@@ -1,0 +1,21 @@
+# ADR — Registro de decisiones técnicas
+
+Una decisión por archivo `ADR-NNN-titulo.md`. Estados: **Propuesta** (espera a Juani) ·
+**Aceptada** · **Reemplazada por ADR-XXX**. Nunca se borra un ADR: se reemplaza con otro.
+Cualquier desvío del stack estándar de NexoSmart necesita un ADR aceptado por Juani.
+
+| ADR | Título | Estado |
+|---|---|---|
+| [001](ADR-001-repos-y-documentacion.md) | Dos repos; la documentación de producto vive en el backend | Propuesta |
+| [002](ADR-002-stack.md) | Stack: Laravel API + React SPA, MySQL, Redis, Resend, Supervisord | Propuesta |
+| [003](ADR-003-monolito-modular.md) | Monolito modular con capas limpias | Propuesta |
+| [004](ADR-004-idioma-del-codigo.md) | Idioma del código: lenguaje del cliente para el dominio | Propuesta |
+| [005](ADR-005-tiempo-real-polling.md) | Tiempo real con polling corto, sin websockets en la Etapa 1 | Propuesta |
+| [006](ADR-006-permisos-matriz.md) | Permisos: matriz sector × función con nivel y alcance | Propuesta |
+| [007](ADR-007-rendicion-fuente-unica.md) | Rendición calculada desde una única fuente: los renglones | Propuesta |
+| [008](ADR-008-importes-y-cantidades.md) | Importes y cantidades: decimales exactos y value objects | Propuesta |
+| [009](ADR-009-autenticacion.md) | Autenticación: Sanctum SPA con cookie, mail + contraseña | Propuesta |
+| [010](ADR-010-auditoria.md) | Registro de quién hizo qué: tabla de actividades | Propuesta |
+| [011](ADR-011-idempotencia.md) | Idempotencia en el backend con Idempotency-Key | Propuesta |
+| [012](ADR-012-avisos.md) | Avisos: sistema + mail en cola y recordatorio programado | Propuesta |
+| [013](ADR-013-tests-y-ci.md) | Tests contra MySQL real separado y CI en cada PR | Propuesta |
