@@ -11,7 +11,7 @@ Plan de trabajo con ítems chequeables. Cada tarea termina con una sección de r
 - [x] ADR-014: archivo o link en todos los documentos (amplía D-022)
 
 ## Semana 1 — a retomar el 2026-11-13
-Plan (brief de agentes: rehacerlo con las mismas reglas; el de la sesión anterior quedó en el scratchpad):
+Plan (brief de agentes: rehacerlo con las mismas reglas; está en `tasks/brief-agentes-semana1.md`):
 - [ ] Tanda 1 en paralelo:
   - Backend Identidad (HU-001…011): rama `feat/w1-identidad`, base `tecnoservicios_testing`
   - Backend transversal (HU-025 adjuntos, RegistroActividad, middleware idempotent): worktree propio + base `tecnoservicios_testing_shared` (ya creada). Copiar `vendor/` y correr `composer dump-autoload` antes de lanzar el agente (tarda varios minutos en esta máquina)
