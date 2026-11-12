@@ -1,6 +1,6 @@
 # ADR-004 · Idioma del código
 
-- **Estado:** Propuesta · **Fecha:** 2026-11-12 · **Rol:** CTO + Tech Lead
+- **Estado:** Aceptada (Juani, 2026-11-12) · **Fecha:** 2026-11-12 · **Rol:** CTO + Tech Lead
 
 ## Contexto
 El brief deja elegir entre `Obra` y `Job`. Traducir "rendición", "rubro", "propietario" o

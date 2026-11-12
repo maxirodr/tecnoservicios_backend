@@ -1,6 +1,6 @@
 # ADR-001 · Dos repos; la documentación de producto vive en el backend
 
-- **Estado:** Propuesta · **Fecha:** 2026-11-12 · **Rol:** CTO
+- **Estado:** Aceptada (Juani, 2026-11-12) · **Fecha:** 2026-11-12 · **Rol:** CTO
 
 ## Contexto
 El trabajo se reparte en `tecnoservicios_backend` y `tecnoservicios_frontend`. Backlog, specs,

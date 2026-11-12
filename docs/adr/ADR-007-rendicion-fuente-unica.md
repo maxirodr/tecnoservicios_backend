@@ -1,6 +1,6 @@
 # ADR-007 · Rendición calculada desde una única fuente: los renglones
 
-- **Estado:** Propuesta · **Fecha:** 2026-11-12 · **Rol:** CTO + DBA
+- **Estado:** Aceptada (Juani, 2026-11-12) · **Fecha:** 2026-11-12 · **Rol:** CTO + DBA
 
 ## Contexto
 RN-07: saldo por rubro = presupuestado − imputado, recalculado en cada carga. Criterio de

@@ -2,8 +2,11 @@
 
 > Módulo `app/Modules/Identidad` · Entrega: **semana 1** · Rol: Analista funcional · 2026-11-12
 > Contrato: documento firmado v1.1 (cap. 3, 5, 11, 13) + maquetas W-15, W-16, W-17, W-19, W-39, W-40, W-50.
-> Decisiones técnicas: ADR-006 (matriz), ADR-009 (autenticación), ADR-010 (auditoría), ADR-011 (idempotencia).
+> Decisiones técnicas: ADR-006 (matriz), ADR-009 (autenticación), ADR-010 (auditoría), ADR-011 (idempotencia),
+> ADR-014 (adjuntos: archivo o link; acá solo sus permisos, §6.6).
 > Lo "Propuesto" del documento está **aprobado**. Lo que no está en el documento va a `docs/dudas.md` (DU-A..).
+> **Dudas resueltas por Juani el 12-nov-2026** (va la propuesta en todas; DU-13 con el texto firmado):
+> las reglas que dependían de una duda son definitivas y citan "resuelta DU-XX".
 > Todos los nombres, mails y obras de este archivo son **ficticios** (los de las maquetas).
 
 ## 1. Propósito
@@ -18,7 +21,7 @@ personalizar" (16-oct). Además, gerencia define los **plazos de la prioridad** 
 | F-XX | Qué | Pantalla | Semana 1 |
 |---|---|---|---|
 | F-01 | Ingreso con usuario y contraseña; recuperación por mail | W-16 | completa |
-| F-02 | Menú según los permisos del sector | W-17 (y barra inferior W-41) | completa (solo módulos entregados, DU-A12) |
+| F-02 | Menú según los permisos del sector | W-17 (y barra inferior W-41) | completa (solo módulos entregados, resuelta DU-A12) |
 | F-10 | Mi perfil: mis datos, mi sector, cambiar contraseña, mis avisos por mail | W-19 | **sin "Mis avisos"** (se activa en semana 2 con Pedidos) |
 | F-58 | Usuarios: alta, edición y baja (activo/inactivo), con sector y jefatura | W-15 · W-39 | completa |
 | F-59 | Sectores: agregar, renombrar, sacar | W-40 | completa |
@@ -102,7 +105,7 @@ Columnas de W-40: **Sector · Usuarios** (cantidad de usuarios activos) **· ren
 - **RN-IDE-06** "Olvidé mi contraseña": la persona escribe su mail y el sistema responde **siempre** "Te mandamos un mail a {mail} para elegir una nueva." exista o no el usuario; solo se manda el mail si el usuario existe y está activo. Máximo 3 pedidos por hora por mail. *(W-16, ADR-009)*
 - **RN-IDE-07** El link del mail sirve **una sola vez** y vence a los **60 minutos**. Vencido o usado: "El link venció. Pedí uno nuevo desde 'Olvidé mi contraseña'." *(ADR-009)*
 - **RN-IDE-08** Al elegir la contraseña nueva se cierran las demás sesiones de esa persona y queda adentro. *(técnica, seguridad)*
-- **RN-IDE-09** Un usuario recién dado de alta recibe un mail para **elegir su contraseña** (mismo flujo y mismo link que la recuperación, con vencimiento de 7 días). Si no lo usó a tiempo, usa "Olvidé mi contraseña" (o gerencia lo reenvía, si se aprueba el botón de DU-03). Nadie (ni gerencia) ve ni escribe contraseñas ajenas. *(ADR-009 · DU-03 · W-16 "Si no tenés usuario, pedíselo a gerencia")*
+- **RN-IDE-09** Un usuario recién dado de alta recibe un mail para **elegir su contraseña** (mismo flujo y mismo link que la recuperación, con vencimiento de 7 días). Si no lo usó a tiempo, usa "Olvidé mi contraseña" o gerencia se lo **reenvía** desde W-15 con el botón "Reenviar mail de bienvenida" (manda un link nuevo de 7 días e invalida el anterior; solo para usuarios activos que todavía no eligieron contraseña). Nadie (ni gerencia) ve ni escribe contraseñas ajenas. *(ADR-009 · resuelta DU-03 · W-16 "Si no tenés usuario, pedíselo a gerencia")*
 - **RN-IDE-10** Los mails de ingreso (bienvenida y recuperación) son **de la cuenta**, no "avisos": salen desde la semana 1 aunque los avisos por mail (F-09) se activen en semana 2. Van por cola, desde noreply con reply-to real. *(ADR-012)*
 
 ### Menú según permisos (F-02, W-17, W-41)
@@ -125,18 +128,18 @@ Columnas de W-40: **Sector · Usuarios** (cantidad de usuarios activos) **· ren
 - **RN-IDE-20** **No se borra a nadie**: la baja es pasar a **Inactivo**. Sus pedidos, obras e historial quedan como están, con su nombre. Se puede volver a activar. *(W-39)*
 - **RN-IDE-21** El listado (W-15) muestra **Nombre · Mail · Sector · Activo**; por defecto solo activos, con un filtro "ver inactivos". Busca por nombre o mail. *(W-15)*
 - **RN-IDE-22** "Depende de" es opcional (Dirección no depende de nadie). No puede ser la misma persona ni armar un círculo (si Laura depende de Hernán, Hernán no puede depender de Laura ni de nadie que dependa de Laura): "Así se arma un círculo: {nombre} ya depende de {nombre}." *(F-58, F-61)*
-- **RN-IDE-23** **Mi gente** = todas las personas que dependen de mí, directa o indirectamente (Dirección → Gerencia → Jefatura → Ingeniería). El **superior** de una persona (para el aviso de "completado" de semana 2) es su jefe **directo**. *(F-61, decisiones Sprint 0 n.º 6)*
-- **RN-IDE-24** Al desactivar a alguien que tiene gente a cargo u obras como responsable, la pantalla avisa cuántas ("Hernán tiene 2 personas a cargo y es responsable de 3 obras. Quedan como están hasta que las cambies.") y **no bloquea**. *(DU-A08)*
-- **RN-IDE-25** Nadie se puede desactivar a sí mismo, y el sistema no deja que quede **ningún usuario activo con Usuarios y permisos = Editar** (por desactivar, por cambiar de sector o por cambiar la matriz): "Tiene que quedar al menos una persona que pueda administrar usuarios y permisos." *(técnica, DU-A09)*
-- **RN-IDE-26** El mail no se restringe a un dominio. *(DU-A11)*
+- **RN-IDE-23** **Mi gente** = todas las personas que dependen de mí, directa o indirectamente (Dirección → Gerencia → Jefatura → Ingeniería). El **superior** de una persona es su jefe **directo**. El aviso de "completado" de semana 2 va al solicitante y al **superior del solicitante** (`jefe_id` de quien pidió, no de quien completó); si el solicitante no tiene jefatura, no hay aviso extra. Identidad lo expone en `Identidad\Contracts\Jerarquia::superiorDe(UserId): ?UserId`. *(F-61, cap. 4.2 y F-31 "a su superior", decisiones Sprint 0 n.º 6, resuelta DU-13 con el texto firmado)*
+- **RN-IDE-24** Al desactivar a alguien que tiene gente a cargo u obras como responsable, la pantalla avisa cuántas ("Hernán tiene 2 personas a cargo y es responsable de 3 obras. Quedan como están hasta que las cambies.") y **no bloquea**. *(resuelta DU-A08)*
+- **RN-IDE-25** Nadie se puede desactivar a sí mismo, y el sistema no deja que quede **ningún usuario activo con Usuarios y permisos = Editar** (por desactivar, por cambiar de sector o por cambiar la matriz): "Tiene que quedar al menos una persona que pueda administrar usuarios y permisos." *(técnica, resuelta DU-A09)*
+- **RN-IDE-26** El mail no se restringe a un dominio; queda la variable opcional `MAIL_DOMINIOS_PERMITIDOS` (vacía = sin restricción). *(resuelta DU-A11)*
 - **RN-IDE-27** El cambio de sector de un usuario cambia sus permisos desde el próximo pedido al servidor (RN-IDE-14). No cambia sus pedidos ni sus obras.
 
 ### Sectores (F-59, W-40)
 
-- **RN-IDE-28** Arrancan, por migración, los **11 sectores** de §6.2 (organigrama). Supervisión de obra **no** es sector: no usa el sistema (cap. 3). *(cap. 3, análisis del organigrama, DU-01, DU-A01)*
+- **RN-IDE-28** Arrancan, por migración, los **11 sectores** de §6.2 (organigrama). Supervisión de obra **no** es sector: no usa el sistema (cap. 3). *(cap. 3, análisis del organigrama, resueltas DU-01 y DU-A01)*
 - **RN-IDE-29** Agregar, renombrar y sacar sectores: quien tenga **Usuarios y permisos = Editar**. *(F-59: "Dirección y las dos gerencias")*
-- **RN-IDE-30** Un sector **nuevo** aparece como una fila más en la tabla de permisos con: **Pedidos = Editar·todas**, **Obras = Ver·todas**, el resto **Sin acceso**. *(W-40, cap. 3 "Todos pueden pedir", cap. 6 "Quién: Todos"; DU-A06)*
-- **RN-IDE-31** **Sacar** un sector: solo si **no tiene usuarios activos** ("Antes de sacar Pañol y Logística, pasá a sus 2 usuarios a otro sector."). Si nunca se usó (sin usuarios ni pedidos) se borra; si tiene historia se **archiva**: sale de los desplegables y de la matriz, y lo histórico conserva su nombre. *(DU-A07)*
+- **RN-IDE-30** Un sector **nuevo** aparece como una fila más en la tabla de permisos con: **Pedidos = Editar·todas**, **Equipos en reparación = Editar·todas** (igual que Pedidos), **Obras = Ver·todas**, el resto **Sin acceso**. *(W-40, cap. 3 "Todos pueden pedir", cap. 6 "Quién: Todos"; resuelta DU-A06)*
+- **RN-IDE-31** **Sacar** un sector: solo si **no tiene usuarios activos** ("Antes de sacar Pañol y Logística, pasá a sus 2 usuarios a otro sector."). Si nunca se usó (sin usuarios ni pedidos) se borra; si tiene historia se **archiva**: sale de los desplegables y de la matriz, y lo histórico conserva su nombre. *(resuelta DU-A07)*
 - **RN-IDE-32** Renombrar no cambia nada más: usuarios, permisos y pedidos siguen en el mismo sector.
 - **RN-IDE-33** "Pañol y Logística" arranca **sin usuarios**: existe y se le da usuario cuando quieran. *(cap. 3, W-15, W-40)*
 
@@ -152,10 +155,21 @@ Columnas de W-40: **Sector · Usuarios** (cantidad de usuarios activos) **· ren
 ### Plazos de la prioridad (F-68, W-50)
 
 - **RN-IDE-40** Los cambian quienes tengan **Plazos de la prioridad = Editar** (inicial: las dos gerencias). *(F-68 "Gerencia")*
-- **RN-IDE-41** Regla: con `d` = días **corridos** entre la fecha de pedido y la de entrega: `d ≤ urgente_hasta_dias` → **Urgente**; `d ≤ prioritario_hasta_dias` → **Prioritario**; si no → **Normal**. Si la entrega es anterior al pedido (`d < 0`), Urgente. *(cap. 4.2, F-26, W-50; días corridos: DU-04)*
+- **RN-IDE-41** Regla: con `d` = días **corridos** entre la fecha de pedido y la de entrega: `d ≤ urgente_hasta_dias` → **Urgente**; `d ≤ prioritario_hasta_dias` → **Prioritario**; si no → **Normal**. Si la entrega es anterior al pedido (`d < 0`), Urgente. Sin calendario de feriados. *(cap. 4.2, F-26, W-50; días corridos: resuelta DU-04)*
 - **RN-IDE-42** El cambio vale para los **pedidos que se carguen desde ese momento** y **no recalcula** los ya cargados: la prioridad se guarda en el pedido. *(W-50, aprobado)*
-- **RN-IDE-43** Si después se cambia la fecha de entrega de un pedido ya cargado (W-32, semana 2), su prioridad se recalcula con los plazos **vigentes al momento de esa edición**, salvo que haya sido corregida a mano. *(DU-A13)*
+- **RN-IDE-43** Si después se cambia la fecha de entrega de un pedido ya cargado (W-32, semana 2), su prioridad se recalcula con los plazos **vigentes al momento de esa edición**, salvo que haya sido corregida a mano: en ese caso se mantiene la manual y el formulario muestra la calculada como sugerencia. *(resuelta DU-A13)*
 - **RN-IDE-44** El módulo Identidad expone `Identidad\Contracts\PlazosPrioridad::calcular(fechaPedido, fechaEntrega): Prioridad` para que Pedidos lo use en semana 2.
+
+### Adjuntos: quién sube y quién baja (ADR-014)
+
+Donde el documento firmado decía "link" para un documento, ahora se puede **subir el archivo o
+poner el link** (ADR-014, amplía D-022). Los adjuntos no son una fila de la matriz: **heredan el
+permiso del recurso dueño** (pedido, presupuesto, documento de la obra, gasto, retiro, equipo).
+
+- **RN-IDE-45** **Subir** (`POST /api/adjuntos`) lo puede cualquier usuario **activo y autenticado**: el adjunto queda **sin dueño** (temporal) y solo lo ve quien lo subió. Si en 24 h no se asocia a un recurso, se purga (archivo físico incluido). *(ADR-014)*
+- **RN-IDE-46** **Asociar** un adjunto (crear o editar el recurso con `adjuntos: [ids]`) exige **editar** en la función del recurso dueño (p. ej. `obras = editar` para un certificado; en un pedido, la regla del pedido). Solo se pueden asociar adjuntos temporales **subidos por la misma persona** y del **contexto** que corresponde al campo; si no: 422 "Ese adjunto no se puede usar acá." *(ADR-014, ADR-006)*
+- **RN-IDE-47** **Bajar** (`GET /api/adjuntos/{id}`) exige poder **ver el recurso dueño**, con su alcance ("solo sus obras" incluido): si no podés ver el pedido, no podés bajar su comprobante. Sin permiso o con un id ajeno (IDOR): **404** (no confirma que exista). Un adjunto temporal solo lo baja quien lo subió. *(ADR-014, ADR-006)*
+- **RN-IDE-48** **Quitar** un adjunto de un recurso exige el mismo permiso que editarlo; borra el archivo físico y queda en `actividades` (quién, cuándo, nombre del adjunto). Un gasto **anulado** conserva sus adjuntos. *(ADR-014, ADR-010)*
 
 ## 6. Permisos
 
@@ -168,15 +182,15 @@ propias las cosas que el documento asigna a **otra gente** que la del módulo qu
 
 | Orden | Clave | Nombre en W-15 | Qué habilita (Ver / Editar) | Admite editar | Admite "solo sus obras" | Por qué es una fila | Entrega |
 |---|---|---|---|---|---|---|---|
-| 1 | `pedidos` | Pedidos | Ver: Todos los pedidos (W-24), Sin obra (W-25), calendario (W-03), pestaña Pedidos de la obra. Editar: crear, comentar, seguir, editar pedidos (F-24…F-38, F-65). | Sí | Sí (los que pidió, tiene, sigue o de su gente) | Columna de W-15; F-35 "se puede restringir en la tabla de permisos"; F-33 "según la tabla de permisos" | 2 |
-| 2 | `equipos_reparacion` | Equipos en reparación | Ver y editar la lista de equipos (W-49). | Sí | No | F-67 "Quién: según permisos" | 2 |
-| 3 | `obras` | Obras | Ver: listado, ficha, documentos y contactos, historial (F-15, F-17, F-19, F-22). Editar: alta, edición, presupuestos adicionales, documentos, contactos, fechas previstas (F-16, F-18, F-20, F-23). | Sí | Sí (obras donde es responsable) | Columna de W-15; F-20 "según permisos" | **1** |
+| 1 | `pedidos` | Pedidos | Ver: Todos los pedidos (W-24), Sin obra (W-25), calendario (W-03), pestaña Pedidos de la obra. Editar: crear, comentar, seguir, editar pedidos, con sus archivos o links y el comprobante de cierre (F-24…F-38, F-65; ADR-014). | Sí | Sí (los que pidió, tiene, sigue o de su gente) | Columna de W-15; F-35 "se puede restringir en la tabla de permisos"; F-33 "según la tabla de permisos" | 2 |
+| 2 | `equipos_reparacion` | Equipos en reparación | Ver y editar la lista de equipos (W-49), con su presupuesto e inventario (archivo o link, ADR-014). | Sí | No | F-67 "Quién: según permisos" | 2 |
+| 3 | `obras` | Obras | Ver: listado, ficha, documentos y contactos, historial (F-15, F-17, F-19, F-22). Editar: alta, edición, presupuestos adicionales, documentos (archivo o link), contactos, fechas previstas (F-16, F-18, F-19, F-20, F-23). | Sí | Sí (obras donde es responsable) | Columna de W-15; F-20 "según permisos" | **1** |
 | 4 | `estado_obra` | Estado de obra | Editar: cambiar el estado de cualquier obra (W-22). El responsable de **su** obra puede siempre (RN-IDE-39). | Sí | No | F-21: lo cambian "responsable de obra y administración", distinto de quien edita la obra | **1** |
 | 5 | `presupuesto_rubro` | Presupuesto por rubro | Ver: W-13 y la columna "Presupuestado". Editar: cargar y corregir montos por rubro o el total (F-48). | Sí | Sí | Columna de W-15; cap. 3 "lo carga administración" (no operaciones, que da de alta la obra) | **1** |
-| 6 | `monto_obra` | Monto de obra y ganancia | Ver: monto de la obra, ganancia y % (W-11, ficha). Editar: cargar el monto de cada presupuesto. | Sí (DU-19) | Sí | Cap. 3 y F-54: "lo ven gerencias y administración", más restringido que la rendición | **1** (dato) / 3 (rendición) |
-| 7 | `gastos` | Gastos y facturas | Ver: Gastos cargados (W-33), detalle (W-34), "Gastado por obra" del proveedor (W-14). Editar: cargar, corregir, anular (F-39…F-47). | Sí | Sí (renglones de sus obras) | Columna de W-15 | 3 |
+| 6 | `monto_obra` | Monto de obra y ganancia | Ver: monto de la obra, ganancia y % (W-11, ficha). Editar: cargar el monto de cada presupuesto. | Sí (resuelta DU-19) | Sí | Cap. 3 y F-54: "lo ven gerencias y administración", más restringido que la rendición | **1** (dato) / 3 (rendición) |
+| 7 | `gastos` | Gastos y facturas | Ver: Gastos cargados (W-33), detalle (W-34), "Gastado por obra" del proveedor (W-14). Editar: cargar, corregir, anular, con la factura o los tickets como archivo o link (F-39…F-47; ADR-014). | Sí | Sí (renglones de sus obras) | Columna de W-15 | 3 |
 | 8 | `rendicion` | Rendición | Ver: rendición de la obra, en curso, detalle de rubro, por proveedor (W-11, W-12, W-36, W-37, W-44). Editar: cargas que se hacen desde la rendición (W-46, horas y fijos por período). | Sí | Sí | Columna de W-15; cap. 3 "las ingenieras ven la rendición de sus obras" | 3 |
-| 9 | `control_cantidad` | Control por cantidad | Ver: W-48. Editar: cargar materiales presupuestados y retiros con remito. | Sí | Sí | F-66: "edita administración · ve operaciones" | 3 |
+| 9 | `control_cantidad` | Control por cantidad | Ver: W-48. Editar: cargar materiales presupuestados y retiros con remito (archivo o link, ADR-014). | Sí | Sí | F-66: "edita administración · ve operaciones" | 3 |
 | 10 | `proveedores` | Proveedores | Ver: base y ficha (W-14). Editar: alta y edición (W-38), alta rápida desde la factura (F-42). | Sí | No | Columna de W-15; F-55/F-56 "administración y compras" | **1** |
 | 11 | `usuarios_permisos` | Usuarios y permisos | Ver: usuarios, sectores y tabla. Editar: alta/edición/baja de usuarios, sectores y la tabla (F-58, F-59, F-60). | Sí | No | Columna "Usuarios" de W-15 | **1** |
 | 12 | `plazos_prioridad` | Plazos de la prioridad | Ver: W-50. Editar: cambiar los plazos (F-68). | Sí | No | F-68: "gerencia", distinto de quien administra usuarios | **1** |
@@ -203,13 +217,14 @@ RN-IDE-13) y **Buscador** (respeta los permisos de cada resultado, W-18).
 
 W-15/W-40 muestran 10 filas con nombres cortos ("Operaciones", "Proyectos", "Administración");
 se separa Administración en Gerencia y Jefatura porque la celda de W-15 "Usuarios: Editar — solo
-la gerencia" no se puede expresar por sector de otra forma (DU-01). Los nombres se pueden renombrar. → DU-A01.
+la gerencia" no se puede expresar por sector de otra forma (resuelta DU-01). Los nombres se pueden renombrar. Nombres: resuelta DU-A01.
 
 ### 6.3 Configuración inicial (sector × función)
 
 Leyenda: **E** = Editar · **V** = Ver · **—** = Sin acceso · **·T** = todas · **·P** = solo sus obras.
 **Negrita** = sale explícita del documento; *cursiva* = celda "a completar" en W-15 que arranca
-según la propuesta de la DU indicada.
+según la DU indicada (todas resueltas el 12-nov: va la propuesta). Esta tabla es **definitiva**
+para la migración.
 
 | Sector | Pedidos | Equipos en reparación | Obras | Estado de obra | Presupuesto por rubro | Monto de obra y ganancia | Gastos y facturas | Rendición | Control por cantidad | Proveedores | Usuarios y permisos | Plazos de la prioridad |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -228,18 +243,18 @@ según la propuesta de la DU indicada.
 De dónde sale cada columna:
 
 - **Pedidos**: E·T para todos — cap. 3 "Todos pueden pedir y le pueden pedir a cualquiera… Todos ven todos los pedidos de todas las obras"; W-15 (Editar en todas las filas, incluida Pañol). Que cada uno vea en su inicio sus tareas y las de su gente es jerarquía (F-61), no matriz.
-- **Equipos en reparación**: F-67 "según permisos" y no figura en W-15 → DU-01 (como hoy la solapa de la minuta: todos la ven y la tocan).
+- **Equipos en reparación**: F-67 "según permisos" y no figura en W-15 → resuelta DU-01 (como hoy la solapa de la minuta: todos la ven y la tocan).
 - **Obras**: Ver·T para todos — cap. 6, columna "Quién" de F-15, F-17, F-19, F-22 = "Todos". Editar — F-16 "Operaciones · también administración" y F-18 "Operaciones y administración"; cap. 3 "Gerencia de Operaciones · Jefatura de Proyectos · Ingeniería de proyectos: dan de alta las obras". Compras no es "administración" en el documento (siempre dice "administración y compras").
 - **Estado de obra**: F-21 "Responsable de obra y administración" → E para Gerencia y Jefatura de Administración; el responsable de su obra lo cambia por regla fija (RN-IDE-39), por eso los sectores de operaciones quedan en V "+ responsable". Dirección V por "ve todo".
 - **Presupuesto por rubro**: cap. 3 "Lo carga administración"; W-15 Editar para Administración y Compras y Ver para Operaciones, Proyectos e Ingeniería.
 - **Monto de obra y ganancia**: cap. 3, F-54 "Lo ven gerencias y administración" → V para las dos gerencias, E para administración (quien la carga, F-54 "Quién: Administración"); Dirección V.
-- **Gastos y facturas / Rendición**: cap. 3 "Editan administración y compras. Operaciones ve y no puede tocar nada; las ingenieras ven la rendición de sus obras"; W-15 y W-17 ("Gastos (ver)", "Rendiciones (ver)" para Ingeniería). Alcance de Ingeniería en Gastos → DU-A04.
-- **Control por cantidad**: F-66 "Edita administración · ve operaciones". Compras → DU-A05.
-- **Proveedores**: F-55/F-56 "Administración y compras"; W-17 "Administración tiene todo lo de gastos, proveedores y rendición" y para Ingeniería "No ve Proveedores… mientras la tabla de permisos no se los dé" (por eso Ingeniería arranca en Sin acceso aunque DU-02 proponga Ver). Gerencia de Operaciones y Jefatura de Proyectos: Ver, como propone DU-02 (ya ven los gastos).
+- **Gastos y facturas / Rendición**: cap. 3 "Editan administración y compras. Operaciones ve y no puede tocar nada; las ingenieras ven la rendición de sus obras"; W-15 y W-17 ("Gastos (ver)", "Rendiciones (ver)" para Ingeniería). Alcance de Ingeniería en Gastos: solo sus obras (resuelta DU-A04).
+- **Control por cantidad**: F-66 "Edita administración · ve operaciones". Compras edita (resuelta DU-A05).
+- **Proveedores**: F-55/F-56 "Administración y compras"; W-17 "Administración tiene todo lo de gastos, proveedores y rendición" y para Ingeniería "No ve Proveedores… mientras la tabla de permisos no se los dé" (por eso Ingeniería arranca en Sin acceso: DU-A02 ajusta DU-02, ambas resueltas). Gerencia de Operaciones y Jefatura de Proyectos: Ver, como DU-02 (ya ven los gastos).
 - **Usuarios y permisos**: F-58/F-59/F-60 "Dirección y las dos gerencias"; W-15 "Administración: Editar — solo la gerencia".
 - **Plazos de la prioridad**: F-68 "Gerencia" → las dos gerencias; Dirección V por "ve todo".
 - **Dirección**: cap. 3 "Ve todo" y F-61 "Dirección ve todo" → V·T en todo lo que W-15 dejó "a completar"; E en Pedidos y Usuarios (W-15).
-- **"a completar"** (W-15: "el resto de la tabla la completan ustedes"): arrancan en **Sin acceso** → DU-A02.
+- **"a completar"** (W-15: "el resto de la tabla la completan ustedes"): arrancan en **Sin acceso** (resuelta DU-A02); RRHH sin acceso a Gastos, Presupuesto, Rendición y Proveedores (resuelta DU-A03).
 
 ### 6.4 Menú (F-02) — qué celda habilita cada ítem
 
@@ -254,7 +269,7 @@ De dónde sale cada columna:
 | Proveedores | `proveedores` ≥ V | — |
 | Usuarios | `usuarios_permisos` ≥ V **o** `plazos_prioridad` ≥ V (solo ve las pestañas que le tocan: Usuarios · Sectores · Tabla de permisos · Plazos de la prioridad) | — |
 
-Semana 1: los ítems de módulos todavía no entregados (Pedidos, Calendario, Gastos, Rendiciones) no se muestran aunque la celda los habilite → DU-A12.
+Semana 1: los ítems de módulos todavía no entregados (Pedidos, Calendario, Gastos, Rendiciones) no se muestran aunque la celda los habilite, con una lista de módulos habilitados por configuración (no por la matriz); cada entrega los enciende (resuelta DU-A12).
 
 ### 6.5 Permisos de las pantallas de este módulo
 
@@ -263,12 +278,30 @@ Semana 1: los ítems de módulos todavía no entregados (Pedidos, Calendario, Ga
 | Ingresar, recuperar contraseña | — (público) | — | — |
 | Ver / editar mi perfil, cambiar mi contraseña | — (autenticado) | — | — |
 | Listar usuarios, ver sectores y tabla | `usuarios_permisos` | ver | — |
-| Alta, edición, activar/desactivar usuario | `usuarios_permisos` | editar | — |
+| Alta, edición, activar/desactivar usuario, reenviar mail de bienvenida | `usuarios_permisos` | editar | — |
 | Agregar, renombrar, sacar sector | `usuarios_permisos` | editar | — |
 | Cambiar celdas de la tabla | `usuarios_permisos` | editar | — |
 | Ver plazos de la prioridad | `plazos_prioridad` | ver | — |
 | Cambiar plazos | `plazos_prioridad` | editar | — |
 | Lista corta de usuarios activos / sectores (para desplegables de responsable, propietario, jefe) | — (autenticado) | — | — |
+
+### 6.6 Permisos de los adjuntos (ADR-014)
+
+| Acción | Quién | Si no |
+|---|---|---|
+| Subir un archivo o registrar un link (`POST /api/adjuntos`) → id temporal | cualquier usuario activo (RN-IDE-45) | 401 |
+| Asociarlo al recurso (crear/editar con `adjuntos: [ids]`) | **editar** en la función del dueño, y el adjunto es temporal, propio y del contexto correcto (RN-IDE-46) | 403 sin permiso · 422 adjunto ajeno, ya usado o de otro contexto |
+| Bajarlo (`GET /api/adjuntos/{id}`) | **ver** el recurso dueño, con su alcance (RN-IDE-47) | 404 |
+| Quitarlo del recurso | **editar** el recurso dueño (RN-IDE-48) | 403 |
+
+| Contexto (`adjuntos.contexto`) | Recurso dueño | Función para ver / editar | Semana |
+|---|---|---|---|
+| `presupuesto`, `aprobacion` | presupuesto de la obra | `obras` (alcance: obras donde es responsable) | **1** |
+| `documento_obra` | documento de la obra (certificado u otro) | `obras` | **1** |
+| `pedido`, `comprobante_cierre` | pedido | `pedidos` + reglas del pedido (completa el propietario) | 2 |
+| `equipo_presupuesto`, `equipo_inventario` | equipo en reparación | `equipos_reparacion` | 2 |
+| `comprobante_gasto` | gasto | `gastos` | 3 |
+| `remito` | retiro | `gastos` (W-46) / `control_cantidad` (W-48) | 3 |
 
 ## 7. Estados y transiciones
 
@@ -302,7 +335,7 @@ Este módulo no genera avisos del sistema. Manda dos mails **de cuenta** (RN-IDE
 | 7 | Gerencia cambia la celda Ingeniería × Rendición de V·P a V·T mientras Laura tiene abierta la rendición de una obra que no es suya | Desde el próximo refresco la puede ver; antes, la API la habría negado con 403. |
 | 8 | Se saca "RRHH" que tiene 0 usuarios y nunca tuvo pedidos | Se borra; desaparece de W-40 y de la tabla. |
 | 9 | Se saca "Calidad" con 1 usuario activo | 422 RN-IDE-31. |
-| 10 | Se agrega el sector "Laboratorio" | Aparece en la tabla con Pedidos E·T, Obras V·T, resto Sin acceso. |
+| 10 | Se agrega el sector "Laboratorio" | Aparece en la tabla con Pedidos E·T, Equipos en reparación E·T, Obras V·T, resto Sin acceso. |
 | 11 | Se renombra "Compras" a "compras " | 422: ya existe (comparación sin mayúsculas, tildes ni espacios). |
 | 12 | Gerencia pone Urgente hasta 3 y Prioritario hasta 2 | 422 "Prioritario tiene que ser mayor que Urgente." |
 | 13 | Gerencia pone Urgente 0, Prioritario 5. Un pedido del lunes para el mismo lunes | Urgente (d = 0). Uno para el sábado (d = 5): Prioritario; para el domingo (d = 6): Normal. |
@@ -311,6 +344,11 @@ Este módulo no genera avisos del sistema. Manda dos mails **de cuenta** (RN-IDE
 | 16 | Diego cambia su propia contraseña poniendo mal la actual | 422 "La contraseña actual no coincide." |
 | 17 | Una persona con Usuarios = Ver intenta `PATCH /api/usuarios/{id}` | 403. |
 | 18 | Link de recuperación usado dos veces | La segunda: "El link venció…" (RN-IDE-07). |
+| 19 | Pablo no usó el mail de bienvenida en 7 días; gerencia toca "Reenviar mail de bienvenida" | Le llega un link nuevo de 7 días; el viejo deja de servir (RN-IDE-09). Sobre un usuario que ya eligió contraseña: 422 "Ya eligió su contraseña: puede usar 'Olvidé mi contraseña'." |
+| 20 | Pablo (Ingeniería) completa un pedido que pidió Carla (Compras), que depende de Diego | Aviso a Carla y a **Diego** (superior de la solicitante), no a Sofía, superior de Pablo (RN-IDE-23, DU-13). |
+| 21 | Laura (Ingeniería, Obras = Editar·solo sus obras) pide `GET /api/adjuntos/{id}` del certificado de una obra donde no es responsable, adivinando el id | 404; no se confirma que el adjunto exista (RN-IDE-47). |
+| 22 | Carla sube un PDF (id temporal 41) y Diego intenta asociar el 41 a un certificado de otra obra | 422 "Ese adjunto no se puede usar acá." (RN-IDE-46: solo adjuntos temporales propios). |
+| 23 | Carla sube una foto y no la asocia a nada | Nadie más la ve; a las 24 h el comando programado la borra, con el archivo físico (RN-IDE-45). |
 
 ## 10. Contrato de API sugerido
 
@@ -333,6 +371,7 @@ Envelope en todo: `{ "data": …, "message": string|null, "errors": object|null 
 | `POST /api/usuarios` | `{nombre, email, sector_id, jefe_id?, telefono?}` | `Usuario` (201) + manda el mail RN-IDE-09 | 403 · 422 |
 | `GET /api/usuarios/{id}` | — | `Usuario` + `{personas_a_cargo: int, obras_como_responsable: int}` | 403 · 404 |
 | `PATCH /api/usuarios/{id}` | `{nombre?, email?, sector_id?, jefe_id?, telefono?, activo?}` | `Usuario` | 403 · 404 · 422 (RN-IDE-22, RN-IDE-25) |
+| `POST /api/usuarios/{id}/reenviar-bienvenida` | — | `null`, `message` "Le mandamos de nuevo el mail a {mail}." | 403 · 404 · 422 (inactivo o ya eligió contraseña) · 429 (3 por hora) |
 | `GET /api/sectores?incluir_archivados=false` | — | `[{id, nombre, usuarios_activos: int, activo}]` | 401 |
 | `POST /api/sectores` | `{nombre}` | `Sector` (201), con sus celdas iniciales RN-IDE-30 | 403 · 422 |
 | `PATCH /api/sectores/{id}` | `{nombre}` | `Sector` | 403 · 404 · 422 |
@@ -365,6 +404,11 @@ Formas:
 `permisos` trae **las 12 claves** siempre. El front arma el menú con la tabla §6.4 (una sola
 función `menuPara(permisos, tieneGente)` testeada) y la API decide (RN-IDE-14).
 
+Adjuntos (transversal, `app/Shared`, ADR-014): `POST /api/adjuntos` (multipart para archivo, JSON
+para link) → id temporal; el recurso recibe `adjuntos: [ids]`; `GET /api/adjuntos/{id}` baja el
+archivo con la autorización de RN-IDE-47. Contrato completo y validaciones (tipos por contenido,
+20 MB, links `http(s)`) en `obras.md` §10.5, que es el primer módulo que los usa.
+
 ## 11. Trazabilidad F-XX → RN → test
 
 | F-XX | Reglas | Tests (PHPUnit, `tests/Feature/Identidad/…`) |
@@ -372,19 +416,22 @@ función `menuPara(permisos, tieneGente)` testeada) y la API decide (RN-IDE-14).
 | F-01 | RN-IDE-01…10 | `test_ingresa_con_mail_de_la_empresa_y_contrasena` · `test_mail_se_compara_sin_mayusculas_ni_espacios` · `test_credenciales_incorrectas_dan_el_mismo_mensaje` · `test_usuario_inactivo_no_puede_ingresar` · `test_sexto_intento_en_un_minuto_devuelve_429` · `test_olvide_contrasena_no_revela_si_el_mail_existe` · `test_link_de_recuperacion_vence_a_los_60_minutos_y_sirve_una_vez` · `test_elegir_contrasena_cierra_las_otras_sesiones` · `test_alta_de_usuario_manda_mail_para_elegir_contrasena` · `test_recordarme_deja_cookie_remember` |
 | F-02 | RN-IDE-11…15 | `test_me_devuelve_las_doce_funciones_con_nivel_y_alcance` · `test_me_indica_si_tiene_gente_a_cargo` · `test_endpoint_responde_403_aunque_el_menu_lo_oculte` · `test_cambio_en_la_matriz_vale_desde_el_proximo_pedido` · front: `menuPara.test.ts` → `oculta_gastos_sin_acceso`, `marca_ver_en_rendiciones_de_ingenieria`, `muestra_usuarios_si_solo_tiene_plazos` |
 | F-10 | RN-IDE-16…18 | `test_perfil_permite_cambiar_nombre_y_telefono` · `test_perfil_no_permite_cambiar_mail_sector_ni_jefe` · `test_cambiar_contrasena_pide_la_actual` · `test_nueva_contrasena_no_puede_ser_igual_a_la_actual` |
-| F-58 | RN-IDE-19…27 | `test_solo_usuarios_permisos_editar_da_de_alta_usuarios` · `test_mail_de_usuario_es_unico_incluso_entre_inactivos` · `test_desactivar_no_borra_y_conserva_historial` · `test_usuario_inactivo_sale_de_las_opciones` · `test_jefe_no_puede_ser_el_mismo_usuario` · `test_jefe_no_puede_armar_un_circulo` · `test_mi_gente_incluye_subordinados_indirectos` · `test_superior_es_el_jefe_directo` · `test_desactivar_jefe_informa_personas_y_obras_sin_bloquear` · `test_nadie_se_desactiva_a_si_mismo` · `test_no_queda_sin_administrador_de_usuarios` |
-| F-59 | RN-IDE-28…33 | `test_migracion_crea_los_once_sectores_del_organigrama` · `test_nombre_de_sector_unico_sin_mayusculas_ni_tildes` · `test_sector_nuevo_nace_con_pedidos_editar_y_obras_ver` · `test_no_se_saca_un_sector_con_usuarios_activos` · `test_sector_sin_historia_se_borra_y_con_historia_se_archiva` · `test_renombrar_sector_conserva_usuarios_y_permisos` |
+| F-58 | RN-IDE-09, 19…27 | `test_solo_usuarios_permisos_editar_da_de_alta_usuarios` · `test_reenviar_bienvenida_manda_link_nuevo_e_invalida_el_anterior` · `test_no_reenvia_bienvenida_a_quien_ya_eligio_contrasena` · `test_superior_para_aviso_de_completado_es_el_jefe_del_solicitante` · `test_mail_de_usuario_es_unico_incluso_entre_inactivos` · `test_desactivar_no_borra_y_conserva_historial` · `test_usuario_inactivo_sale_de_las_opciones` · `test_jefe_no_puede_ser_el_mismo_usuario` · `test_jefe_no_puede_armar_un_circulo` · `test_mi_gente_incluye_subordinados_indirectos` · `test_superior_es_el_jefe_directo` · `test_desactivar_jefe_informa_personas_y_obras_sin_bloquear` · `test_nadie_se_desactiva_a_si_mismo` · `test_no_queda_sin_administrador_de_usuarios` |
+| F-59 | RN-IDE-28…33 | `test_migracion_crea_los_once_sectores_del_organigrama` · `test_nombre_de_sector_unico_sin_mayusculas_ni_tildes` · `test_sector_nuevo_nace_con_pedidos_y_equipos_editar_y_obras_ver` · `test_no_se_saca_un_sector_con_usuarios_activos` · `test_sector_sin_historia_se_borra_y_con_historia_se_archiva` · `test_renombrar_sector_conserva_usuarios_y_permisos` |
 | F-60 | RN-IDE-34…39, §6.3 | `test_migracion_carga_el_catalogo_de_doce_funciones` · `test_migracion_carga_la_configuracion_inicial_del_cap_3` (una aserción por celda de §6.3) · `test_migracion_de_permisos_es_idempotente` · `test_no_acepta_editar_en_funcion_que_no_lo_admite` · `test_no_acepta_propias_en_funcion_sin_alcance` · `test_cambio_de_celda_queda_en_actividades` · `test_cambio_de_matriz_es_todo_o_nada` |
 | F-61 | RN-IDE-22, 23 | (ver F-58) · `test_dato_depende_de_se_ve_en_mi_perfil` |
 | F-68 | RN-IDE-40…44 | `test_migracion_arranca_plazos_en_1_y_7` · `test_prioritario_debe_ser_mayor_que_urgente` · `test_solo_plazos_editar_cambia_los_plazos` · unit `PlazosPrioridadTest`: `test_dias_hasta_urgente_es_urgente`, `test_limite_prioritario_es_inclusivo`, `test_mas_que_prioritario_es_normal`, `test_entrega_anterior_al_pedido_es_urgente`, `test_cambiar_plazos_no_recalcula_pedidos_cargados` (semana 2) |
+| Adjuntos (ADR-014) | RN-IDE-45…48, §6.6 | `tests/Feature/Shared/Adjuntos/…`: `test_usuario_autenticado_sube_adjunto_y_recibe_id_temporal` · `test_sin_sesion_no_sube_adjuntos` · `test_adjunto_temporal_solo_lo_baja_quien_lo_subio` · `test_no_se_asocia_adjunto_subido_por_otro` · `test_no_se_asocia_adjunto_de_otro_contexto` · `test_descarga_sin_permiso_de_ver_el_dueno_devuelve_404` · `test_descarga_respeta_alcance_solo_sus_obras` · `test_quitar_adjunto_borra_el_archivo_y_queda_en_actividades` · `test_adjunto_huerfano_se_purga_a_las_24_horas` |
 
 ## 12. Dudas
 
-Ya abiertas por QA (se respetan sus propuestas salvo donde se indica): DU-01 (separar Gerencia de
-Administración; columnas Equipos en reparación y Monto de obra), DU-02 (celdas "a completar"; acá
-Ingeniería queda sin Proveedores por W-17), DU-03 (primera contraseña), DU-04 (días corridos).
-Nuevas: DU-A01 (nombres de sectores y filas Estado de obra, Control por cantidad y Plazos), DU-A02
-(observaciones a DU-02), DU-A03 (RRHH), DU-A04 (alcance de Ingeniería), DU-A05 (Compras en control
-por cantidad), DU-A06 (sector nuevo), DU-A07 (sacar sector), DU-A08 (desactivar jefe/responsable),
-DU-A09 (guardas anti-bloqueo), DU-A10 (primer usuario), DU-A11 (dominio del mail), DU-A12 (semana 1
-sin Pedidos/Gastos), DU-A13 (prioridad al editar la entrega). Detalle en `docs/dudas.md`.
+**Todas resueltas por Juani el 12-nov-2026: va la propuesta** (detalle y resolución en
+`docs/dudas.md`). Las de este módulo: DU-01 (Gerencia de Administración separada; columnas Equipos en
+reparación y Monto de obra), DU-02 y DU-A02 (celdas "a completar"; Ingeniería sin Proveedores por
+W-17), DU-03 (primera contraseña con mail y reenvío), DU-04 (días corridos), DU-13 (superior **del
+solicitante**, con el texto firmado: RN-IDE-23), DU-A01 (11 sectores y 12 filas), DU-A03 (RRHH),
+DU-A04 (Ingeniería solo sus obras), DU-A05 (Compras edita control por cantidad), DU-A06 (sector
+nuevo), DU-A07 (sacar sector), DU-A08 (desactivar jefe/responsable), DU-A09 (guardas anti-bloqueo),
+DU-A10 (primer usuario por comando), DU-A11 (dominio del mail), DU-A12 (semana 1 sin
+Pedidos/Gastos), DU-A13 (prioridad al editar la entrega). DU-23 → ADR-014 (adjuntos, §6.6). No
+quedan dudas abiertas en este módulo.

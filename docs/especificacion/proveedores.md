@@ -5,6 +5,9 @@
 > Contrato: documento firmado v1.1 (cap. 2 "No incluye", cap. 4.3, cap. 8 F-42/F-44, cap. 10) +
 > maquetas W-14, W-38 (y W-10 para el alta rápida). Decisiones: D-033, D-036, D-040; C12.
 > Lo "Propuesto" del documento está **aprobado**. Lo no especificado → `docs/dudas.md` (DU-A..).
+> **Dudas resueltas por Juani el 12-nov-2026** (va la propuesta): las reglas que dependían de una
+> duda son definitivas y citan "resuelta DU-XX". Adjuntos (ADR-014): este módulo **no tiene**
+> archivos ni links propios (§4.2).
 > Los proveedores, CUIT, mails e importes de este archivo son **ficticios** (los de las maquetas).
 
 ## 1. Propósito
@@ -55,17 +58,24 @@ corriente, vencimientos ni pagos, que siguen en Tango (D-033, D-040).
 **No hay** campos de saldo, cuenta corriente, condición de pago, vencimientos ni estado de pago
 (cap. 8: "Fuera de este módulo, porque siguen en Tango"; W-14 "acá no hay saldos").
 
+### 4.2 Adjuntos: no van en el proveedor
+
+La factura escaneada, los tickets y el remito son del **gasto**, no del proveedor: se cargan como
+**archivo o link** en la carga del gasto (contextos `comprobante_gasto` y `remito`, semana 3,
+ADR-014; F-43, F-44, F-47). El alta rápida desde la factura (F-42) no sube nada: crea el proveedor
+y vuelve a la factura, donde se adjunta. Un proveedor no tiene adjuntos ni campo de link.
+
 ## 5. Reglas de negocio
 
 ### Listado (F-55, W-14)
 
 - **RN-PRV-01** W-14: a la izquierda, buscador **"Buscar proveedor…"** y la lista con **nombre** y, al costado, su **rubro habitual**; a la derecha, la ficha del elegido con sus datos, botón **Editar** y la sección **"Gastado por obra"**. Botón **"+ Nuevo proveedor"**. *(W-14)*
-- **RN-PRV-02** La lista va en orden alfabético por nombre (sin distinguir mayúsculas ni tildes). *(DU-A20)*
+- **RN-PRV-02** La lista va en orden alfabético por nombre (sin distinguir mayúsculas ni tildes). *(resuelta DU-A20)*
 - **RN-PRV-03** El buscador encuentra por **nombre**, por cualquier parte del texto, sin distinguir mayúsculas, tildes ni puntuación ("corralon" encuentra "Corralón Centro"; "s.r.l" encuentra "… SRL"). *(F-03 "proveedores por nombre")*
 
 ### Alta y edición (F-56, W-38)
 
-- **RN-PRV-04** **Cada proveedor se carga una vez.** No se puede guardar un nombre que, normalizado **suave** (minúsculas, sin tildes, sin puntuación, espacios simples y sin forma societaria `sa`, `srl`, `sas`, `sh`, `sac`, `saic`, `sacif`, `sca`, `cia`, `y cia`), ya exista: "Hormigonera Sur S.R.L." = "HORMIGONERA SUR" = "hormigonera sur srl". 422: "Ya existe Hormigonera Sur SRL." con link a su ficha. *(F-55 "cada proveedor se carga una vez", D-036, DU-10)*
+- **RN-PRV-04** **Cada proveedor se carga una vez.** No se puede guardar un nombre que, normalizado **suave** (minúsculas, sin tildes, sin puntuación, espacios simples y sin forma societaria `sa`, `srl`, `sas`, `sh`, `sac`, `saic`, `sacif`, `sca`, `cia`, `y cia`), ya exista: "Hormigonera Sur S.R.L." = "HORMIGONERA SUR" = "hormigonera sur srl". 422: "Ya existe Hormigonera Sur SRL." con link a su ficha. *(F-55 "cada proveedor se carga una vez", D-036, resuelta DU-10)*
 - **RN-PRV-05** Solo el **nombre** es obligatorio; CUIT, teléfono, mail y rubro habitual son opcionales y se pueden completar después. *(W-38, W-14 "el nombre alcanza para empezar")*
 - **RN-PRV-06** CUIT tolerante: se acepta con o sin guiones o espacios (`30-00000001-5`, `30 00000001 5`, `30000000015`); se guardan los 11 dígitos y se muestra `30-00000001-5`. Si no son 11 dígitos o el dígito verificador no da: 422 "El CUIT no es válido. Revisá los números." *(técnica: un CUIT mal escrito no sirve para cruzar con Tango después)*
 - **RN-PRV-07** **El CUIT no se repite**: si ya lo tiene otro proveedor, 422 "Ese CUIT ya es de Corralón Centro." con link. *(F-55; modelo-datos "único si está")*
@@ -77,12 +87,12 @@ corriente, vencimientos ni pagos, que siguen en Tango (D-033, D-040).
 
   Se muestran hasta 5, los más parecidos primero. Se puede guardar igual. *(W-38 aprobado: "Aviso de parecidos para no cargar el mismo proveedor dos veces")*
 - **RN-PRV-09** El aviso de parecidos también se muestra al **editar** el nombre (excluyendo al propio proveedor) y en el **alta rápida** desde la factura. *(W-38, F-42)*
-- **RN-PRV-10** Alta rápida (F-42): desde la carga de una factura (W-10, semana 3) se abre el mismo formulario W-38; al guardar, el proveedor queda elegido en la factura. Mismo endpoint y mismas reglas. Requiere `proveedores = editar`. *(F-42 aprobado)*
-- **RN-PRV-11** No hay baja ni fusión de proveedores en la Etapa 1 (F-56 dice "alta y edición"). Un duplicado que se cuele se corrige editando el nombre de uno de los dos; la fusión queda como DU-A19.
+- **RN-PRV-10** Alta rápida (F-42): desde la carga de una factura (W-10, semana 3) se abre el mismo formulario W-38; Al guardar, el proveedor queda elegido en la factura y la persona sigue con la factura, donde adjunta el archivo o link (§4.2). Mismo endpoint y mismas reglas. Requiere `proveedores = editar`. *(F-42 aprobado, ADR-014)*
+- **RN-PRV-11** No hay baja ni fusión de proveedores en la Etapa 1 (F-56 dice "alta y edición"). Un duplicado que se cuele y no tenga gastos se corrige renombrándolo. La carga inicial (semana 4) entra **depurada**, con una lista de equivalencias de proveedores que revisa y aprueba administración. *(resuelta DU-A19)*
 
 ### Proveedor genérico (F-44)
 
-- **RN-PRV-12** Existe **un** proveedor genérico, creado **por migración** (no por seeder), con nombre según DU-A18 (propuesta: "Gastos sin comprobante") y `es_generico = true`. Es el que se elige en los gastos personales de obra sin ticket, "como hoy, sin documento y con proveedor genérico", con el dato "rendido por" en el gasto (semana 3). *(F-44, cap. 4.3, C12)*
+- **RN-PRV-12** Existe **un** proveedor genérico, creado **por migración** (no por seeder), con nombre **"Gastos sin comprobante"** (resuelta DU-A18) y `es_generico = true`. Es el que se elige en los gastos personales de obra sin ticket, "como hoy, sin documento y con proveedor genérico", con el dato "rendido por" en el gasto (semana 3). *(F-44, cap. 4.3, C12)*
 - **RN-PRV-13** El genérico **no se edita** (422 "El proveedor genérico no se modifica.") y aparece en la lista con la marca "genérico". No tiene CUIT. *(técnica: si se renombra, se mezcla con proveedores reales)*
 - **RN-PRV-14** Que el genérico solo se pueda usar con "sin documento" lo valida Gastos (semana 3); el módulo Proveedores lo expone en `ProveedoresConsulta::generico()`.
 
@@ -107,8 +117,8 @@ No tiene. (El campo `activo` del modelo de datos queda siempre en `true` en la E
 
 Configuración inicial (`identidad.md` §6.3): Editar para Gerencia de Administración, Jefatura de
 Administración y Compras; Ver para Dirección; Ver para Gerencia de Operaciones y Jefatura de Proyectos
-(DU-02); Sin acceso para Ingeniería de proyectos (W-17) y, mientras la empresa no lo complete, para
-el resto (DU-A02).
+(resuelta DU-02); Sin acceso para Ingeniería de proyectos (W-17) y, mientras la empresa no lo complete, para
+el resto (resuelta DU-A02).
 
 ## 8. Avisos
 
@@ -131,6 +141,7 @@ No genera avisos.
 | 11 | Mail "VENTAS@Corralon-Centro.com" | Se guarda en minúsculas. |
 | 12 | Doble clic en "Guardar proveedor" con la misma `Idempotency-Key` | Un solo proveedor. |
 | 13 | Rubro habitual EPP | Válido (EPP se imputa, aunque no se presupueste). |
+| 14 | Se manda `POST /api/proveedores` con un campo `adjuntos` o `factura_url` | Se ignora (no es un campo del proveedor); la respuesta no lo trae (§4.2). |
 
 ## 10. Contrato de API sugerido
 
@@ -148,6 +159,9 @@ POST que crean con `Idempotency-Key`.
 | `GET /api/proveedores/{id}` | — | `Proveedor` | 403 · 404 |
 | `PATCH /api/proveedores/{id}` | mismos campos, opcionales | `Proveedor` | 403 · 404 · 422 (incluye RN-PRV-13) |
 | `GET /api/proveedores/{id}/gastado-por-obra` | — | ver §10.3 | 403 (sin `gastos` ≥ ver) · 404 |
+
+No hay endpoints de adjuntos en este módulo: los archivos o links de la factura van por
+`POST /api/adjuntos` y se asocian al gasto (`obras.md` §10.5, `identidad.md` §6.6).
 
 ```json
 // Proveedor
@@ -187,11 +201,16 @@ agrupado por `obra_id`, con `null` = sin obra). Semana 1: `GastadoPorProveedorNu
 | F-55 | RN-PRV-01…04 | `test_listado_ordena_alfabeticamente_sin_tildes` · `test_busca_por_parte_del_nombre_sin_tildes_ni_puntuacion` · `test_no_permite_dos_proveedores_con_el_mismo_nombre_normalizado` · `test_sin_permiso_de_proveedores_devuelve_403` |
 | F-56 | RN-PRV-05…09 | `test_alta_solo_con_nombre` · `test_cuit_se_normaliza_a_once_digitos` · `test_cuit_con_digito_verificador_invalido_es_rechazado` · `test_cuit_no_se_repite` · `test_email_se_guarda_en_minusculas` · `test_solo_proveedores_editar_da_de_alta_y_edita` · `test_alta_con_idempotency_key_no_duplica` · Unit `ProveedoresParecidosTest`: `test_nombre_sin_forma_societaria_es_parecido`, `test_nombre_contenido_es_parecido`, `test_mitad_de_palabras_en_comun_es_parecido`, `test_ochenta_por_ciento_de_letras_es_parecido`, `test_parecidos_no_bloquean_el_alta`, `test_al_editar_no_se_muestra_a_si_mismo`, `test_devuelve_hasta_cinco_ordenados` |
 | F-42 | RN-PRV-10 | `test_opciones_devuelve_lo_necesario_para_elegir_en_la_factura` (la integración con W-10 se testea en semana 3) |
-| F-44 | RN-PRV-12…14 | `test_migracion_crea_un_solo_proveedor_generico` · `test_proveedor_generico_no_se_edita` · `test_consulta_expone_el_generico` |
+| F-44 | RN-PRV-12…14 | `test_migracion_crea_un_solo_proveedor_generico` · `test_proveedor_generico_se_llama_gastos_sin_comprobante` · `test_proveedor_generico_no_se_edita` · `test_consulta_expone_el_generico` |
 | F-57 | RN-PRV-15…17 | `test_gastado_por_obra_vacio_en_semana_1` · `test_gastado_por_obra_exige_permiso_de_gastos` · (semana 3) `test_gastado_por_obra_agrupa_por_obra_con_fila_sin_obra`, `test_gastado_por_obra_excluye_anulados`, `test_gastado_por_obra_con_alcance_propias_muestra_solo_sus_obras` |
 | cap. 10 / D-040 | §4.1 | `test_proveedor_no_expone_saldos_ni_cuenta_corriente` (el recurso no tiene esas claves) |
+| ADR-014 | §4.2 | `test_proveedor_ignora_adjuntos_y_links_en_el_payload` |
 
 ## 12. Dudas
 
-DU-02 y DU-A02 (quién ve Proveedores al arrancar), DU-10 (repetido: bloquear o avisar), DU-A18 (nombre del proveedor genérico), DU-A19
-(duplicados y fusión), DU-A20 (orden de los listados). Detalle en `docs/dudas.md`.
+**Todas resueltas por Juani el 12-nov-2026: va la propuesta** (detalle en `docs/dudas.md`):
+DU-02 y DU-A02 (quién ve Proveedores al arrancar: §7), DU-10 (nombre idéntico y CUIT repetido se
+rechazan, parecidos avisan: RN-PRV-04, 07, 08), DU-A18 (genérico "Gastos sin comprobante":
+RN-PRV-12), DU-A19 (sin fusión; carga inicial depurada: RN-PRV-11), DU-A20 (orden alfabético:
+RN-PRV-02). DU-23 → ADR-014: no afecta a este módulo salvo para aclarar que los adjuntos de la
+factura son del gasto (§4.2). No quedan dudas abiertas en este módulo.

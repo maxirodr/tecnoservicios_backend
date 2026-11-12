@@ -23,13 +23,12 @@ erDiagram
   presupuestos ||--o{ presupuesto_montos : "por rubro o total"
   rubros ||--o{ presupuesto_montos : ""
   obras ||--o{ obra_contactos : "solicitante / comprador"
-  obras ||--o{ obra_documentos : "certificados, otros links"
+  obras ||--o{ obra_documentos : "certificados, otros"
 
   obras |o--o{ pedidos : "obra o sin obra"
   sectores ||--o{ pedidos : "sector"
   users |o--o{ pedidos : "propietario (o queda en el sector)"
   users ||--o{ pedidos : "solicitante"
-  pedidos ||--o{ pedido_links : ""
   pedidos ||--o{ pedido_comentarios : ""
   pedidos ||--o{ pedido_seguidores : ""
 
@@ -75,9 +74,9 @@ erDiagram
 **`funciones`** — filas de la tabla de permisos (catálogo por migración; lista final en `especificacion/identidad.md`).
 | Campo | Tipo | Nota |
 |---|---|---|
-| clave | varchar(40) único | `pedidos`, `obras`, `rendicion`, `monto_ganancia`… |
+| clave | varchar(40) único | `pedidos`, `obras`, `rendicion`, `monto_obra`… |
 | nombre | varchar(80) | como se ve en W-15 |
-| admite_editar | bool | false en filas que solo se miran; true en `monto_ganancia` (DU-A21) |
+| admite_editar | bool | false en filas que solo se miran; true en `monto_obra` (DU-A21) |
 | admite_alcance | bool | si acepta "solo sus obras" (ADR-006) |
 | orden | smallint | |
 
@@ -89,7 +88,7 @@ erDiagram
 | nivel | varchar(12) | `sin_acceso` · `ver` · `editar` |
 | alcance | varchar(10) | `todas` · `propias` |
 
-Único `(sector_id, funcion_id)`. Un sector nuevo aparece como una fila más (W-40) y nace con Pedidos `editar` y Obras `ver` ("todos pueden pedir"), el resto `sin_acceso` (DU-A06, pendiente de Juani). Catálogo: las 12 funciones de `especificacion/identidad.md`; `monto_ganancia` admite editar (lo carga administración).
+Único `(sector_id, funcion_id)`. Un sector nuevo aparece como una fila más (W-40) y nace con Pedidos y Equipos en reparación `editar` y Obras `ver` ("todos pueden pedir"), el resto `sin_acceso` (DU-A06, resuelta). Catálogo: las 12 funciones de `especificacion/identidad.md`; `monto_obra` admite editar (lo carga administración).
 
 **`plazos_prioridad`** — F-68, W-50.
 | Campo | Tipo | Nota |
@@ -124,11 +123,12 @@ La prioridad calculada se **guarda** en el pedido al crearlo o al cambiar la ent
 | revision | varchar(10) | no | "REV01" |
 | es_principal | bool | sí | exactamente uno por obra |
 | descripcion | varchar(200) | no | p. ej. "Adicional A1 — reparación de juntas" |
-| presupuesto_url | varchar(500) | sí | link a la oferta técnica |
 | aprobacion_tipo | varchar(20) | no | `oc` · `ot` · `contrato` · `mail` |
 | aprobacion_numero | varchar(60) | no | N.º de OC/OT |
-| aprobacion_url | varchar(500) | no | la OC no siempre llega (D-027) |
-| monto_obra | decimal(15,2) | no | monto asignado del presupuesto; lo ve y lo edita quien tiene `monto_ganancia` |
+
+La oferta técnica (obligatoria) y la OC/OT/contrato/mail van como **archivo o link** en `adjuntos` (contextos `presupuesto` y `aprobacion`, ADR-014). La OC no siempre llega (D-027).
+
+| monto_obra | decimal(15,2) | no | monto asignado del presupuesto; lo ve y lo edita quien tiene `monto_obra` |
 | created_by | FK users | sí | W-20 "Cargado: fecha · persona" |
 
 Único `numero` (normalizado, **sin** la revisión: la revisión se edita sobre el mismo presupuesto, DU-A16). Índice `obra_id`.
@@ -136,7 +136,7 @@ El "modo de carga" (sin cargar · por rubro · solo total) **no se guarda**: se 
 
 **`obra_contactos`** — `obra_id` (cascade), `tipo` (`solicitante`|`comprador`), `nombre`, `email`, `telefono`. Uno de cada tipo obligatorio al dar de alta (cap. 6). Único `(obra_id, tipo)`.
 
-**`obra_documentos`** — `obra_id` (cascade), `tipo` (`certificado`|`otro`), `nombre`, `fecha` (date, null; W-20), `url`, `created_by`. Solo links (D-022).
+**`obra_documentos`** — `obra_id` (cascade), `tipo` (`certificado`|`otro`), `nombre`, `fecha` (date, null; W-20), `created_by`. El archivo o link va en `adjuntos` (contexto `documento_obra`, ADR-014).
 
 En `obras` además: `terminada_at`, `terminada_por` (FK users, null) — se completan al pasar a Terminada.
 
@@ -186,8 +186,7 @@ En `obras` además: `terminada_at`, `terminada_por` (FK users, null) — se comp
 | proveedor_id | FK proveedores | factura sí | sin documento: proveedor genérico (F-44) |
 | rendido_por | varchar(120) | no | gastos sin comprobante (C12). Texto: quien rinde puede no ser usuario (supervisión no usa el sistema) |
 | periodo_desde, periodo_hasta | date | `monto_periodo` sí | horas y fijos (C18) |
-| documento_url | varchar(500) | no | link a la factura escaneada (F-43) o a los tickets |
-| observaciones | text | no | |
+| observaciones | text | no | factura escaneada o tickets: archivo o link en `adjuntos` (`comprobante_gasto`; remito: `remito`) |
 | cargado_por | FK users | sí | quién y cuándo (F-46) |
 | anulado_at, anulado_por, motivo_anulacion | | no | anular en lugar de borrar (W-34) |
 
@@ -246,11 +245,10 @@ Sin saldos ni cuenta corriente (siguen en Tango).
 | motivo_bloqueo | text | si bloqueada | |
 | completado_at, completado_por | | si completada | |
 | comentario_cierre | text | si completada | obligatorio (D-030) |
-| comprobante_url | varchar(500) | no | remito, recibo |
 
 Índices: `(propietario_id, estado, fecha_entrega)` (Mis tareas), `(solicitante_id, estado)`, `(obra_id, estado)`, `(sector_id, estado)`, `(estado, fecha_entrega)` (recordatorio y vencidos). FULLTEXT en `tarea` para el buscador.
 
-**`pedido_links`** — `pedido_id` (cascade), `url`, `etiqueta`, `orden`. Varios por pedido (F-27).
+Archivos y links del pedido (F-27) y comprobante de cierre: en `adjuntos` (contextos `pedido` y `comprobante_cierre`, ADR-014).
 **`pedido_comentarios`** — `pedido_id` (cascade), `user_id`, `texto`, `created_at`. Solo inserción (F-30).
 **`pedido_seguidores`** — `pedido_id`, `user_id`, único par (F-07).
 
@@ -264,8 +262,7 @@ Sin saldos ni cuenta corriente (siguen en Tango).
 | estado | varchar(12) | `no_iniciada` · `para_retiro` · `en_curso` · `bloqueada` · `completada` |
 | aprobacion | varchar(12) | `pendiente` · `aprobado` · `bloqueado` (se registra; el sistema no decide) |
 | fecha | date, null | |
-| presupuesto_url, inventario_url | varchar(500), null | |
-| notas | text, null | |
+| notas | text, null | presupuesto e inventario: archivo o link en `adjuntos` (ADR-014) |
 | created_by, updated_by | FK users | |
 
 ### Avisos (F-08, F-09, F-37, F-64)
@@ -289,6 +286,21 @@ Sin saldos ni cuenta corriente (siguen en Tango).
 ### Transversales (`app/Shared`)
 
 **`actividades`** — ADR-010. `sujeto_type`, `sujeto_id`, `user_id`, `accion`, `cambios` json, `created_at`. Índice `(sujeto_type, sujeto_id, created_at)`. Solo inserción.
+
+**`adjuntos`** — ADR-014. Un archivo **o** un link.
+| Campo | Tipo | Nota |
+|---|---|---|
+| sujeto_type, sujeto_id | morph, null | null hasta que el caso de uso lo asocia (se purga a las 24 h) |
+| contexto | varchar(30) | `pedido`, `comprobante_cierre`, `presupuesto`, `aprobacion`, `documento_obra`, `comprobante_gasto`, `remito`, `equipo_presupuesto`, `equipo_inventario` |
+| tipo | varchar(8) | `archivo` · `link` |
+| url | varchar(1000), null | si es link (solo http/https) |
+| disco, ruta | varchar, null | si es archivo; nombre UUID en disco privado |
+| nombre | varchar(200) | nombre original del archivo o etiqueta del link |
+| mime, tamano_bytes | varchar(100), int unsigned, null | MIME detectado por contenido |
+| subido_por | FK users | |
+| created_at | timestamp | |
+
+CHECK: `(tipo = 'link' AND url IS NOT NULL AND ruta IS NULL) OR (tipo = 'archivo' AND ruta IS NOT NULL AND url IS NULL)`. Índice `(sujeto_type, sujeto_id, contexto)`.
 
 **`idempotency_keys`** — ADR-011. `user_id`, `clave` uuid, `ruta`, `payload_hash`, `status`, `respuesta` json, `created_at`. Único `(user_id, clave)`. Se purgan a las 24 h (comando programado).
 

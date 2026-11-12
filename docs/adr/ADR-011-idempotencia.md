@@ -1,6 +1,6 @@
 # ADR-011 · Idempotencia en el backend
 
-- **Estado:** Propuesta · **Fecha:** 2026-11-12 · **Rol:** CTO
+- **Estado:** Aceptada (Juani, 2026-11-12) · **Fecha:** 2026-11-12 · **Rol:** CTO
 
 ## Decisión
 - Los POST que crean o hacen transiciones (pedido, gasto, comentario, tomar, completar,

@@ -1,6 +1,6 @@
 # ADR-010 · Registro de quién hizo qué
 
-- **Estado:** Propuesta · **Fecha:** 2026-11-12 · **Rol:** CTO
+- **Estado:** Aceptada (Juani, 2026-11-12) · **Fecha:** 2026-11-12 · **Rol:** CTO
 
 ## Decisión
 - Tabla `actividades`: `sujeto_type`, `sujeto_id`, `user_id`, `accion` (creado, editado, tomado,

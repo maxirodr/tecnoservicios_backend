@@ -1,6 +1,6 @@
 # ADR-003 · Monolito modular con capas limpias
 
-- **Estado:** Propuesta · **Fecha:** 2026-11-12 · **Rol:** CTO
+- **Estado:** Aceptada (Juani, 2026-11-12) · **Fecha:** 2026-11-12 · **Rol:** CTO
 
 ## Contexto
 ≈13 usuarios, un solo equipo, 4 semanas: microservicios no se justifican. Pero el documento

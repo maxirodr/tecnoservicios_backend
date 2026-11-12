@@ -1,6 +1,6 @@
 # ADR-006 · Permisos: matriz sector × función con nivel y alcance
 
-- **Estado:** Propuesta (el alcance "solo sus obras" requiere OK de Juani) · **Fecha:** 2026-11-12 · **Rol:** CTO + Seguridad
+- **Estado:** Aceptada (Juani, 2026-11-12) · **Fecha:** 2026-11-12 · **Rol:** CTO + Seguridad
 
 ## Contexto
 D-037 y F-60: "para cada sector y cada módulo se elige editar, solo ver o sin acceso", y la

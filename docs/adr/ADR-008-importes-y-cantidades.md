@@ -1,6 +1,6 @@
 # ADR-008 · Importes y cantidades
 
-- **Estado:** Propuesta · **Fecha:** 2026-11-12 · **Rol:** CTO + DBA
+- **Estado:** Aceptada (Juani, 2026-11-12) · **Fecha:** 2026-11-12 · **Rol:** CTO + DBA
 
 ## Decisión
 - Importes en pesos, **netos sin IVA** (C9): `DECIMAL(15,2)`. Nunca float.

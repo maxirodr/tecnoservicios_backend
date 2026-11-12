@@ -21,11 +21,13 @@ flowchart LR
   DB[("MySQL")]
   R[("Redis<br/>sesión · cache · colas · rate limit")]
   RS["Resend (mail)"]
-  DRIVE["Google Drive del cliente<br/>(solo links)"]
+  DRIVE["Google Drive del cliente<br/>(links)"]
+  FS[("Disco privado<br/>adjuntos")]
 
   SPA -- "cookie de sesión + CSRF (Sanctum SPA)" --> NGINX --> API
   API --> DB
   API --> R
+  API --> FS
   W --> R
   W --> DB
   W --> RS
@@ -37,7 +39,7 @@ flowchart LR
 
 - **Un solo backend**, una sola base. ≈13 usuarios: la complejidad se gasta en reglas
   correctas, no en infraestructura (ADR-002, ADR-003).
-- **Los archivos no se suben**: obras, pedidos y gastos guardan links a Drive (D-022).
+- **Archivo o link**: donde hay un documento (pedido, comprobante, presupuesto, OC, certificado, factura, remito) se sube el archivo o se pega el link (ADR-014, amplía D-022). Los archivos van a disco privado y se descargan solo con permiso sobre el recurso dueño.
 - **Tiempo real** con polling corto + invalidación (ADR-005).
 - **Sin integraciones externas** salvo el envío de mail.
 
@@ -47,13 +49,13 @@ flowchart LR
 |---|---|---|---|
 | **Identidad** | cap. 11 · F-01, F-02, F-10, F-58…F-61, F-68 | users, sectores, funciones, permisos, plazos_prioridad | `PermisoService`, `JerarquiaService` (mi gente, superior), `PlazosPrioridad` |
 | **Obras** | cap. 6 · F-15…F-23 | obras, presupuestos, obra_contactos, obra_documentos | `ObraEstadoCambiado`, `PresupuestoAgregado`; `ObrasQuery` (buscador) |
-| **Pedidos** | cap. 7 · F-24…F-38, F-65, F-67 | pedidos, pedido_links, pedido_comentarios, pedido_seguidores, equipos_reparacion | `PedidoAsignado`, `PedidoReasignado`, `PedidoTomado`, `PedidoBloqueado`, `PedidoComentado`, `PedidoCompletado`, `PedidoReabierto`; `PedidosAbiertosDeObra` |
+| **Pedidos** | cap. 7 · F-24…F-38, F-65, F-67 | pedidos, pedido_comentarios, pedido_seguidores, equipos_reparacion | `PedidoAsignado`, `PedidoReasignado`, `PedidoTomado`, `PedidoBloqueado`, `PedidoComentado`, `PedidoCompletado`, `PedidoReabierto`; `PedidosAbiertosDeObra` |
 | **Gastos** | cap. 8 · F-39…F-47 | gastos, gasto_renglones | `GastoImputado`, `GastoCorregido`, `GastoAnulado` |
 | **Rendicion** | cap. 9 · F-48…F-54, F-66 | rubros, presupuesto_montos, materiales | `RendicionDeObraQuery`, `RendicionesEnCursoQuery`, `RubroCatalog` |
 | **Proveedores** | cap. 10 · F-55…F-57 | proveedores | `ProveedorLookup` |
 | **Avisos** | F-07, F-08, F-09, F-37, F-64 | avisos, preferencias_aviso | escucha los eventos de Pedidos |
 | **Importacion** | cap. 12 · F-62 | (registro de corridas) | usa los casos de uso de los demás módulos; nunca escribe tablas ajenas directamente |
-| **Shared** | F-14 | actividades, idempotency_keys | `RegistroActividad`, middleware `Idempotent`, envelope JSON, value objects |
+| **Shared** | F-14 · adjuntos (ADR-014) | actividades, idempotency_keys, adjuntos | `RegistroActividad`, `AdjuntosService`, middleware `Idempotent`, envelope JSON, value objects |
 
 **Regla de límites:** un módulo escribe solo sus tablas. Para lo ajeno usa el `Contracts/`
 del otro módulo o reacciona a sus eventos. Leer por FK con Eloquent está permitido.
@@ -106,7 +108,7 @@ sequenceDiagram
   API->>A: DTO
   A->>P: fecha_pedido, fecha_entrega, prioridad manual?
   P-->>A: prioridad
-  A->>DB: transacción: pedido + links + actividad "creado"
+  A->>DB: transacción: pedido + asocia adjuntos + actividad "creado"
   A-->>AV: PedidoAsignado (after commit)
   AV->>DB: aviso al propietario (o al sector)
   AV->>Q: Mailable de asignación (cola mail, 1/s)
@@ -114,8 +116,8 @@ sequenceDiagram
 ```
 
 ### 4.2 Completar un pedido (F-31, D-030)
-`POST /api/pedidos/{id}/completar` con `comentario` (obligatorio) y `comprobante_url`
-(opcional) → Policy: solo el propietario → `PedidoStateMachine` valida `en_curso|bloqueada → completada`
+`POST /api/pedidos/{id}/completar` con `comentario` (obligatorio) y comprobantes
+(opcionales: ids de adjuntos ya subidos, archivo o link) → Policy: solo el propietario → `PedidoStateMachine` valida `en_curso|bloqueada → completada`
 (y `no_iniciada → completada` si el documento lo admite, ver especificación) → guarda cierre +
 actividad → `PedidoCompletado` → avisos al solicitante, a su superior (`jefe_id`) y a los
 seguidores, dentro del sistema.
@@ -185,6 +187,7 @@ src/
 - Autorización en **cada** endpoint por Policy + matriz; tests de IDOR.
 - Sin `X-Powered-By` ni `Server`; la raíz devuelve `{"status":"ok"}`; errores 500 sin detalle.
 - Throttle en login, recuperación y API general; logs sin datos personales ni importes.
+- Adjuntos: tipo validado por contenido, 20 MB máx., sin ejecutables/HTML/SVG, disco privado, descarga autorizada por la Policy del dueño con `attachment` + `nosniff`.
 - `.env` y `.claude/bug-report.json` fuera del repo; `/api/errors` protegido por token.
 
 ## 8. Operación
@@ -198,5 +201,4 @@ src/
 
 ## 9. Qué queda abierto para Juani
 
-Ver `dudas.md`. Las de arquitectura: OK al polling (ADR-005), alcance "solo sus obras" en la
-matriz (ADR-006), y el servidor de staging/producción para `deploy.md`.
+Aprobados por Juani el 2026-11-12: polling (ADR-005), alcance "solo sus obras" (ADR-006) y adjuntos archivo o link (ADR-014). Pendiente: el servidor de staging/producción para `deploy.md`.

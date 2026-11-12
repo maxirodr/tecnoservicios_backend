@@ -1,6 +1,6 @@
 # ADR-005 · Tiempo real con polling corto
 
-- **Estado:** Propuesta (requiere OK de Juani) · **Fecha:** 2026-11-12 · **Rol:** CTO
+- **Estado:** Aceptada (Juani, 2026-11-12) · **Fecha:** 2026-11-12 · **Rol:** CTO
 
 ## Contexto
 Cap. 13: "un gasto cargado se ve en la rendición en el momento; un aviso aparece apenas

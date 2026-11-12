@@ -10,6 +10,11 @@
 > [`dudas.md`](dudas.md) con su propuesta. Las historias que dependen de una duda abierta
 > quedan **⛔ bloqueadas** hasta que se decida.
 >
+> **12-nov-2026:** Juani aprobó todas las dudas (DU-01…DU-22, DU-A01…DU-A21: va la propuesta;
+> DU-13 con el texto firmado: aviso al solicitante y a **su** superior) y la DU-23 / ADR-014
+> (**archivo o link** donde el documento decía "link"; la carpeta de Drive sigue siendo solo link).
+> No queda ninguna historia ⛔.
+>
 > Trazabilidad completa F-XX ↔ W-XX ↔ tests: [`qa/matriz-trazabilidad.md`](qa/matriz-trazabilidad.md).
 > Estrategia de pruebas: [`qa/plan-de-pruebas.md`](qa/plan-de-pruebas.md).
 >
@@ -83,9 +88,12 @@ Una historia está terminada cuando:
 
 ## 4. Configuración inicial de permisos (cap. 3 y W-15)
 
-Es la base de los "permisos involucrados" de cada historia. Sectores de arranque (W-40):
-Dirección · Operaciones · Proyectos · Ingeniería de proyectos · Seguridad e Higiene · Calidad ·
-Administración · Compras · RRHH · Pañol y Logística (sin usuario por ahora).
+Es la base de los "permisos involucrados" de cada historia. Sectores de arranque (W-40), **11**
+con los nombres del organigrama (resueltas DU-01 y DU-A01): Dirección · Calidad · Gerencia de
+Operaciones · Jefatura de Proyectos · Ingeniería de proyectos · Seguridad e Higiene · Gerencia de
+Administración · Jefatura de Administración · Compras · RRHH · Pañol y Logística (sin usuario por
+ahora). Configuración inicial completa, celda por celda: `especificacion/identidad.md` §6.3
+(12 filas; definitiva).
 
 | Módulo (fila de W-15) | Configuración inicial firmada |
 |---|---|
@@ -94,8 +102,12 @@ Administración · Compras · RRHH · Pañol y Logística (sin usuario por ahora
 | Presupuesto por rubro | Lo carga Administración (editan Administración y Compras según W-15). Ven Operaciones, Proyectos e Ingeniería. |
 | Rendición | Editan Administración y Compras. Ven Operaciones y Proyectos; Ingeniería de proyectos ve **la de sus obras**. |
 | Monto de la obra y ganancia | Lo ven gerencias y administración. |
-| Usuarios, sectores y permisos (incluye Plazos de la prioridad, que vive en la misma sección) | Editan Dirección y las dos gerencias. |
-| Obras · Proveedores · resto de las celdas | "A completar" por el cliente. Propuesta de arranque en **DU-02**. |
+| Usuarios, sectores y permisos | Editan Dirección y las dos gerencias (en Administración, solo la gerencia). |
+| Plazos de la prioridad (fila propia, DU-A01) | Editan las dos gerencias; Dirección ve. |
+| Obras | Ven todos. Editan Gerencia de Operaciones, Jefatura de Proyectos, Ingeniería de proyectos, Gerencia y Jefatura de Administración (resuelta DU-02). |
+| Estado de obra · Control por cantidad · Equipos en reparación (filas propias, DU-01/DU-A01) | Estado: editan Gerencia y Jefatura de Administración, más el responsable de **su** obra. Control por cantidad: editan administración y Compras (DU-A05). Equipos: todos editan, como Pedidos. |
+| Proveedores | Editan administración y Compras; ven Dirección, Gerencia de Operaciones y Jefatura de Proyectos; Ingeniería sin acceso (W-17, DU-A02). |
+| Resto de las celdas "a completar" | Arrancan en **Sin acceso** (DU-A02, DU-A03); Ingeniería ve solo sus obras en Gastos, Presupuesto por rubro, Rendición y Control por cantidad (DU-A04). |
 
 Notación usada abajo: `modulo:nivel` (nivel `ver` o `editar`), `(propias)` = alcance solo sobre
 las obras donde la persona es responsable.
@@ -104,19 +116,23 @@ las obras donde la persona es responsable.
 
 ## 5. Semana 1 · Base (detalle)
 
-**24 historias** en 6 épicas. Resumen de estado DoR: **18 ✅ listas · 6 ⛔ bloqueadas**.
+**25 historias** en 7 épicas. Resumen de estado DoR: **25 ✅ listas · 0 ⛔ bloqueadas** (las 6
+que estaban ⛔ — HU-005, HU-010, HU-012, HU-015, HU-018 y HU-023 — se destrabaron con la
+resolución del 12-nov; se suma la HU-025, transversal).
 
 | Épica | Historias | ✅ | ⛔ |
 |---|---|---|---|
 | A · Ingreso y perfil | HU-001…HU-004 | 4 | 0 |
-| B · Usuarios, sectores y permisos | HU-005…HU-011 | 5 | 2 |
-| C · Obras y presupuestos por rubro | HU-012…HU-019 | 5 | 3 |
+| B · Usuarios, sectores y permisos | HU-005…HU-011 | 7 | 0 |
+| C · Obras y presupuestos por rubro | HU-012…HU-019 | 8 | 0 |
 | D · Proveedores | HU-020…HU-021 | 2 | 0 |
 | E · Buscador parcial | HU-022 | 1 | 0 |
-| F · Navegación | HU-023…HU-024 | 1 | 1 |
+| F · Navegación | HU-023…HU-024 | 2 | 0 |
+| G · Transversal | HU-025 | 1 | 0 |
 
-> Orden de construcción sugerido: B (HU-005, HU-009, HU-010) → A → F → C → D → E. Sin
-> permisos aplicados no se puede probar ninguna otra historia con permitido/denegado.
+> Orden de construcción sugerido: B (HU-005, HU-009, HU-010) → A → F → G (HU-025) → C → D → E.
+> Sin permisos aplicados no se puede probar ninguna otra historia con permitido/denegado, y sin
+> adjuntos no se puede dar de alta una obra (la oferta técnica es obligatoria).
 
 ### Épica A · Ingreso y perfil
 
@@ -205,15 +221,18 @@ las obras donde la persona es responsable.
      **entonces** ve "Ya hay un usuario con ese mail" y no se crea (422).
   3. **Dado** que falta nombre, mail o sector, **cuando** guarda, **entonces** ve el error en cada
      campo que falta (sector es obligatorio: todo usuario tiene sector).
-  4. **Dado** el usuario nuevo, **cuando** se guarda, **entonces** recibe el mail para elegir su
-     contraseña según se decida en **DU-03**.
-  5. **Dado** "depende de", **cuando** se elige, **entonces** solo se ofrecen usuarios activos y
+  4. **Dado** el usuario nuevo, **cuando** se guarda, **entonces** recibe un mail de bienvenida con
+     un link para elegir su contraseña que dura 7 días (mismo circuito que "Olvidé mi contraseña").
+  5. **Dado** un usuario activo que no usó el link a tiempo, **cuando** gerencia toca "Reenviar mail
+     de bienvenida" en W-15, **entonces** le llega un link nuevo y el anterior deja de servir; si ya
+     eligió su contraseña, el botón no aparece (por API, 422).
+  6. **Dado** "depende de", **cuando** se elige, **entonces** solo se ofrecen usuarios activos y
      no se puede elegir a sí mismo.
-  6. **Dado** un usuario sin `usuarios:editar`, **cuando** llama al alta por API, **entonces**
+  7. **Dado** un usuario sin `usuarios:editar`, **cuando** llama al alta por API, **entonces**
      recibe 403 y no se crea nada.
 - **Permisos:** `usuarios:editar` (Dirección y las dos gerencias).
 - **Dependencias:** HU-007 (existen sectores), HU-009.
-- **DoR:** ⛔ bloqueada por **DU-03** (cómo elige su primera contraseña el usuario nuevo).
+- **DoR:** ✅ listo (resuelta DU-03: mail de bienvenida y reenvío).
 
 #### HU-006 · Editar y desactivar un usuario
 - **F-58 · F-61 · W-39 · W-15**
@@ -243,20 +262,22 @@ las obras donde la persona es responsable.
 - **Como** Dirección o gerencia **quiero** mantener la lista de sectores del organigrama **para**
   ordenar a la gente y sus permisos como trabaja la empresa.
 - **Criterios de aceptación**
-  1. **Dado** la instalación, **cuando** se abre W-40, **entonces** están los 10 sectores de arranque
+  1. **Dado** la instalación, **cuando** se abre W-40, **entonces** están los 11 sectores de arranque
      (sección 4), con "Pañol y Logística" en 0 usuarios.
   2. **Dado** `usuarios:editar`, **cuando** agrega un sector con nombre nuevo, **entonces** aparece en
-     la lista y como **una fila más en la tabla de permisos** (W-15), con todas sus celdas en
-     "Sin acceso" salvo Pedidos en "Editar" (todos piden y le piden a cualquiera).
+     la lista y como **una fila más en la tabla de permisos** (W-15), con Pedidos y Equipos en
+     reparación en "Editar", Obras en "Ver" y el resto en "Sin acceso" (resuelta DU-A06).
   3. **Dado** un nombre que ya existe (sin distinguir mayúsculas ni tildes), **cuando** agrega o
      renombra, **entonces** ve el error y no se guarda.
   4. **Dado** un sector renombrado, **cuando** se guarda, **entonces** sus usuarios y sus permisos
      siguen iguales y se ve el nombre nuevo en todas las pantallas.
-  5. **Dado** un sector con usuarios (activos o inactivos), **cuando** intenta sacarlo, **entonces**
-     ve "Este sector tiene N usuarios: pasalos a otro sector antes de sacarlo" y no se saca (todo
-     usuario tiene sector).
-  6. **Dado** un sector sin usuarios, **cuando** lo saca, **entonces** desaparece de la lista y de
-     la tabla de permisos.
+  5. **Dado** un sector con usuarios **activos**, **cuando** intenta sacarlo, **entonces** ve "Antes
+     de sacar {sector}, pasá a sus N usuarios a otro sector." y no se saca (422).
+  6. **Dado** un sector que nunca se usó (sin usuarios ni pedidos), **cuando** lo saca, **entonces**
+     se borra y desaparece de la lista y de la tabla de permisos.
+  7. **Dado** un sector con historia (usuarios inactivos o pedidos), **cuando** lo saca, **entonces**
+     se **archiva**: sale de los desplegables y de la tabla, y lo histórico conserva su nombre
+     (resuelta DU-A07).
 - **Permisos:** `usuarios:editar`.
 - **Dependencias:** HU-009.
 - **DoR:** ✅ listo. (El caso de sacar un sector que tenga pedidos asignados "al sector" se
@@ -272,8 +293,9 @@ las obras donde la persona es responsable.
      alcance "sus obras".
   2. **Dado** que cambia una celda y guarda, **cuando** una persona de ese sector hace su siguiente
      pedido al servidor, **entonces** ya rige el permiso nuevo (no hace falta salir y volver a entrar).
-  3. **Dado** un cambio que dejaría **ningún sector** con Editar en "Usuarios", **cuando** guarda,
-     **entonces** ve "Tiene que quedar al menos un sector que administre usuarios" y no se guarda.
+  3. **Dado** un cambio que dejaría **0 usuarios activos** con Editar en "Usuarios y permisos",
+     **cuando** guarda, **entonces** ve "Tiene que quedar al menos una persona que pueda administrar
+     usuarios y permisos." y no se guarda (resuelta DU-A09).
   4. **Dado** cada cambio de celda, **cuando** se guarda, **entonces** queda registrado quién lo
      cambió, cuándo y el valor anterior.
   5. **Dado** `usuarios:ver` o sin acceso, **cuando** manda un cambio por API, **entonces** recibe 403.
@@ -315,11 +337,13 @@ las obras donde la persona es responsable.
      la ganancia, **entonces** esos datos **no vienen en el JSON** (no alcanza con ocultarlos en
      pantalla).
   5. **Dado** Administración, **cuando** se aplica "Usuarios: Editar, solo la gerencia" (W-15),
-     **entonces** solo la gerencia de Administración edita usuarios, según se decida en **DU-01**.
+     **entonces** el sector Gerencia de Administración edita usuarios y la Jefatura de
+     Administración no (sectores separados, resuelta DU-01).
+  6. **Dado** la configuración inicial, **cuando** se revisa celda por celda, **entonces** coincide
+     con las 12 filas × 11 sectores de `especificacion/identidad.md` §6.3 (una aserción por celda).
 - **Permisos:** —
 - **Dependencias:** HU-007, catálogo de módulos.
-- **DoR:** ⛔ bloqueada por **DU-01** (filas que faltan en W-15 y "solo la gerencia") y por
-  **DU-02** (valor de arranque de las celdas "a completar").
+- **DoR:** ✅ listo (resueltas DU-01, DU-02 y DU-A01…DU-A06: filas, sectores y celdas de arranque).
 
 #### HU-011 · Plazos de la prioridad
 - **F-68 (parte semana 1) · W-50**
@@ -328,18 +352,19 @@ las obras donde la persona es responsable.
 - **Criterios de aceptación**
   1. **Dado** la instalación, **cuando** se abre W-50, **entonces** muestra los plazos de arranque:
      urgente hasta 1 día, prioritario hasta 7 días, normal más de 7.
-  2. **Dado** `usuarios:editar`, **cuando** cambia "urgente hasta" o "prioritario hasta" a números
+  2. **Dado** `plazos_prioridad:editar`, **cuando** cambia "urgente hasta" o "prioritario hasta" a números
      enteros donde urgente < prioritario, **entonces** se guardan y "normal" se muestra como "más de
      <prioritario> días".
   3. **Dado** urgente ≥ prioritario, un número negativo o vacío, **cuando** guarda, **entonces** ve el
      error y no se guarda (422).
   4. **Dado** un cambio de plazos, **cuando** se guarda, **entonces** queda registrado quién lo
      cambió, cuándo y los valores anteriores.
-  5. **Dado** un usuario sin `usuarios:editar`, **cuando** intenta guardar, **entonces** 403.
-- **Fuera de esta semana:** el cálculo de la prioridad de cada pedido (F-26) y la regla de que el
-  cambio vale solo para los pedidos nuevos (semana 2). Si los días son corridos o hábiles: **DU-04**
-  (no bloquea esta historia: acá solo se guardan los números).
-- **Permisos:** `usuarios:editar` (W-50 vive en la sección Usuarios).
+  5. **Dado** un usuario sin `plazos_prioridad:editar`, **cuando** intenta guardar, **entonces** 403.
+- **Fuera de esta semana:** el cálculo de la prioridad de cada pedido (F-26), en **días corridos**
+  y sin feriados (resuelta DU-04), y la regla de que el cambio vale solo para los pedidos nuevos
+  (semana 2).
+- **Permisos:** `plazos_prioridad:editar` (las dos gerencias; fila propia, resuelta DU-A01). W-50
+  vive en la sección Usuarios.
 - **Dependencias:** HU-009.
 - **DoR:** ✅ listo.
 
@@ -351,31 +376,38 @@ las obras donde la persona es responsable.
   mínimo **para** empezar a cargarle pedidos.
 - **Criterios de aceptación**
   1. **Dado** `obras:editar`, **cuando** carga N.º de presupuesto y revisión, nombre del trabajo,
-     link al presupuesto, cliente, responsable de obra y los dos contactos (solicitante en planta y
-     comprador, cada uno con nombre, mail y teléfono) y guarda, **entonces** la obra queda creada en
-     estado **Confirmada** con ese presupuesto como principal.
-  2. **Dado** que no carga OC / OT / contrato / mail de aprobación (link ni número), **cuando**
-     guarda, **entonces** la obra se crea igual (la OC no es obligatoria).
-  3. **Dado** que falta cualquier dato obligatorio (N.º, revisión, nombre del trabajo, link al
-     presupuesto, cliente, responsable, o nombre/mail/teléfono de cualquiera de los dos contactos),
-     **cuando** guarda, **entonces** ve el error en cada campo y no se crea (422).
+     la oferta técnica (**archivo o link**), cliente, responsable de obra y los dos contactos
+     (solicitante en planta y comprador, cada uno con nombre, mail y teléfono) y guarda,
+     **entonces** la obra queda creada en estado **Confirmada** con ese presupuesto como principal.
+  2. **Dado** que no carga OC / OT / contrato / mail de aprobación (ni archivo o link ni número),
+     **cuando** guarda, **entonces** la obra se crea igual (la OC no es obligatoria).
+  3. **Dado** que falta cualquier dato obligatorio (N.º, revisión, nombre del trabajo, oferta
+     técnica como archivo o link, cliente, responsable, o nombre/mail/teléfono de cualquiera de los
+     dos contactos), **cuando** guarda, **entonces** ve el error en cada campo y no se crea (422).
   4. **Dado** planta y fechas previstas de inicio y fin, **cuando** las carga, **entonces** se
      guardan; si no las carga, la obra se crea igual. Si el fin previsto es anterior al inicio
      previsto, ve el error.
   5. **Dado** que manda `estado` en el alta (por ejemplo "Terminada"), **cuando** guarda,
      **entonces** el backend lo ignora: siempre nace Confirmada.
-  6. **Dado** un N.º de presupuesto que ya está en otra obra, **cuando** guarda, **entonces** ve el
-     error según la regla que se decida en **DU-05**.
-  7. **Dado** el cliente, **cuando** lo escribe, **entonces** se comporta según **DU-06** (elegir de
-     los ya cargados o escribir uno nuevo).
+  6. **Dado** un N.º de presupuesto que ya está en otra obra (comparado normalizado y con su sufijo,
+     sin la revisión: `2-31-2026` = `2-031-2026`), **cuando** guarda, **entonces** ve "El presupuesto
+     … ya está en la obra '…'" con el link a esa obra y no se crea (422). Formato `P-NNN-AAAA` con
+     sufijo opcional ` A1`; revisión `REVnn` precargada en `REV01` (resueltas DU-05 y DU-A16).
+  7. **Dado** el cliente, **cuando** lo escribe, **entonces** ve sugerencias de los clientes ya
+     usados en otras obras, puede elegir uno o escribir uno nuevo, y si lo escrito se parece a uno
+     existente ve el aviso (resuelta DU-06).
   8. **Dado** el alta guardada, **entonces** queda registrado quién la creó y cuándo (F-14).
-  9. **Dado** un mail de contacto mal escrito o links que no empiezan con `http(s)://`, **cuando**
-     guarda, **entonces** ve el error.
-- **Permisos:** `obras:editar` (Operaciones, Proyectos, Ingeniería; también Administración —
-  arranque propuesto en DU-02).
-- **Dependencias:** HU-005 (responsable = usuario activo), HU-009.
-- **DoR:** ⛔ bloqueada por **DU-05** (formato y unicidad del N.º de presupuesto y la revisión) y
-  **DU-06** (cliente: lista o texto libre).
+  9. **Dado** un mail de contacto mal escrito o un link (oferta, OC o carpeta de Drive) que no empieza
+     con `http(s)://`, **cuando** guarda, **entonces** ve el error.
+  10. **Dado** la oferta técnica como **archivo** (PDF, imagen —también HEIC del celular—, Excel o
+      Word, hasta 20 MB), **cuando** la sube, **entonces** queda en la obra con su nombre y tamaño;
+      un tipo no permitido o un archivo más grande se rechaza con el motivo (HU-025).
+  11. **Dado** la carpeta de Drive de la obra, **entonces** solo se puede pegar el link (no se
+      sube una carpeta).
+- **Permisos:** `obras:editar` (Gerencia de Operaciones, Jefatura de Proyectos, Ingeniería de
+  proyectos, Gerencia y Jefatura de Administración — resuelta DU-02).
+- **Dependencias:** HU-005 (responsable = usuario activo), HU-009, HU-025 (adjuntos).
+- **DoR:** ✅ listo (resueltas DU-05, DU-06, DU-A14 y DU-A16; adjuntos por ADR-014).
 
 #### HU-013 · Listado de obras por estado
 - **F-15 (parte semana 1) · F-22 · W-05**
@@ -407,19 +439,25 @@ las obras donde la persona es responsable.
      cliente y planta, responsable, estado, fechas previstas) y las pestañas Pedidos · Rendición ·
      Documentos y contactos.
   2. **Dado** la pestaña Documentos y contactos, **entonces** ve cada presupuesto (principal y
-     adicionales) con su revisión y su link; la OC / OT / contrato / mail de aprobación con número y
-     link; los certificados como links; el link a la carpeta de Drive de la obra; y los contactos
-     solicitante y comprador con mail y teléfono.
-  3. **Dado** `obras:editar`, **cuando** agrega un certificado (nombre + link) o el link a la carpeta
-     de Drive, **entonces** queda en la pestaña y en el registro de la obra.
-  4. **Dado** cualquier link, **cuando** lo toca, **entonces** se abre en una pestaña nueva: el
-     sistema guarda links, no copias de archivos.
-  5. **Dado** el id de una obra que no existe, **cuando** abre la ficha, **entonces** ve "Obra no
+     adicionales) con su revisión y su oferta técnica (archivo o link); la OC / OT / contrato / mail
+     de aprobación con número y su archivo o link; los certificados y otros documentos con sus
+     archivos o links; el link a la carpeta de Drive de la obra; y los contactos solicitante y
+     comprador con mail y teléfono.
+  3. **Dado** `obras:editar`, **cuando** agrega un certificado (nombre + fecha + uno o más archivos
+     o links) o el link a la carpeta de Drive, **entonces** queda en la pestaña y en el registro de
+     la obra.
+  4. **Dado** un link, **cuando** lo toca, **entonces** se abre en una pestaña nueva; **dado** un
+     archivo, **cuando** lo toca, **entonces** se baja con su nombre original (solo si puede ver la
+     obra: con un id ajeno o sin permiso, 404).
+  5. **Dado** `obras:editar`, **cuando** quita un certificado o uno de sus archivos o links,
+     **entonces** desaparece de la pestaña, el archivo se borra y queda en el registro de la obra.
+  6. **Dado** el id de una obra que no existe, **cuando** abre la ficha, **entonces** ve "Obra no
      encontrada" (404 con el sobre JSON).
 - **Fuera de esta semana:** el contenido de las pestañas Pedidos (semana 2) y Rendición (semana 3);
   hasta entonces muestran "Disponible en la próxima entrega".
-- **Permisos:** `obras:ver`; agregar certificados y carpeta: `obras:editar`.
-- **Dependencias:** HU-012.
+- **Permisos:** `obras:ver` (también para bajar los archivos); agregar o quitar certificados,
+  documentos y carpeta: `obras:editar`.
+- **Dependencias:** HU-012, HU-025.
 - **DoR:** ✅ listo.
 
 #### HU-015 · Agregar un presupuesto adicional a la obra
@@ -427,18 +465,22 @@ las obras donde la persona es responsable.
 - **Como** Operaciones o Administración **quiero** sumar a la misma obra un presupuesto adicional
   (como el "A1") **para** no abrir otra obra y que su plata se sume a la de la obra.
 - **Criterios de aceptación**
-  1. **Dado** `obras:editar`, **cuando** carga N.º de presupuesto, revisión y link (y, si los tiene,
-     N.º y link de la OC y una descripción) y guarda, **entonces** el adicional queda en la obra y
-     pasa a cargar sus montos por rubro (HU-018).
+  1. **Dado** `obras:editar`, **cuando** carga N.º de presupuesto (y, si los tiene, revisión, la
+     oferta técnica como archivo o link, N.º y archivo o link de la OC y una descripción) y guarda,
+     **entonces** el adicional queda en la obra; quien tiene `presupuesto_rubro:editar` pasa a cargar
+     sus montos por rubro (HU-018) y el resto ve solo "Guardar".
   2. **Dado** una obra con 1 presupuesto, **cuando** se agregan 2 adicionales, **entonces** la obra
      tiene 3 y los muestra en orden de alta (como en sus rendiciones: 1 a 3 por obra).
-  3. **Dado** que falta N.º, revisión o link, **cuando** guarda, **entonces** ve el error.
-  4. **Dado** una obra **Terminada**, **cuando** agrega un adicional, **entonces** se permite (la
+  3. **Dado** que falta el N.º, **cuando** guarda, **entonces** ve el error; en un adicional la
+     revisión, la oferta técnica, la OC y la descripción son opcionales (resuelta DU-A14).
+  4. **Dado** el N.º sugerido (`2-131-2026 A1`, después `A2`), **cuando** lo deja o lo cambia por un
+     número propio con formato válido, **entonces** se guarda (resuelta DU-05).
+  5. **Dado** una obra **Terminada**, **cuando** agrega un adicional, **entonces** se permite (la
      obra se consulta igual) y queda registrado.
-  5. **Dado** el alta del adicional, **entonces** queda en el registro de la obra (F-14).
+  6. **Dado** el alta del adicional, **entonces** queda en el registro de la obra (F-14).
 - **Permisos:** `obras:editar`.
-- **Dependencias:** HU-012.
-- **DoR:** ⛔ bloqueada por **DU-05** (formato del N.º de un adicional: "N-NNN-AAAA A1" o número propio).
+- **Dependencias:** HU-012, HU-025.
+- **DoR:** ✅ listo (resueltas DU-05 y DU-A14).
 
 #### HU-016 · Editar los datos de la obra con registro del cambio
 - **F-20 · F-14 (obras) · W-23**
@@ -464,18 +506,20 @@ las obras donde la persona es responsable.
 - **Criterios de aceptación**
   1. **Dado** una obra Confirmada y la persona que es su **responsable de obra**, **cuando** la pasa
      a En ejecución, **entonces** cambia de pestaña en el listado y queda registrado quién y cuándo.
-  2. **Dado** una persona de **Administración** (con permiso de editar obras), **cuando** cambia el
+  2. **Dado** una persona de **Gerencia o Jefatura de Administración** (`estado_obra:editar`), **cuando** cambia el
      estado de cualquier obra, **entonces** se permite.
   3. **Dado** una persona de Operaciones que **no** es responsable de esa obra, **cuando** intenta
      cambiar el estado, **entonces** recibe 403 (el estado lo cambian el responsable y Administración).
   4. **Dado** una obra En ejecución, **cuando** la pasan a Terminada, **entonces** sale de las activas
      y queda en Terminadas con todo lo suyo.
   5. **Dado** el cambio de estado, **entonces** solo se hace desde W-22 (la edición no lo cambia).
-- **Fuera de esta semana:** la lista de pedidos abiertos al pasar a Terminada (semana 2, ver
-  **DU-12**). Volver a un estado anterior o saltear uno: **DU-07** (los criterios de arriba no
-  dependen de esa respuesta).
-- **Permisos:** `obras:editar` con alcance (propias) para el responsable; alcance todas para
-  Administración.
+  6. **Dado** una obra pasada por error, **cuando** quien puede cambiar el estado la vuelve **un paso
+     atrás** (Terminada → En ejecución, En ejecución → Confirmada), **entonces** se permite y queda
+     registrado; saltar de Confirmada a Terminada (o al revés) da error (resuelta DU-07).
+- **Fuera de esta semana:** la lista de pedidos abiertos al pasar a Terminada (semana 2): muestra
+  los abiertos y **no frena** el pase (resuelta DU-12).
+- **Permisos:** el **responsable de esa obra** (regla fija) o `estado_obra:editar` (Gerencia y
+  Jefatura de Administración).
 - **Dependencias:** HU-012.
 - **DoR:** ✅ listo.
 
@@ -496,18 +540,22 @@ las obras donde la persona es responsable.
      **entonces** el backend lo rechaza (422): la lista es cerrada.
   4. **Dado** un presupuesto del que solo se conoce el total, **cuando** elige "solo el total" y
      carga un importe, **entonces** queda guardado como total sin rubros (como hoy en 2 de sus 6
-     rendiciones). Cómo se ve una obra que mezcla un presupuesto por rubro con otro solo total:
-     **DU-08**.
+     rendiciones). "Por rubro" o "solo total" se elige **por presupuesto**; si la obra mezcla los
+     dos, W-13 muestra el total del de solo total en la fila Total y "—" en sus rubros, y la
+     rendición (semana 3) lo suma en la fila "Sin desglose por rubro" (resuelta DU-08).
   5. **Dado** una obra sin presupuesto por rubro cargado, **entonces** la obra existe igual y se
      puede trabajar (los gastos se cargan igual en la semana 3).
   6. **Dado** Operaciones o Ingeniería (`ver`), **cuando** abre W-13, **entonces** lo ve sin poder
      editar; por API, 403 al guardar.
   7. **Dado** un presupuesto ya cargado, **cuando** Administración corrige un importe, **entonces**
-     se comporta según **DU-09** (corregible con registro del cambio).
+     se guarda y queda en el historial con valor anterior, quién y cuándo (resuelta DU-09).
+  8. **Dado** `monto_obra:editar`, **cuando** carga en W-13 la fila "Monto del presupuesto" de cada
+     presupuesto, **entonces** se guarda; quien no tiene `monto_obra:ver` no ve la fila y el dato no
+     viaja en el JSON (resuelta DU-19).
 - **Permisos:** `presupuesto_rubro:editar` (Administración y Compras); `presupuesto_rubro:ver`
   (Operaciones, Proyectos, Ingeniería).
 - **Dependencias:** HU-012, HU-015.
-- **DoR:** ⛔ bloqueada por **DU-08** (obra con presupuestos mixtos) y **DU-09** (corregir después).
+- **DoR:** ✅ listo (resueltas DU-08, DU-09 y DU-19).
 
 #### HU-019 · Que una obra sin presupuesto por rubro igual se pueda usar
 - **F-48 · F-16 · W-07**
@@ -538,8 +586,8 @@ las obras donde la persona es responsable.
      "Gastado por obra" muestra "Disponible cuando se carguen gastos" hasta la semana 3 (F-57).
   4. **Dado** la base, **entonces** no hay saldos, vencimientos ni cuenta corriente (siguen en Tango).
   5. **Dado** sin acceso a Proveedores, **cuando** pide la lista por API, **entonces** 403.
-- **Permisos:** `proveedores:ver` / `proveedores:editar` (Administración y Compras — arranque del
-  resto en DU-02).
+- **Permisos:** `proveedores:ver` / `proveedores:editar` (Administración y Compras editan; ven Dirección,
+  Gerencia de Operaciones y Jefatura de Proyectos; Ingeniería y el resto sin acceso — resueltas DU-02 y DU-A02).
 - **Dependencias:** HU-009.
 - **DoR:** ✅ listo.
 
@@ -558,12 +606,13 @@ las obras donde la persona es responsable.
      "Hormigonera del Sur" contra "Hormigonera Sur SRL" y "Hormigones del Sur"), **entonces** ve la
      lista "Parecidos ya cargados" y **puede guardar igual**.
   4. **Dado** un nombre idéntico a uno existente o un CUIT que ya tiene otro proveedor, **cuando**
-     guarda, **entonces** se comporta según **DU-10** (propuesta: no se guarda).
+     guarda, **entonces** ve "Ya existe …" o "Ese CUIT ya es de …" con el link a ese proveedor y no
+     se guarda (422; resuelta DU-10).
   5. **Dado** un proveedor, **cuando** lo edita, **entonces** se guardan los cambios con quién y cuándo.
   6. **Dado** la ficha, **entonces** no existe "borrar" (F-56 es alta y edición).
 - **Permisos:** `proveedores:editar`.
 - **Dependencias:** HU-020.
-- **DoR:** ✅ listo (DU-10 es decisión técnica; el criterio 4 se escribe con la propuesta).
+- **DoR:** ✅ listo (resuelta DU-10).
 
 ### Épica E · Buscador parcial
 
@@ -575,7 +624,7 @@ las obras donde la persona es responsable.
 - **Criterios de aceptación**
   1. **Dado** que escribe "087", **cuando** busca, **entonces** encuentra la obra 1-087-2026 (y sus
      adicionales) por N.º de presupuesto parcial.
-  2. **Dado** que escribe parte del cliente o del nombre del trabajo ("tanque"), **entonces** ve las
+  2. **Dado** que escribe parte del cliente, de la planta o del nombre del trabajo ("tanque"), **entonces** ve las
      obras que lo contienen, sin distinguir mayúsculas ni tildes, de cualquier estado (las terminadas
      también, marcadas "Terminada").
   3. **Dado** que escribe parte del nombre de un proveedor, **entonces** lo ve en el grupo Proveedores
@@ -586,7 +635,7 @@ las obras donde la persona es responsable.
   6. **Dado** sin acceso a un módulo, **cuando** busca, **entonces** ese grupo no aparece ni viaja en
      la respuesta.
 - **Fuera de esta semana:** pedidos por texto (semana 2) y gastos por número de factura (semana 3).
-  Si también busca por planta: **DU-11** (no bloquea: el resto de los criterios no cambia).
+  La planta entra en la búsqueda (resuelta DU-11).
 - **Permisos:** `obras:ver`, `proveedores:ver`.
 - **Dependencias:** HU-013, HU-020.
 - **DoR:** ✅ listo.
@@ -600,7 +649,11 @@ las obras donde la persona es responsable.
 - **Criterios de aceptación**
   1. **Dado** la barra única (Inicio · Pedidos · Obras · Calendario · Gastos · Rendiciones ·
      Proveedores · Usuarios), **cuando** una persona entra, **entonces** ve solo los módulos con
-     Ver o Editar en su sector; "Sin acceso" no aparece.
+     Ver o Editar en su sector; "Sin acceso" no aparece. Cada ítem sale de las claves del catálogo
+     (`identidad.md` §6.1 y §6.4): Pedidos ← `pedidos` o `equipos_reparacion`; Obras ← `obras`;
+     Calendario ← `pedidos`; Gastos ← `gastos`; Rendiciones ← `rendicion`; Proveedores ←
+     `proveedores`; Usuarios ← `usuarios_permisos` o `plazos_prioridad`. `GET /api/me` trae siempre
+     las 12 claves (el front alinea su `FUNCIONES_NAV`, D-UI-01).
   2. **Dado** que gerencia cambia la tabla, **cuando** la persona navega a otra pantalla o vuelve a
      enfocar la pestaña, **entonces** la barra refleja el cambio sin volver a entrar.
   3. **Dado** que escribe a mano la dirección de un módulo sin acceso, **entonces** ve "No tenés
@@ -611,8 +664,7 @@ las obras donde la persona es responsable.
      semana 1), **entonces** no se muestra en la barra hasta su semana.
 - **Permisos:** todos (lectura del propio permiso).
 - **Dependencias:** HU-009.
-- **DoR:** ⛔ bloqueada por **DU-01** (qué módulos tiene la tabla: define qué ítems de la barra
-  dependen de qué fila).
+- **DoR:** ✅ listo (resueltas DU-01, DU-A01 y DU-A12; claves de función en `identidad.md` §6.1).
 
 #### HU-024 · Inicio de la semana 1 y celular básico
 - **F-02 · F-13 (base) · W-17 · W-16**
@@ -628,6 +680,54 @@ las obras donde la persona es responsable.
 - **Dependencias:** HU-023.
 - **DoR:** ✅ listo.
 
+### Épica G · Transversal
+
+#### HU-025 · Adjuntos: subir el archivo o poner el link
+- **ADR-014 (amplía D-022) · DU-23** · F-16, F-18 (oferta técnica y OC/OT/contrato/mail) · F-19
+  (certificados y documentos de la obra) · F-27 (pedido) · F-31 (comprobante de cierre) · F-43, F-44
+  (factura y tickets) · F-47, F-66 (remito de retiros) · F-67 (presupuesto e inventario de equipos)
+- **W-06, W-20, W-21** (semana 1) · W-08, W-43, W-29, W-42, W-49 (semana 2) · W-10, W-35, W-46, W-48
+  (semana 3)
+- **Como** cualquier persona que carga un documento **quiero** subir el archivo (también una foto
+  desde el celular) o pegar el link al Drive, según lo que tenga a mano, **para** no tener que
+  subirlo primero al Drive para poder cargarlo.
+- **Criterios de aceptación**
+  1. **Dado** un usuario activo, **cuando** sube un PDF, una imagen (JPG, PNG, WEBP o HEIC/HEIF del
+     iPhone), un Excel, un Word, un CSV o un TXT de hasta 20 MB, **entonces** recibe el id del
+     adjunto con nombre, tamaño y tipo detectado, y el formulario lo muestra con "quitar".
+  2. **Dado** un archivo de otro tipo (ejecutable, HTML, SVG) **o** con la extensión cambiada (un
+     `.exe` renombrado a `.pdf`), **cuando** lo sube, **entonces** se rechaza (422) porque el tipo se
+     valida **por contenido**, con el mensaje de los tipos aceptados.
+  3. **Dado** un archivo de más de 20 MB, **cuando** lo sube, **entonces** ve "El archivo pesa N MB y
+     el máximo es 20 MB." y no se guarda.
+  4. **Dado** un link, **cuando** lo pega, **entonces** se acepta solo si empieza con `http://` o
+     `https://` (no `javascript:`, `file:`, `ftp:` ni texto suelto).
+  5. **Dado** un adjunto subido, **cuando** se guarda el recurso (por ejemplo, la obra), **entonces**
+     queda asociado en la misma operación; si el recurso no se guarda, el adjunto queda temporal y
+     **se borra a las 24 h** (fila y archivo).
+  6. **Dado** un archivo de una obra, **cuando** lo baja alguien que puede ver esa obra, **entonces**
+     lo recibe como descarga con su nombre original; **cuando** lo pide alguien que no la puede ver
+     (otro sector sin acceso, o Ingeniería con "solo sus obras" en una obra ajena), aunque conozca el
+     id, **entonces** recibe 404 y no se confirma que exista.
+  7. **Dado** `obras:editar`, **cuando** quita un adjunto, **entonces** se borra el archivo físico y
+     queda en el historial de la obra con el nombre del archivo (sin la URL ni la ruta).
+  8. **Dado** el celular, **cuando** toca "Subir archivo", **entonces** puede elegir la cámara o la
+     galería; la foto HEIC se acepta tal cual.
+  9. **Dado** la carpeta de Drive de la obra, **entonces** solo admite link.
+- **Seguridad:** disco privado (`storage/app/private/adjuntos/AAAA/MM/`) con nombre UUID, nunca
+  servido desde `public/`; descarga solo por `GET /api/adjuntos/{id}` con la Policy del recurso
+  dueño, `Content-Disposition: attachment`, MIME detectado y `X-Content-Type-Options: nosniff`;
+  IDOR → 404; solo se asocian adjuntos temporales **propios** y del **contexto** del campo; la
+  `ruta` no viaja en el JSON; límite de subidas por minuto; borrar deja actividad (ADR-010); entra
+  en el backup diario. `seguridad.md` (a crear, ADR-014) suma estos tests (tipo rechazado, tamaño, IDOR).
+- **Fuera de esta semana:** los contextos de pedidos y equipos (semana 2) y de gastos y retiros
+  (semana 3) reusan este mecanismo sin cambios; cada historia de esas semanas solo agrega su
+  contexto y su prueba.
+- **Permisos:** subir: cualquier usuario activo; asociar y quitar: editar el recurso dueño; bajar:
+  ver el recurso dueño (`identidad.md` §6.6).
+- **Dependencias:** HU-009 (permisos aplicados).
+- **DoR:** ✅ listo (resuelta DU-23 → ADR-014; contrato en `obras.md` §10.5).
+
 ---
 
 ## 6. Semanas 2 a 4 (épicas, sin detalle fino)
@@ -638,32 +738,33 @@ Se detallan en historias al cierre de la semana anterior, con DoR.
 
 | Épica | F-XX | W-XX |
 |---|---|---|
-| Crear y editar pedidos | F-24, F-25, F-26, F-27, F-33, F-36, F-38, F-68 (aplicar plazos) | W-08, W-25, W-32, W-50 |
-| Ciclo del pedido | F-28, F-29, F-30, F-31, F-32, F-34, F-65 | W-09, W-29, W-30, W-31 |
+| Crear y editar pedidos (F-27: varios archivos o links por pedido, HU-025) | F-24, F-25, F-26, F-27, F-33, F-36, F-38, F-68 (aplicar plazos) | W-08, W-25, W-32, W-50 |
+| Ciclo del pedido (F-31: comprobante de cierre como archivo o link, p. ej. la foto del remito; aviso al solicitante y a **su** superior) | F-28, F-29, F-30, F-31, F-32, F-34, F-65 | W-09, W-29, W-30, W-31 |
 | Mis tareas y vistas de inicio | F-04, F-05, F-06, F-07, F-61 (visibilidad) | W-01, W-26, W-27, W-28 |
 | Todos los pedidos | F-35 | W-24 |
 | Calendario y carga por persona | F-11, F-12 | W-03, W-04 |
 | Avisos | F-08, F-09, F-10 (Mis avisos), F-37, F-64 | W-02, W-19, W-45 |
 | Celular | F-13 | W-41, W-42, W-43, W-47 (W-44 en la semana 3) |
-| Equipos en reparación | F-67 | W-49 |
+| Equipos en reparación (presupuesto e inventario: archivo o link) | F-67 | W-49 |
 | Lo que se completa de semana 1 | F-03 (pedidos), F-14 (pedidos), F-15 (pedidos abiertos, fila Servicios generales), F-17 (pestaña Pedidos), F-21 (pedidos abiertos al terminar) | W-18, W-05, W-07, W-22 |
 
-Dudas que conviene cerrar antes: DU-04, DU-12, DU-13, DU-14, DU-15, DU-16, DU-22.
+Dudas de esta semana: DU-04, DU-12, DU-13, DU-14, DU-15, DU-16 y DU-22, **resueltas el 12-nov**
+(DU-13 con el texto firmado: el aviso de completado va al solicitante y al superior del solicitante).
 
 ### Semana 3 · Gastos y rendición
 
 | Épica | F-XX | W-XX |
 |---|---|---|
-| Carga única de facturas y gastos | F-39, F-40, F-41, F-42, F-43 | W-10, W-38 (alta rápida) |
-| Gastos sin factura | F-44, F-47 | W-35, W-46 |
+| Carga única de facturas y gastos (F-43: factura como archivo o link) | F-39, F-40, F-41, F-42, F-43 | W-10, W-38 (alta rápida) |
+| Gastos sin factura (tickets y remito como archivo o link) | F-44, F-47 | W-35, W-46 |
 | Gastos cargados y detalle | F-45, F-46 | W-33, W-34 |
 | Rendición de la obra | F-49, F-50, F-51, F-52, F-54 | W-11, W-36, W-37, W-44 |
 | Todas las rendiciones en curso | F-53 | W-12 |
-| Control de materiales por cantidad | F-66 | W-48 |
+| Control de materiales por cantidad (remito como archivo o link) | F-66 | W-48 |
 | Gastos del proveedor | F-57 | W-14 |
 | Lo que se completa de semanas 1 y 2 | F-03 (gastos), F-14 (gastos), F-15 (% gastado), F-17 (pestaña Rendición), F-48 (alimenta la rendición) | W-18, W-05, W-07 |
 
-Dudas que conviene cerrar antes: DU-08, DU-17, DU-18, DU-19.
+Dudas de esta semana: DU-08, DU-17, DU-18 y DU-19, **resueltas el 12-nov** (va la propuesta).
 
 ### Semana 4 · Puesta en marcha
 
@@ -672,7 +773,7 @@ Dudas que conviene cerrar antes: DU-08, DU-17, DU-18, DU-19.
 | Carga inicial (pedidos abiertos de la minuta, obras en ejecución con su gastado acumulado por rubro) | F-62 | — |
 | Capacitación por sector y acompañamiento del arranque | F-63 | — |
 
-Dudas que conviene cerrar antes: DU-20, DU-21.
+Dudas de esta semana: DU-20 y DU-21, **resueltas el 12-nov** (va la propuesta).
 
 ---
 
@@ -686,14 +787,15 @@ donde cualquier diferencia se ve.
 **Señales de que el plazo peligra** (se miran el miércoles de la semana 3):
 - La carga de factura (W-10) con reparto por renglón no está en verde de punta a punta.
 - La rendición (W-11) no da el mismo número que la rendición ficticia de referencia, rubro por rubro.
-- Quedan abiertas DU-17 o DU-18.
+- La carga única de retiros (DU-17, resuelta: una sola carga suma en W-48 y en la rendición) no
+  está en verde.
 
 **Recorte candidato para proponerle a Juani** (no está decidido; nada sale de la Etapa 1, solo se
 mueve de semana):
 
 | Se mueve | De → a | Por qué este y no otro |
 |---|---|---|
-| F-66 Control de materiales por cantidad (W-48) | Semana 3 → semana 4 | Es una vista aparte de la rendición; la rendición por rubro (criterio de aceptación global n.º 1) no depende de ella. Además depende de DU-17. |
+| F-66 Control de materiales por cantidad (W-48) | Semana 3 → semana 4 | Es una vista aparte de la rendición; la rendición por rubro (criterio de aceptación global n.º 1) no depende de ella. Con DU-17 resuelta, la carga de retiros es una sola y se puede mover sin rehacerla. |
 | F-57 Gastos del proveedor (en la ficha del proveedor, W-14) | Semana 3 → semana 4 | Es una consulta sobre datos que ya se cargan; no frena la carga ni la rendición. |
 
 Lo que **no** se propone mover, porque sin eso el cliente no puede hacer su prueba de la semana 3

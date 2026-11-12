@@ -73,7 +73,8 @@ redondos e inventados. Pero la **forma** de los datos copia la de la minuta y la
 Se arman con factories + un `EscenarioRealistaSeeder` (solo base de tests) con:
 
 ### 4.1 Usuarios, sectores y jerarquía
-- Los 10 sectores de arranque; **Pañol y Logística sin usuarios**.
+- Los **11 sectores** de arranque (Gerencia y Jefatura de Administración separadas, DU-01/DU-A01);
+  **Pañol y Logística sin usuarios**.
 - ~13 usuarios ficticios con jerarquía de 4 niveles: Dirección → gerencia (Operaciones /
   Administración) → jefatura (Proyectos / Administración) → personas (Ingeniería de proyectos ×2,
   Seguridad e Higiene, Compras, RRHH). Calidad depende de Dirección (staff).
@@ -91,6 +92,9 @@ Se arman con factories + un `EscenarioRealistaSeeder` (solo base de tests) con:
 - Obras en los 3 estados; una **Terminada con pedidos abiertos** (hoy hay 18 abiertos en solapas
   ocultas) para F-21.
 - N.º de presupuesto con revisión ("2-131-2026 REV01") y prefijos 1, 2 y 3.
+- **Adjuntos (ADR-014):** una obra con la oferta técnica **subida como PDF** y otra con la oferta como
+  **link** al Drive; una OC como PDF y un mail de aprobación como link; un certificado con una **foto
+  HEIC** del celular y otro con un PDF **y** un link; una carpeta de Drive (solo link).
 
 ### 4.3 Pedidos (semana 2)
 - Estados en la proporción de la minuta: casi todos Completada, algunos No iniciada, En curso y
@@ -102,12 +106,17 @@ Se arman con factories + un `EscenarioRealistaSeeder` (solo base de tests) con:
 - **Pedido sin obra** (Servicios generales: vehículo, pañol, curso) y **pedido de varias obras** de un
   mismo cliente cargado sin obra nombrando las obras en la tarea.
 - Pedido con **período inicio–fin** (alojamiento de 7 personas, alquiler de equipo).
-- Pedido con **varios links** (Drive, Maps, página de un producto).
+- Pedido con **varios archivos o links**: links a Drive, Maps y la página de un producto, más una
+  foto subida desde el celular; y un pedido **completado con la foto del remito** como comprobante
+  de cierre (lo que se probaba antes como "link al remito").
+- Pedido completado por alguien cuyo superior **no** es el del solicitante (para verificar que el
+  aviso va al superior **del solicitante**, DU-13).
 - "Con quién / para quién" que **no es proveedor**: el cliente, un área interna, la propia empresa.
 - Pedido completado y **reabierto** ("falta tal cosa acá").
 - Pedido con entrega **mañana** abierto (recordatorio) y otro igual pero completado (sin recordatorio).
 - Pedido de la obra administración → operaciones ("Planilla de cierre y control de obras").
-- **Equipos en reparación** con los 5 estados (incluido "Para retiro") y las 3 aprobaciones.
+- **Equipos en reparación** con los 5 estados (incluido "Para retiro") y las 3 aprobaciones; uno con
+  el presupuesto del taller en PDF y el inventario como link.
 
 ### 4.4 Gastos y rendición (semana 3)
 - **Factura repartida en varias obras**: una factura de ferretería con ~30 renglones a 3 obras, 4 rubros
@@ -118,7 +127,10 @@ Se arman con factories + un `EscenarioRealistaSeeder` (solo base de tests) con:
   concepto) y la factura posterior del mismo proveedor que **no** se imputa.
 - **Consumo de stock propio** como renglón sin documento (hoy "ARCHIVO") y la **compra a stock sin obra**:
   la suma de la obra no la cuenta dos veces.
-- **Retiros de la empresa hermana por remito**, varios retiros por fecha del mismo material.
+- **Retiros de la empresa hermana por remito**, varios retiros por fecha del mismo material; un
+  remito como foto y otro como link.
+- Una factura con su **PDF subido** y otra con **link** al escaneo; un gasto sin comprobante con la
+  **foto de los tickets**; una factura **anulada** que conserva sus adjuntos.
 - **Amortización de herramientas**: un renglón por obra.
 - **Devolución de materiales** con cantidad negativa que **resta**.
 - Renglones imputados a **EPP** que en el resumen suman a **INSUMOS**.
@@ -134,6 +146,27 @@ Se arman con factories + un `EscenarioRealistaSeeder` (solo base de tests) con:
   (General con rubros, EPP sumado a INSUMOS, ganancia y %), que es el **oráculo**: la rendición del
   sistema tiene que dar exactamente esos números.
 
+### 4.5 Archivos de prueba para adjuntos (ADR-014)
+
+En `tests/fixtures/adjuntos/`, todos **fabricados para el proyecto** (ningún documento real del
+cliente, sin datos personales ni metadatos de ubicación):
+
+| Archivo | Qué es | Para qué |
+|---|---|---|
+| `ejemplo.pdf` | PDF de 1 página con el texto "Documento de ejemplo" | subida válida (oferta, certificado, factura) |
+| `ejemplo.jpg` · `ejemplo.png` · `ejemplo.webp` | imagen chica de un recuadro gris | subida válida de imagen |
+| `foto-celular.heic` | foto HEIC generada (un recuadro), **sin EXIF de GPS** | subida desde el celular (iPhone) |
+| `planilla-ejemplo.xlsx` · `nota-ejemplo.docx` · `datos.csv` · `texto.txt` | contenido inventado de 2 o 3 filas | resto de tipos permitidos |
+| `ejecutable-renombrado.pdf` | bytes de un ejecutable (`MZ…`) con extensión `.pdf` | rechazo **por contenido** |
+| `pagina.html` · `dibujo.svg` | HTML y SVG mínimos (el SVG con un `<script>` inofensivo) | rechazo de HTML y SVG |
+| (generado en el test) | archivo de 20 MB + 1 byte, creado al vuelo y borrado al terminar | límite de tamaño |
+
+Links de prueba: `https://drive.example/carpeta-ejemplo`, `https://maps.example/punto-ejemplo` (válidos);
+`ftp://servidor-ejemplo/plano.pdf`, `javascript:alert(1)`, `file:///c:/ejemplo.pdf`, `drive.example/sin-esquema`
+(inválidos en el backend; el front completa `https://` en el último). El disco de adjuntos de los
+tests es uno temporal (`Storage::fake`), así ningún test escribe en `storage/app/private` real; la
+purga de huérfanos se prueba con el reloj fijado (`travelTo` + 24 h).
+
 ## 5. Seguridad (en cada entrega que toca permisos o datos)
 
 - Permitido / denegado por cada celda relevante de la tabla; un cambio de celda rige sin volver a entrar.
@@ -145,6 +178,13 @@ Se arman con factories + un `EscenarioRealistaSeeder` (solo base de tests) con:
 - Datos sensibles: monto y ganancia fuera del JSON para quien no los ve; el buscador no devuelve grupos
   de módulos sin acceso; los mails no exponen datos de otras obras.
 - Datos personales: el concepto de combustible no lleva el nombre del chofer (va en "rendido por").
+- **Adjuntos (ADR-014)** — desde la semana 1: tipo validado **por contenido** (ejecutable renombrado,
+  HTML y SVG rechazados); 20 MB máximo; links solo `http(s)`; descarga solo por
+  `GET /api/adjuntos/{id}` con la Policy del recurso dueño, `Content-Disposition: attachment`, MIME
+  detectado y `nosniff`; **IDOR en la descarga → 404** (id ajeno, obra fuera de "solo sus obras",
+  temporal de otro usuario); no se asocia un adjunto ajeno ni de otro contexto; la `ruta` no viaja en
+  el JSON; nada se sirve desde `public/`; huérfanos purgados a las 24 h. `seguridad.md` (todavía no
+  existe) suma esta sección según ADR-014.
 
 ## 6. Criterios de entrada y salida por entrega
 

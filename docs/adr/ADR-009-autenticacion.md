@@ -1,6 +1,6 @@
 # ADR-009 · Autenticación
 
-- **Estado:** Propuesta · **Fecha:** 2026-11-12 · **Rol:** CTO + Seguridad
+- **Estado:** Aceptada (Juani, 2026-11-12) · **Fecha:** 2026-11-12 · **Rol:** CTO + Seguridad
 
 ## Decisión
 - Sanctum en modo SPA (cookie de sesión + CSRF), front y API bajo el mismo dominio padre.

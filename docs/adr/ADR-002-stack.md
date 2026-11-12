@@ -1,6 +1,6 @@
 # ADR-002 · Stack
 
-- **Estado:** Propuesta · **Fecha:** 2026-11-12 · **Rol:** CTO
+- **Estado:** Aceptada (Juani, 2026-11-12) · **Fecha:** 2026-11-12 · **Rol:** CTO
 
 ## Decisión
 Stack estándar de NexoSmart, sin desvíos:

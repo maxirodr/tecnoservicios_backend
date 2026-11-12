@@ -1,6 +1,6 @@
 # ADR-012 · Avisos
 
-- **Estado:** Propuesta · **Fecha:** 2026-11-12 · **Rol:** CTO
+- **Estado:** Aceptada (Juani, 2026-11-12) · **Fecha:** 2026-11-12 · **Rol:** CTO
 
 ## Decisión
 - Laravel Notifications con canal `database` propio (tabla `avisos`, para tener `tipo`,

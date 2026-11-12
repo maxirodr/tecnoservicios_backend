@@ -1,6 +1,6 @@
 # ADR-013 · Tests y CI
 
-- **Estado:** Propuesta · **Fecha:** 2026-11-12 · **Rol:** QA + DevOps
+- **Estado:** Aceptada (Juani, 2026-11-12) · **Fecha:** 2026-11-12 · **Rol:** QA + DevOps
 
 ## Decisión
 - Backend: PHPUnit contra **MySQL real** `tecnoservicios_testing` (nunca la base de dev, nunca

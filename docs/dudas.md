@@ -1,5 +1,17 @@
-# Dudas abiertas · Etapa 1 · NS-2026-025
+# Dudas · Etapa 1 · NS-2026-025
 
+> **Estado al 12-nov-2026: todas resueltas.** Juani (dev a cargo, decide alcance) aprobó el
+> 12-nov el paquete del Sprint 0:
+>
+> - **DU-01…DU-22 y DU-A01…DU-A21 (43 dudas): va la propuesta tal como está escrita**, con una
+>   sola excepción: **DU-13** se resuelve con el texto firmado (el aviso de completado llega al
+>   solicitante y **al superior del solicitante**, `jefe_id` de quien pidió).
+> - **DU-23** (archivos además de links) entra ya resuelta → [ADR-014](adr/ADR-014-adjuntos-archivo-o-link.md).
+> - Aceptados los **ADR-001…ADR-014** (incluidos el polling cada 15 s de ADR-005 y el alcance
+>   "solo sus obras" de la matriz, ADR-006).
+> - No queda ninguna historia ⛔ en el [backlog](backlog.md). Las especificaciones pasan a regla
+>   definitiva lo que antes decía "propuesta" o "si se aprueba".
+>
 > Lo que el Documento del sistema firmado (v1.1, 4-nov-2026) no dice y hace falta para escribir
 > un criterio de aceptación verificable. Regla de oro: no se agrega, quita ni cambia funcionalidad;
 > cada propuesta es **la más cercana a cómo trabajan hoy**, con su fuente.
@@ -7,7 +19,8 @@
 > - **"¿Cambia lo que ve el cliente? → decide Juani"**: la propuesta cambia una pantalla, un mensaje
 >   o un comportamiento que el cliente nota. No se construye hasta que Juani decida.
 > - **"Decisión técnica"**: la decide el equipo (Tech Lead) y se documenta en un ADR si hace falta.
-> - Las historias que dependen de una duda "decide Juani" están ⛔ en el [backlog](backlog.md).
+> - Las historias que dependen de una duda "decide Juani" abierta quedan ⛔ en el [backlog](backlog.md)
+>   (hoy ninguna: todas resueltas el 12-nov).
 > - Una duda nunca se borra: al cerrarla se anota debajo **Decisión**, quién, fecha y el ADR o RN.
 
 ---
@@ -36,6 +49,7 @@
   3. **Plazos de la prioridad** sin columna propia: va con "Usuarios", porque W-50 vive en esa misma
      sección (pestañas Usuarios · Sectores · Tabla de permisos · Plazos de la prioridad).
 - **¿Cambia lo que ve el cliente?** Sí (un sector más en W-40 y dos columnas en W-15) → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-02 · Valor de arranque de las celdas "a completar"
 - **Fuente:** cap. 3 ("el resto de las celdas las completan ustedes al empezar") · W-15 (columnas Obras
@@ -54,6 +68,7 @@
     Calidad, RRHH y Pañol: Sin acceso (el documento no les da nada en esos módulos).
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani** (idealmente lo valida con el cliente en la
   entrega de la semana 1).
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-03 · Cómo elige su primera contraseña un usuario nuevo
 - **Fuente:** W-39 (el alta tiene nombre, mail, sector, jefatura, estado y teléfono; **no** tiene
@@ -64,6 +79,7 @@
   contraseña** (el mismo circuito de "Olvidé mi contraseña", con un link que dura 7 días). Desde W-15 se
   puede reenviar si venció. Es lo más parecido a cómo ya funciona la recuperación firmada en W-16.
 - **¿Cambia lo que ve el cliente?** Sí (un mail nuevo y un botón "reenviar") → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-04 · Los plazos de la prioridad, ¿en días corridos o hábiles?
 - **Fuente:** F-26 / W-50 ("hasta 1 día · hasta 7 días · más de 7") · análisis de la minuta §7 (las
@@ -73,6 +89,7 @@
 - **Propuesta:** **días corridos**, como se midió en su minuta, y la persona corrige a mano si hace falta
   (F-26 ya lo permite). Sin calendario de feriados.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**. No bloquea la semana 1 (W-50 solo guarda números).
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-05 · N.º de presupuesto: formato, revisión y unicidad
 - **Fuente:** análisis de la minuta §2 (solapas `CLIENTE N-NNN-AAAA` + `REV01`/`rev02` cuando hay
@@ -91,6 +108,7 @@
   - **Único en todo el sistema** (sin contar la revisión): un mismo N.º no puede estar en dos obras.
     Un caso así (ej. ficticio "3-201203-2026") se carga como dos presupuestos de la misma obra.
 - **¿Cambia lo que ve el cliente?** Sí (validaciones del alta) → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-06 · Cliente de la obra: ¿se elige de una lista o se escribe?
 - **Fuente:** W-06 (el campo Cliente se dibuja como lista desplegable "Planta Ejemplo SA ▾"; Planta como
@@ -104,6 +122,7 @@
   escribe uno nuevo, sin pantalla aparte de clientes), con aviso si lo escrito se parece a uno existente.
   Planta: texto libre opcional.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-07 · ¿Se puede volver una obra a un estado anterior?
 - **Fuente:** F-21 ("Confirmada → En ejecución → Terminada") · W-22 (el selector muestra los tres estados)
@@ -114,6 +133,7 @@
   atrás** (Terminada → En ejecución, En ejecución → Confirmada), con registro de quién y cuándo. Avanzar
   sigue siendo de a un paso.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**. No bloquea: la semana 1 construye el avance.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-08 · Obra que mezcla un presupuesto por rubro con otro "solo total"
 - **Fuente:** cap. 4.4 / F-48 / W-13 ("si una obra solo tiene el total, se carga el total") · análisis de
@@ -126,6 +146,7 @@
   presupuestado total de la obra es la suma de todo. Si todos son solo total, se ve total contra gastado,
   como hoy.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-09 · ¿Se puede corregir el presupuesto por rubro después de cargado?
 - **Fuente:** F-48 ("una vez, al darlo de alta") · cap. 4.1 ("lo carga el administrativo una sola vez;
@@ -135,6 +156,7 @@
 - **Propuesta:** Administración **puede corregir** los importes, y cada corrección queda registrada con
   valor anterior, quién y cuándo (como la edición de la obra, F-20). Hoy corrigen la celda del Excel.
 - **¿Cambia lo que ve el cliente?** Sí (historial en W-13) → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-10 · Proveedor repetido: ¿se bloquea o solo se avisa?
 - **Fuente:** F-55 ("cada proveedor se carga una vez") · W-38 ("aviso de parecidos para no cargar el
@@ -144,6 +166,7 @@
   "SA / SRL") y un **CUIT** que ya tiene otro proveedor; los **parecidos** solo avisan y dejan guardar.
 - **¿Cambia lo que ve el cliente?** Mínimamente (un mensaje de error que aplica lo firmado) → **decisión
   técnica**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-11 · Buscador: ¿también por planta?
 - **Fuente:** F-03 ("obras por N.º de presupuesto o por palabra clave (cliente, nombre del trabajo)") ·
@@ -153,6 +176,7 @@
   mira, una búsqueda que hoy funciona en la minuta no encuentra la obra.
 - **Propuesta:** incluir **planta** en la búsqueda de obras, junto con cliente y nombre del trabajo.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**. No bloquea la semana 1.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 ### Semana 2
 
@@ -168,6 +192,7 @@
   tareas de su propietario y en la obra terminada, así ninguno se esconde como hoy en las solapas
   ocultas.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-13 · Al completar un pedido, ¿a qué superior le llega el aviso?
 - **Fuente:** cap. 4.2 y F-31 ("Le avisa al que lo pidió y, dentro del sistema, a su superior") · tabla
@@ -180,6 +205,9 @@
   dijo la gerencia en la reunión ("ya terminé"). Si la persona no tiene jefatura (Dirección), no hay
   aviso extra.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ se sigue el texto firmado: aviso al solicitante y a su superior.
+  "Su superior" = el `jefe_id` **de quien pidió**, no el de quien completó. Si el solicitante no tiene
+  jefatura (Dirección), no hay aviso extra. La propuesta de arriba queda descartada.
 
 #### DU-14 · ¿La fecha de entrega es obligatoria en un pedido nuevo?
 - **Fuente:** F-24 (lista los datos del pedido sin marcar obligatorios) · F-26 (la prioridad se calcula
@@ -190,6 +218,7 @@
 - **Propuesta:** **obligatoria** en todo pedido nuevo. Obligatorios: tarea, sector y propietario, fecha
   de entrega (obra puede ser "sin obra"). Los pedidos de la carga inicial sin fecha: DU-20.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-15 · ¿Se puede completar un pedido sin tomarlo antes?
 - **Fuente:** estados del cap. 7 (No iniciada → En curso → Completada; "de Bloqueada se vuelve a En
@@ -199,6 +228,7 @@
 - **Propuesta:** el propietario puede **completar desde No iniciada o En curso** (el recorrido registra
   que se completó sin tomarlo). Desde **Bloqueada**, primero "Retomar" (W-30).
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-16 · Pedido "en el sector" (sin persona): ¿a quién le avisa y quién lo toma?
 - **Fuente:** cap. 4.2 ("Si el propietario no está ese día, el pedido queda en su sector") · W-31
@@ -210,6 +240,7 @@
   ellas y, al tomarlo, pasa a ser su propietario. Aparece en Mis tareas de todo el sector hasta que alguien
   lo tome.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-22 · Comentario nuevo: ¿a quién le llega el aviso?
 - **Fuente:** tabla de avisos del cap. 7 ("Bloquean o comentan un pedido mío → al que lo pidió") · W-41
@@ -220,6 +251,7 @@
 - **Propuesta:** el aviso le llega **a la otra parte** (comenta el solicitante → al propietario; comenta
   el propietario → al solicitante) y a los seguidores; **nunca al autor**. Solo dentro del sistema.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 ### Semana 3
 
@@ -237,6 +269,7 @@
   rubro. Lo que no está en la lista va a "fuera de presupuesto". Un renglón de factura de otro proveedor
   puede asociarse a un material de la lista para contar como "pedido".
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-18 · HORAS LIQUIDADAS y FIJOS: ¿qué período?
 - **Fuente:** F-54 ("un monto total por período") · análisis de rendiciones (hoja "Horas liquidadas"
@@ -245,6 +278,7 @@
 - **Propuesta:** período **desde–hasta** (dos fechas), que sirve para quincenas (horas, como hoy) y
   meses (fijos), con un renglón por período y por obra en su rubro.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-19 · ¿Dónde se carga el "monto de la obra"?
 - **Fuente:** F-54 / cap. 4.4 ("la rendición muestra también el monto de la obra, la ganancia y el %")
@@ -254,6 +288,7 @@
 - **Propuesta:** una fila **"Monto del presupuesto"** en W-13, por presupuesto, que solo ven y cargan
   quienes tienen "Monto de la obra y ganancia" (DU-01). Monto de la obra = suma de los montos.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 ### Semana 4
 
@@ -270,6 +305,7 @@
   propietario** se listan antes del arranque para que el sector los complete; los que son documentos
   (presupuesto, OC, certificado) van a Documentos de la obra y no a pedidos.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-21 · Carga inicial de obras en ejecución: obligatorios que faltan y rubros mal escritos
 - **Fuente:** F-62 ("obras en ejecución con su gastado acumulado (un total por rubro)") · cap. 6 (contactos,
@@ -282,6 +318,7 @@
   una tabla de equivalencias ("INSUMO" → INSUMOS, EPP → EPP) que **revisa y aprueba administración**
   antes de importar; nada se mapea solo sin esa revisión.
 - **¿Cambia lo que ve el cliente?** Sí (les pedimos completar y aprobar) → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 ---
 
@@ -313,6 +350,7 @@
   (DU-01) + **Estado de obra**, **Control por cantidad** y **Plazos de la prioridad**. Catálogo,
   qué habilita cada una y configuración inicial completa en `especificacion/identidad.md` §6.1–§6.3.
 - **¿Cambia lo que ve el cliente?** Sí (nombres en W-40 y columnas en W-15) → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-A02 · Observaciones a DU-02 (arranque de las celdas "a completar")
 - **Fuente:** W-17 ("[Ingeniería] No ve Proveedores ni Usuarios mientras la tabla de permisos no se
@@ -324,6 +362,7 @@
   (2) Dirección **Ver·todas** en todas las filas nuevas ("ve todo"). Lo que no tiene fuente arranca en
   **Sin acceso** y lo completa la empresa en W-15.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-A03 · RRHH: ¿carga gastos y lleva la rendición?
 - **Fuente:** cap. 3, tabla de sectores ("Gerencia y Jefatura de Administración · Compras · **RRHH**:
@@ -335,6 +374,7 @@
   (lo de la configuración inicial y W-15, que es lo específico). Hoy no tiene usuarios y la gerencia
   lo habilita desde W-15 cuando le den usuario.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-A04 · Ingeniería: "solo sus obras" también en Gastos, Presupuesto por rubro y Control por cantidad
 - **Fuente:** cap. 3 ("las ingenieras ven la rendición **de sus obras**") · W-15 (Ingeniería: Gastos
@@ -347,6 +387,7 @@
   (Gastos y facturas, Presupuesto por rubro, Rendición, Control por cantidad). La gerencia la pasa a
   "todas" desde W-15 si quiere.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-A05 · Control por cantidad: ¿edita Compras?
 - **Fuente:** F-66 ("Edita administración · ve operaciones") · cap. 3 ("Gastos, facturas y rendición:
@@ -357,6 +398,7 @@
 - **Propuesta:** Compras **edita** (igual que Gastos y Rendición; los retiros con remito son compras
   de material). Ver Gerencia de Operaciones y Jefatura de Proyectos; Ingeniería solo sus obras (DU-A04).
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**. No bloquea la semana 1 (es una celda).
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-A06 · Con qué permisos nace un sector nuevo
 - **Fuente:** W-40 ("Cada sector nuevo aparece como una fila más en la tabla de permisos") · cap. 3
@@ -367,6 +409,7 @@
 - **Propuesta:** nace con **Pedidos Editar·todas**, **Equipos en reparación** igual que Pedidos (DU-01),
   **Obras Ver·todas** y el resto **Sin acceso**.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani** (si se aprueba, ajustar `modelo-datos.md`).
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-A07 · Sacar un sector que tiene gente o historia
 - **Fuente:** F-59 / W-40 ("renombrar · sacar") · W-39 ("no se borra a nadie, para no perder el
@@ -378,6 +421,7 @@
   inactivos o pedidos) se **archiva**: sale de los desplegables y de la tabla, y lo histórico conserva
   su nombre.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-A08 · Desactivar a alguien que tiene gente a cargo u obras
 - **Fuente:** W-39 ("Un usuario inactivo no entra, pero sus pedidos e historial quedan") · F-61 ·
@@ -387,6 +431,7 @@
 - **Propuesta:** se permite; antes de confirmar, la ventana avisa "Hernán tiene 2 personas a cargo y es
   responsable de 3 obras. Quedan como están hasta que las cambies." No se reasigna nada solo.
 - **¿Cambia lo que ve el cliente?** Sí (un aviso en W-39) → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-A09 · Guardas para no quedarse sin administrador
 - **Fuente:** F-58 / F-60 (usuarios y tabla los administran Dirección y las dos gerencias).
@@ -396,6 +441,7 @@
   activos** con Usuarios y permisos = Editar ("Tiene que quedar al menos una persona que pueda
   administrar usuarios y permisos.").
 - **¿Cambia lo que ve el cliente?** No (solo un mensaje en un caso límite) → **decisión técnica**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-A10 · Primer usuario en producción
 - **Fuente:** roadmap (semana 1: "cargan … sus usuarios") · decisiones del Sprint 0 (catálogos por
@@ -405,6 +451,7 @@
   usuario en el sector Dirección y le manda el mail para elegir contraseña. Se corre una vez en el
   deploy con el mail que indique Juani; no queda escrito en el repo.
 - **¿Cambia lo que ve el cliente?** No → **decisión técnica**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-A11 · ¿Se restringe el ingreso al dominio de mail de la empresa?
 - **Fuente:** W-16 ("Se entra con el mail de la empresa").
@@ -413,6 +460,7 @@
 - **Propuesta:** no se valida el dominio: el alta la hace gerencia, que ya decide quién entra. Queda
   una variable opcional `MAIL_DOMINIOS_PERMITIDOS` por si se quiere después.
 - **¿Cambia lo que ve el cliente?** No → **decisión técnica**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-A12 · Semana 1 sin Pedidos, Gastos ni Rendición: qué se ve
 - **Fuente:** cap. 14, roadmap (semana 1: ingreso, usuarios, obras, proveedores; "cargan dos o tres
@@ -426,6 +474,7 @@
   muestran **"—"**; la fila "Servicios generales" no aparece; en la ficha no se muestran las pestañas
   Pedidos y Rendición. Cada entrega las enciende.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-A13 · Prioridad al cambiar la entrega de un pedido ya cargado (complementa DU-04)
 - **Fuente:** W-32 ("Si cambia la entrega se recalcula la prioridad") · W-50 ("el cambio vale para los
@@ -436,6 +485,7 @@
   prioridad había sido **corregida a mano**, se mantiene la manual y el formulario muestra la
   calculada como sugerencia.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**. No bloquea la semana 1.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 ### Semana 1 · Obras
 
@@ -450,6 +500,7 @@
   los dos contactos obligatorios (la revisión, obligatoria y precargada en REV01, según DU-05). En un
   **adicional**, solo el N.º es obligatorio (W-21); revisión, link, OC y descripción opcionales.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-A15 · Obra Terminada: ¿se sigue editando y admite pedidos y gastos nuevos? (complementa DU-12)
 - **Fuente:** cap. 4.5 ("Sale del listado de activas pero no se pierde nada: se consulta igual") ·
@@ -461,6 +512,7 @@
   como a cualquier otra; Terminada solo la saca de las activas y de Rendiciones en curso. Las
   pantallas de carga muestran "Obra terminada" al lado del nombre para que se note.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-A16 · N.º de presupuesto: tope de dígitos y unicidad sin la revisión (complementa DU-05)
 - **Fuente:** DU-05 ("número de 3 o más dígitos"; "3-115117-2026 se carga como dos presupuestos") ·
@@ -472,6 +524,7 @@
   unicidad es por **número normalizado + sufijo**, sin la revisión (índice único sobre `numero`).
   Ajustar `modelo-datos.md`.
 - **¿Cambia lo que ve el cliente?** No (afina la validación de DU-05) → **decisión técnica**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-A17 · Borrar una obra, un presupuesto o un certificado cargado por error
 - **Fuente:** F-16, F-18, F-19, F-20 (alta y edición; no hablan de borrar) · W-39 y W-34 (el criterio
@@ -482,6 +535,7 @@
   puede quitar mientras no tenga montos por rubro cargados (ni materiales, desde la semana 3).
   **Certificados y links** se pueden quitar. Todo queda en el historial de la obra.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 ### Semana 1 · Proveedores
 
@@ -492,6 +546,7 @@
   tablas por proveedor y en el filtro.
 - **Propuesta:** **"Gastos sin comprobante"**, marcado "genérico" en la lista y no editable.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-A19 · Proveedores que ya están repetidos
 - **Fuente:** cap. 10 ("Hoy el mismo proveedor aparece escrito de varias formas") · F-56 (alta y
@@ -502,6 +557,7 @@
   lista de equivalencias de proveedores que revisa y aprueba administración, igual que DU-21 para los
   rubros. Un duplicado que aparezca después y no tenga gastos se corrige renombrándolo.
 - **¿Cambia lo que ve el cliente?** Sí (les pedimos aprobar la lista) → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 ### Semana 1 · Todos los listados
 
@@ -513,6 +569,7 @@
   **Confirmadas** por fecha de alta, la más nueva primero; **Terminadas** por fecha en que se
   terminaron; **proveedores, usuarios y sectores** en orden alfabético.
 - **¿Cambia lo que ve el cliente?** Sí (menor) → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
 #### DU-A21 · Ajustes al modelo de datos que piden estas especificaciones
 - **Fuente:** `especificacion/identidad.md`, `obras.md` y `proveedores.md` vs. `modelo-datos.md`.
@@ -526,3 +583,25 @@
   DU-10) además de `nombre_normalizado` (fuerte, para parecidos). (6) `obras.terminada_at` y
   `terminada_por`. (7) Sector nuevo con Pedidos y Obras habilitados (DU-A06).
 - **¿Cambia lo que ve el cliente?** No → **decisión técnica** (DBA + Tech Lead).
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
+
+---
+
+## Juani · ampliación del 12-nov-2026
+
+#### DU-23 · Archivos además de links
+- **Fuente:** decisión D-022 del documento firmado ("los archivos siguen en Drive; el sistema guarda
+  solo links") · F-16, F-18 (oferta técnica y OC/OT/contrato/mail) · F-19 (certificados y documentos de
+  la obra) · F-27 (links del pedido) · F-31 (comprobante de cierre) · F-43, F-44 (factura y tickets) ·
+  F-47, F-66 (remito de retiros) · F-67 (presupuesto e inventario de equipos) · pedido de Juani del 12-nov.
+- **Por qué importa:** muchas veces el documento no está en el Drive: la foto del remito que se saca con
+  el celular al completar un pedido, o el PDF de una factura que nadie escaneó. Con "solo links" hay que
+  subirlo primero al Drive para poder cargarlo, y eso frena la carga.
+- **Propuesta:** en cada uno de esos lugares se puede **subir el archivo o poner el link**, según
+  convenga, con un solo mecanismo transversal (tabla `adjuntos`, disco privado, descarga autorizada por
+  el recurso dueño, tipos y tamaño validados en el borde). La **carpeta de Drive de la obra** sigue
+  siendo solo link. Detalle en [ADR-014](adr/ADR-014-adjuntos-archivo-o-link.md) y `modelo-datos.md`.
+- **¿Cambia lo que ve el cliente?** Sí (amplía D-022 a su favor: en cada uno de esos campos aparecen
+  "Subir archivo" y "Pegar link") → **decide Juani**.
+- **Resolución (Juani, 2026-11-12):** ✅ va la propuesta (ADR-014 aceptada). Se lo comunica Juani al
+  cliente como ampliación de D-022. Historia transversal: HU-025 en el backlog.
