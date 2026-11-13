@@ -10,15 +10,15 @@ use App\Modules\Identidad\Application\Usuarios\CrearUsuarioAction;
 use App\Modules\Identidad\Application\Usuarios\ListarUsuariosQuery;
 use App\Modules\Identidad\Application\Usuarios\OpcionesUsuariosQuery;
 use App\Modules\Identidad\Domain\Models\User;
-use App\Modules\Identidad\Http\Controllers\Concerns\UsuarioAutenticado;
 use App\Modules\Identidad\Http\Requests\ActualizarUsuarioRequest;
 use App\Modules\Identidad\Http\Requests\CrearUsuarioRequest;
 use App\Modules\Identidad\Http\Requests\ListarUsuariosRequest;
+use App\Modules\Identidad\Http\Requests\OpcionesUsuariosRequest;
 use App\Modules\Identidad\Http\Resources\UsuarioOpcionResource;
 use App\Modules\Identidad\Http\Resources\UsuarioResource;
 use App\Shared\Http\RespondsWithEnvelope;
+use App\Shared\Http\UsuarioAutenticado;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 /** F-58 · F-61 · W-15 · W-39: usuarios. La autorización (matriz) va en las rutas. */
 final class UsuarioController
@@ -33,11 +33,9 @@ final class UsuarioController
         ));
     }
 
-    public function opciones(Request $request, OpcionesUsuariosQuery $opciones): JsonResponse
+    public function opciones(OpcionesUsuariosRequest $request, OpcionesUsuariosQuery $opciones): JsonResponse
     {
-        $buscar = $request->filled('buscar') ? $request->string('buscar')->toString() : null;
-
-        return $this->ok(UsuarioOpcionResource::collection($opciones->handle($buscar)));
+        return $this->ok(UsuarioOpcionResource::collection($opciones->handle($request->buscar())));
     }
 
     public function store(CrearUsuarioRequest $request, CrearUsuarioAction $crear): JsonResponse

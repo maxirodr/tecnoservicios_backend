@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Proveedores\Application\Filtros;
+namespace App\Modules\Proveedores\Infrastructure\Consultas;
 
 use Illuminate\Database\Eloquent\Builder;
 

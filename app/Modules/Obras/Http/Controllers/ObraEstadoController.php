@@ -9,18 +9,18 @@ use App\Modules\Obras\Application\Estado\CambiarEstadoObraAction;
 use App\Modules\Obras\Application\Estado\PedidoAbiertoArray;
 use App\Modules\Obras\Application\Obras\FichaObraQuery;
 use App\Modules\Obras\Application\Ports\PedidosDeObra;
-use App\Modules\Obras\Http\Controllers\Concerns\ConUsuario;
 use App\Modules\Obras\Http\Requests\CambiarEstadoRequest;
 use App\Modules\Obras\Http\Resources\ObraFichaResource;
 use App\Shared\Http\RespondsWithEnvelope;
+use App\Shared\Http\UsuarioAutenticado;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /** F-21 (W-22): pedidos abiertos de la obra y cambio de estado. */
 final class ObraEstadoController
 {
-    use ConUsuario;
     use RespondsWithEnvelope;
+    use UsuarioAutenticado;
 
     public function pedidosAbiertos(Request $request, int $obra, BuscarObra $buscar, PedidosDeObra $pedidos): JsonResponse
     {

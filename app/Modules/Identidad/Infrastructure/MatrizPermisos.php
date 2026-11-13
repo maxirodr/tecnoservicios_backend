@@ -12,11 +12,16 @@ use App\Modules\Identidad\Domain\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * Lee la celda del sector del usuario en cada llamada (sin cache): un cambio en la matriz vale
- * desde el próximo pedido al servidor (RN-IDE-14). Un usuario inactivo no puede nada.
+ * Lee la celda del sector del usuario y la recuerda solo mientras dura el pedido (TL-05): binding
+ * *scoped* y `olvidar()` al terminar cada pedido y al guardar una celda o un sector
+ * (IdentidadServiceProvider). Sin cache persistente: un cambio en la matriz vale desde el próximo
+ * pedido al servidor (RN-IDE-14). Un usuario inactivo no puede nada (se mira siempre, no se recuerda).
  */
 final class MatrizPermisos implements Permisos
 {
+    /** @var array<string, Permiso|null> celda por "sector|funcion" */
+    private array $celdas = [];
+
     public function puede(User $user, string $funcion, Nivel $nivelMinimo): bool
     {
         if (! $user->activo) {
@@ -33,12 +38,23 @@ final class MatrizPermisos implements Permisos
         return $this->celda($user, $funcion)->alcance ?? Alcance::Todas;
     }
 
+    public function olvidar(): void
+    {
+        $this->celdas = [];
+    }
+
     private function celda(User $user, string $funcion): ?Permiso
     {
-        return Permiso::query()
-            ->where('sector_id', $user->sector_id)
-            ->whereHas('funcion', fn (Builder $query): Builder => $query->where('clave', $funcion))
-            ->whereHas('sector', fn (Builder $query): Builder => $query->where('activo', true))
-            ->first();
+        $clave = $user->sector_id.'|'.$funcion;
+
+        if (! array_key_exists($clave, $this->celdas)) {
+            $this->celdas[$clave] = Permiso::query()
+                ->where('sector_id', $user->sector_id)
+                ->whereHas('funcion', fn (Builder $query): Builder => $query->where('clave', $funcion))
+                ->whereHas('sector', fn (Builder $query): Builder => $query->where('activo', true))
+                ->first();
+        }
+
+        return $this->celdas[$clave];
     }
 }

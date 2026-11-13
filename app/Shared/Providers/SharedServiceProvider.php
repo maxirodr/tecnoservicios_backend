@@ -25,6 +25,8 @@ final class SharedServiceProvider extends ModuleServiceProvider
 {
     public const LIMITE_SUBIDAS = 'adjuntos';
 
+    public const LIMITE_API = 'api';
+
     public function register(): void
     {
         $this->app->bind(RegistroActividad::class, EloquentRegistroActividad::class);
@@ -40,11 +42,23 @@ final class SharedServiceProvider extends ModuleServiceProvider
             (int) config('adjuntos.subidas_por_minuto'),
         )->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
 
+        RateLimiter::for(self::LIMITE_API, static fn (Request $request): Limit => Limit::perMinute(
+            (int) config('app.api_requests_per_minute'),
+        )->by(self::claveDeLimite($request)));
+
         if ($this->app->runningInConsole()) {
             $this->commands([PurgarAdjuntosHuerfanosCommand::class, PurgarIdempotencyKeysCommand::class]);
         }
 
         parent::boot();
+    }
+
+    /** Por usuario si hay sesión; si no, por IP (pedir código, ingresar, health). */
+    private static function claveDeLimite(Request $request): string
+    {
+        $userId = $request->user()?->getAuthIdentifier();
+
+        return $userId !== null ? 'user|'.$userId : 'ip|'.$request->ip();
     }
 
     protected function moduleDirectory(): string

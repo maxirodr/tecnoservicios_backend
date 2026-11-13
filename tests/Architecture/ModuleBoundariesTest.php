@@ -84,6 +84,57 @@ final class ModuleBoundariesTest extends TestCase
         );
     }
 
+    /** ADR-003, enmienda 2026-11-13. */
+    public function test_application_y_http_pueden_usar_la_infrastructure_de_su_propio_modulo(): void
+    {
+        $source = "<?php\nuse App\\Modules\\Obras\\Infrastructure\\Consultas\\ObrasQuery;\nuse App\\Modules\\Obras\\Infrastructure\\Consultas\\PorResponsable;";
+
+        $this->assertSame([], ModuleBoundaryScanner::violations($source, 'Obras', 'Application'));
+        $this->assertSame([], ModuleBoundaryScanner::violations($source, 'Obras', 'Http'));
+    }
+
+    /** ADR-003, enmienda 2026-11-13. */
+    public function test_ningun_modulo_usa_la_infrastructure_de_otro_modulo(): void
+    {
+        $source = "<?php\nuse App\\Modules\\Proveedores\\Infrastructure\\Consultas\\ProveedoresQuery;";
+
+        foreach (['Application', 'Http', 'Infrastructure', 'Domain', ''] as $layer) {
+            $this->assertContains(
+                'Importa Infrastructure del módulo Proveedores: App\\Modules\\Proveedores\\Infrastructure\\Consultas\\ProveedoresQuery',
+                ModuleBoundaryScanner::violations($source, 'Obras', $layer),
+                "Desde la capa '{$layer}'",
+            );
+        }
+    }
+
+    /** ADR-003, enmienda 2026-11-13. */
+    public function test_domain_no_usa_infrastructure_ni_la_propia(): void
+    {
+        $own = "<?php\nuse App\\Modules\\Obras\\Infrastructure\\Consultas\\ObrasQuery;";
+
+        $this->assertSame(
+            ['Domain usa la capa Infrastructure: App\\Modules\\Obras\\Infrastructure\\Consultas\\ObrasQuery'],
+            ModuleBoundaryScanner::violations($own, 'Obras', 'Domain'),
+        );
+    }
+
+    /** ADR-003, enmienda 2026-11-13: los query objects y sus filtros viven en Infrastructure/Consultas. */
+    public function test_los_query_objects_y_filtros_viven_en_infrastructure_consultas(): void
+    {
+        foreach (self::MODULES as $module) {
+            foreach (['Filtros', 'Consultas'] as $carpeta) {
+                $this->assertDirectoryDoesNotExist(
+                    $this->modulesPath().DIRECTORY_SEPARATOR.$module.DIRECTORY_SEPARATOR.'Application'.DIRECTORY_SEPARATOR.$carpeta,
+                    "{$module}/Application/{$carpeta}: va en {$module}/Infrastructure/Consultas",
+                );
+            }
+        }
+
+        foreach (['Obras', 'Proveedores'] as $module) {
+            $this->assertDirectoryExists($this->modulesPath().DIRECTORY_SEPARATOR.$module.DIRECTORY_SEPARATOR.'Infrastructure'.DIRECTORY_SEPARATOR.'Consultas');
+        }
+    }
+
     #[Test]
     public function scanner_allows_own_infrastructure_contracts_and_http_outside_domain(): void
     {

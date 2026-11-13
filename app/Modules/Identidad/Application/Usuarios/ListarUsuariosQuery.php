@@ -31,8 +31,8 @@ final class ListarUsuariosQuery
             ->with(['sector', 'jefe'])
             ->when($buscar !== null && $buscar !== '', fn (Builder $query): Builder => $query->where(
                 fn (Builder $texto): Builder => $texto
-                    ->where('nombre', 'like', '%'.$buscar.'%')
-                    ->orWhere('email', 'like', '%'.$buscar.'%'),
+                    ->where('nombre', 'like', TextoLike::contiene((string) $buscar))
+                    ->orWhere('email', 'like', TextoLike::contiene((string) $buscar)),
             ))
             ->when($sectorId !== null, fn (Builder $query): Builder => $query->where('sector_id', $sectorId))
             ->when($activo !== self::TODOS, fn (Builder $query): Builder => $query->where('activo', $activo === self::ACTIVOS))

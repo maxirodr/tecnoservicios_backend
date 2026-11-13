@@ -52,3 +52,24 @@
   (pendiente de Juani en `tasks/todo.md`).
 - El front cambia W-16 (mail → código) y W-19 (sin "Cambiar contraseña"), y W-15 pierde
   "Reenviar mail de bienvenida".
+
+## Enmienda 2026-11-13: bloqueo progresivo
+
+- **Decide:** Juani · **Origen:** SEG-01 de `docs/seguridad.md` (fuerza bruta distribuida: con IPs rotativas,
+  3 códigos cada 10 min × 5 intentos ≈ 2.160 intentos por día contra una cuenta).
+- **Código quemado** = el que se invalida por los 5 intentos fallidos (RN-IDE-05).
+- **3 quemados seguidos** del mismo mail, sin un ingreso exitoso en el medio → el mail queda **bloqueado 1 hora**.
+- **Otros 3 quemados** después de cumplir ese bloqueo, todavía sin ingreso exitoso → **24 horas** (y 24 h en
+  cada reincidencia siguiente).
+- **Un ingreso exitoso** pone todo en cero (también la reincidencia).
+- **Durante el bloqueo** nada lo delata: `POST /api/auth/pedir-codigo` responde lo mismo de siempre (200,
+  "Si el mail está registrado, te llegó un código.") pero no manda mail ni emite código; `POST /api/auth/ingresar`
+  responde el mismo 422 `errors.codigo` ("El código no es válido o venció."), aun con un código correcto.
+- **Dónde:** tabla `bloqueos_ingreso` (una fila por usuario: `codigos_quemados`, `bloqueos_cumplidos`,
+  `bloqueado_hasta`; migración reversible `2026_11_14_500001`). Umbral y duraciones son constantes de
+  `BloqueoIngreso` (`QUEMADOS_PARA_BLOQUEAR`, `HORAS_PRIMER_BLOQUEO`, `HORAS_REINCIDENCIA`). El contador se
+  actualiza dentro de la transacción del canje, con la fila del código bloqueada. Cada bloqueo queda en el
+  log (`ingreso.bloqueado`, con el id del usuario, sin el mail).
+- **Consecuencia:** el techo pasa de ≈2.160 intentos por día a 15 por hora y luego 15 cada 24 h; la persona
+  bloqueada espera o pide a gerencia que revise. Los límites por mail e IP de arriba siguen iguales.
+- Tests: `BloqueoProgresivoTest` (RN-IDE-49).

@@ -37,3 +37,32 @@ Http  ──►  Application  ──►  Domain  ◄──  Infrastructure
 ## Consecuencias
 - Indicadores (etapa siguiente) será un módulo nuevo que lee los contratos de Rendicion.
 - Herramientas absorberá Equipos en reparación moviendo el submódulo, sin migrar datos.
+
+## Enmienda 2026-11-13: Application y Http usan la Infrastructure de su propio módulo
+
+- **Decide:** Juani · **Origen:** TL-02 de `docs/seguridad.md`. El diagrama de arriba (`Application → Domain ←
+  Infrastructure`) no describía el código ni lo que el test permitía: los casos de uso usan modelos Eloquent y
+  query objects del propio módulo. Se corrige el ADR, no el código.
+- **Permitido:** `Application` y `Http` **pueden** usar la `Infrastructure` **de su propio módulo** (modelos
+  Eloquent, query objects y sus filtros, servicios técnicos como `CodigosDeIngreso` o `MailsDeCuenta`).
+- **Sigue prohibido:**
+  - `Domain` → `Infrastructure` (ni la propia), `Http` (de cualquier módulo), `Illuminate\Http` y Facades.
+  - Cualquier capa de un módulo → la `Infrastructure` de **otro** módulo (se usa su `Contracts/` o sus eventos).
+  - Un puerto (`Application/Ports`) sigue siendo la forma de depender de algo que implementa **otro** módulo
+    (p. ej. `PedidosDeObra`, que implementa Pedidos).
+- **Ubicación única de los query objects:** el punto de partida (`ObrasQuery`, `ProveedoresQuery`) y sus
+  filtros componibles (`PorResponsable`, `PorNombre`…) viven en `<Modulo>/Infrastructure/Consultas/`. Los casos
+  de uso de lectura (`ListarObrasQuery`, `ListarProveedoresQuery`) quedan en `Application` y los componen.
+  Proveedores tenía los suyos en `Application/Filtros` y `Application/ProveedoresQuery`: se movieron a
+  `Infrastructure/Consultas` (cambio mecánico de namespace).
+- **Lo verifica** `tests/Architecture/ModuleBoundariesTest`: `test_application_y_http_pueden_usar_la_infrastructure_de_su_propio_modulo`,
+  `test_ningun_modulo_usa_la_infrastructure_de_otro_modulo`, `test_domain_no_usa_infrastructure_ni_la_propia` y
+  `test_los_query_objects_y_filtros_viven_en_infrastructure_consultas`, además del barrido de todo `app/Modules`.
+
+```
+Http ──► Application ──► Domain
+  │           │            ▲
+  └─────┬─────┘            │
+        ▼                  │
+  Infrastructure (propia) ─┘        Otro módulo: solo Contracts/ o eventos
+```

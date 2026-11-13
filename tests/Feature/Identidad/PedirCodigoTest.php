@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Identidad;
 
+use App\Modules\Identidad\Application\Auth\EnviarCodigoJob;
 use App\Modules\Identidad\Application\Auth\PedirCodigoAction;
 use App\Modules\Identidad\Domain\Models\CodigoIngreso;
 use App\Modules\Identidad\Domain\Models\User;
 use App\Modules\Identidad\IdentidadServiceProvider;
 use App\Modules\Identidad\Infrastructure\Mail\CodigoIngresoMail;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Queue;
 
 /** F-01 · W-16 · HU-001/HU-002 (ADR-015, RN-IDE-02, 03, 06, 08): pedir el código por mail. */
 final class PedirCodigoTest extends IdentidadTestCase
@@ -57,6 +60,22 @@ final class PedirCodigoTest extends IdentidadTestCase
         $this->assertSame(1, CodigoIngreso::query()->count());
     }
 
+    /** SEG-06: sin diferencia de trabajo (ni de tiempo) entre un mail que existe y uno que no. */
+    public function test_pedir_codigo_hace_el_mismo_trabajo_exista_o_no_el_mail(): void
+    {
+        $this->usuarioDe('Compras', ['email' => 'carla@empresa-ejemplo.com']);
+        Queue::fake();
+
+        $existe = $this->trabajoDelPedido('carla@empresa-ejemplo.com');
+        $noExiste = $this->trabajoDelPedido('nadie@empresa-ejemplo.com');
+
+        $this->assertSame($existe, $noExiste);
+        $this->assertSame([], $existe, 'El pedido no consulta ni escribe la base: lo hace el job');
+        Queue::assertPushedOn(EnviarCodigoJob::COLA, EnviarCodigoJob::class);
+        Queue::assertPushed(EnviarCodigoJob::class, 2);
+        $this->assertSame(0, CodigoIngreso::query()->count());
+    }
+
     public function test_usuario_inactivo_no_recibe_codigo(): void
     {
         User::factory()->enSector('Compras')->inactivo()->create(['email' => 'hugo@empresa-ejemplo.com']);
@@ -75,6 +94,21 @@ final class PedirCodigoTest extends IdentidadTestCase
         $this->usuarioDe('Compras', ['email' => 'carla@empresa-ejemplo.com']);
 
         $this->assertNotNull($this->pedirCodigo(' CARLA@Empresa-Ejemplo.com '));
+    }
+
+    /**
+     * Consultas SQL que hace el pedido HTTP (sin bindings: solo la forma).
+     *
+     * @return list<string>
+     */
+    private function trabajoDelPedido(string $email): array
+    {
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+        $this->postJson('/api/auth/pedir-codigo', ['email' => $email])->assertOk();
+        DB::disableQueryLog();
+
+        return array_map(static fn (array $query): string => (string) $query['query'], DB::getQueryLog());
     }
 
     public function test_pedir_codigo_rechaza_un_mail_sin_formato(): void

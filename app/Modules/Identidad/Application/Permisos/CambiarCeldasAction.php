@@ -43,6 +43,8 @@ final class CambiarCeldasAction
         $this->validar($celdas, $funciones->all(), $sectoresActivos);
 
         DB::transaction(function () use ($celdas, $funciones): void {
+            $this->administradores->bloquear();
+
             foreach ($celdas as $celda) {
                 /** @var Funcion $funcion */
                 $funcion = $funciones->get($celda['funcion']);

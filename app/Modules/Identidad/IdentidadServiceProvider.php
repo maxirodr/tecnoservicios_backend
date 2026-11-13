@@ -9,6 +9,8 @@ use App\Modules\Identidad\Contracts\ObrasDelResponsable;
 use App\Modules\Identidad\Contracts\Permisos;
 use App\Modules\Identidad\Contracts\PlazosPrioridad;
 use App\Modules\Identidad\Domain\MailNormalizado;
+use App\Modules\Identidad\Domain\Models\Permiso;
+use App\Modules\Identidad\Domain\Models\Sector;
 use App\Modules\Identidad\Http\Middleware\AsegurarUsuarioActivo;
 use App\Modules\Identidad\Http\Middleware\VerificarPermiso;
 use App\Modules\Identidad\Infrastructure\Console\CrearAdministradorCommand;
@@ -20,9 +22,12 @@ use App\Shared\Http\ApiResponse;
 use App\Shared\Providers\ModuleServiceProvider;
 use Closure;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Foundation\Http\Events\RequestHandled;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 
 final class IdentidadServiceProvider extends ModuleServiceProvider
@@ -49,13 +54,15 @@ final class IdentidadServiceProvider extends ModuleServiceProvider
 
     /** @var array<class-string, class-string> */
     public array $bindings = [
-        Permisos::class => MatrizPermisos::class,
         Jerarquia::class => JerarquiaPorJefe::class,
         PlazosPrioridad::class => PlazosVigentes::class,
     ];
 
     public function register(): void
     {
+        // TL-05: una instancia por pedido (o por job de la cola), que recuerda las celdas leídas.
+        $this->app->scoped(MatrizPermisos::class);
+        $this->app->scoped(Permisos::class, static fn (Application $app): Permisos => $app->make(MatrizPermisos::class));
         // Obras registra la suya al existir (su provider carga después).
         $this->app->bindIf(ObrasDelResponsable::class, SinObrasDelResponsable::class);
     }
@@ -74,10 +81,22 @@ final class IdentidadServiceProvider extends ModuleServiceProvider
         $router->pushMiddlewareToGroup('api', AsegurarUsuarioActivo::class);
 
         $this->limites();
+        $this->olvidarPermisosAlCambiar();
 
         if ($this->app->runningInConsole()) {
             $this->commands([CrearAdministradorCommand::class]);
         }
+    }
+
+    /** La matriz recordada vale solo dentro del pedido y hasta que se toque una celda o un sector. */
+    private function olvidarPermisosAlCambiar(): void
+    {
+        $olvidar = fn () => $this->app->make(MatrizPermisos::class)->olvidar();
+
+        Event::listen(RequestHandled::class, $olvidar);
+        Permiso::saved($olvidar);
+        Permiso::deleted($olvidar);
+        Sector::saved($olvidar);
     }
 
     private function limites(): void

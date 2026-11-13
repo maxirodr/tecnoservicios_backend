@@ -12,19 +12,19 @@ use App\Modules\Obras\Application\Presupuestos\AgregarPresupuestoAction;
 use App\Modules\Obras\Application\Presupuestos\QuitarPresupuestoAction;
 use App\Modules\Obras\Application\Presupuestos\SugerirNumeroAdicionalQuery;
 use App\Modules\Obras\Domain\Models\Presupuesto;
-use App\Modules\Obras\Http\Controllers\Concerns\ConUsuario;
 use App\Modules\Obras\Http\Requests\ActualizarPresupuestoRequest;
 use App\Modules\Obras\Http\Requests\AgregarPresupuestoRequest;
 use App\Modules\Obras\Http\Resources\PresupuestoResource;
 use App\Shared\Http\RespondsWithEnvelope;
+use App\Shared\Http\UsuarioAutenticado;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /** F-18 (W-20, W-21): presupuestos adicionales y corrección de cualquier presupuesto. */
 final class PresupuestoController
 {
-    use ConUsuario;
     use RespondsWithEnvelope;
+    use UsuarioAutenticado;
 
     public function __construct(private readonly AccesoObra $acceso) {}
 

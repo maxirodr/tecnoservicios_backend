@@ -6,7 +6,6 @@ namespace App\Modules\Identidad\Domain\Models;
 
 use App\Modules\Identidad\Domain\NombreClave;
 use Database\Factories\SectorFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,7 +21,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property bool $es_direccion
  * @property bool $activo
  */
-#[Fillable(['nombre', 'es_direccion', 'activo'])]
 #[UseFactory(SectorFactory::class)]
 class Sector extends Model
 {
@@ -30,6 +28,8 @@ class Sector extends Model
     use HasFactory;
 
     protected $table = 'sectores';
+
+    protected $fillable = ['nombre', 'es_direccion', 'activo'];
 
     /**
      * @return array<string, string>

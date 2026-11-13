@@ -31,6 +31,8 @@ final class PuertosFalsos implements AvanceGastoDeObra, PedidosDeObra
 
     public int $consultasDeConteo = 0;
 
+    public int $consultasDePorcentaje = 0;
+
     public static function registrar(Container $app): self
     {
         $puertos = new self;
@@ -59,6 +61,8 @@ final class PuertosFalsos implements AvanceGastoDeObra, PedidosDeObra
 
     public function porcentajesGastados(array $obraIds): array
     {
+        $this->consultasDePorcentaje++;
+
         return array_map(fn (int $id): ?string => $this->porcentajes[$id] ?? null, array_combine($obraIds, $obraIds));
     }
 

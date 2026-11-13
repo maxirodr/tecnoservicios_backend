@@ -6,7 +6,6 @@ namespace App\Modules\Identidad\Domain\Models;
 
 use App\Modules\Identidad\Domain\Enums\Alcance;
 use App\Modules\Identidad\Domain\Enums\Nivel;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -21,10 +20,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property-read Funcion $funcion
  * @property-read Sector $sector
  */
-#[Fillable(['sector_id', 'funcion_id', 'nivel', 'alcance'])]
 class Permiso extends Model
 {
     protected $table = 'permisos';
+
+    protected $fillable = ['sector_id', 'funcion_id', 'nivel', 'alcance'];
 
     /**
      * @return array<string, string>

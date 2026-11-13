@@ -37,7 +37,23 @@ final readonly class SubirArchivoAction
         $disco = (string) config('adjuntos.disk');
         $carpeta = 'adjuntos/'.Carbon::now()->format('Y/m');
         $uuid = (string) Str::uuid();
+        $confirmado = false;
 
+        try {
+            $adjunto = $this->guardar($user, $contexto, $archivo, $nombre, $disco, $carpeta, $uuid);
+            $confirmado = true;
+
+            return $adjunto;
+        } finally {
+            // TL-15: si la transacción no confirma (rollback o falla el commit), el archivo no queda huérfano.
+            if (! $confirmado) {
+                $this->filesystem->disk($disco)->delete($carpeta.'/'.$uuid);
+            }
+        }
+    }
+
+    private function guardar(User $user, string $contexto, UploadedFile $archivo, string $nombre, string $disco, string $carpeta, string $uuid): Adjunto
+    {
         return $this->db->transaction(function () use ($user, $contexto, $archivo, $nombre, $disco, $carpeta, $uuid): Adjunto {
             $adjunto = Adjunto::query()->create([
                 'contexto' => $contexto,

@@ -13,13 +13,13 @@ use App\Modules\Proveedores\Application\EditarProveedorAction;
 use App\Modules\Proveedores\Application\ListarProveedoresQuery;
 use App\Modules\Proveedores\Domain\Models\Proveedor;
 use App\Modules\Proveedores\Domain\ProveedorDuplicado;
-use App\Modules\Proveedores\Http\Controllers\Concerns\UsuarioAutenticado;
 use App\Modules\Proveedores\Http\Requests\BuscarProveedoresRequest;
 use App\Modules\Proveedores\Http\Requests\GuardarProveedorRequest;
 use App\Modules\Proveedores\Http\Resources\ProveedorResource;
 use App\Modules\Proveedores\Http\Resources\ProveedorResumenResource;
 use App\Shared\Http\ApiExceptionRenderer;
 use App\Shared\Http\RespondsWithEnvelope;
+use App\Shared\Http\UsuarioAutenticado;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

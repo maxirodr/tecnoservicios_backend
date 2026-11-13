@@ -52,7 +52,7 @@ No hay `DELETE` (RN-PRV-11). El buscador general (`GET /api/buscar?q=`) vive en 
 
 - `Http/` — controllers delgados, FormRequests, Resources.
 - `Application/` — casos de uso (`CrearProveedorAction`, `EditarProveedorAction`), queries con filtros
-  componibles (`ProveedoresQuery` + `Filtros\PorNombre`, `Filtros\Alfabetico`), parecidos, puerto F-57.
+  componibles (`ProveedoresQuery` + `Infrastructure\Consultas\PorNombre`, `Alfabetico`), parecidos, puerto F-57.
 - `Domain/` — modelo `Proveedor`, normalización del nombre, CUIT, similitud, `ProveedorDuplicado`.
 - `Infrastructure/` — `ProveedoresConsultaEloquent`, `GastadoPorProveedorNulo`, `ProveedoresEnBuscador`.
 

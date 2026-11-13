@@ -6,10 +6,10 @@ namespace App\Modules\Identidad\Http\Controllers;
 
 use App\Modules\Identidad\Application\Perfil\ActualizarPerfilAction;
 use App\Modules\Identidad\Application\Perfil\UsuarioActualQuery;
-use App\Modules\Identidad\Http\Controllers\Concerns\UsuarioAutenticado;
 use App\Modules\Identidad\Http\Requests\ActualizarPerfilRequest;
 use App\Modules\Identidad\Http\Resources\UsuarioActualResource;
 use App\Shared\Http\RespondsWithEnvelope;
+use App\Shared\Http\UsuarioAutenticado;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

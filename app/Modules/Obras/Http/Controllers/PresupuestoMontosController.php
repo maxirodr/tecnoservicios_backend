@@ -10,11 +10,11 @@ use App\Modules\Obras\Application\Montos\CargarMontoObraAction;
 use App\Modules\Obras\Application\Montos\CargarMontosAction;
 use App\Modules\Obras\Application\Montos\PresupuestoPorRubroQuery;
 use App\Modules\Obras\Domain\Models\Presupuesto;
-use App\Modules\Obras\Http\Controllers\Concerns\ConUsuario;
 use App\Modules\Obras\Http\Requests\CargarMontoObraRequest;
 use App\Modules\Obras\Http\Requests\CargarMontosRequest;
 use App\Modules\Obras\Http\Resources\PresupuestoResource;
 use App\Shared\Http\RespondsWithEnvelope;
+use App\Shared\Http\UsuarioAutenticado;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -24,8 +24,8 @@ use Illuminate\Http\Request;
  */
 final class PresupuestoMontosController
 {
-    use ConUsuario;
     use RespondsWithEnvelope;
+    use UsuarioAutenticado;
 
     public function __construct(
         private readonly AccesoObra $acceso,

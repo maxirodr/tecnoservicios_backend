@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Api\Traits\SafeErrorResponse;
+use App\Http\Controllers\Api\Support\ErrorLogContext;
 use App\Shared\Http\ApiExceptionRenderer;
 use App\Shared\Http\Middleware\RemoveStackHeaders;
+use App\Shared\Http\Middleware\SecurityHeaders;
+use App\Shared\Providers\SharedServiceProvider;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -24,8 +26,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->prepend(RemoveStackHeaders::class);
+        $middleware->append(SecurityHeaders::class);
         $middleware->statefulApi();
-        $middleware->trustProxies(at: '*');
+        // Límite general por usuario o IP (SEG-03): limitador `api` en SharedServiceProvider.
+        $middleware->throttleApi(SharedServiceProvider::LIMITE_API);
+        // Proxies de confianza: config/trustedproxy.php (TRUSTED_PROXIES), nunca `*` (SEG-04).
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Error logging (NexoSmart bug-report): todo error de servidor y toda validación fallida
@@ -43,19 +48,12 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             $route = $request->route();
-            $baseContext = [
-                'action' => $route instanceof Route ? $route->getActionName() : 'unknown',
-                'method' => $request->method(),
-                'url' => $request->fullUrl(),
-                'user_id' => $request->user()?->getAuthIdentifier(),
-                'ip' => $request->ip(),
-                'input' => $request->except(['password', 'password_confirmation', 'codigo', 'token', 'secret']),
-            ];
+            $baseContext = ErrorLogContext::fromRequest($request);
 
             if ($e instanceof ValidationException) {
                 Log::channel('errors')->warning($e->getMessage(), $baseContext + [
                     'exception_class' => 'ValidationException',
-                    'validation_errors' => $e->errors(),
+                    'validation_errors' => ErrorLogContext::validationFields($e->errors()),
                 ]);
 
                 return false;
@@ -67,10 +65,10 @@ return Application::configure(basePath: dirname(__DIR__))
                 'user_agent' => $request->userAgent(),
                 'referer' => $request->header('referer'),
                 'file' => $e->getFile().':'.$e->getLine(),
-                'trace_short' => SafeErrorResponse::shortTrace($e),
+                'trace_short' => ErrorLogContext::shortTrace($e),
             ]);
 
-            // Sigue el reporte por defecto (laravel.log).
+            // Ya quedó en el canal `errors`: false corta el reporte por defecto (no se duplica en laravel.log).
             return false;
         });
 
