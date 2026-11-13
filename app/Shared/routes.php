@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Shared\Adjuntos\Http\AdjuntoController;
+use App\Shared\Busqueda\Http\BuscadorController;
 use App\Shared\Providers\SharedServiceProvider;
 use Illuminate\Support\Facades\Route;
 
@@ -22,4 +23,6 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::delete('/adjuntos/{adjunto}', [AdjuntoController::class, 'destroy'])
         ->whereNumber('adjunto')
         ->name('adjuntos.destroy');
+
+    Route::get('/buscar', BuscadorController::class)->name('buscar');
 });
