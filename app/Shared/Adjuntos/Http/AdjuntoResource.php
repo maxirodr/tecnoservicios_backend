@@ -40,14 +40,10 @@ final class AdjuntoResource extends JsonResource
     }
 
     /**
-     * @return array{id: int, nombre: string|null}
+     * @return array{id: int, nombre: string}
      */
     private static function usuario(User $user): array
     {
-        // `users.nombre` según modelo-datos.md; `name` mientras Identidad no renombre la columna.
-        $atributos = $user->getAttributes();
-        $nombre = $atributos['nombre'] ?? $atributos['name'] ?? null;
-
-        return ['id' => (int) $user->getKey(), 'nombre' => is_string($nombre) ? $nombre : null];
+        return ['id' => $user->id, 'nombre' => $user->nombre];
     }
 }

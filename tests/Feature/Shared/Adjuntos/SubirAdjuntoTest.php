@@ -30,7 +30,7 @@ final class SubirAdjuntoTest extends AdjuntosTestCase
         $adjunto = $this->adjuntoDeLaRespuesta($response);
         $this->assertTrue($adjunto->esTemporal());
         $this->assertSame($user->id, $adjunto->subido_por);
-        $response->assertJsonPath('data.subido_por.id', $user->id)
+        $response->assertJsonPath('data.subido_por', ['id' => $user->id, 'nombre' => $user->nombre])
             ->assertJsonPath('data.contexto', 'documento_obra')
             ->assertJsonPath('message', null)
             ->assertJsonPath('errors', null);
