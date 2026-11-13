@@ -4,44 +4,62 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Modules\Identidad\Domain\Models\Sector;
 use App\Modules\Identidad\Domain\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
+ * Usuarios ficticios. Por defecto en un sector nuevo sin celdas (sin acceso a nada):
+ * para probar permisos usar `enSector('Compras')` (sectores y matriz de la migración).
+ *
  * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
+    public const PASSWORD = 'contrasena-de-prueba';
+
     protected static ?string $password;
 
     /**
-     * Define the model's default state.
-     *
      * @return array<string, mixed>
      */
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'nombre' => fake()->firstName(),
             'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => static::$password ??= Hash::make(self::PASSWORD),
+            'telefono' => null,
+            'activo' => true,
+            'sector_id' => Sector::factory(),
+            'jefe_id' => null,
             'remember_token' => Str::random(10),
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
+    /** En un sector de la configuración inicial (§6.2), por nombre. */
+    public function enSector(string $nombre): static
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
+        return $this->state(fn (): array => [
+            'sector_id' => Sector::query()->where('nombre', $nombre)->valueOrFail('id'),
         ]);
+    }
+
+    public function inactivo(): static
+    {
+        return $this->state(fn (): array => ['activo' => false]);
+    }
+
+    /** Dado de alta pero sin usar todavía el mail de bienvenida. */
+    public function sinContrasena(): static
+    {
+        return $this->state(fn (): array => ['password' => null]);
+    }
+
+    public function dependeDe(User $jefe): static
+    {
+        return $this->state(fn (): array => ['jefe_id' => $jefe->id]);
     }
 }
