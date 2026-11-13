@@ -63,7 +63,9 @@ final class SectoresTest extends IdentidadTestCase
         $this->assertSame('editar·todas', $celdas['equipos_reparacion']);
         $this->assertSame('ver·todas', $celdas['obras']);
         $this->assertSame(9, $celdas->filter(fn (string $celda): bool => $celda === 'sin_acceso·todas')->count());
-        $this->assertCount(1, $this->actividad->de(Sector::class, 'creado'));
+        $creado = $this->actividades(Sector::class, 'creado');
+        $this->assertCount(1, $creado);
+        $this->assertSame($sector->id, $creado[0]->sujeto_id);
     }
 
     public function test_no_se_saca_un_sector_con_usuarios_activos(): void

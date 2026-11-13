@@ -59,14 +59,16 @@ final class PlazosPrioridadTest extends IdentidadTestCase
 
     public function test_cambio_de_plazos_queda_registrado_con_los_valores_anteriores(): void
     {
-        $this->actingAs($this->administrador())->putJson('/api/plazos-prioridad', $this->plazos(0, 5))->assertOk();
+        $admin = $this->administrador();
+        $this->actingAs($admin)->putJson('/api/plazos-prioridad', $this->plazos(0, 5))->assertOk();
 
-        $registro = $this->actividad->de(Plazos::class, 'editado')[0] ?? null;
-        $this->assertNotNull($registro);
+        $registros = $this->actividades(Plazos::class, 'editado');
+        $this->assertCount(1, $registros);
+        $this->assertSame($admin->id, $registros[0]->user_id);
         $this->assertSame([
             'urgente_hasta_dias' => ['antes' => 1, 'despues' => 0],
             'prioritario_hasta_dias' => ['antes' => 7, 'despues' => 5],
-        ], $registro['cambios']);
+        ], $registros[0]->cambios);
     }
 
     public function test_calculo_usa_los_plazos_vigentes(): void

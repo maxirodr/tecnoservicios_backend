@@ -9,6 +9,7 @@ use App\Modules\Identidad\Application\Usuarios\GuardaAdministradores;
 use App\Modules\Identidad\Domain\Models\Funcion;
 use App\Modules\Identidad\Domain\Models\Permiso;
 use App\Modules\Identidad\Domain\Models\Sector;
+use App\Shared\Actividad\Actividad;
 
 /** F-60 · W-15 · HU-008 · HU-009 (RN-IDE-34…38). */
 final class TablaDePermisosTest extends IdentidadTestCase
@@ -84,17 +85,23 @@ final class TablaDePermisosTest extends IdentidadTestCase
     {
         $ingenieria = Sector::query()->where('nombre', 'Ingeniería de proyectos')->valueOrFail('id');
 
-        $this->actingAs($this->administrador())->putJson('/api/permisos', ['celdas' => [
+        $admin = $this->administrador();
+
+        $this->actingAs($admin)->putJson('/api/permisos', ['celdas' => [
             ['sector_id' => $ingenieria, 'funcion' => 'rendicion', 'nivel' => 'ver', 'alcance' => 'todas'],
             ['sector_id' => $ingenieria, 'funcion' => 'obras', 'nivel' => 'editar', 'alcance' => 'todas'],
         ]])->assertOk()->assertJsonPath('message', 'Guardamos la tabla de permisos.');
 
-        $registros = $this->actividad->de(Permiso::class, 'editado');
+        $registros = $this->actividades(Permiso::class, 'editado');
         $this->assertCount(1, $registros, 'Solo la celda que cambió');
+        $celda = Permiso::query()->where('sector_id', $ingenieria)
+            ->whereHas('funcion', fn ($query) => $query->where('clave', 'rendicion'))->firstOrFail();
+        $this->assertSame($celda->id, $registros[0]->sujeto_id);
+        $this->assertSame($admin->id, $registros[0]->user_id);
         $this->assertSame([
             'nivel' => ['antes' => 'ver', 'despues' => 'ver'],
             'alcance' => ['antes' => 'propias', 'despues' => 'todas'],
-        ], $registros[0]['cambios']);
+        ], $registros[0]->cambios);
     }
 
     public function test_cambio_de_matriz_es_todo_o_nada(): void
@@ -108,7 +115,7 @@ final class TablaDePermisosTest extends IdentidadTestCase
         ]])->assertUnprocessable()->assertJsonValidationErrors(['celdas.1.sector_id']);
 
         $this->assertSame('ver', $this->nivel('Compras', 'obras'));
-        $this->assertSame([], $this->actividad->registros);
+        $this->assertSame(0, Actividad::query()->count());
     }
 
     public function test_no_se_puede_dejar_sin_administrador_desde_la_tabla(): void

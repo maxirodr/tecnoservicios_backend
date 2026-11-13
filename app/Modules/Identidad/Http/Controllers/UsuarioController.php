@@ -9,7 +9,6 @@ use App\Modules\Identidad\Application\Usuarios\ActualizarUsuarioAction;
 use App\Modules\Identidad\Application\Usuarios\CrearUsuarioAction;
 use App\Modules\Identidad\Application\Usuarios\ListarUsuariosQuery;
 use App\Modules\Identidad\Application\Usuarios\OpcionesUsuariosQuery;
-use App\Modules\Identidad\Application\Usuarios\ReenviarBienvenidaAction;
 use App\Modules\Identidad\Domain\Models\User;
 use App\Modules\Identidad\Http\Controllers\Concerns\UsuarioAutenticado;
 use App\Modules\Identidad\Http\Requests\ActualizarUsuarioRequest;
@@ -43,9 +42,10 @@ final class UsuarioController
 
     public function store(CrearUsuarioRequest $request, CrearUsuarioAction $crear): JsonResponse
     {
-        $user = $crear->handle($this->usuario($request), $request->datos());
+        $user = $crear->handle($request->datos());
 
-        return $this->created(new UsuarioResource($user->load(['sector', 'jefe'])), "Le mandamos el mail de bienvenida a {$user->email}.");
+        // ADR-015: no hay mail de bienvenida; la persona entra pidiendo un código con su mail.
+        return $this->created(new UsuarioResource($user->load(['sector', 'jefe'])), "Listo: {$user->nombre} ya puede entrar con su mail.");
     }
 
     public function show(int $usuario, ACargoDelUsuarioQuery $aCargo): JsonResponse
@@ -61,14 +61,6 @@ final class UsuarioController
         $user->load(['sector', 'jefe']);
 
         return $this->ok(UsuarioResource::detalle($user, $aCargo->handle($user)), 'Guardamos los cambios.');
-    }
-
-    public function reenviarBienvenida(Request $request, int $usuario, ReenviarBienvenidaAction $reenviar): JsonResponse
-    {
-        $user = $this->buscar($usuario);
-        $reenviar->handle($this->usuario($request), $user);
-
-        return $this->noContent("Le mandamos de nuevo el mail a {$user->email}.");
     }
 
     private function buscar(int $id): User

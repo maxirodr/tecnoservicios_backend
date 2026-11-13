@@ -6,37 +6,34 @@ namespace App\Modules\Identidad\Application\Auth;
 
 use App\Modules\Identidad\Domain\MailNormalizado;
 use App\Modules\Identidad\Domain\Models\User;
-use Illuminate\Contracts\Hashing\Hasher;
+use App\Modules\Identidad\Infrastructure\CodigosDeIngreso;
 use Illuminate\Validation\ValidationException;
 
 /**
- * F-01: ingreso con mail + contraseña (RN-IDE-01…04). El mensaje de error no revela si el mail
- * existe; el inactivo recibe su propio mensaje solo si la contraseña es correcta.
+ * F-01 (ADR-015): entrar con el mail y el código que llegó por mail (RN-IDE-01, 03…05). Código
+ * incorrecto, vencido o usado, usuario inactivo o mail inexistente: siempre el mismo mensaje.
  */
 final class IngresarAction
 {
-    public const CREDENCIALES_INCORRECTAS = 'Mail o contraseña incorrectos.';
-
-    public const USUARIO_INACTIVO = 'Tu usuario está inactivo. Si lo necesitás, pedíselo a gerencia.';
+    public const CODIGO_INVALIDO = 'El código no es válido o venció.';
 
     public function __construct(
+        private readonly CodigosDeIngreso $codigos,
         private readonly SesionWeb $sesion,
-        private readonly Hasher $hasher,
     ) {}
 
-    public function handle(string $email, string $password, bool $recordarme): User
+    public function handle(string $email, string $codigo): User
     {
-        $user = User::query()->where('email', MailNormalizado::de($email))->first();
+        $user = User::query()
+            ->where('email', MailNormalizado::de($email))
+            ->where('activo', true)
+            ->first();
 
-        if ($user === null || $user->password === null || ! $this->hasher->check($password, $user->password)) {
-            throw ValidationException::withMessages(['email' => [self::CREDENCIALES_INCORRECTAS]]);
+        if ($user === null || ! $this->codigos->canjear($user, $codigo)) {
+            throw ValidationException::withMessages(['codigo' => [self::CODIGO_INVALIDO]]);
         }
 
-        if (! $user->activo) {
-            throw ValidationException::withMessages(['email' => [self::USUARIO_INACTIVO]]);
-        }
-
-        $this->sesion->iniciar($user, $recordarme);
+        $this->sesion->iniciar($user);
 
         return $user;
     }

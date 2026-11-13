@@ -4,19 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Identidad;
 
-use App\Modules\Identidad\Application\Perfil\CambiarContrasenaAction;
 use App\Modules\Identidad\Domain\Enums\ClaveFuncion;
 use App\Modules\Identidad\Domain\Models\Sector;
 use App\Modules\Identidad\Domain\Models\User;
-use Database\Factories\UserFactory;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
-/** F-02 · F-10 · W-17 · W-19 · HU-003 · HU-004 (RN-IDE-11…17). */
+/** F-02 · F-10 · W-17 · W-19 · HU-003 (RN-IDE-11…16). */
 final class PerfilTest extends IdentidadTestCase
 {
-    private const NUEVA = 'otra-contrasena-segura';
-
     public function test_me_devuelve_las_doce_funciones_con_nivel_y_alcance(): void
     {
         $laura = $this->usuarioDe('Ingeniería de proyectos');
@@ -55,7 +49,8 @@ final class PerfilTest extends IdentidadTestCase
         $this->actingAs($laura)->getJson('/api/me')
             ->assertJsonPath('data.jefe', ['id' => $hernan->id, 'nombre' => 'Hernán', 'sector' => 'Jefatura de Proyectos'])
             ->assertJsonPath('data.telefono', '291 000-0000')
-            ->assertJsonMissingPath('data.password');
+            ->assertJsonMissingPath('data.password')
+            ->assertJsonMissingPath('data.eligio_contrasena');
     }
 
     public function test_perfil_permite_cambiar_nombre_y_telefono(): void
@@ -84,72 +79,6 @@ final class PerfilTest extends IdentidadTestCase
         ])->assertUnprocessable()->assertJsonValidationErrors(['email', 'sector_id', 'jefe_id']);
 
         $this->assertDatabaseHas('users', ['id' => $laura->id, 'email' => 'laura@empresa-ejemplo.com', 'sector_id' => $laura->sector_id, 'jefe_id' => null]);
-    }
-
-    public function test_cambiar_contrasena_pide_la_actual(): void
-    {
-        $diego = $this->usuarioDe('Compras');
-
-        $this->actingAs($diego)->putJson('/api/me/contrasena', [
-            'actual' => 'no-es-la-actual',
-            'nueva' => self::NUEVA,
-            'nueva_confirmation' => self::NUEVA,
-        ])->assertUnprocessable()->assertJsonPath('errors.actual.0', CambiarContrasenaAction::ACTUAL_NO_COINCIDE);
-
-        $this->assertTrue(Hash::check(UserFactory::PASSWORD, (string) $diego->fresh()?->password));
-
-        $this->actingAs($diego)->putJson('/api/me/contrasena', [
-            'actual' => UserFactory::PASSWORD,
-            'nueva' => self::NUEVA,
-            'nueva_confirmation' => self::NUEVA,
-        ])->assertOk()->assertJsonPath('message', 'Cambiamos tu contraseña.');
-
-        $this->assertTrue(Hash::check(self::NUEVA, (string) $diego->fresh()?->password));
-    }
-
-    public function test_nueva_contrasena_no_puede_ser_igual_a_la_actual(): void
-    {
-        $diego = $this->usuarioDe('Compras');
-
-        $this->actingAs($diego)->putJson('/api/me/contrasena', [
-            'actual' => UserFactory::PASSWORD,
-            'nueva' => UserFactory::PASSWORD,
-            'nueva_confirmation' => UserFactory::PASSWORD,
-        ])->assertUnprocessable()->assertJsonPath('errors.nueva.0', CambiarContrasenaAction::NUEVA_IGUAL_A_ACTUAL);
-    }
-
-    public function test_nueva_contrasena_tiene_al_menos_10_caracteres(): void
-    {
-        $diego = $this->usuarioDe('Compras');
-
-        $this->actingAs($diego)->putJson('/api/me/contrasena', [
-            'actual' => UserFactory::PASSWORD,
-            'nueva' => 'corta1234',
-            'nueva_confirmation' => 'corta1234',
-        ])->assertUnprocessable()->assertJsonValidationErrors(['nueva']);
-    }
-
-    public function test_cambiar_contrasena_cierra_las_otras_sesiones(): void
-    {
-        $diego = $this->usuarioDe('Compras');
-        $hashViejo = Auth::guard('web')->hashPasswordForCookie((string) $diego->password);
-
-        $this->actingAs($diego)->putJson('/api/me/contrasena', [
-            'actual' => UserFactory::PASSWORD,
-            'nueva' => self::NUEVA,
-            'nueva_confirmation' => self::NUEVA,
-        ])->assertOk();
-
-        $diego = $diego->fresh() ?? $diego;
-        $hashNuevo = Auth::guard('web')->hashPasswordForCookie((string) $diego->password);
-        $this->app['auth']->forgetGuards();
-
-        $this->desdeElFront()->withSession(['password_hash_web' => $hashNuevo])->actingAs($diego, 'web')
-            ->getJson('/api/me')->assertOk();
-
-        $this->app['auth']->forgetGuards();
-        $this->desdeElFront()->withSession(['password_hash_web' => $hashViejo])->actingAs($diego, 'web')
-            ->getJson('/api/me')->assertUnauthorized();
     }
 
     public function test_cambio_en_la_matriz_vale_desde_el_proximo_pedido(): void

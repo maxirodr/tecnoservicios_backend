@@ -9,8 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
- * Usuario de W-15/W-39. `eligio_contrasena` decide si se muestra "Reenviar mail de bienvenida"
- * (RN-IDE-09). El detalle suma lo que tiene a cargo (RN-IDE-24). Nunca viaja la contraseña.
+ * Usuario de W-15/W-39. El detalle suma lo que tiene a cargo (RN-IDE-24).
  *
  * @property User $resource
  */
@@ -46,7 +45,6 @@ final class UsuarioResource extends JsonResource
             'email' => $user->email,
             'telefono' => $user->telefono,
             'activo' => $user->activo,
-            'eligio_contrasena' => $user->eligioContrasena(),
             'sector' => ['id' => $user->sector->id, 'nombre' => $user->sector->nombre],
             'jefe' => $jefe === null ? null : ['id' => $jefe->id, 'nombre' => $jefe->nombre],
             ...($this->aCargo ?? []),
