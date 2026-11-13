@@ -48,6 +48,21 @@ final class UsuariosAltaTest extends IdentidadTestCase
         Mail::assertNothingSent();
     }
 
+    public function test_doble_envio_del_alta_crea_un_solo_usuario(): void
+    {
+        $admin = $this->administrador();
+        $clave = ['Idempotency-Key' => '7d1c3b2a-4e5f-4a6b-8c7d-9e0f1a2b3c4d'];
+
+        $primero = $this->actingAs($admin)->withHeaders($clave)->postJson('/api/usuarios', $this->datosDeAlta())->assertCreated();
+        $segundo = $this->actingAs($admin)->withHeaders($clave)->postJson('/api/usuarios', $this->datosDeAlta())
+            ->assertCreated()
+            ->assertHeader('Idempotent-Replayed', 'true');
+
+        $this->assertSame($primero->json('data.id'), $segundo->json('data.id'));
+        $this->assertSame(1, User::query()->where('email', 'pablo@empresa-ejemplo.com')->count());
+        $this->assertCount(1, $this->actividades(User::class, 'creado'));
+    }
+
     public function test_mail_de_usuario_es_unico_incluso_entre_inactivos(): void
     {
         User::factory()->enSector('Compras')->inactivo()->create(['nombre' => 'Diego', 'email' => 'diego@empresa-ejemplo.com']);

@@ -68,6 +68,21 @@ final class SectoresTest extends IdentidadTestCase
         $this->assertSame($sector->id, $creado[0]->sujeto_id);
     }
 
+    public function test_doble_envio_del_alta_de_sector_crea_uno_solo(): void
+    {
+        $admin = $this->administrador();
+        $clave = ['Idempotency-Key' => '0b6f9e0e-6a35-4c4c-9a57-6f1f2c1d3e4a'];
+
+        $primero = $this->actingAs($admin)->withHeaders($clave)->postJson('/api/sectores', ['nombre' => 'Laboratorio'])->assertCreated();
+        $segundo = $this->actingAs($admin)->withHeaders($clave)->postJson('/api/sectores', ['nombre' => 'Laboratorio'])
+            ->assertCreated()
+            ->assertHeader('Idempotent-Replayed', 'true');
+
+        $this->assertSame($primero->json('data.id'), $segundo->json('data.id'));
+        $this->assertSame(1, Sector::query()->where('nombre', 'Laboratorio')->count());
+        $this->assertCount(1, $this->actividades(Sector::class, 'creado'));
+    }
+
     public function test_no_se_saca_un_sector_con_usuarios_activos(): void
     {
         $calidad = Sector::query()->where('nombre', 'Calidad')->firstOrFail();

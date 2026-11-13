@@ -28,12 +28,12 @@ Route::middleware('auth:sanctum')->group(function () use ($verUsuarios, $editarU
 
     Route::get('usuarios/opciones', [UsuarioController::class, 'opciones']);
     Route::get('usuarios', [UsuarioController::class, 'index'])->middleware($verUsuarios);
-    Route::post('usuarios', [UsuarioController::class, 'store'])->middleware($editarUsuarios);
+    Route::post('usuarios', [UsuarioController::class, 'store'])->middleware([$editarUsuarios, 'idempotent']);
     Route::get('usuarios/{usuario}', [UsuarioController::class, 'show'])->whereNumber('usuario')->middleware($verUsuarios);
     Route::patch('usuarios/{usuario}', [UsuarioController::class, 'update'])->whereNumber('usuario')->middleware($editarUsuarios);
 
     Route::get('sectores', [SectorController::class, 'index']);
-    Route::post('sectores', [SectorController::class, 'store'])->middleware($editarUsuarios);
+    Route::post('sectores', [SectorController::class, 'store'])->middleware([$editarUsuarios, 'idempotent']);
     Route::patch('sectores/{sector}', [SectorController::class, 'update'])->whereNumber('sector')->middleware($editarUsuarios);
     Route::delete('sectores/{sector}', [SectorController::class, 'destroy'])->whereNumber('sector')->middleware($editarUsuarios);
 
