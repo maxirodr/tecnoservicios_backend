@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Shared;
 
+use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -46,6 +47,14 @@ final class SecurityHeadersTest extends TestCase
         $this->app->detectEnvironment(fn (): string => 'production');
 
         $this->getJson('/api/health')->assertHeader('Strict-Transport-Security', 'max-age=31536000');
+    }
+
+    /** SEG-05: el disco privado no se sirve por /storage ni con URL firmada. */
+    public function test_storage_privado_no_tiene_ruta_publica(): void
+    {
+        $this->assertFalse(Route::has('storage.local'));
+        $this->get('/storage/adjuntos/2026/01/prueba')->assertNotFound();
+        $this->put('/storage/adjuntos/2026/01/otro', ['x' => 'y'])->assertNotFound();
     }
 
     #[Test]

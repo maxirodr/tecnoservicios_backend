@@ -32,10 +32,11 @@ return [
 
     'disks' => [
 
+        // Misma raíz que `adjuntos`: nunca se sirve por /storage (SEG-05); los adjuntos solo salen por la API.
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            'serve' => false,
             'throw' => false,
             'report' => false,
         ],
