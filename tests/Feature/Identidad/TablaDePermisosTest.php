@@ -39,8 +39,16 @@ final class TablaDePermisosTest extends IdentidadTestCase
         $compras = Sector::query()->where('nombre', 'Compras')->valueOrFail('id');
         $celda = ['sector_id' => $compras, 'funcion' => 'proveedores', 'nivel' => 'ver', 'alcance' => 'todas'];
 
+        $this->celda('Jefatura de Proyectos', 'usuarios_permisos', 'ver');
+        $soloVe = $this->usuarioDe('Jefatura de Proyectos');
+
+        $this->actingAs($soloVe)->getJson('/api/permisos')->assertOk();
+        $this->actingAs($soloVe)->putJson('/api/permisos', ['celdas' => [$celda]])->assertForbidden();
+        $this->actingAs($this->usuarioDe('Calidad'))->putJson('/api/permisos', ['celdas' => [$celda]])->assertForbidden();
+        $this->assertSame('editar', $this->nivel('Compras', 'proveedores'));
+
         $this->actingAs($this->usuarioDe('Dirección'))->putJson('/api/permisos', ['celdas' => [$celda]])->assertOk();
-        $this->actingAs($this->usuarioDe('Jefatura de Proyectos'))->putJson('/api/permisos', ['celdas' => [$celda]])->assertForbidden();
+        $this->assertSame('ver', $this->nivel('Compras', 'proveedores'));
     }
 
     public function test_no_acepta_editar_en_funcion_que_no_lo_admite(): void

@@ -45,14 +45,15 @@ final class UsuariosEdicionTest extends IdentidadTestCase
 
     public function test_usuarios_ver_no_puede_editar_un_usuario(): void
     {
+        // Caso borde 17: con Usuarios y permisos = Ver lista y ve el detalle, pero PATCH → 403.
+        $this->celda('Jefatura de Administración', 'usuarios_permisos', 'ver');
         $carla = $this->usuarioDe('Compras', ['nombre' => 'Carla']);
+        $soloVe = $this->usuarioDe('Jefatura de Administración');
 
-        $this->actingAs($this->usuarioDe('Dirección', ['nombre' => 'Eva']))->patchJson("/api/usuarios/{$carla->id}", ['nombre' => 'Otra'])
-            ->assertOk();
+        $this->actingAs($soloVe)->getJson("/api/usuarios/{$carla->id}")->assertOk();
+        $this->actingAs($soloVe)->patchJson("/api/usuarios/{$carla->id}", ['nombre' => 'Y'])->assertForbidden();
         $this->actingAs($this->usuarioDe('Gerencia de Operaciones'))->patchJson("/api/usuarios/{$carla->id}", ['nombre' => 'X'])
             ->assertOk();
-        $this->actingAs($this->usuarioDe('Jefatura de Administración'))->patchJson("/api/usuarios/{$carla->id}", ['nombre' => 'Y'])
-            ->assertForbidden();
         $this->assertDatabaseHas('users', ['id' => $carla->id, 'nombre' => 'X']);
     }
 

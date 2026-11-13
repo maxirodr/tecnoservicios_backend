@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Identidad;
 
+use App\Modules\Identidad\Domain\Models\Funcion;
+use App\Modules\Identidad\Domain\Models\Permiso;
 use App\Modules\Identidad\Domain\Models\Sector;
 use App\Modules\Identidad\Domain\Models\User;
 use App\Shared\Actividad\RegistroActividad;
@@ -45,6 +47,15 @@ abstract class IdentidadTestCase extends TestCase
     protected function administrador(): User
     {
         return $this->usuarioDe('Gerencia de Administración', ['nombre' => 'Diego']);
+    }
+
+    /** Fija una celda de la matriz directo en la base (para escenarios que la configuración inicial no trae). */
+    protected function celda(string $sector, string $funcion, string $nivel): void
+    {
+        Permiso::query()
+            ->where('sector_id', Sector::query()->where('nombre', $sector)->valueOrFail('id'))
+            ->where('funcion_id', Funcion::query()->where('clave', $funcion)->valueOrFail('id'))
+            ->update(['nivel' => $nivel]);
     }
 
     /**
