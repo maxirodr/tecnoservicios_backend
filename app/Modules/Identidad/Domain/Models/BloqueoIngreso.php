@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Modules\Identidad\Domain\Models;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
@@ -20,7 +19,6 @@ use Illuminate\Support\Carbon;
  * @property int $bloqueos_cumplidos
  * @property Carbon|null $bloqueado_hasta
  */
-#[Fillable(['user_id', 'codigos_quemados', 'bloqueos_cumplidos', 'bloqueado_hasta'])]
 final class BloqueoIngreso extends Model
 {
     public const QUEMADOS_PARA_BLOQUEAR = 3;
@@ -30,6 +28,8 @@ final class BloqueoIngreso extends Model
     public const HORAS_REINCIDENCIA = 24;
 
     protected $table = 'bloqueos_ingreso';
+
+    protected $fillable = ['user_id', 'codigos_quemados', 'bloqueos_cumplidos', 'bloqueado_hasta'];
 
     protected $attributes = ['codigos_quemados' => 0, 'bloqueos_cumplidos' => 0];
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\Identidad\Domain\Models;
 
 use App\Modules\Identidad\Domain\CalculadorPrioridad;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -20,10 +19,11 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read User|null $editor
  */
-#[Fillable(['urgente_hasta_dias', 'prioritario_hasta_dias', 'updated_by'])]
 class Plazos extends Model
 {
     protected $table = 'plazos_prioridad';
+
+    protected $fillable = ['urgente_hasta_dias', 'prioritario_hasta_dias', 'updated_by'];
 
     /**
      * @return array<string, string>

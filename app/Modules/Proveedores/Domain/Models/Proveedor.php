@@ -7,7 +7,6 @@ namespace App\Modules\Proveedores\Domain\Models;
 use App\Modules\Proveedores\Domain\NombreProveedor;
 use App\Modules\Rendicion\Domain\Models\Rubro;
 use Database\Factories\ProveedorFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -32,7 +31,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int|null $updated_by
  * @property-read Rubro|null $rubroHabitual
  */
-#[Fillable(['nombre', 'cuit', 'telefono', 'email', 'rubro_habitual_id', 'created_by', 'updated_by'])]
 #[UseFactory(ProveedorFactory::class)]
 class Proveedor extends Model
 {
@@ -40,6 +38,8 @@ class Proveedor extends Model
     use HasFactory;
 
     protected $table = 'proveedores';
+
+    protected $fillable = ['nombre', 'cuit', 'telefono', 'email', 'rubro_habitual_id', 'created_by', 'updated_by'];
 
     /** @var array<string, mixed> */
     protected $attributes = [

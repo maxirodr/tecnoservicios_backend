@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\Identidad\Domain\Models;
 
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,8 +27,6 @@ use Illuminate\Notifications\Notifiable;
  * @property-read Sector $sector
  * @property-read User|null $jefe
  */
-#[Fillable(['nombre', 'email', 'telefono', 'sector_id', 'jefe_id', 'activo'])]
-#[Hidden(['remember_token'])]
 #[UseFactory(UserFactory::class)]
 class User extends Authenticatable
 {
@@ -38,6 +34,10 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $table = 'users';
+
+    protected $fillable = ['nombre', 'email', 'telefono', 'sector_id', 'jefe_id', 'activo'];
+
+    protected $hidden = ['remember_token'];
 
     /**
      * @return array<string, string>
