@@ -11,9 +11,11 @@ use App\Modules\Pedidos\PedidosServiceProvider;
 use App\Modules\Proveedores\ProveedoresServiceProvider;
 use App\Modules\Rendicion\RendicionServiceProvider;
 use App\Providers\AppServiceProvider;
+use App\Shared\Providers\SharedServiceProvider;
 
 return [
     AppServiceProvider::class,
+    SharedServiceProvider::class,
     IdentidadServiceProvider::class,
     ObrasServiceProvider::class,
     PedidosServiceProvider::class,
