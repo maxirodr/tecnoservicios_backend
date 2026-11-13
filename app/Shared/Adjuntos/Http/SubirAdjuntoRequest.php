@@ -9,9 +9,13 @@ use App\Shared\Adjuntos\DetectorTipoArchivo;
 use App\Shared\Adjuntos\Http\Rules\LinkHttp;
 use App\Shared\Adjuntos\Http\Rules\TamanoMaximoArchivo;
 use App\Shared\Adjuntos\Http\Rules\TipoPermitidoPorContenido;
+use App\Shared\Adjuntos\LimiteDeSubida;
+use App\Shared\Http\ApiResponse;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * `POST /api/adjuntos`: multipart `{contexto, archivo}` o JSON `{contexto, url, nombre?}` (obras.md §10.5).
@@ -64,6 +68,27 @@ final class SubirAdjuntoRequest extends FormRequest
             'url.max' => 'El link puede tener hasta '.self::LARGO_URL.' caracteres.',
             'nombre.max' => 'El nombre puede tener hasta '.self::LARGO_NOMBRE.' caracteres.',
         ];
+    }
+
+    /**
+     * Si PHP cortó el archivo antes que la validación (`upload_max_filesize`, o un multipart que
+     * llegó vacío por `post_max_size`), se responde 413 con el máximo en MB (HU-025 criterio 3)
+     * y no "Subí un archivo o pegá un link.".
+     */
+    protected function prepareForValidation(): void
+    {
+        $archivo = $this->file('archivo');
+        $cortadoPorPhp = $archivo instanceof UploadedFile
+            && in_array($archivo->getError(), [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true);
+        $multipartVacio = str_starts_with((string) $this->header('Content-Type'), 'multipart/form-data')
+            && $this->request->all() === []
+            && $this->files->all() === [];
+
+        if ($cortadoPorPhp || $multipartVacio) {
+            throw new HttpResponseException(
+                ApiResponse::error(LimiteDeSubida::delServidor()->mensaje(), Response::HTTP_REQUEST_ENTITY_TOO_LARGE),
+            );
+        }
     }
 
     public function archivo(): ?UploadedFile

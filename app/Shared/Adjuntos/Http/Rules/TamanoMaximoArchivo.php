@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Adjuntos\Http\Rules;
 
+use App\Shared\Adjuntos\LimiteDeSubida;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Http\UploadedFile;
@@ -26,14 +27,7 @@ final readonly class TamanoMaximoArchivo implements ValidationRule
         $bytes = (int) $value->getSize();
 
         if ($bytes > $this->maximoMb * self::BYTES_POR_MB) {
-            $fail("El archivo pesa {$this->enMb($bytes)} MB y el máximo es {$this->maximoMb} MB.");
+            $fail('El archivo pesa '.LimiteDeSubida::enMb($bytes)." MB y el máximo es {$this->maximoMb} MB.");
         }
-    }
-
-    private function enMb(int $bytes): string
-    {
-        $mb = number_format($bytes / self::BYTES_POR_MB, 1, ',', '.');
-
-        return str_ends_with($mb, ',0') ? substr($mb, 0, -2) : $mb;
     }
 }

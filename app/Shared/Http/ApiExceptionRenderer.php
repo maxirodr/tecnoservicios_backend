@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Shared\Http;
 
+use App\Shared\Adjuntos\LimiteDeSubida;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Exceptions\PostTooLargeException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Session\TokenMismatchException;
@@ -55,6 +57,11 @@ final class ApiExceptionRenderer
             ),
             $exception instanceof ModelNotFoundException => ApiResponse::error(self::messageFor(404), 404),
             $exception instanceof TokenMismatchException => ApiResponse::error(self::messageFor(419), 419),
+            // PHP descartó el cuerpo por `post_max_size`: el único envío grande es un archivo (HU-025 c. 3).
+            $exception instanceof PostTooLargeException => ApiResponse::error(
+                LimiteDeSubida::delServidor()->mensaje(self::largoDelCuerpo($request)),
+                413,
+            ),
             $exception instanceof HttpExceptionInterface => $this->renderHttpException($exception),
             default => $this->renderServerError($exception),
         };
@@ -64,6 +71,13 @@ final class ApiExceptionRenderer
     {
         return self::STATUS_MESSAGES[$status]
             ?? ($status >= 500 ? self::STATUS_MESSAGES[500] : self::STATUS_MESSAGES[400]);
+    }
+
+    private static function largoDelCuerpo(Request $request): ?int
+    {
+        $largo = $request->server('CONTENT_LENGTH');
+
+        return is_numeric($largo) ? (int) $largo : null;
     }
 
     private function renderHttpException(HttpExceptionInterface $exception): JsonResponse
