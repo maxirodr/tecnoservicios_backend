@@ -63,7 +63,7 @@ final class ApiEnvelopeTest extends TestCase
     {
         $this->getJson('/api/_envelope/unauthenticated')
             ->assertUnauthorized()
-            ->assertExactJson(['data' => null, 'message' => 'No autenticado.', 'errors' => null]);
+            ->assertExactJson(['data' => null, 'message' => 'Tenés que ingresar para seguir.', 'errors' => null]);
     }
 
     #[Test]
@@ -71,7 +71,7 @@ final class ApiEnvelopeTest extends TestCase
     {
         $this->getJson('/api/_envelope/forbidden')
             ->assertForbidden()
-            ->assertExactJson(['data' => null, 'message' => 'No tenés permiso para realizar esta acción.', 'errors' => null]);
+            ->assertExactJson(['data' => null, 'message' => 'No tenés permiso para hacer esto.', 'errors' => null]);
     }
 
     #[Test]
@@ -79,11 +79,11 @@ final class ApiEnvelopeTest extends TestCase
     {
         $this->getJson('/api/no-existe')
             ->assertNotFound()
-            ->assertExactJson(['data' => null, 'message' => 'Recurso no encontrado.', 'errors' => null]);
+            ->assertExactJson(['data' => null, 'message' => 'No encontramos lo que buscabas.', 'errors' => null]);
 
         $this->getJson('/api/_envelope/model-missing')
             ->assertNotFound()
-            ->assertExactJson(['data' => null, 'message' => 'Recurso no encontrado.', 'errors' => null]);
+            ->assertExactJson(['data' => null, 'message' => 'No encontramos lo que buscabas.', 'errors' => null]);
     }
 
     #[Test]
@@ -92,7 +92,7 @@ final class ApiEnvelopeTest extends TestCase
         $this->get('/no-existe')
             ->assertNotFound()
             ->assertHeader('Content-Type', 'application/json')
-            ->assertJsonPath('message', 'Recurso no encontrado.');
+            ->assertJsonPath('message', 'No encontramos lo que buscabas.');
     }
 
     #[Test]
@@ -100,7 +100,7 @@ final class ApiEnvelopeTest extends TestCase
     {
         $this->deleteJson('/api/_envelope/ok')
             ->assertStatus(405)
-            ->assertExactJson(['data' => null, 'message' => 'Método no permitido.', 'errors' => null]);
+            ->assertExactJson(['data' => null, 'message' => 'Esa acción no está disponible.', 'errors' => null]);
     }
 
     #[Test]
@@ -123,7 +123,7 @@ final class ApiEnvelopeTest extends TestCase
         $this->getJson('/api/_envelope/throttled')
             ->assertTooManyRequests()
             ->assertHeader('Retry-After')
-            ->assertExactJson(['data' => null, 'message' => 'Demasiadas solicitudes. Probá de nuevo en unos segundos.', 'errors' => null]);
+            ->assertExactJson(['data' => null, 'message' => 'Fueron demasiadas acciones seguidas. Esperá unos segundos y volvé a intentar.', 'errors' => null]);
     }
 
     #[Test]
@@ -133,7 +133,7 @@ final class ApiEnvelopeTest extends TestCase
 
         $response = $this->getJson('/api/_envelope/boom')
             ->assertStatus(500)
-            ->assertExactJson(['data' => null, 'message' => 'Error interno del servidor.', 'errors' => null]);
+            ->assertExactJson(['data' => null, 'message' => 'El sistema tuvo un problema. Volvé a intentar en un momento.', 'errors' => null]);
 
         $this->assertStringNotContainsString('SQLSTATE', (string) $response->getContent());
         $this->assertStringNotContainsString('RuntimeException', (string) $response->getContent());
@@ -146,7 +146,7 @@ final class ApiEnvelopeTest extends TestCase
 
         $this->getJson('/api/_envelope/boom')
             ->assertStatus(500)
-            ->assertJsonPath('message', 'Error interno del servidor.')
+            ->assertJsonPath('message', 'El sistema tuvo un problema. Volvé a intentar en un momento.')
             ->assertJsonPath('errors.debug.exception', RuntimeException::class);
     }
 }

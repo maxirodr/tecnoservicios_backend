@@ -22,18 +22,18 @@ use Throwable;
 final class ApiExceptionRenderer
 {
     private const STATUS_MESSAGES = [
-        400 => 'La solicitud no es válida.',
-        401 => 'No autenticado.',
-        403 => 'No tenés permiso para realizar esta acción.',
-        404 => 'Recurso no encontrado.',
-        405 => 'Método no permitido.',
-        409 => 'Conflicto con el estado actual del recurso.',
+        400 => 'No pudimos procesar lo que enviaste. Revisá los datos y volvé a intentar.',
+        401 => 'Tenés que ingresar para seguir.',
+        403 => 'No tenés permiso para hacer esto.',
+        404 => 'No encontramos lo que buscabas.',
+        405 => 'Esa acción no está disponible.',
+        409 => 'Alguien cambió esto mientras lo tenías abierto. Recargá y volvé a intentar.',
         413 => 'Lo que enviaste es demasiado grande. Si es un archivo, probá con uno más liviano.',
         419 => 'La sesión expiró. Volvé a ingresar.',
         422 => 'Los datos enviados no son válidos.',
-        429 => 'Demasiadas solicitudes. Probá de nuevo en unos segundos.',
-        500 => 'Error interno del servidor.',
-        503 => 'Servicio no disponible momentáneamente.',
+        429 => 'Fueron demasiadas acciones seguidas. Esperá unos segundos y volvé a intentar.',
+        500 => 'El sistema tuvo un problema. Volvé a intentar en un momento.',
+        503 => 'El sistema no está disponible en este momento. Probá de nuevo en unos minutos.',
     ];
 
     public function __construct(private readonly bool $debug) {}

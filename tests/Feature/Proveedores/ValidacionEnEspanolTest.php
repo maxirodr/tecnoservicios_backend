@@ -45,7 +45,7 @@ final class ValidacionEnEspanolTest extends ProveedoresTestCase
     {
         $response = $this->actingAs($this->quienVe())->getJson('/api/proveedores/999999')
             ->assertNotFound()
-            ->assertJsonPath('message', 'Recurso no encontrado.');
+            ->assertJsonPath('message', 'No encontramos lo que buscabas.');
 
         $this->assertRespuestaSinIngles($response);
     }

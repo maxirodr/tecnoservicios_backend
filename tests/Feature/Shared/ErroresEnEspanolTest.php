@@ -38,12 +38,12 @@ final class ErroresEnEspanolTest extends TestCase
 
     public function test_ruta_inexistente_da_404_en_espanol(): void
     {
-        $this->assertMensaje($this->getJson('/api/no-existe'), 404, 'Recurso no encontrado.');
+        $this->assertMensaje($this->getJson('/api/no-existe'), 404, 'No encontramos lo que buscabas.');
     }
 
     public function test_metodo_no_permitido_da_405_en_espanol(): void
     {
-        $this->assertMensaje($this->deleteJson('/api/_errores/ok'), 405, 'Método no permitido.');
+        $this->assertMensaje($this->deleteJson('/api/_errores/ok'), 405, 'Esa acción no está disponible.');
     }
 
     public function test_envio_demasiado_grande_da_413_en_espanol(): void
@@ -67,7 +67,7 @@ final class ErroresEnEspanolTest extends TestCase
         $this->assertMensaje(
             $this->getJson('/api/_errores/limitado'),
             429,
-            'Demasiadas solicitudes. Probá de nuevo en unos segundos.',
+            'Fueron demasiadas acciones seguidas. Esperá unos segundos y volvé a intentar.',
         );
     }
 
@@ -75,7 +75,7 @@ final class ErroresEnEspanolTest extends TestCase
     {
         config(['app.debug' => false]);
 
-        $this->assertMensaje($this->getJson('/api/_errores/roto'), 500, 'Error interno del servidor.');
+        $this->assertMensaje($this->getJson('/api/_errores/roto'), 500, 'El sistema tuvo un problema. Volvé a intentar en un momento.');
     }
 
     /**
@@ -84,10 +84,10 @@ final class ErroresEnEspanolTest extends TestCase
     public static function abortsSinMensaje(): array
     {
         return [
-            'sin permiso' => [403, 'No tenés permiso para realizar esta acción.'],
-            'no encontrado' => [404, 'Recurso no encontrado.'],
+            'sin permiso' => [403, 'No tenés permiso para hacer esto.'],
+            'no encontrado' => [404, 'No encontramos lo que buscabas.'],
             'sesión vencida' => [419, 'La sesión expiró. Volvé a ingresar.'],
-            'en mantenimiento' => [503, 'Servicio no disponible momentáneamente.'],
+            'en mantenimiento' => [503, 'El sistema no está disponible en este momento. Probá de nuevo en unos minutos.'],
         ];
     }
 
