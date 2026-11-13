@@ -8,7 +8,7 @@ use App\Modules\Obras\Domain\Enums\ModoCarga;
 use App\Modules\Obras\Domain\Models\Obra;
 use App\Modules\Obras\Domain\Models\Presupuesto;
 use App\Modules\Obras\Domain\Models\PresupuestoMonto;
-use App\Modules\Obras\Domain\Models\Rubro;
+use App\Modules\Rendicion\Domain\Models\Rubro;
 use App\Shared\Domain\Importe;
 
 /**

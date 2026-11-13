@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Obras\Application\Montos;
 
-use App\Modules\Obras\Domain\Models\Rubro;
+use App\Modules\Rendicion\Domain\Models\Rubro;
 use Illuminate\Database\Eloquent\Collection;
 
 /**

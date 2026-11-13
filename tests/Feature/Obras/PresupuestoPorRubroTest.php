@@ -8,7 +8,7 @@ use App\Modules\Identidad\Domain\Models\User;
 use App\Modules\Obras\Domain\Events\PresupuestoMontosCambiados;
 use App\Modules\Obras\Domain\Models\Obra;
 use App\Modules\Obras\Domain\Models\Presupuesto;
-use App\Modules\Obras\Domain\Models\Rubro;
+use App\Modules\Rendicion\Domain\Models\Rubro;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Testing\TestResponse;

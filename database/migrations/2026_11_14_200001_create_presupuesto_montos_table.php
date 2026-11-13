@@ -7,25 +7,14 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Rubros (lista cerrada, cap. 9; el catálogo lo carga la migración siguiente) y lo presupuestado por
- * rubro de cada presupuesto (F-48). `rubro_id` null = el presupuesto se cargó "solo el total" (C16);
- * `rubro_clave` (generada) permite el único (presupuesto, rubro) aun con el null.
+ * Lo presupuestado por rubro de cada presupuesto (F-48, obras.md §4.7). Corre después del catálogo de
+ * rubros (`2026_11_13_300001`, dueño Rendicion). `rubro_id` null = el presupuesto se cargó "solo el
+ * total" (C16); `rubro_clave` (generada) permite el único (presupuesto, rubro) aun con el null.
  */
 return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('rubros', function (Blueprint $table): void {
-            $table->id();
-            $table->string('clave', 40)->unique();
-            $table->string('nombre', 40)->unique();
-            $table->unsignedSmallInteger('orden');
-            $table->foreignId('resume_en_rubro_id')->nullable()->constrained('rubros')->restrictOnDelete();
-            $table->boolean('se_presupuesta')->default(true);
-            $table->boolean('carga_por_periodo')->default(false);
-            $table->timestamps();
-        });
-
         Schema::create('presupuesto_montos', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('presupuesto_id')->constrained('presupuestos')->cascadeOnDelete();
@@ -41,6 +30,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('presupuesto_montos');
-        Schema::dropIfExists('rubros');
     }
 };
