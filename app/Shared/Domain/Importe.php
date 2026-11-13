@@ -75,6 +75,22 @@ final readonly class Importe
         return bccomp($this->valor, $otro->valor, self::ESCALA) === 0;
     }
 
+    /**
+     * Como lo lee la persona, igual que `formatearImporte` del front (`Intl.NumberFormat('es-AR')`
+     * con hasta 2 decimales): "2500.00" → "2.500" · "12400000.50" → "12.400.000,5". Para textos
+     * que arma el backend (historial, W-23); en el resto de la API el importe viaja crudo.
+     */
+    public function legible(): string
+    {
+        $negativo = str_starts_with($this->valor, '-');
+        [$enteros, $decimales] = explode('.', ltrim($this->valor, '-'));
+        $conPuntos = (string) preg_replace('/\B(?=(\d{3})+(?!\d))/', '.', $enteros);
+        $decimales = rtrim($decimales, '0');
+        $texto = $decimales === '' ? $conPuntos : "{$conPuntos},{$decimales}";
+
+        return $negativo && $texto !== '0' ? "-{$texto}" : $texto;
+    }
+
     public function __toString(): string
     {
         return $this->valor;

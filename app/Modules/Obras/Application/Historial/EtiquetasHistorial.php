@@ -10,6 +10,7 @@ use App\Modules\Obras\Domain\Enums\AprobacionTipo;
 use App\Modules\Obras\Domain\Enums\TipoContacto;
 use App\Modules\Obras\Domain\Models\ObraDocumento;
 use App\Modules\Obras\Domain\Models\Presupuesto;
+use App\Shared\Domain\Importe;
 
 /** Nombres de los campos y valores del historial como los dice el cliente (W-23). */
 final readonly class EtiquetasHistorial
@@ -48,6 +49,8 @@ final readonly class EtiquetasHistorial
 
     private const LINKS = ['carpeta_drive_url'];
 
+    private const IMPORTES = ['monto_obra', CargarMontosAction::CLAVE_TOTAL];
+
     public function __construct(private CatalogoRubros $rubros) {}
 
     public function campo(string $campo): string
@@ -71,6 +74,13 @@ final readonly class EtiquetasHistorial
         return in_array($campo, self::LINKS, true);
     }
 
+    /** Montos por rubro, total y monto del presupuesto: se leen como en W-13 ("2.500"). */
+    public function esImporte(string $campo): bool
+    {
+        return in_array($campo, self::IMPORTES, true)
+            || $this->rubros->todos()->contains('clave', $campo);
+    }
+
     public function valor(string $campo, mixed $valor): string
     {
         if ($valor === null || $valor === '') {
@@ -78,6 +88,10 @@ final readonly class EtiquetasHistorial
         }
 
         $texto = is_scalar($valor) ? (string) $valor : '';
+
+        if ($this->esImporte($campo) && Importe::esDecimal($texto) && Importe::decimales($texto) <= Importe::ESCALA) {
+            return Importe::desde($texto)->legible();
+        }
 
         return match ($campo) {
             'aprobacion_tipo' => AprobacionTipo::tryFrom($texto)?->etiqueta() ?? $texto,

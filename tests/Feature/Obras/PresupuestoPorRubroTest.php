@@ -87,7 +87,7 @@ final class PresupuestoPorRubroTest extends ObrasTestCase
 
         $this->assertSame(1, $principal->montos()->count());
         $this->actingAs($diego)->getJson("/api/obras/{$principal->obra_id}/historial")
-            ->assertJsonPath('data.0.que', 'MATERIALES: 10900000.00 → (vacío)')
+            ->assertJsonPath('data.0.que', 'MATERIALES: 10.900.000 → (vacío)')
             ->assertJsonPath('data.3.que', 'Presupuesto por rubro: por rubro → solo el total');
     }
 
@@ -171,15 +171,17 @@ final class PresupuestoPorRubroTest extends ObrasTestCase
         $this->actingAs($diego)->putJson("/api/presupuestos/{$principal->id}/monto-obra", ['monto_obra' => '36500000.00'])->assertOk();
         $obraId = $principal->obra_id;
 
-        $this->actingAs($diego)->getJson("/api/obras/{$obraId}/historial")->assertJsonPath('data.0.que', 'Monto del presupuesto: (vacío) → 36500000.00');
+        $this->actingAs($diego)->getJson("/api/obras/{$obraId}/historial")->assertJsonPath('data.0.que', 'Monto del presupuesto: (vacío) → 36.500.000');
 
-        $calidad = $this->actingAs($this->usuarioDe('Calidad'))->getJson("/api/obras/{$obraId}/historial")->assertOk();
-        $this->assertStringNotContainsString('25650000', (string) $calidad->getContent());
-        $this->assertStringNotContainsString('36500000', (string) $calidad->getContent());
+        $calidad = (string) $this->actingAs($this->usuarioDe('Calidad'))->getJson("/api/obras/{$obraId}/historial")->assertOk()->getContent();
+        foreach (['25650000', '25.650.000', '36500000', '36.500.000'] as $monto) {
+            $this->assertStringNotContainsString($monto, $calidad);
+        }
 
-        $carla = $this->actingAs($this->carla())->getJson("/api/obras/{$obraId}/historial")->assertOk();
-        $this->assertStringContainsString('25650000', (string) $carla->getContent());
-        $this->assertStringNotContainsString('36500000', (string) $carla->getContent());
+        $carla = (string) $this->actingAs($this->carla())->getJson("/api/obras/{$obraId}/historial")->assertOk()->getContent();
+        $this->assertStringContainsString('25.650.000', $carla);
+        $this->assertStringNotContainsString('36500000', $carla);
+        $this->assertStringNotContainsString('36.500.000', $carla);
     }
 
     public function test_correccion_de_montos_guarda_el_valor_anterior(): void
@@ -188,7 +190,22 @@ final class PresupuestoPorRubroTest extends ObrasTestCase
         $this->montos($diego, $principal, ['modo' => 'por_rubro', 'montos' => ['viaticos' => '1000.00']])->assertOk();
         $this->montos($diego, $principal, ['modo' => 'por_rubro', 'montos' => ['viaticos' => '1200.00']])->assertOk();
 
-        $this->actingAs($diego)->getJson("/api/obras/{$principal->obra_id}/historial")->assertJsonPath('data.0.que', 'VIATICOS: 1000.00 → 1200.00');
+        $this->actingAs($diego)->getJson("/api/obras/{$principal->obra_id}/historial")->assertJsonPath('data.0.que', 'VIATICOS: 1.000 → 1.200');
+    }
+
+    public function test_historial_muestra_los_importes_como_en_el_presupuesto_por_rubro(): void
+    {
+        [$diego, $principal] = $this->obraConPrincipal();
+        $this->montos($diego, $principal, ['modo' => 'por_rubro', 'montos' => ['materiales' => '1000.00', 'logistica' => '12400000.50']])->assertOk();
+        $this->actingAs($diego)->putJson("/api/presupuestos/{$principal->id}/monto-obra", ['monto_obra' => '2500.00'])->assertOk();
+
+        $lineas = array_column((array) $this->actingAs($diego)->getJson("/api/obras/{$principal->obra_id}/historial")->assertOk()->json('data'), 'que');
+
+        $this->assertContains('Monto del presupuesto: (vacío) → 2.500', $lineas);
+        $this->assertContains('MATERIALES: (vacío) → 1.000', $lineas);
+        $this->assertContains('LOGISTICA: (vacío) → 12.400.000,5', $lineas);
+        $this->assertContains('Presupuesto por rubro: sin cargar → por rubro', $lineas);
+        $this->assertSame([], preg_grep('/\d\.\d{2}(?!\d)/', $lineas), 'Ningún importe con punto decimal crudo.');
     }
 
     /**
