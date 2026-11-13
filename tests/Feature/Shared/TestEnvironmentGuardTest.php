@@ -17,7 +17,8 @@ final class TestEnvironmentGuardTest extends TestCase
     public function tests_run_against_the_separate_mysql_testing_database_and_it_answers(): void
     {
         $this->assertSame('mysql', config('database.default'));
-        $this->assertSame('tecnoservicios_testing', DB::connection()->getDatabaseName());
+        // Una base de tests por agente en paralelo (tecnoservicios_testing_shared, _obras…), nunca la de dev.
+        $this->assertMatchesRegularExpression('/^tecnoservicios_testing(_[a-z]+)?$/', DB::connection()->getDatabaseName());
         $this->assertSame(1, (int) DB::scalar('select 1'));
     }
 

@@ -13,11 +13,11 @@ final class SpaAuthConfigurationTest extends TestCase
     public function cors_preflight_from_the_spa_allows_credentials(): void
     {
         $this->withHeaders([
-            'Origin' => 'http://localhost:5173',
+            'Origin' => 'http://localhost:5310',
             'Access-Control-Request-Method' => 'POST',
         ])->options('/api/health')
             ->assertNoContent()
-            ->assertHeader('Access-Control-Allow-Origin', 'http://localhost:5173')
+            ->assertHeader('Access-Control-Allow-Origin', 'http://localhost:5310')
             ->assertHeader('Access-Control-Allow-Credentials', 'true');
     }
 
@@ -48,7 +48,7 @@ final class SpaAuthConfigurationTest extends TestCase
         $stateful = config('sanctum.stateful');
 
         $this->assertIsArray($stateful);
-        $this->assertContains('localhost:5173', $stateful);
+        $this->assertContains('localhost:5310', $stateful);
     }
 
     #[Test]
