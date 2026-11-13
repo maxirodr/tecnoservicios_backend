@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Shared;
 
+use App\Shared\Adjuntos\LimiteDeSubida;
 use Illuminate\Http\Exceptions\PostTooLargeException;
 use Illuminate\Session\TokenMismatchException;
 use Illuminate\Support\Facades\Route;
@@ -51,7 +52,8 @@ final class ErroresEnEspanolTest extends TestCase
         $this->assertMensaje(
             $this->postJson('/api/_errores/grande'),
             413,
-            'Lo que enviaste es demasiado grande. Si es un archivo, probá con uno más liviano.',
+            // B-04: el único envío grande es un archivo; se dice el máximo en MB.
+            LimiteDeSubida::delServidor()->mensaje(),
         );
     }
 

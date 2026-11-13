@@ -59,7 +59,8 @@ final readonly class LimiteDeSubida
     {
         $maximo = $this->maximoMb();
 
-        if ($bytes === null || $bytes <= 0) {
+        // Sin el peso, o con uno que no supera el máximo (no debería cortarse), no se inventa el número.
+        if ($bytes === null || $bytes <= $maximo * self::BYTES_POR_MB) {
             return "El archivo pesa más de {$maximo} MB, que es el máximo.";
         }
 

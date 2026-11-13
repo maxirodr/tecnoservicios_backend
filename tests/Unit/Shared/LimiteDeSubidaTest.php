@@ -29,5 +29,6 @@ final class LimiteDeSubidaTest extends TestCase
         $this->assertSame('El archivo pesa 25 MB y el máximo es 8 MB.', $limite->mensaje(25 * 1048576));
         $this->assertSame('El archivo pesa 10,5 MB y el máximo es 8 MB.', $limite->mensaje((int) (10.5 * 1048576)));
         $this->assertSame('El archivo pesa más de 8 MB, que es el máximo.', $limite->mensaje());
+        $this->assertSame('El archivo pesa más de 8 MB, que es el máximo.', $limite->mensaje(2));
     }
 }
