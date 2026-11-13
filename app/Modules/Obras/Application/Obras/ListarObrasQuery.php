@@ -39,14 +39,16 @@ final readonly class ListarObrasQuery
         $filtros = $this->filtros($user, $buscar, $responsableId);
         $numeros = $this->obras->idsOrdenados($filtros, $estado);
         $ids = array_keys($numeros);
-        $porcentajes = $estado === ObraEstado::EnEjecucion ? $this->avance->porcentajesGastados($ids) : [];
+        // "En ejecución" ordena por % gastado: se pide una vez para todas y se reusa en la página (TL-04).
+        $porcentajes = null;
 
         if ($estado === ObraEstado::EnEjecucion) {
+            $porcentajes = $this->avance->porcentajesGastados($ids);
             $ids = self::porPorcentaje($ids, $porcentajes);
         }
 
         $idsPagina = array_slice($ids, ($pagina - 1) * self::POR_PAGINA, self::POR_PAGINA);
-        $filas = $this->filas($user, $idsPagina);
+        $filas = $this->filas($user, $idsPagina, $porcentajes);
 
         return new ListadoObras(
             new LengthAwarePaginator($filas, count($ids), self::POR_PAGINA, $pagina, ['path' => LengthAwarePaginator::resolveCurrentPath()]),
@@ -79,12 +81,13 @@ final readonly class ListarObrasQuery
 
     /**
      * @param  list<int>  $ids
+     * @param  array<int, numeric-string|null>|null  $porcentajes  ya pedidos para estas obras (o más), o null
      * @return list<FilaObra>
      */
-    private function filas(User $user, array $ids): array
+    private function filas(User $user, array $ids, ?array $porcentajes): array
     {
         $pedidos = $this->pedidos->contarAbiertosPorObra($ids);
-        $porcentajes = $this->avance->porcentajesGastados($ids);
+        $porcentajes ??= $this->avance->porcentajesGastados($ids);
         $pasadas = $this->avance->pasadas($ids);
         $rendicionTodas = $this->acceso->puedeNivel($user, ClaveFuncion::Rendicion, Nivel::Ver)
             && ! $this->acceso->soloPropias($user, ClaveFuncion::Rendicion);

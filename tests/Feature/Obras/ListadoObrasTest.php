@@ -74,6 +74,19 @@ final class ListadoObrasTest extends ObrasTestCase
         $this->actingAs($this->diego())->getJson('/api/obras?buscar=ejemplo')->assertJsonPath('meta.pedidos_sin_obra_abiertos', null);
     }
 
+    public function test_porcentaje_gastado_se_pide_una_sola_vez_por_listado(): void
+    {
+        $puertos = PuertosFalsos::registrar($this->app);
+        $this->obraDe($this->laura(), ObraEstado::EnEjecucion);
+        $this->obraDe($this->laura());
+
+        $this->actingAs($this->diego())->getJson('/api/obras?estado=en_ejecucion')->assertOk();
+        $this->assertSame(1, $puertos->consultasDePorcentaje);
+
+        $this->actingAs($this->diego())->getJson('/api/obras?estado=confirmada')->assertOk();
+        $this->assertSame(2, $puertos->consultasDePorcentaje);
+    }
+
     public function test_en_ejecucion_ordena_por_porcentaje_gastado_y_lo_oculta_sin_permiso_de_rendicion(): void
     {
         $puertos = PuertosFalsos::registrar($this->app);
