@@ -43,7 +43,8 @@ return [
         // Adjuntos (ADR-014): privado, nunca servido directo; se bajan solo por GET /api/adjuntos/{id}.
         'adjuntos' => [
             'driver' => 'local',
-            'root' => storage_path('app/private'),
+            // ADJUNTOS_ROOT: la integración E2E del front guarda sus archivos aparte.
+            'root' => env('ADJUNTOS_ROOT') ?: storage_path('app/private'),
             'serve' => false,
             'throw' => false,
             'report' => false,

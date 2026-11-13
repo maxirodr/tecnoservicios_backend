@@ -63,6 +63,15 @@ return [
             'replace_placeholders' => true,
         ],
 
+        // E2E de integración del front (MAIL_LOG_CHANNEL=integracion): los mails con MAIL_MAILER=log
+        // quedan en un archivo propio, de donde la suite lee el código de ingreso.
+        'integracion' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/integracion-mail.log'),
+            'level' => 'debug',
+            'replace_placeholders' => true,
+        ],
+
         'stack' => [
             'driver' => 'stack',
             'channels' => explode(',', (string) env('LOG_STACK', 'single')),
