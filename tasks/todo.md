@@ -40,3 +40,12 @@ Plan (brief de agentes: rehacerlo con las mismas reglas; está en `tasks/brief-a
 - Backend en main: 433 tests / 2292 assertions, pint ok, larastan 0 (Identidad + Shared + Proveedores + Obras).
 - Front en main: vitest 168 ok, e2e 44 ok (API mockeada), typecheck/lint/format ok.
 - Rubros: una sola tabla (`2026_11_13_300001`, modelo en Rendicion); Obras la reusa. Buscador general en Shared (`/api/buscar`), grupos obras y proveedores.
+
+### Integración y revisión (2026-11-13, en main)
+- [x] Integración real front ↔ backend: `npm run e2e:integracion` 42 ok (backend 8320 + front 5312, base `tecnoservicios_integracion`). Bug: 422 fuera de formulario mostraba mensaje genérico (arreglado).
+- [x] Revisión Tech Lead + seguridad (`docs/seguridad.md`), hallazgos arreglados; SEG-01 bloqueo progresivo y TL-02 (enmienda ADR-003) decididos por Juani.
+- [x] `modelo-datos.md` alineado con las migraciones.
+- Suites en main: backend 483 / 2633; front unit 215, e2e mock 44, e2e real 42.
+- [ ] Mensajes de validación del backend en español (hoy las reglas sin mensaje propio responden en inglés)
+- [ ] QC `docs/qc/entrega-1.md` + notas de entrega para el cliente
+- [ ] Diseño pendiente: TL-03 (meta paginado), TL-07 (asociar con usuario), TL-08 (Shared → User), renombrar tests viejos a la regla
