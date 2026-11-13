@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\Support\ErrorLogContext;
 use App\Shared\Http\ApiExceptionRenderer;
 use App\Shared\Http\Middleware\RemoveStackHeaders;
+use App\Shared\Http\Middleware\SecurityHeaders;
 use App\Shared\Providers\SharedServiceProvider;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
@@ -25,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->prepend(RemoveStackHeaders::class);
+        $middleware->append(SecurityHeaders::class);
         $middleware->statefulApi();
         // Límite general por usuario o IP (SEG-03): limitador `api` en SharedServiceProvider.
         $middleware->throttleApi(SharedServiceProvider::LIMITE_API);

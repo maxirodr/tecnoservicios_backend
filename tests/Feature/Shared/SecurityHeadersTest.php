@@ -28,6 +28,26 @@ final class SecurityHeadersTest extends TestCase
             ->assertHeaderMissing('Server');
     }
 
+    /** SEG-07 */
+    public function test_toda_respuesta_de_la_api_lleva_las_cabeceras_de_seguridad(): void
+    {
+        foreach ([$this->getJson('/api/health'), $this->getJson('/api/me'), $this->getJson('/api/no-existe')] as $response) {
+            $response->assertHeader('X-Content-Type-Options', 'nosniff')
+                ->assertHeader('X-Frame-Options', 'DENY')
+                ->assertHeader('Referrer-Policy', 'no-referrer');
+        }
+    }
+
+    /** SEG-07: en local la API corre por HTTP; HSTS se manda solo en producción. */
+    public function test_hsts_solo_en_produccion(): void
+    {
+        $this->getJson('/api/health')->assertHeaderMissing('Strict-Transport-Security');
+
+        $this->app->detectEnvironment(fn (): string => 'production');
+
+        $this->getJson('/api/health')->assertHeader('Strict-Transport-Security', 'max-age=31536000');
+    }
+
     #[Test]
     public function resend_webhook_route_is_not_exposed(): void
     {
