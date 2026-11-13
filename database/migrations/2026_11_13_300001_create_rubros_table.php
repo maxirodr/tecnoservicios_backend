@@ -33,22 +33,20 @@ return new class extends Migration
     private const RESUMEN = ['epp' => 'insumos'];
 
     /**
-     * Idempotente: si otra rama ya creó la tabla (Obras usa el mismo catálogo) no la recrea, y las
-     * filas se cargan por `clave` sin duplicar ni pisar.
+     * Única dueña de la tabla (TL-14): la crea y la borra (`down()` simétrico). Las filas se cargan por
+     * `clave` sin duplicar ni pisar.
      */
     public function up(): void
     {
-        if (! Schema::hasTable('rubros')) {
-            Schema::create('rubros', function (Blueprint $table) {
-                $table->id();
-                $table->string('clave', 40)->unique();
-                $table->string('nombre', 40)->unique();
-                $table->unsignedSmallInteger('orden');
-                $table->foreignId('resume_en_rubro_id')->nullable()->constrained('rubros')->restrictOnDelete();
-                $table->boolean('se_presupuesta');
-                $table->boolean('carga_por_periodo');
-            });
-        }
+        Schema::create('rubros', function (Blueprint $table) {
+            $table->id();
+            $table->string('clave', 40)->unique();
+            $table->string('nombre', 40)->unique();
+            $table->unsignedSmallInteger('orden');
+            $table->foreignId('resume_en_rubro_id')->nullable()->constrained('rubros')->restrictOnDelete();
+            $table->boolean('se_presupuesta');
+            $table->boolean('carga_por_periodo');
+        });
 
         $orden = 0;
         foreach (self::RUBROS as $clave => [$nombre, $sePresupuesta, $cargaPorPeriodo]) {
