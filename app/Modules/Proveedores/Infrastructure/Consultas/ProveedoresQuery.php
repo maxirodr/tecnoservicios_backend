@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Proveedores\Application;
+namespace App\Modules\Proveedores\Infrastructure\Consultas;
 
-use App\Modules\Proveedores\Application\Filtros\FiltroProveedores;
 use App\Modules\Proveedores\Domain\Models\Proveedor;
 use Illuminate\Database\Eloquent\Builder;
 

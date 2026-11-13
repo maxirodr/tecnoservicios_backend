@@ -8,10 +8,10 @@ use App\Modules\Identidad\Contracts\Permisos;
 use App\Modules\Identidad\Domain\Enums\ClaveFuncion;
 use App\Modules\Identidad\Domain\Enums\Nivel;
 use App\Modules\Identidad\Domain\Models\User;
-use App\Modules\Proveedores\Application\Filtros\Alfabetico;
-use App\Modules\Proveedores\Application\Filtros\PorNombre;
-use App\Modules\Proveedores\Application\ProveedoresQuery;
 use App\Modules\Proveedores\Domain\Models\Proveedor;
+use App\Modules\Proveedores\Infrastructure\Consultas\Alfabetico;
+use App\Modules\Proveedores\Infrastructure\Consultas\PorNombre;
+use App\Modules\Proveedores\Infrastructure\Consultas\ProveedoresQuery;
 use App\Shared\Busqueda\FuenteBusqueda;
 use App\Shared\Busqueda\ResultadoBusqueda;
 

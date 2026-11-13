@@ -72,10 +72,13 @@ app/Modules/Pedidos/
 │                    registra la actividad, dispara eventos después del commit.
 ├── Domain/          Models (Eloquent), Enums de estado, PedidoStateMachine, estrategias
 │                    de prioridad, Value Objects, Events. Reglas puras sin framework.
-├── Infrastructure/  Queries complejas (filtros componibles), listeners técnicos, mail.
+├── Infrastructure/  Consultas/ (query objects y filtros componibles), listeners técnicos, mail.
 ├── Contracts/       Interfaces públicas para otros módulos.
 └── README.md        Propósito, F-XX que cubre, reglas → docs/especificacion/pedidos.md
 ```
+
+Application y Http pueden usar la Infrastructure **de su propio módulo**; Domain no usa
+Infrastructure ni Http; nadie usa la Infrastructure de otro módulo (ADR-003, enmienda 2026-11-13).
 
 ## 3. Patrones (dónde y por qué)
 
@@ -85,7 +88,7 @@ app/Modules/Pedidos/
 | **Strategy** | `CalculadorPrioridad` (`PorAnticipacion` con plazos de W-50, `Manual`) | F-26: se calcula sola y se puede corregir; los plazos se configuran sin tocar código |
 | **Policy/Gate sobre matriz** | `PermisoService` + Policies por recurso | D-037/F-60: ningún rol en el código; nivel `ver/editar` y alcance `todas/propias` (ADR-006) |
 | **Eventos de dominio + listeners** | Pedidos → Avisos; Gastos → Rendicion (invalidación de cache) | Desacopla módulos; avisos y recálculo sin condicionales en los casos de uso |
-| **Query object / filtros componibles** | `PedidosQuery`, `ObrasQuery`, `GastosQuery` | F-35, F-45, F-03: cada filtro es una clase chica que se suma (`PorObra`, `PorEstado`, `Vencidos`…) |
+| **Query object / filtros componibles** | `<Modulo>/Infrastructure/Consultas/`: `ObrasQuery`, `ProveedoresQuery`, `PedidosQuery`, `GastosQuery` | F-35, F-45, F-03: cada filtro es una clase chica que se suma (`PorObra`, `PorEstado`, `Vencidos`…) |
 | **Read model calculado** | `RendicionDeObraQuery` con cache por obra | RN-07 sin doble conteo (ADR-007) |
 | **Value Object** | `Importe`, `Cantidad`, `NumeroPresupuesto`, `RangoFechas` | ADR-008 |
 | **Repository** | Solo en Importacion (lectores de xlsx) | No se envuelve Eloquent sin motivo |

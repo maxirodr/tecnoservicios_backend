@@ -52,6 +52,11 @@ final class ModuleBoundaryScanner
                 if (preg_match('/^App\\\\Modules\\\\\w+\\\\Http(\\\\|$)/', $name) === 1) {
                     $violations[] = "Domain usa la capa Http: {$name}";
                 }
+
+                // ADR-003 (enmienda 2026-11-13): Domain no usa Infrastructure, ni la propia.
+                if (preg_match('/^App\\\\Modules\\\\\w+\\\\Infrastructure(\\\\|$)/', $name) === 1) {
+                    $violations[] = "Domain usa la capa Infrastructure: {$name}";
+                }
             }
 
             if (preg_match('/^App\\\\Modules\\\\(\w+)\\\\Infrastructure(\\\\|$)/', $name, $match) === 1

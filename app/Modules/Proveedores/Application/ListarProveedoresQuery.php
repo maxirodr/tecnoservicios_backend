@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\Proveedores\Application;
 
-use App\Modules\Proveedores\Application\Filtros\Alfabetico;
-use App\Modules\Proveedores\Application\Filtros\PorNombre;
 use App\Modules\Proveedores\Domain\Models\Proveedor;
+use App\Modules\Proveedores\Infrastructure\Consultas\Alfabetico;
+use App\Modules\Proveedores\Infrastructure\Consultas\PorNombre;
+use App\Modules\Proveedores\Infrastructure\Consultas\ProveedoresQuery;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 /** F-55 · W-14 (RN-PRV-01…03): la base, alfabética, con buscador por nombre y paginada. */
