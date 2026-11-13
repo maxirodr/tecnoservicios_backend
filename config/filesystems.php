@@ -40,6 +40,15 @@ return [
             'report' => false,
         ],
 
+        // Adjuntos (ADR-014): privado, nunca servido directo; se bajan solo por GET /api/adjuntos/{id}.
+        'adjuntos' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private'),
+            'serve' => false,
+            'throw' => false,
+            'report' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

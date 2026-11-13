@@ -6,5 +6,8 @@ declare(strict_types=1);
 
 use Illuminate\Support\Facades\Schedule;
 
+// Adjuntos temporales no asociados: fila y archivo a las 24 h (ADR-014, RN-IDE-45).
+Schedule::command('adjuntos:purgar-huerfanos')->hourly()->withoutOverlapping();
+
 // Idempotency-Key vencidas (24 h, ADR-011).
 Schedule::command('idempotencia:purgar')->hourly()->withoutOverlapping();
