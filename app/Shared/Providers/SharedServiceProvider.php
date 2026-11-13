@@ -8,6 +8,7 @@ use App\Shared\Actividad\EloquentRegistroActividad;
 use App\Shared\Actividad\RegistroActividad;
 use App\Shared\Adjuntos\Console\PurgarAdjuntosHuerfanosCommand;
 use App\Shared\Adjuntos\ContextosAdjuntos;
+use App\Shared\Busqueda\FuentesBusqueda;
 use App\Shared\Idempotencia\Idempotent;
 use App\Shared\Idempotencia\PurgarIdempotencyKeysCommand;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -16,8 +17,9 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\RateLimiter;
 
 /**
- * Lo transversal (app/Shared): registro de actividad (ADR-010), middleware `idempotent` (ADR-011)
- * y adjuntos (ADR-014) con su registro de contextos y sus rutas.
+ * Lo transversal (app/Shared): registro de actividad (ADR-010), middleware `idempotent` (ADR-011),
+ * adjuntos (ADR-014) con su registro de contextos y sus rutas, y el buscador general (F-03) con su
+ * registro de grupos.
  */
 final class SharedServiceProvider extends ModuleServiceProvider
 {
@@ -27,6 +29,7 @@ final class SharedServiceProvider extends ModuleServiceProvider
     {
         $this->app->bind(RegistroActividad::class, EloquentRegistroActividad::class);
         $this->app->singleton(ContextosAdjuntos::class);
+        $this->app->singleton(FuentesBusqueda::class);
     }
 
     public function boot(): void

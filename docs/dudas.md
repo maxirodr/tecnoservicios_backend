@@ -70,7 +70,8 @@
   entrega de la semana 1).
 - **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
 
-#### DU-03 · Cómo elige su primera contraseña un usuario nuevo
+#### DU-03 · Cómo elige su primera contraseña un usuario nuevo — reemplazada por ADR-015 (13-nov)
+> Ya no hay contraseñas: el usuario nuevo entra directo con su mail pidiendo un código. Lo de abajo queda como historia.
 - **Fuente:** W-39 (el alta tiene nombre, mail, sector, jefatura, estado y teléfono; **no** tiene
   contraseña) · W-16 ("Olvidé mi contraseña manda un mail para elegir una nueva") · F-01.
 - **Por qué importa:** sin esto el usuario dado de alta no puede entrar y la historia de alta no se puede
@@ -452,6 +453,7 @@
   deploy con el mail que indique Juani; no queda escrito en el repo.
 - **¿Cambia lo que ve el cliente?** No → **decisión técnica**.
 - **Resolución (Juani, 2026-11-12):** ✅ va la propuesta.
+  **13-nov (ADR-015):** el comando ya no manda mail; la persona entra pidiendo un código con su mail.
 
 #### DU-A11 · ¿Se restringe el ingreso al dominio de mail de la empresa?
 - **Fuente:** W-16 ("Se entra con el mail de la empresa").

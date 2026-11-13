@@ -7,21 +7,17 @@ namespace Database\Factories;
 use App\Modules\Identidad\Domain\Models\Sector;
 use App\Modules\Identidad\Domain\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
  * Usuarios ficticios. Por defecto en un sector nuevo sin celdas (sin acceso a nada):
  * para probar permisos usar `enSector('Compras')` (sectores y matriz de la migración).
+ * Sin contraseña: se entra con un código por mail (ADR-015).
  *
  * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
-    public const PASSWORD = 'contrasena-de-prueba';
-
-    protected static ?string $password;
-
     /**
      * @return array<string, mixed>
      */
@@ -30,7 +26,6 @@ class UserFactory extends Factory
         return [
             'nombre' => fake()->firstName(),
             'email' => fake()->unique()->safeEmail(),
-            'password' => static::$password ??= Hash::make(self::PASSWORD),
             'telefono' => null,
             'activo' => true,
             'sector_id' => Sector::factory(),
@@ -50,12 +45,6 @@ class UserFactory extends Factory
     public function inactivo(): static
     {
         return $this->state(fn (): array => ['activo' => false]);
-    }
-
-    /** Dado de alta pero sin usar todavía el mail de bienvenida. */
-    public function sinContrasena(): static
-    {
-        return $this->state(fn (): array => ['password' => null]);
     }
 
     public function dependeDe(User $jefe): static

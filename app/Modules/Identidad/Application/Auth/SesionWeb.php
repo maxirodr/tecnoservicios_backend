@@ -10,7 +10,8 @@ use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use LogicException;
 
 /**
- * Sesión de Sanctum SPA (guard `web`, cookie): iniciar, cerrar y "recordarme" (RN-IDE-02).
+ * Sesión de Sanctum SPA (guard `web`, cookie): iniciar y cerrar. Dura 90 días desde el último uso
+ * (config/session.php, RN-IDE-07); no hay "recordarme".
  */
 final class SesionWeb
 {
@@ -18,20 +19,14 @@ final class SesionWeb
 
     public function __construct(private readonly AuthFactory $auth) {}
 
-    public function iniciar(User $user, bool $recordarme): void
+    public function iniciar(User $user): void
     {
-        $this->guard()->login($user, $recordarme);
+        $this->guard()->login($user);
     }
 
     public function cerrar(): void
     {
         $this->guard()->logout();
-    }
-
-    /** Nombre de la cookie "recordarme" de este guard. */
-    public function cookieRecordarme(): string
-    {
-        return $this->guard()->getRecallerName();
     }
 
     private function guard(): SessionGuard

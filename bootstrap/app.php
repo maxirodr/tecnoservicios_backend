@@ -49,7 +49,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 'url' => $request->fullUrl(),
                 'user_id' => $request->user()?->getAuthIdentifier(),
                 'ip' => $request->ip(),
-                'input' => $request->except(['password', 'password_confirmation', 'actual', 'nueva', 'nueva_confirmation', 'token', 'secret']),
+                'input' => $request->except(['password', 'password_confirmation', 'codigo', 'token', 'secret']),
             ];
 
             if ($e instanceof ValidationException) {

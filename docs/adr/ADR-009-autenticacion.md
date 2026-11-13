@@ -1,6 +1,11 @@
 # ADR-009 · Autenticación
 
-- **Estado:** Aceptada (Juani, 2026-11-12) · **Fecha:** 2026-11-12 · **Rol:** CTO + Seguridad
+- **Estado:** Aceptada (Juani, 2026-11-12) · **Reemplazada en parte por [ADR-015](ADR-015-ingreso-con-codigo-por-mail.md)** (2026-11-13) · **Fecha:** 2026-11-12 · **Rol:** CTO + Seguridad
+
+> **Nota (13-nov):** ADR-015 reemplaza el ingreso con contraseña, "recordarme", la recuperación,
+> el cambio de contraseña y el mail para elegir la primera contraseña: ahora se entra con el mail
+> y un código por mail, con sesión de 90 días desde el último uso. Sigue vigente: Sanctum SPA con
+> cookie, sin Google, el inactivo no entra y las cuentas las crea gerencia. Lo de abajo queda como historia.
 
 ## Decisión
 - Sanctum en modo SPA (cookie de sesión + CSRF), front y API bajo el mismo dominio padre.

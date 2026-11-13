@@ -173,8 +173,9 @@ purga de huérfanos se prueba con el reloj fijado (`travelTo` + 24 h).
 - IDOR: ids de obras, pedidos, gastos, usuarios y avisos ajenos → 403 (avisos de otro usuario: 404).
 - Asignación masiva: campos que el usuario no debe tocar (`estado` en el alta de obra, `sector_id` y
   `jefe_id` en el propio perfil, `cargado_por`, `solicitante_id`) se ignoran o se rechazan.
-- Sesión: inactivo no entra; cambiar la contraseña o desactivar cierra sesiones; CSRF de Sanctum activo;
-  rate limit en ingreso y recuperación (429 con sobre JSON).
+- Sesión (ADR-015): inactivo no recibe código ni entra; desactivar cierra sesiones; código de un uso,
+  10 min, 5 intentos, guardado hasheado y fuera de los logs; CSRF de Sanctum activo; rate limit al pedir
+  código y al ingresar, por mail y por IP (429 con sobre JSON); sesión de 90 días desde el último uso.
 - Datos sensibles: monto y ganancia fuera del JSON para quien no los ve; el buscador no devuelve grupos
   de módulos sin acceso; los mails no exponen datos de otras obras.
 - Datos personales: el concepto de combustible no lleva el nombre del chofer (va en "rendido por").

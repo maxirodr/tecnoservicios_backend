@@ -23,6 +23,7 @@ Plan (brief de agentes: rehacerlo con las mismas reglas; está en `tasks/brief-a
 ## Pendientes de Juani
 - Servidor de staging y producción (para `docs/deploy.md` y la URL de `/bug-report`)
 - Avisarle al cliente que ADR-014 amplía lo firmado (archivos además de links)
+- Avisarle al cliente que ADR-015 cambia F-01 (ingreso con código por mail, sin contraseña)
 
 ### Revisión Tanda 1 (2026-11-13)
 - Identidad (`feat/w1-identidad`): 149 tests / 753 assertions verde, pint ok, larastan 0. HU-001…011.

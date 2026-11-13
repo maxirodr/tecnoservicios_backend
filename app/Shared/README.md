@@ -164,3 +164,19 @@ DB::transaction(function () use ($datos) {
 - Disco `ADJUNTOS_DISK` (por defecto `adjuntos` = `storage/app/private`, sin `serve`), ruta
   `adjuntos/AAAA/MM/<uuid>` sin extensión. El nombre original solo se muestra y va en `Content-Disposition`.
 - `adjuntos:purgar-huerfanos` corre cada hora: borra fila y archivo de los temporales con más de 24 h.
+
+## Buscador general (F-03, W-18, HU-022)
+
+`GET /api/buscar?q=` (con sesión) → `{ "grupos": [{ "tipo", "cantidad", "resultados": [...] }] }`. Con menos
+de 2 caracteres devuelve `grupos: []` sin buscar. Cada grupo trae la cantidad total y los primeros 10. Un
+grupo al que la persona no tiene acceso no aparece ni viaja. Orden de W-18: obras, pedidos, proveedores, gastos.
+
+Cada módulo dueño implementa `App\Shared\Busqueda\FuenteBusqueda` (`puedeBuscar(User)` con su matriz y
+`buscar(texto, User, limite): ResultadoBusqueda` con su query y su alcance) y la registra en el `boot()`
+de su provider:
+
+```php
+$this->app->make(\App\Shared\Busqueda\FuentesBusqueda::class)->registrar('obras', ObrasEnBuscador::class);
+```
+
+Semana 1: `proveedores` (Proveedores). `obras` lo registra Obras; `pedidos` (s2) y `gastos` (s3) después.

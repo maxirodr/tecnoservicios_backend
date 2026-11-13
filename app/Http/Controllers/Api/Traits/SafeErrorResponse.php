@@ -32,7 +32,7 @@ trait SafeErrorResponse
             'route_name' => $route instanceof Route ? $route->getName() : null,
             'user_id' => $request->user()?->getAuthIdentifier(),
             'ip' => $request->ip(),
-            'input' => $request->except(['password', 'password_confirmation', 'token', 'secret']),
+            'input' => $request->except(['password', 'password_confirmation', 'codigo', 'token', 'secret']),
             'file' => $e->getFile().':'.$e->getLine(),
             'trace_short' => self::shortTrace($e),
         ]);

@@ -2,12 +2,16 @@
 
 > Módulo `app/Modules/Identidad` · Entrega: **semana 1** · Rol: Analista funcional · 2026-11-12
 > Contrato: documento firmado v1.1 (cap. 3, 5, 11, 13) + maquetas W-15, W-16, W-17, W-19, W-39, W-40, W-50.
-> Decisiones técnicas: ADR-006 (matriz), ADR-009 (autenticación), ADR-010 (auditoría), ADR-011 (idempotencia),
+> Decisiones técnicas: ADR-006 (matriz), ADR-009 (autenticación, reemplazada en parte), **ADR-015 (ingreso con código
+> por mail, sin contraseña; cambia F-01)**, ADR-010 (auditoría), ADR-011 (idempotencia),
 > ADR-014 (adjuntos: archivo o link; acá solo sus permisos, §6.6).
 > Lo "Propuesto" del documento está **aprobado**. Lo que no está en el documento va a `docs/dudas.md` (DU-A..).
 > **Dudas resueltas por Juani el 12-nov-2026** (va la propuesta en todas; DU-13 con el texto firmado):
 > las reglas que dependían de una duda son definitivas y citan "resuelta DU-XX".
 > Todos los nombres, mails y obras de este archivo son **ficticios** (los de las maquetas).
+> **13-nov-2026 (ADR-015, Juani):** se entra con el mail y un código que llega por mail; no hay contraseñas.
+> Reemplaza RN-IDE-01…10 y RN-IDE-17 de la versión del 12-nov ("mail + contraseña, recordarme, recuperación,
+> bienvenida y cambio de contraseña"). Hay que avisarle al cliente: cambia F-01 del documento firmado.
 
 ## 1. Propósito
 
@@ -20,9 +24,9 @@ personalizar" (16-oct). Además, gerencia define los **plazos de la prioridad** 
 
 | F-XX | Qué | Pantalla | Semana 1 |
 |---|---|---|---|
-| F-01 | Ingreso con usuario y contraseña; recuperación por mail | W-16 | completa |
+| F-01 | Ingreso con el mail y un código por mail, sin contraseña (ADR-015; lo firmado decía "usuario y contraseña; recuperación por mail") | W-16 | completa |
 | F-02 | Menú según los permisos del sector | W-17 (y barra inferior W-41) | completa (solo módulos entregados, resuelta DU-A12) |
-| F-10 | Mi perfil: mis datos, mi sector, cambiar contraseña, mis avisos por mail | W-19 | **sin "Mis avisos"** (se activa en semana 2 con Pedidos) |
+| F-10 | Mi perfil: mis datos, mi sector, mis avisos por mail (sin "cambiar contraseña": no hay contraseña, ADR-015) | W-19 | **sin "Mis avisos"** (se activa en semana 2 con Pedidos) |
 | F-58 | Usuarios: alta, edición y baja (activo/inactivo), con sector y jefatura | W-15 · W-39 | completa |
 | F-59 | Sectores: agregar, renombrar, sacar | W-40 | completa |
 | F-60 | Tabla de permisos sector × función: editar / ver / sin acceso (+ alcance) | W-15 | completa |
@@ -56,7 +60,8 @@ personalizar" (16-oct). Además, gerencia define los **plazos de la prioridad** 
 | jefe_id | ref. usuario | No | no puede ser él mismo; no puede generar un ciclo (RN-IDE-22); al asignar, el jefe debe estar activo | W-39 "Depende de (jefatura)", F-58 |
 | telefono | texto ≤ 50 | No | libre (se muestra "(opcional)") | W-39, W-19 |
 | activo | booleano | Sí (default `true`) | — | W-39 "Activo o inactivo" |
-| password | hash | Sí (la elige la persona) | `Password::defaults()` mínimo 10 caracteres (ADR-009) | F-01 |
+
+El usuario **no** tiene contraseña (ADR-015): entra con un código por mail (§4.5).
 
 El usuario **no** tiene rol propio: lo que puede hacer sale de la celda de su sector (F-60).
 "Dirección ve todo" (F-61) se resuelve con la configuración de la matriz (Dirección con alcance
@@ -93,20 +98,31 @@ Columnas de W-40: **Sector · Usuarios** (cantidad de usuarios activos) **· ren
 | (normal) | — | — | "más de `prioritario_hasta_dias`" (no se carga: se deriva) | "más de 7" |
 | updated_by, updated_at | — | — | — | — |
 
+### 4.5 Código de ingreso (`codigos_ingreso`) — W-16, ADR-015
+
+| Campo | Tipo | Oblig. | Qué es |
+|---|---|---|---|
+| user_id | ref. usuario | Sí | **único**: un código vigente por persona (pedir otro reemplaza al anterior) |
+| codigo_hash | texto | Sí | HMAC-SHA256 del código con la `APP_KEY`; el código en claro solo viaja en el mail |
+| intentos_fallidos | entero | Sí (0) | al llegar a 5 el código se borra |
+| vence_at | fecha y hora | Sí | 10 minutos después de pedirlo |
+
+Al usarse bien, vencer o agotar los intentos, la fila se borra.
+
 ## 5. Reglas de negocio
 
-### Ingreso y recuperación (F-01, W-16)
+### Ingreso con código por mail (F-01, W-16, ADR-015)
 
-- **RN-IDE-01** Se entra con **mail de la empresa + contraseña**. Cada uno con su usuario; no hay usuarios compartidos. *(F-01, W-16, ADR-009)*
-- **RN-IDE-02** "Recordarme en este equipo" mantiene la sesión abierta en ese navegador después de cerrarlo (cookie *remember*). Sin tildarlo, la sesión vence por inactividad (`SESSION_LIFETIME`, 120 min). *(W-16)*
-- **RN-IDE-03** Si mail o contraseña no coinciden, el mensaje es siempre el mismo: **"Mail o contraseña incorrectos."** (no revela si el mail existe). *(ADR-009)*
-- **RN-IDE-04** Un usuario **inactivo no entra**, aunque la contraseña sea correcta: "Tu usuario está inactivo. Si lo necesitás, pedíselo a gerencia." *(W-39 "Un usuario inactivo no entra")*
-- **RN-IDE-05** Máximo **5 intentos de ingreso por minuto** por mail + IP; el sexto devuelve 429 "Demasiados intentos. Probá de nuevo en un minuto." *(ADR-009)*
-- **RN-IDE-06** "Olvidé mi contraseña": la persona escribe su mail y el sistema responde **siempre** "Te mandamos un mail a {mail} para elegir una nueva." exista o no el usuario; solo se manda el mail si el usuario existe y está activo. Máximo 3 pedidos por hora por mail. *(W-16, ADR-009)*
-- **RN-IDE-07** El link del mail sirve **una sola vez** y vence a los **60 minutos**. Vencido o usado: "El link venció. Pedí uno nuevo desde 'Olvidé mi contraseña'." *(ADR-009)*
-- **RN-IDE-08** Al elegir la contraseña nueva se cierran las demás sesiones de esa persona y queda adentro. *(técnica, seguridad)*
-- **RN-IDE-09** Un usuario recién dado de alta recibe un mail para **elegir su contraseña** (mismo flujo y mismo link que la recuperación, con vencimiento de 7 días). Si no lo usó a tiempo, usa "Olvidé mi contraseña" o gerencia se lo **reenvía** desde W-15 con el botón "Reenviar mail de bienvenida" (manda un link nuevo de 7 días e invalida el anterior; solo para usuarios activos que todavía no eligieron contraseña). Nadie (ni gerencia) ve ni escribe contraseñas ajenas. *(ADR-009 · resuelta DU-03 · W-16 "Si no tenés usuario, pedíselo a gerencia")*
-- **RN-IDE-10** Los mails de ingreso (bienvenida y recuperación) son **de la cuenta**, no "avisos": salen desde la semana 1 aunque los avisos por mail (F-09) se activen en semana 2. Van por cola, desde noreply con reply-to real. *(ADR-012)*
+- **RN-IDE-01** Se entra con el **mail de la empresa** y un **código de 6 dígitos** que le llega por mail. No hay contraseñas en ningún lado. Cada uno con su usuario; no hay usuarios compartidos. *(F-01 cambiado por ADR-015, W-16)*
+- **RN-IDE-02** "Pedir código": la persona escribe su mail y el sistema responde **siempre** "Si el mail está registrado, te llegó un código.", exista o no. Solo se manda el código si el usuario existe y está **activo**. El mail se compara en minúsculas y sin espacios. *(ADR-015)*
+- **RN-IDE-03** El código es **numérico de 6 dígitos**, vence a los **10 minutos**, sirve **una sola vez**, y **pedir uno nuevo invalida el anterior**. Se guarda **hasheado**, nunca en claro, y no queda en ningún log. *(ADR-015)*
+- **RN-IDE-04** Código incorrecto, vencido o ya usado, usuario **inactivo** o mail que no existe: el error es siempre el mismo, **"El código no es válido o venció."** (no revela si el mail existe ni si está inactivo). Un usuario inactivo no entra. *(ADR-015, W-39 "Un usuario inactivo no entra")*
+- **RN-IDE-05** **5 intentos fallidos** invalidan el código: hay que pedir otro. Un código con otra forma (no son 6 dígitos) da el mismo error y no gasta intento. *(ADR-015)*
+- **RN-IDE-06** Límites (429 "Ya pediste varios códigos. Probá de nuevo en unos minutos." / "Demasiados intentos. Probá de nuevo en un minuto."): pedir código **3 cada 10 minutos por mail** y **20 por hora por IP**; ingresar **10 intentos por minuto por mail** y **30 por IP**. *(ADR-015)*
+- **RN-IDE-07** La sesión dura **90 días desde el último uso**: cada pedido al servidor renueva el plazo y cerrar el navegador no la cierra (`SESSION_LIFETIME=129600`, `expire_on_close = false`). No hay "recordarme". "Salir" la cierra. *(ADR-015)*
+- **RN-IDE-08** El mail del código es **de la cuenta**, no un "aviso": sale desde la semana 1, por cola, desde noreply con reply-to real, con texto corto ("Tu código para entrar al sistema de Tecnoservicios es… Sirve una sola vez y vence en 10 minutos. Si no lo pediste, ignorá este mail."). *(ADR-012, ADR-015)*
+- **RN-IDE-09** Un usuario recién dado de alta **entra directo con su mail** pidiendo un código: no hay mail de bienvenida ni reenvío. Nadie ve los códigos de otro. *(ADR-015; reemplaza la resolución de DU-03)*
+- **RN-IDE-10** Desactivar a un usuario **corta su sesión en el próximo pedido** al servidor (401) y ya no recibe códigos. *(W-39, HU-006)*
 
 ### Menú según permisos (F-02, W-17, W-41)
 
@@ -119,7 +135,7 @@ Columnas de W-40: **Sector · Usuarios** (cantidad de usuarios activos) **· ren
 ### Mi perfil (F-10, W-19)
 
 - **RN-IDE-16** La persona puede cambiar su **nombre** y su **teléfono**. Ve, sin poder cambiarlos, su **mail**, su **sector** y **de quién depende** ("Hernán (Proyectos)"): "Sector y jefatura los cambia gerencia". *(W-19)*
-- **RN-IDE-17** Cambiar la contraseña pide la **actual**, la nueva y su repetición; la nueva cumple RN de §4.1 y no puede ser igual a la actual. Cierra las demás sesiones. *(W-19, ADR-009)*
+- **RN-IDE-17** ~~Cambiar la contraseña pide la actual, la nueva y su repetición…~~ **Reemplazada por ADR-015 (13-nov):** no hay contraseña que cambiar; Mi perfil no tiene esa sección.
 - **RN-IDE-18** **Semana 1:** la sección "Mis avisos" no se muestra. Se activa en semana 2 con: avisos dentro del sistema "siempre", por mail solo la asignación (y la reasignación) tildada por defecto, y cada persona puede tildar más. *(F-09, F-10, W-19; fuera de alcance de esta entrega)*
 
 ### Usuarios (F-58, W-15, W-39)
@@ -130,7 +146,7 @@ Columnas de W-40: **Sector · Usuarios** (cantidad de usuarios activos) **· ren
 - **RN-IDE-22** "Depende de" es opcional (Dirección no depende de nadie). No puede ser la misma persona ni armar un círculo (si Laura depende de Hernán, Hernán no puede depender de Laura ni de nadie que dependa de Laura): "Así se arma un círculo: {nombre} ya depende de {nombre}." *(F-58, F-61)*
 - **RN-IDE-23** **Mi gente** = todas las personas que dependen de mí, directa o indirectamente (Dirección → Gerencia → Jefatura → Ingeniería). El **superior** de una persona es su jefe **directo**. El aviso de "completado" de semana 2 va al solicitante y al **superior del solicitante** (`jefe_id` de quien pidió, no de quien completó); si el solicitante no tiene jefatura, no hay aviso extra. Identidad lo expone en `Identidad\Contracts\Jerarquia::superiorDe(UserId): ?UserId`. *(F-61, cap. 4.2 y F-31 "a su superior", decisiones Sprint 0 n.º 6, resuelta DU-13 con el texto firmado)*
 - **RN-IDE-24** Al desactivar a alguien que tiene gente a cargo u obras como responsable, la pantalla avisa cuántas ("Hernán tiene 2 personas a cargo y es responsable de 3 obras. Quedan como están hasta que las cambies.") y **no bloquea**. *(resuelta DU-A08)*
-- **RN-IDE-25** Nadie se puede desactivar a sí mismo, y el sistema no deja que quede **ningún usuario activo con Usuarios y permisos = Editar** (por desactivar, por cambiar de sector o por cambiar la matriz): "Tiene que quedar al menos una persona que pueda administrar usuarios y permisos." *(técnica, resuelta DU-A09)*
+- **RN-IDE-25** Nadie se puede desactivar a sí mismo, y el sistema no deja que quede **ningún usuario activo con Usuarios y permisos = Editar** (por desactivar, por cambiar de sector o por cambiar la matriz). Cuenta a **cualquier usuario activo** de un sector con esa celda en Editar, haya entrado alguna vez o no (con ADR-015 cualquier activo puede entrar con su mail): "Tiene que quedar al menos una persona que pueda administrar usuarios y permisos." *(técnica, resuelta DU-A09)*
 - **RN-IDE-26** El mail no se restringe a un dominio; queda la variable opcional `MAIL_DOMINIOS_PERMITIDOS` (vacía = sin restricción). *(resuelta DU-A11)*
 - **RN-IDE-27** El cambio de sector de un usuario cambia sus permisos desde el próximo pedido al servidor (RN-IDE-14). No cambia sus pedidos ni sus obras.
 
@@ -275,10 +291,10 @@ Semana 1: los ítems de módulos todavía no entregados (Pedidos, Calendario, Ga
 
 | Acción | Función | Nivel | Alcance |
 |---|---|---|---|
-| Ingresar, recuperar contraseña | — (público) | — | — |
-| Ver / editar mi perfil, cambiar mi contraseña | — (autenticado) | — | — |
+| Pedir código, ingresar | — (público, con límites RN-IDE-06) | — | — |
+| Ver / editar mi perfil | — (autenticado) | — | — |
 | Listar usuarios, ver sectores y tabla | `usuarios_permisos` | ver | — |
-| Alta, edición, activar/desactivar usuario, reenviar mail de bienvenida | `usuarios_permisos` | editar | — |
+| Alta, edición, activar/desactivar usuario | `usuarios_permisos` | editar | — |
 | Agregar, renombrar, sacar sector | `usuarios_permisos` | editar | — |
 | Cambiar celdas de la tabla | `usuarios_permisos` | editar | — |
 | Ver plazos de la prioridad | `plazos_prioridad` | ver | — |
@@ -315,20 +331,21 @@ desde la pantalla en la Etapa 1 (se agrega uno nuevo con el mismo nombre si hici
 
 ## 8. Avisos
 
-Este módulo no genera avisos del sistema. Manda dos mails **de cuenta** (RN-IDE-10):
+Este módulo no genera avisos del sistema. Manda un solo mail **de cuenta** (RN-IDE-08):
 
 | Cuándo | A quién | Asunto | Contenido |
 |---|---|---|---|
-| Alta de usuario | al nuevo usuario | "Tu usuario en el sistema de Tecnoservicios" | quién lo dio de alta, su mail de ingreso y el botón "Elegir mi contraseña" (vence en 7 días) |
-| Olvidé mi contraseña | al usuario activo | "Elegí una contraseña nueva" | botón "Elegir contraseña nueva" (vence en 60 min) y "Si no lo pediste, ignorá este mail." |
+| Pide código para entrar | al usuario activo | "Tu código para entrar a Tecnoservicios" | el código de 6 dígitos, "Sirve una sola vez y vence en 10 minutos." y "Si no lo pediste, ignorá este mail." |
+
+(Hasta el 12-nov había dos: bienvenida al alta y "Olvidé mi contraseña". ADR-015 los reemplaza.)
 
 ## 9. Casos borde (datos ficticios)
 
 | # | Caso | Resultado esperado |
 |---|---|---|
-| 1 | Laura escribe `LAURA@empresa-ejemplo.com ` | Entra: el mail se compara en minúsculas y sin espacios. |
-| 2 | Carla (inactiva) pone bien su contraseña | No entra: "Tu usuario está inactivo…" (RN-IDE-04). |
-| 3 | Alguien pide recuperar `nadie@empresa-ejemplo.com` | Ve el mismo mensaje que si existiera; no se manda nada. |
+| 1 | Laura escribe `LAURA@empresa-ejemplo.com ` al pedir el código | Le llega: el mail se compara en minúsculas y sin espacios. |
+| 2 | Carla (inactiva) pide un código | Ve "Si el mail está registrado, te llegó un código." pero no se le manda nada; con un código viejo, "El código no es válido o venció." (RN-IDE-02/04). |
+| 3 | Alguien pide un código para `nadie@empresa-ejemplo.com` | Ve el mismo mensaje que si existiera; no se manda nada. |
 | 4 | Gerencia da de alta a Pablo con `diego@empresa-ejemplo.com` (ya existe, inactivo) | 422 "Ese mail ya es de otro usuario (Diego, inactivo). Podés reactivarlo." |
 | 5 | Gerencia pone que Hernán depende de Laura, y Laura ya depende de Hernán | 422 por círculo (RN-IDE-22). |
 | 6 | El único usuario de Gerencia de Administración con Usuarios = Editar es Diego; Dirección y Gerencia de Operaciones no tienen usuarios todavía; Diego se pasa a Compras | 422 RN-IDE-25. |
@@ -341,10 +358,10 @@ Este módulo no genera avisos del sistema. Manda dos mails **de cuenta** (RN-IDE
 | 13 | Gerencia pone Urgente 0, Prioritario 5. Un pedido del lunes para el mismo lunes | Urgente (d = 0). Uno para el sábado (d = 5): Prioritario; para el domingo (d = 6): Normal. |
 | 14 | Un pedido cargado con plazos 1/7 quedó Prioritario (d = 5); gerencia cambia a 1/4 | Sigue Prioritario (RN-IDE-42). |
 | 15 | Hernán (Jefatura de Proyectos) de quien dependen Laura y Sofía, y Sofía de quien depende Pablo | "Mi gente" de Hernán = Laura, Sofía y Pablo. Superior de Pablo = Sofía. |
-| 16 | Diego cambia su propia contraseña poniendo mal la actual | 422 "La contraseña actual no coincide." |
+| 16 | Diego escribe mal el código 5 veces | El código deja de servir; tiene que pedir otro (RN-IDE-05). |
 | 17 | Una persona con Usuarios = Ver intenta `PATCH /api/usuarios/{id}` | 403. |
-| 18 | Link de recuperación usado dos veces | La segunda: "El link venció…" (RN-IDE-07). |
-| 19 | Pablo no usó el mail de bienvenida en 7 días; gerencia toca "Reenviar mail de bienvenida" | Le llega un link nuevo de 7 días; el viejo deja de servir (RN-IDE-09). Sobre un usuario que ya eligió contraseña: 422 "Ya eligió su contraseña: puede usar 'Olvidé mi contraseña'." |
+| 18 | Un código usado se vuelve a escribir (o pasaron 11 minutos) | "El código no es válido o venció." (RN-IDE-03/04). |
+| 19 | Gerencia da de alta a Pablo | Pablo entra con su mail pidiendo un código; no recibe mail de bienvenida (RN-IDE-09). |
 | 20 | Pablo (Ingeniería) completa un pedido que pidió Carla (Compras), que depende de Diego | Aviso a Carla y a **Diego** (superior de la solicitante), no a Sofía, superior de Pablo (RN-IDE-23, DU-13). |
 | 21 | Laura (Ingeniería, Obras = Editar·solo sus obras) pide `GET /api/adjuntos/{id}` del certificado de una obra donde no es responsable, adivinando el id | 404; no se confirma que el adjunto exista (RN-IDE-47). |
 | 22 | Carla sube un PDF (id temporal 41) y Diego intenta asociar el 41 a un certificado de otra obra | 422 "Ese adjunto no se puede usar acá." (RN-IDE-46: solo adjuntos temporales propios). |
@@ -353,33 +370,33 @@ Este módulo no genera avisos del sistema. Manda dos mails **de cuenta** (RN-IDE
 ## 10. Contrato de API sugerido
 
 Envelope en todo: `{ "data": …, "message": string|null, "errors": object|null }`; listados con
-`meta` y `links` dentro. Sanctum SPA: `GET /sanctum/csrf-cookie` antes de ingresar. Códigos:
+`meta` y `links` dentro. Sanctum SPA: `GET /sanctum/csrf-cookie` antes de pedir el código. Códigos:
 401 sin sesión, 403 sin permiso, 404, 409 conflicto, 422 validación (`errors.<campo>: [mensajes]`),
 429 límite. Los POST que crean aceptan `Idempotency-Key` (ADR-011).
 
 | Método y ruta | Payload | Respuesta `data` | Errores |
 |---|---|---|---|
-| `POST /api/auth/ingresar` | `{email, password, recordarme: bool}` | `UsuarioActual` | 422 RN-IDE-03/04 · 429 |
+| `POST /api/auth/pedir-codigo` | `{email}` | `null`, `message` "Si el mail está registrado, te llegó un código." (siempre) | 422 formato del mail · 429 |
+| `POST /api/auth/ingresar` | `{email, codigo}` | `UsuarioActual` (el mismo payload que `GET /api/me`) | 422 `errors.codigo: ["El código no es válido o venció."]` (también inactivo o inexistente) · 429 |
 | `POST /api/auth/salir` | — | `null` | 401 |
-| `POST /api/auth/olvide-contrasena` | `{email}` | `null`, `message` RN-IDE-06 | 422 formato · 429 |
-| `POST /api/auth/elegir-contrasena` | `{token, email, password, password_confirmation}` | `UsuarioActual` (queda adentro) | 422 token vencido o contraseña inválida |
 | `GET /api/me` | — | `UsuarioActual` | 401 |
 | `PATCH /api/me` | `{nombre?, telefono?}` | `UsuarioActual` | 422 |
-| `PUT /api/me/contrasena` | `{actual, nueva, nueva_confirmation}` | `null` | 422 |
 | `GET /api/usuarios?buscar=&sector_id=&activo=true\|false\|todos&page=` | — | `[Usuario]` paginado | 403 |
 | `GET /api/usuarios/opciones?buscar=` | — | `[{id, nombre, sector: {id, nombre}}]` solo activos | 401 |
-| `POST /api/usuarios` | `{nombre, email, sector_id, jefe_id?, telefono?}` | `Usuario` (201) + manda el mail RN-IDE-09 | 403 · 422 |
+| `POST /api/usuarios` | `{nombre, email, sector_id, jefe_id?, telefono?}` · acepta `Idempotency-Key` | `Usuario` (201), `message` "Listo: {nombre} ya puede entrar con su mail." (sin mail, RN-IDE-09) | 403 · 422 |
 | `GET /api/usuarios/{id}` | — | `Usuario` + `{personas_a_cargo: int, obras_como_responsable: int}` | 403 · 404 |
 | `PATCH /api/usuarios/{id}` | `{nombre?, email?, sector_id?, jefe_id?, telefono?, activo?}` | `Usuario` | 403 · 404 · 422 (RN-IDE-22, RN-IDE-25) |
-| `POST /api/usuarios/{id}/reenviar-bienvenida` | — | `null`, `message` "Le mandamos de nuevo el mail a {mail}." | 403 · 404 · 422 (inactivo o ya eligió contraseña) · 429 (3 por hora) |
 | `GET /api/sectores?incluir_archivados=false` | — | `[{id, nombre, usuarios_activos: int, activo}]` | 401 |
-| `POST /api/sectores` | `{nombre}` | `Sector` (201), con sus celdas iniciales RN-IDE-30 | 403 · 422 |
+| `POST /api/sectores` | `{nombre}` · acepta `Idempotency-Key` | `Sector` (201), con sus celdas iniciales RN-IDE-30 | 403 · 422 |
 | `PATCH /api/sectores/{id}` | `{nombre}` | `Sector` | 403 · 404 · 422 |
 | `DELETE /api/sectores/{id}` | — | `{resultado: "borrado"\|"archivado"}` | 403 · 404 · 422 RN-IDE-31 / RN-IDE-25 |
 | `GET /api/permisos` | — | `{funciones: [Funcion], sectores: [{id, nombre}], celdas: [{sector_id, funcion, nivel, alcance}]}` | 403 |
 | `PUT /api/permisos` | `{celdas: [{sector_id, funcion, nivel, alcance}]}` (solo las cambiadas; todo o nada) | igual que GET | 403 · 422 (nivel/alcance no admitido, RN-IDE-25) |
 | `GET /api/plazos-prioridad` | — | `{urgente_hasta_dias, prioritario_hasta_dias, updated_at, updated_by: {id, nombre}\|null}` | 403 |
 | `PUT /api/plazos-prioridad` | `{urgente_hasta_dias, prioritario_hasta_dias}` | igual que GET | 403 · 422 |
+
+Eliminados por ADR-015 (13-nov): `POST /api/auth/olvide-contrasena`, `POST /api/auth/elegir-contrasena`,
+`PUT /api/me/contrasena` y `POST /api/usuarios/{id}/reenviar-bienvenida` (404). `Usuario` ya no trae `eligio_contrasena`.
 
 Formas:
 
@@ -413,11 +430,11 @@ archivo con la autorización de RN-IDE-47. Contrato completo y validaciones (tip
 
 | F-XX | Reglas | Tests (PHPUnit, `tests/Feature/Identidad/…`) |
 |---|---|---|
-| F-01 | RN-IDE-01…10 | `test_ingresa_con_mail_de_la_empresa_y_contrasena` · `test_mail_se_compara_sin_mayusculas_ni_espacios` · `test_credenciales_incorrectas_dan_el_mismo_mensaje` · `test_usuario_inactivo_no_puede_ingresar` · `test_sexto_intento_en_un_minuto_devuelve_429` · `test_olvide_contrasena_no_revela_si_el_mail_existe` · `test_link_de_recuperacion_vence_a_los_60_minutos_y_sirve_una_vez` · `test_elegir_contrasena_cierra_las_otras_sesiones` · `test_alta_de_usuario_manda_mail_para_elegir_contrasena` · `test_recordarme_deja_cookie_remember` |
+| F-01 | RN-IDE-01…10 (ADR-015) | `PedirCodigoTest`: `test_pedir_codigo_manda_un_codigo_de_6_digitos_por_la_cola_de_mail` · `test_codigo_se_guarda_hasheado_y_nunca_en_claro` · `test_pedir_codigo_responde_igual_si_el_mail_no_existe` · `test_usuario_inactivo_no_recibe_codigo` · `test_pedir_codigo_nuevo_reemplaza_al_anterior` · `test_cuarto_pedido_del_mismo_mail_en_10_minutos_devuelve_429` · `test_pedidos_de_codigo_desde_la_misma_ip_tienen_limite_por_hora` · `IngresoTest`: `test_ingresa_con_su_mail_y_el_codigo_que_le_llego` · `test_codigo_incorrecto_o_mail_inexistente_dan_el_mismo_mensaje` · `test_codigo_vencido_no_deja_ingresar` · `test_codigo_sirve_una_sola_vez` · `test_pedir_un_codigo_nuevo_invalida_el_anterior` · `test_quinto_intento_fallido_invalida_el_codigo` · `test_usuario_inactivo_no_puede_ingresar_aunque_tenga_un_codigo_vigente` · `test_undecimo_intento_del_mismo_mail_en_un_minuto_devuelve_429` · `test_el_codigo_no_queda_en_el_registro_de_errores` · `SesionTest`: `test_cada_uso_renueva_los_90_dias_y_sin_uso_la_sesion_vence` · `test_sesion_dura_90_dias_y_no_se_cierra_al_cerrar_el_navegador` · `test_usuario_desactivado_pierde_su_sesion_en_el_proximo_pedido` |
 | F-02 | RN-IDE-11…15 | `test_me_devuelve_las_doce_funciones_con_nivel_y_alcance` · `test_me_indica_si_tiene_gente_a_cargo` · `test_endpoint_responde_403_aunque_el_menu_lo_oculte` · `test_cambio_en_la_matriz_vale_desde_el_proximo_pedido` · front: `menuPara.test.ts` → `oculta_gastos_sin_acceso`, `marca_ver_en_rendiciones_de_ingenieria`, `muestra_usuarios_si_solo_tiene_plazos` |
-| F-10 | RN-IDE-16…18 | `test_perfil_permite_cambiar_nombre_y_telefono` · `test_perfil_no_permite_cambiar_mail_sector_ni_jefe` · `test_cambiar_contrasena_pide_la_actual` · `test_nueva_contrasena_no_puede_ser_igual_a_la_actual` |
-| F-58 | RN-IDE-09, 19…27 | `test_solo_usuarios_permisos_editar_da_de_alta_usuarios` · `test_reenviar_bienvenida_manda_link_nuevo_e_invalida_el_anterior` · `test_no_reenvia_bienvenida_a_quien_ya_eligio_contrasena` · `test_superior_para_aviso_de_completado_es_el_jefe_del_solicitante` · `test_mail_de_usuario_es_unico_incluso_entre_inactivos` · `test_desactivar_no_borra_y_conserva_historial` · `test_usuario_inactivo_sale_de_las_opciones` · `test_jefe_no_puede_ser_el_mismo_usuario` · `test_jefe_no_puede_armar_un_circulo` · `test_mi_gente_incluye_subordinados_indirectos` · `test_superior_es_el_jefe_directo` · `test_desactivar_jefe_informa_personas_y_obras_sin_bloquear` · `test_nadie_se_desactiva_a_si_mismo` · `test_no_queda_sin_administrador_de_usuarios` |
-| F-59 | RN-IDE-28…33 | `test_migracion_crea_los_once_sectores_del_organigrama` · `test_nombre_de_sector_unico_sin_mayusculas_ni_tildes` · `test_sector_nuevo_nace_con_pedidos_y_equipos_editar_y_obras_ver` · `test_no_se_saca_un_sector_con_usuarios_activos` · `test_sector_sin_historia_se_borra_y_con_historia_se_archiva` · `test_renombrar_sector_conserva_usuarios_y_permisos` |
+| F-10 | RN-IDE-16…18 | `test_perfil_permite_cambiar_nombre_y_telefono` · `test_perfil_no_permite_cambiar_mail_sector_ni_jefe` · `test_las_rutas_de_contrasena_ya_no_existen` (RN-IDE-17 reemplazada) |
+| F-58 | RN-IDE-09, 19…27 | `test_solo_usuarios_permisos_editar_da_de_alta_usuarios` · `test_alta_de_usuario_no_manda_mail_de_bienvenida` · `test_doble_envio_del_alta_crea_un_solo_usuario` · `test_el_alta_de_un_usuario_no_manda_mail_y_entra_pidiendo_un_codigo` · `test_superior_para_aviso_de_completado_es_el_jefe_del_solicitante` · `test_mail_de_usuario_es_unico_incluso_entre_inactivos` · `test_desactivar_no_borra_y_conserva_historial` · `test_usuario_inactivo_sale_de_las_opciones` · `test_jefe_no_puede_ser_el_mismo_usuario` · `test_jefe_no_puede_armar_un_circulo` · `test_mi_gente_incluye_subordinados_indirectos` · `test_superior_es_el_jefe_directo` · `test_desactivar_jefe_informa_personas_y_obras_sin_bloquear` · `test_nadie_se_desactiva_a_si_mismo` · `test_no_queda_sin_administrador_de_usuarios` · `test_guarda_de_administradores_cuenta_a_cualquier_activo_aunque_nunca_haya_ingresado` |
+| F-59 | RN-IDE-28…33 | `test_migracion_crea_los_once_sectores_del_organigrama` · `test_nombre_de_sector_unico_sin_mayusculas_ni_tildes` · `test_sector_nuevo_nace_con_pedidos_y_equipos_editar_y_obras_ver` · `test_no_se_saca_un_sector_con_usuarios_activos` · `test_sector_sin_historia_se_borra_y_con_historia_se_archiva` · `test_renombrar_sector_conserva_usuarios_y_permisos` · `test_doble_envio_del_alta_de_sector_crea_uno_solo` |
 | F-60 | RN-IDE-34…39, §6.3 | `test_migracion_carga_el_catalogo_de_doce_funciones` · `test_migracion_carga_la_configuracion_inicial_del_cap_3` (una aserción por celda de §6.3) · `test_migracion_de_permisos_es_idempotente` · `test_no_acepta_editar_en_funcion_que_no_lo_admite` · `test_no_acepta_propias_en_funcion_sin_alcance` · `test_cambio_de_celda_queda_en_actividades` · `test_cambio_de_matriz_es_todo_o_nada` |
 | F-61 | RN-IDE-22, 23 | (ver F-58) · `test_dato_depende_de_se_ve_en_mi_perfil` |
 | F-68 | RN-IDE-40…44 | `test_migracion_arranca_plazos_en_1_y_7` · `test_prioritario_debe_ser_mayor_que_urgente` · `test_solo_plazos_editar_cambia_los_plazos` · unit `PlazosPrioridadTest`: `test_dias_hasta_urgente_es_urgente`, `test_limite_prioritario_es_inclusivo`, `test_mas_que_prioritario_es_normal`, `test_entrega_anterior_al_pedido_es_urgente`, `test_cambiar_plazos_no_recalcula_pedidos_cargados` (semana 2) |
@@ -428,7 +445,7 @@ archivo con la autorización de RN-IDE-47. Contrato completo y validaciones (tip
 **Todas resueltas por Juani el 12-nov-2026: va la propuesta** (detalle y resolución en
 `docs/dudas.md`). Las de este módulo: DU-01 (Gerencia de Administración separada; columnas Equipos en
 reparación y Monto de obra), DU-02 y DU-A02 (celdas "a completar"; Ingeniería sin Proveedores por
-W-17), DU-03 (primera contraseña con mail y reenvío), DU-04 (días corridos), DU-13 (superior **del
+W-17), DU-03 (primera contraseña con mail y reenvío; **reemplazada por ADR-015**: el alta entra directo con su mail), DU-04 (días corridos), DU-13 (superior **del
 solicitante**, con el texto firmado: RN-IDE-23), DU-A01 (11 sectores y 12 filas), DU-A03 (RRHH),
 DU-A04 (Ingeniería solo sus obras), DU-A05 (Compras edita control por cantidad), DU-A06 (sector
 nuevo), DU-A07 (sacar sector), DU-A08 (desactivar jefe/responsable), DU-A09 (guardas anti-bloqueo),

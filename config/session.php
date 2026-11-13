@@ -34,9 +34,11 @@ return [
     |
     */
 
-    'lifetime' => (int) env('SESSION_LIFETIME', 120),
+    // ADR-015 (RN-IDE-07): 90 días desde el último uso; cada pedido renueva el plazo. Cerrar el
+    // navegador no cierra la sesión (no hay "recordarme").
+    'lifetime' => (int) env('SESSION_LIFETIME', 129600),
 
-    'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
+    'expire_on_close' => false,
 
     /*
     |--------------------------------------------------------------------------
