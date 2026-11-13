@@ -44,7 +44,7 @@ erDiagram
   users ||--o{ preferencias_aviso : ""
 ```
 
-`actividades` (auditoría polimórfica), `idempotency_keys`, `plazos_prioridad` y
+`actividades` (auditoría polimórfica), `idempotency_keys`, `plazos_prioridad`, `codigos_ingreso` y
 `equipos_reparacion` no tienen relaciones de negocio fuertes y se describen abajo.
 
 ## 2. Diccionario por módulo
@@ -62,14 +62,27 @@ erDiagram
 | Campo | Tipo | Nota |
 |---|---|---|
 | nombre | varchar(120) | |
-| email | varchar(190) único | mail de la empresa; es el usuario de ingreso (ADR-009) |
-| password | varchar | hash |
+| email | varchar(190) único | mail de la empresa, en minúsculas; es el usuario de ingreso (ADR-015) |
+| telefono | varchar(50), null | opcional (W-39, W-19) |
 | sector_id | FK sectores | obligatorio |
 | jefe_id | FK users, null | "de quién depende" (F-58); base de "mi gente" y del "superior" que recibe el aviso de completado |
-| activo | bool | inactivo no entra; no se borra (W-39) |
-| remember_token, timestamps | | |
+| activo | bool | inactivo no entra ni recibe código; no se borra (W-39) |
+| remember_token, timestamps | | `remember_token` es de Laravel; no se usa (no hay "recordarme", ADR-015) |
+
+**Sin contraseña** (ADR-015, 13-nov): se entra con un código por mail; la columna `password` se quitó.
 
 Índices: `email`, `(sector_id, activo)`, `jefe_id`. Regla: `jefe_id` no puede generar ciclos (validado en el caso de uso).
+
+**`codigos_ingreso`** — código de 6 dígitos para entrar (F-01, W-16, ADR-015).
+| Campo | Tipo | Nota |
+|---|---|---|
+| user_id | FK users único, cascade | un código vigente por persona: pedir otro lo reemplaza |
+| codigo_hash | varchar | HMAC-SHA256 del código con la `APP_KEY`; nunca el código en claro |
+| intentos_fallidos | tinyint | al 5.º fallo se borra la fila |
+| vence_at | datetime | 10 minutos después de pedirlo (`datetime`: en MariaDB 10.4 un `timestamp` NOT NULL se pisa solo en cada UPDATE) |
+| timestamps | | |
+
+Usado, vencido o con 5 fallos: la fila se borra.
 
 **`funciones`** — filas de la tabla de permisos (catálogo por migración; lista final en `especificacion/identidad.md`).
 | Campo | Tipo | Nota |
@@ -90,12 +103,13 @@ erDiagram
 
 Único `(sector_id, funcion_id)`. Un sector nuevo aparece como una fila más (W-40) y nace con Pedidos y Equipos en reparación `editar` y Obras `ver` ("todos pueden pedir"), el resto `sin_acceso` (DU-A06, resuelta). Catálogo: las 12 funciones de `especificacion/identidad.md`; `monto_obra` admite editar (lo carga administración).
 
-**`plazos_prioridad`** — F-68, W-50.
+**`plazos_prioridad`** — F-68, W-50. **Una sola fila** (cargada por migración).
 | Campo | Tipo | Nota |
 |---|---|---|
-| prioridad | varchar(12) único | `urgente`, `prioritario` |
-| hasta_dias | smallint | inicial: urgente 1, prioritario 7; más que eso = `normal` |
+| urgente_hasta_dias | smallint | inicial 1 |
+| prioritario_hasta_dias | smallint | inicial 7; mayor que `urgente_hasta_dias`; más que eso = `normal` (se deriva) |
 | updated_by | FK users, null | |
+| timestamps | | |
 
 La prioridad calculada se **guarda** en el pedido al crearlo o al cambiar la entrega: cambiar plazos no recalcula lo cargado (W-50).
 
@@ -304,7 +318,7 @@ CHECK: `(tipo = 'link' AND url IS NOT NULL AND ruta IS NULL) OR (tipo = 'archivo
 
 **`idempotency_keys`** — ADR-011. `user_id`, `clave` uuid, `ruta`, `payload_hash`, `status`, `respuesta` json, `created_at`. Único `(user_id, clave)`. Se purgan a las 24 h (comando programado).
 
-Además las tablas de Laravel: `password_reset_tokens`, `jobs`, `failed_jobs`, `job_batches` (sesión y cache en Redis).
+Además las tablas de Laravel: `jobs`, `failed_jobs`, `job_batches` (sesión y cache en Redis). Sin `password_reset_tokens` ni `password_bienvenida_tokens` (ADR-015).
 
 ## 3. Consultas críticas
 
