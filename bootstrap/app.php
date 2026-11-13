@@ -25,7 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->prepend(RemoveStackHeaders::class);
         $middleware->statefulApi();
-        $middleware->trustProxies(at: '*');
+        // Proxies de confianza: config/trustedproxy.php (TRUSTED_PROXIES), nunca `*` (SEG-04).
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Error logging (NexoSmart bug-report): todo error de servidor y toda validación fallida
