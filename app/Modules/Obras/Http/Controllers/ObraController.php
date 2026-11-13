@@ -11,6 +11,7 @@ use App\Modules\Obras\Application\Obras\CrearObraAction;
 use App\Modules\Obras\Application\Obras\FichaObraQuery;
 use App\Modules\Obras\Application\Obras\ListarObrasQuery;
 use App\Modules\Obras\Http\Requests\ActualizarObraRequest;
+use App\Modules\Obras\Http\Requests\ClientesSugeridosRequest;
 use App\Modules\Obras\Http\Requests\CrearObraRequest;
 use App\Modules\Obras\Http\Requests\ListarObrasRequest;
 use App\Modules\Obras\Http\Resources\ObraFichaResource;
@@ -40,11 +41,9 @@ final class ObraController
         return $respuesta->setData($cuerpo);
     }
 
-    public function clientes(Request $request, ClientesSugeridosQuery $clientes): JsonResponse
+    public function clientes(ClientesSugeridosRequest $request, ClientesSugeridosQuery $clientes): JsonResponse
     {
-        $buscar = $request->filled('buscar') ? $request->string('buscar')->toString() : null;
-
-        return $this->ok($clientes->handle($this->usuario($request), $buscar));
+        return $this->ok($clientes->handle($this->usuario($request), $request->buscar()));
     }
 
     public function store(CrearObraRequest $request, CrearObraAction $crear, BuscarObra $buscar, FichaObraQuery $ficha): JsonResponse

@@ -22,7 +22,7 @@ final class OpcionesUsuariosQuery
         return User::query()
             ->with('sector')
             ->where('activo', true)
-            ->when($buscar !== null && $buscar !== '', fn (Builder $query): Builder => $query->where('nombre', 'like', '%'.$buscar.'%'))
+            ->when($buscar !== null && $buscar !== '', fn (Builder $query): Builder => $query->where('nombre', 'like', TextoLike::contiene((string) $buscar)))
             ->orderBy('nombre')
             ->get();
     }
