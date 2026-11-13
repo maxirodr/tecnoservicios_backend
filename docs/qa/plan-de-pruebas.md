@@ -13,7 +13,7 @@
 |---|---|---|---|
 | **Unit de dominio** | PHPUnit (`tests/Unit/<Modulo>`) · Vitest (front: helpers y esquemas zod) | Reglas puras sin base ni HTTP: cálculo de prioridad por plazos, transiciones de estado (pedido y obra), `Importe` y `Cantidad` (2 y 3 decimales, negativos en devoluciones), `NumeroPresupuesto`, armado de la rendición (EPP → INSUMOS, solo total, saldo = presupuestado − imputado), jerarquía sin ciclos y "mi gente" recursiva, normalización de nombres de proveedor para "parecidos". | Muchos y rápidos. Toda regla con números o estados tiene su unit. |
 | **Feature HTTP** | PHPUnit (`tests/Feature/<Modulo>`) contra MySQL real (`tecnoservicios_testing`) | **Cada endpoint** con, como mínimo: camino feliz · validación (422 con `errors`) · **permitido** según la tabla de permisos · **denegado** (403 para Ver que intenta editar y para Sin acceso) · **IDOR** (un id ajeno con alcance "sus obras" o "mis pedidos" → 403) · sobre JSON `{data, message, errors}` también en 401/403/404/422/429 · idempotencia (`Idempotency-Key` repetida → mismo recurso, no duplica) en los POST que crean · registro en `actividades` cuando corresponde. | Uno o más archivos por endpoint. |
-| **E2E** | Playwright (front) contra el backend real sobre `tecnoservicios_testing` | **Camino feliz por feature** tal como lo hace una persona del sector, más el denegado visible más importante (botón que no aparece). Proyectos **PC** (1366×768, Chromium) y **celular** (390×844, emulación de teléfono) para las pantallas de celular (W-16, W-41…W-44, W-47) y un recorrido responsive por entrega. | Uno por feature (ver matriz). |
+| **E2E** | Playwright (front), dos suites: **mock** (`npm run e2e`, API simulada con `page.route`, puerto 5310) e **integración real** (`npm run e2e:integracion`: el front en 5312 contra este backend en 8320 sobre la base descartable `tecnoservicios_integracion`, ver §2) | **Camino feliz por feature** tal como lo hace una persona del sector, más el denegado visible más importante (botón que no aparece). Proyectos **PC** (1366×768, Chromium) y **celular** (390×844, emulación de teléfono) para las pantallas de celular (W-16, W-41…W-44, W-47) y un recorrido responsive por entrega. | Uno por feature (ver matriz). |
 
 Reglas de la pirámide:
 
@@ -44,8 +44,16 @@ Reglas de la pirámide:
   completa y no aislado, se trata como contaminación y se arregla.
 - **Feature y E2E no corren en paralelo sobre la misma base.** En CI: unit → feature → E2E, secuencial.
   Dos runners a la vez sobre la misma base dan fallas falsas.
-- El E2E levanta el backend con `APP_ENV=testing` sobre `tecnoservicios_testing` y lo resetea con un
-  comando de semillas E2E que **se niega a correr** si la base no es la de tests.
+- La **integración real** (`tecnoservicios_frontend/playwright.integracion.config.ts`) levanta
+  `php artisan serve --port=8320 --no-reload` con su propio entorno (`DB_DATABASE=tecnoservicios_integracion`,
+  `SANCTUM_STATEFUL_DOMAINS=localhost:5312`, `CORS_ALLOWED_ORIGINS`, `SESSION_DOMAIN=localhost`,
+  `MAIL_MAILER=log` con el canal `integracion` → `storage/logs/integracion-mail.log`, `QUEUE_CONNECTION=sync`,
+  prefijo de Redis y carpeta de adjuntos propios) y el front en 5312 con `VITE_API_URL=http://localhost:8320`.
+  El global setup **verifica que el backend apunta a `tecnoservicios_integracion`** (y que no hay config
+  cacheada) antes de correr `migrate:fresh --seed` sobre esa base descartable; si no, corta. Nunca toca
+  `tecnoservicios_testing` ni la de desarrollo. El código de ingreso se lee del mail logueado: no hay
+  endpoints de test ni atajos en el código. Un solo worker (comparten base); el proyecto celular corre
+  los caminos críticos (tag `@celular`) después del de PC.
 - Redis de tests: base lógica distinta de la de desarrollo; el rate limiter se limpia en `setUp`.
 - La configuración inicial de permisos y el catálogo de rubros llegan **por migración**: los tests usan
   esas migraciones (no seeders aparte), así lo que se prueba es lo que llega a producción.
