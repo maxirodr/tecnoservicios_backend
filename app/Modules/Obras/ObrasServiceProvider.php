@@ -15,14 +15,17 @@ use App\Modules\Obras\Domain\Models\Presupuesto;
 use App\Modules\Obras\Infrastructure\AvanceGastoDeObraNulo;
 use App\Modules\Obras\Infrastructure\ObrasConsultaEloquent;
 use App\Modules\Obras\Infrastructure\ObrasDelResponsableEloquent;
+use App\Modules\Obras\Infrastructure\ObrasEnBuscador;
 use App\Modules\Obras\Infrastructure\PedidosDeObraNulo;
 use App\Shared\Adjuntos\ContextosAdjuntos;
+use App\Shared\Busqueda\FuentesBusqueda;
 use App\Shared\Providers\ModuleServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * Obras (obras.md): rutas, contratos públicos, puertos con implementación nula hasta que Pedidos
- * (semana 2) y Rendicion (semana 3) registren las suyas, y los contextos de adjuntos de la obra.
+ * (semana 2) y Rendicion (semana 3) registren las suyas, los contextos de adjuntos de la obra y el
+ * grupo "obras" del buscador general.
  */
 final class ObrasServiceProvider extends ModuleServiceProvider
 {
@@ -54,6 +57,8 @@ final class ObrasServiceProvider extends ModuleServiceProvider
         $contextos->registrar(Presupuesto::CONTEXTO_OFERTA, ObraAdjuntos::class);
         $contextos->registrar(Presupuesto::CONTEXTO_APROBACION, ObraAdjuntos::class);
         $contextos->registrar(ObraDocumento::CONTEXTO, ObraAdjuntos::class);
+
+        $this->app->make(FuentesBusqueda::class)->registrar(ObrasEnBuscador::TIPO, ObrasEnBuscador::class);
     }
 
     protected function moduleDirectory(): string
