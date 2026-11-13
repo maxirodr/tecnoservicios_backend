@@ -109,6 +109,17 @@ Columnas de W-40: **Sector · Usuarios** (cantidad de usuarios activos) **· ren
 
 Al usarse bien, vencer o agotar los intentos, la fila se borra.
 
+### 4.6 Bloqueo del ingreso (`bloqueos_ingreso`) — ADR-015 (enmienda 2026-11-13), RN-IDE-49
+
+| Campo | Tipo | Oblig. | Qué es |
+|---|---|---|---|
+| user_id | ref. usuario | Sí | **único**: una fila por persona |
+| codigos_quemados | entero | Sí (0) | códigos invalidados por 5 fallos, seguidos y sin ingreso exitoso; al llegar a 3 bloquea y vuelve a 0 |
+| bloqueos_cumplidos | entero | Sí (0) | 0 = el próximo bloqueo es de 1 hora; 1 o más = de 24 horas |
+| bloqueado_hasta | fecha y hora | No | mientras sea futura, no se emiten códigos ni se canjean |
+
+Un ingreso exitoso borra la fila.
+
 ## 5. Reglas de negocio
 
 ### Ingreso con código por mail (F-01, W-16, ADR-015)
@@ -123,6 +134,7 @@ Al usarse bien, vencer o agotar los intentos, la fila se borra.
 - **RN-IDE-08** El mail del código es **de la cuenta**, no un "aviso": sale desde la semana 1, por cola, desde noreply con reply-to real, con texto corto ("Tu código para entrar al sistema de Tecnoservicios es… Sirve una sola vez y vence en 10 minutos. Si no lo pediste, ignorá este mail."). *(ADR-012, ADR-015)*
 - **RN-IDE-09** Un usuario recién dado de alta **entra directo con su mail** pidiendo un código: no hay mail de bienvenida ni reenvío. Nadie ve los códigos de otro. *(ADR-015; reemplaza la resolución de DU-03)*
 - **RN-IDE-10** Desactivar a un usuario **corta su sesión en el próximo pedido** al servidor (401) y ya no recibe códigos. *(W-39, HU-006)*
+- **RN-IDE-49** **Bloqueo progresivo:** un código invalidado por los 5 fallos está "quemado". **3 quemados seguidos** del mismo mail sin un ingreso exitoso en el medio lo bloquean **1 hora**; **otros 3** después de cumplir ese bloqueo, **24 horas**. Un ingreso exitoso pone el contador en cero. Durante el bloqueo, pedir código responde lo mismo de siempre pero no manda nada, e ingresar da el mismo "El código no es válido o venció." *(ADR-015, enmienda 2026-11-13; SEG-01)*
 
 ### Menú según permisos (F-02, W-17, W-41)
 
@@ -361,6 +373,7 @@ Este módulo no genera avisos del sistema. Manda un solo mail **de cuenta** (RN-
 | 16 | Diego escribe mal el código 5 veces | El código deja de servir; tiene que pedir otro (RN-IDE-05). |
 | 17 | Una persona con Usuarios = Ver intenta `PATCH /api/usuarios/{id}` | 403. |
 | 18 | Un código usado se vuelve a escribir (o pasaron 11 minutos) | "El código no es válido o venció." (RN-IDE-03/04). |
+| 18b | Alguien escribe mal 5 veces tres códigos seguidos de Diego | El mail de Diego queda bloqueado 1 hora: pedir código responde lo mismo pero no le llega nada; si vuelve a pasar después, 24 horas. Si Diego entra bien, todo vuelve a cero (RN-IDE-49). |
 | 19 | Gerencia da de alta a Pablo | Pablo entra con su mail pidiendo un código; no recibe mail de bienvenida (RN-IDE-09). |
 | 20 | Pablo (Ingeniería) completa un pedido que pidió Carla (Compras), que depende de Diego | Aviso a Carla y a **Diego** (superior de la solicitante), no a Sofía, superior de Pablo (RN-IDE-23, DU-13). |
 | 21 | Laura (Ingeniería, Obras = Editar·solo sus obras) pide `GET /api/adjuntos/{id}` del certificado de una obra donde no es responsable, adivinando el id | 404; no se confirma que el adjunto exista (RN-IDE-47). |
