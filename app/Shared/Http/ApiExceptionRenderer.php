@@ -28,6 +28,7 @@ final class ApiExceptionRenderer
         404 => 'Recurso no encontrado.',
         405 => 'Método no permitido.',
         409 => 'Conflicto con el estado actual del recurso.',
+        413 => 'Lo que enviaste es demasiado grande. Si es un archivo, probá con uno más liviano.',
         419 => 'La sesión expiró. Volvé a ingresar.',
         422 => 'Los datos enviados no son válidos.',
         429 => 'Demasiadas solicitudes. Probá de nuevo en unos segundos.',
