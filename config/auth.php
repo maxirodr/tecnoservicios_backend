@@ -101,6 +101,14 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+
+        // Mail de bienvenida de un usuario nuevo (RN-IDE-09): link de 7 días; reenviar invalida el anterior.
+        'bienvenida' => [
+            'provider' => 'users',
+            'table' => 'password_bienvenida_tokens',
+            'expire' => 7 * 24 * 60,
+            'throttle' => 0,
+        ],
     ],
 
     /*
