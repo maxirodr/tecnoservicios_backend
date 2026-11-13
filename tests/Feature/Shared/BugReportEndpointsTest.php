@@ -50,7 +50,7 @@ final class BugReportEndpointsTest extends TestCase
             ->assertJsonPath('total', 1)
             ->assertJsonPath('errors.0.exception_class', RuntimeException::class)
             ->assertJsonPath('errors.0.method', 'POST')
-            ->assertJsonPath('errors.0.input', ['campo' => 'x']);
+            ->assertJsonPath('errors.0.input', ['campo', 'password']);
 
         $this->assertStringNotContainsString('no-se-loguea', (string) $response->getContent());
     }
@@ -65,7 +65,7 @@ final class BugReportEndpointsTest extends TestCase
         $this->withToken(self::TOKEN)->getJson('/api/errors?search=ValidationException')
             ->assertOk()
             ->assertJsonPath('errors.0.level', 'WARNING')
-            ->assertJsonStructure(['errors' => [['validation_errors' => ['nombre']]]]);
+            ->assertJsonPath('errors.0.validation_errors', ['nombre']);
     }
 
     #[Test]
@@ -120,7 +120,7 @@ final class BugReportEndpointsTest extends TestCase
     }
 
     #[Test]
-    public function errors_endpoint_returns_parsed_entries_in_contract_shape_and_strips_sensitive_input(): void
+    public function errors_endpoint_returns_parsed_entries_in_contract_shape_and_returns_only_input_keys(): void
     {
         $context = json_encode([
             'exception_class' => 'RuntimeException',
@@ -142,7 +142,7 @@ final class BugReportEndpointsTest extends TestCase
             ->assertJsonPath('errors.0.level', 'ERROR')
             ->assertJsonPath('errors.0.message', 'Algo se rompió')
             ->assertJsonPath('errors.0.exception_class', 'RuntimeException')
-            ->assertJsonPath('errors.0.input', ['q' => 'x'])
+            ->assertJsonPath('errors.0.input', ['q', 'password'])
             ->assertJsonStructure(['date', 'total', 'errors' => [[
                 'timestamp', 'level', 'message', 'action', 'method', 'url', 'user_id', 'ip',
                 'input', 'exception_class', 'file', 'trace_short',

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\Traits;
 
+use App\Http\Controllers\Api\Support\ErrorLogContext;
 use App\Shared\Http\ApiExceptionRenderer;
 use App\Shared\Http\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -13,7 +14,7 @@ use Throwable;
 
 /**
  * Para los catch explícitos de un controller: registra el error en el canal `errors` con contexto
- * (lo lee /api/errors) y responde con el envelope sin filtrar detalles en producción.
+ * sin valores del input (ErrorLogContext; lo lee /api/errors) y responde con el envelope sin filtrar detalles en producción.
  */
 trait SafeErrorResponse
 {
@@ -23,36 +24,16 @@ trait SafeErrorResponse
         $route = $request->route();
         $fallback ??= ApiExceptionRenderer::messageFor($status);
 
-        Log::channel('errors')->error($fallback, [
+        Log::channel('errors')->error($fallback, ErrorLogContext::fromRequest($request) + [
             'exception_class' => $e::class,
             'exception' => $e->getMessage(),
-            'action' => $route instanceof Route ? $route->getActionName() : 'unknown',
-            'method' => $request->method(),
-            'url' => $request->fullUrl(),
             'route_name' => $route instanceof Route ? $route->getName() : null,
-            'user_id' => $request->user()?->getAuthIdentifier(),
-            'ip' => $request->ip(),
-            'input' => $request->except(['password', 'password_confirmation', 'codigo', 'token', 'secret']),
             'file' => $e->getFile().':'.$e->getLine(),
-            'trace_short' => self::shortTrace($e),
+            'trace_short' => ErrorLogContext::shortTrace($e),
         ]);
 
         $errors = config('app.debug') ? ['debug' => ['message' => $e->getMessage()]] : null;
 
         return ApiResponse::error($fallback, $status, $errors);
-    }
-
-    /**
-     * @return list<string>
-     */
-    public static function shortTrace(Throwable $e): array
-    {
-        return array_map(
-            static fn (array $frame): string => ($frame['class'] ?? '')
-                .($frame['type'] ?? '')
-                .$frame['function']
-                .' ('.basename($frame['file'] ?? '').':'.($frame['line'] ?? '?').')',
-            array_slice($e->getTrace(), 0, 5),
-        );
     }
 }

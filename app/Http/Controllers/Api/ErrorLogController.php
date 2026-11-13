@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\Support\ErrorLogContext;
 use App\Http\Controllers\Controller;
 use App\Shared\Http\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -21,8 +22,6 @@ use Illuminate\Support\Facades\Log;
 final class ErrorLogController extends Controller
 {
     private const MAX_FAILED_ATTEMPTS = 10;
-
-    private const SENSITIVE_INPUT_KEYS = ['password', 'password_confirmation', 'token', 'secret'];
 
     public function index(Request $request): JsonResponse
     {
@@ -132,9 +131,15 @@ final class ErrorLogController extends Controller
             }
         }
 
+        // Las entradas viejas guardaban valores: se devuelven solo las claves (SEG-02).
         $input = $context['input'] ?? null;
-        if (is_array($input)) {
-            $input = array_diff_key($input, array_flip(self::SENSITIVE_INPUT_KEYS));
+        if (is_array($input) && ! self::isListOfStrings($input)) {
+            $input = ErrorLogContext::inputKeys($input);
+        }
+
+        $url = $context['url'] ?? null;
+        if (is_string($url)) {
+            $url = explode('?', $url, 2)[0];
         }
 
         $parsed = [
@@ -143,7 +148,7 @@ final class ErrorLogController extends Controller
             'message' => trim($messageMatch[1] ?? ''),
             'action' => $context['action'] ?? null,
             'method' => $context['method'] ?? null,
-            'url' => $context['url'] ?? null,
+            'url' => $url,
             'user_id' => $context['user_id'] ?? null,
             'ip' => $context['ip'] ?? null,
             'input' => $input,
@@ -152,11 +157,20 @@ final class ErrorLogController extends Controller
             'trace_short' => $context['trace_short'] ?? null,
         ];
 
-        if (isset($context['validation_errors'])) {
-            $parsed['validation_errors'] = $context['validation_errors'];
+        if (isset($context['validation_errors']) && is_array($context['validation_errors'])) {
+            $errors = $context['validation_errors'];
+            $parsed['validation_errors'] = self::isListOfStrings($errors) ? $errors : ErrorLogContext::validationFields($errors);
         }
 
         return $parsed;
+    }
+
+    /**
+     * @param  array<mixed>  $values
+     */
+    private static function isListOfStrings(array $values): bool
+    {
+        return array_is_list($values) && array_filter($values, is_string(...)) === $values;
     }
 
     /**
