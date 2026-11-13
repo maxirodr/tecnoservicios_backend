@@ -7,6 +7,7 @@ namespace App\Shared\Http;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Session\TokenMismatchException;
@@ -39,6 +40,8 @@ final class ApiExceptionRenderer
     public function render(Throwable $exception, Request $request): JsonResponse
     {
         return match (true) {
+            // Respuesta ya armada con el envelope (p. ej. el `response()` de un rate limiter con mensaje propio).
+            $exception instanceof HttpResponseException && $exception->getResponse() instanceof JsonResponse => $exception->getResponse(),
             $exception instanceof ValidationException => ApiResponse::error(
                 self::messageFor(422),
                 $exception->status,
