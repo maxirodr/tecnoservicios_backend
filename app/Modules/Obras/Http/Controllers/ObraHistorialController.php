@@ -7,8 +7,8 @@ namespace App\Modules\Obras\Http\Controllers;
 use App\Modules\Obras\Application\Acceso\BuscarObra;
 use App\Modules\Obras\Application\Historial\EntradaHistorial;
 use App\Modules\Obras\Application\Historial\HistorialObraQuery;
-use App\Modules\Obras\Http\Controllers\Concerns\ConUsuario;
 use App\Shared\Http\ApiResponse;
+use App\Shared\Http\UsuarioAutenticado;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
  */
 final class ObraHistorialController
 {
-    use ConUsuario;
+    use UsuarioAutenticado;
 
     public function __invoke(Request $request, int $obra, BuscarObra $buscar, HistorialObraQuery $historial): JsonResponse
     {

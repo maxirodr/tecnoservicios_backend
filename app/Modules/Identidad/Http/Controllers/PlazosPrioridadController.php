@@ -6,10 +6,10 @@ namespace App\Modules\Identidad\Http\Controllers;
 
 use App\Modules\Identidad\Application\Plazos\ActualizarPlazosAction;
 use App\Modules\Identidad\Domain\Models\Plazos;
-use App\Modules\Identidad\Http\Controllers\Concerns\UsuarioAutenticado;
 use App\Modules\Identidad\Http\Requests\ActualizarPlazosRequest;
 use App\Modules\Identidad\Http\Resources\PlazosResource;
 use App\Shared\Http\RespondsWithEnvelope;
+use App\Shared\Http\UsuarioAutenticado;
 use Illuminate\Http\JsonResponse;
 
 /** F-68 · W-50: plazos de la prioridad. */

@@ -10,13 +10,13 @@ use App\Modules\Identidad\Application\Usuarios\CrearUsuarioAction;
 use App\Modules\Identidad\Application\Usuarios\ListarUsuariosQuery;
 use App\Modules\Identidad\Application\Usuarios\OpcionesUsuariosQuery;
 use App\Modules\Identidad\Domain\Models\User;
-use App\Modules\Identidad\Http\Controllers\Concerns\UsuarioAutenticado;
 use App\Modules\Identidad\Http\Requests\ActualizarUsuarioRequest;
 use App\Modules\Identidad\Http\Requests\CrearUsuarioRequest;
 use App\Modules\Identidad\Http\Requests\ListarUsuariosRequest;
 use App\Modules\Identidad\Http\Resources\UsuarioOpcionResource;
 use App\Modules\Identidad\Http\Resources\UsuarioResource;
 use App\Shared\Http\RespondsWithEnvelope;
+use App\Shared\Http\UsuarioAutenticado;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

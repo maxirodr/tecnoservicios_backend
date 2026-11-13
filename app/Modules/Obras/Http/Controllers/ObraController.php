@@ -10,7 +10,6 @@ use App\Modules\Obras\Application\Obras\ClientesSugeridosQuery;
 use App\Modules\Obras\Application\Obras\CrearObraAction;
 use App\Modules\Obras\Application\Obras\FichaObraQuery;
 use App\Modules\Obras\Application\Obras\ListarObrasQuery;
-use App\Modules\Obras\Http\Controllers\Concerns\ConUsuario;
 use App\Modules\Obras\Http\Requests\ActualizarObraRequest;
 use App\Modules\Obras\Http\Requests\CrearObraRequest;
 use App\Modules\Obras\Http\Requests\ListarObrasRequest;
@@ -18,14 +17,15 @@ use App\Modules\Obras\Http\Resources\ObraFichaResource;
 use App\Modules\Obras\Http\Resources\ObraFilaResource;
 use App\Shared\Http\ApiResponse;
 use App\Shared\Http\RespondsWithEnvelope;
+use App\Shared\Http\UsuarioAutenticado;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /** F-15 · F-16 · F-17 · F-20 · F-22 (W-05, W-06, W-07, W-23). Permisos por matriz en las rutas. */
 final class ObraController
 {
-    use ConUsuario;
     use RespondsWithEnvelope;
+    use UsuarioAutenticado;
 
     public function index(ListarObrasRequest $request, ListarObrasQuery $listar): JsonResponse
     {

@@ -6,9 +6,9 @@ namespace App\Modules\Proveedores\Http\Controllers;
 
 use App\Modules\Proveedores\Application\GastadoPorObraQuery;
 use App\Modules\Proveedores\Domain\Models\Proveedor;
-use App\Modules\Proveedores\Http\Controllers\Concerns\UsuarioAutenticado;
 use App\Modules\Proveedores\Http\Resources\GastadoPorObraResource;
 use App\Shared\Http\RespondsWithEnvelope;
+use App\Shared\Http\UsuarioAutenticado;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 

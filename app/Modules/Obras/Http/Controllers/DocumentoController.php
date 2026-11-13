@@ -9,19 +9,19 @@ use App\Modules\Obras\Application\Documentos\ActualizarDocumentoAction;
 use App\Modules\Obras\Application\Documentos\AgregarDocumentoAction;
 use App\Modules\Obras\Application\Documentos\QuitarDocumentoAction;
 use App\Modules\Obras\Domain\Models\ObraDocumento;
-use App\Modules\Obras\Http\Controllers\Concerns\ConUsuario;
 use App\Modules\Obras\Http\Requests\ActualizarDocumentoRequest;
 use App\Modules\Obras\Http\Requests\GuardarDocumentoRequest;
 use App\Modules\Obras\Http\Resources\DocumentoResource;
 use App\Shared\Http\RespondsWithEnvelope;
+use App\Shared\Http\UsuarioAutenticado;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /** F-19 (W-20): certificados y otros documentos de la obra, con sus archivos o links. */
 final class DocumentoController
 {
-    use ConUsuario;
     use RespondsWithEnvelope;
+    use UsuarioAutenticado;
 
     public function store(GuardarDocumentoRequest $request, int $obra, BuscarObra $buscar, AgregarDocumentoAction $agregar): JsonResponse
     {
