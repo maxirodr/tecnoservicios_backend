@@ -15,6 +15,10 @@
 > (**archivo o link** donde el documento decía "link"; la carpeta de Drive sigue siendo solo link).
 > No queda ninguna historia ⛔.
 >
+> **13-nov-2026 (ADR-015, Juani):** se entra con el mail y un **código por mail**, sin contraseña.
+> Cambian HU-001 y HU-005 (criterios nuevos), y HU-002 y HU-004 quedan **reemplazadas**. Lo viejo
+> queda tachado como historia. Cambia F-01 del documento firmado: hay que avisarle al cliente.
+>
 > Trazabilidad completa F-XX ↔ W-XX ↔ tests: [`qa/matriz-trazabilidad.md`](qa/matriz-trazabilidad.md).
 > Estrategia de pruebas: [`qa/plan-de-pruebas.md`](qa/plan-de-pruebas.md).
 >
@@ -40,7 +44,7 @@ matriz, para que nadie dé por terminada una función a medias.
 | F-XX | Semana 1 | Se completa en |
 |---|---|---|
 | F-03 Buscador general | Obras (N.º de presupuesto, cliente, nombre del trabajo) y proveedores (nombre) | Semana 2: pedidos por texto · Semana 3: gastos por número de factura |
-| F-10 Mi perfil | Mis datos, mi sector, de quién dependo, cambiar la contraseña | Semana 2: "Mis avisos" (qué avisos llegan además por mail) |
+| F-10 Mi perfil | Mis datos, mi sector, de quién dependo (~~cambiar la contraseña~~: no hay contraseña, ADR-015) | Semana 2: "Mis avisos" (qué avisos llegan además por mail) |
 | F-14 Registro de quién hizo qué | En obras (alta, edición, cambio de estado, presupuestos) | Semana 2: en pedidos · Semana 3: en gastos |
 | F-15 Listado de obras | Pestañas por estado, N.º de presupuesto, trabajo, cliente y planta, responsable | Semana 2: columna "pedidos abiertos" y fila de Servicios generales · Semana 3: columna "% del presupuesto gastado" (en rojo si se pasó) |
 | F-17 Ficha de la obra | Datos de la obra y pestaña Documentos y contactos | Semana 2: pestaña Pedidos · Semana 3: pestaña Rendición |
@@ -137,45 +141,57 @@ resolución del 12-nov; se suma la HU-025, transversal).
 ### Épica A · Ingreso y perfil
 
 #### HU-001 · Entrar al sistema con el mail de la empresa
-- **F-01 · W-16**
-- **Como** cualquier persona de la empresa **quiero** entrar con mi mail y mi contraseña, desde
-  la PC o el celular, **para** usar el sistema sin compartir usuario.
-- **Criterios de aceptación**
-  1. **Dado** un usuario activo, **cuando** ingresa su mail y su contraseña correctos, **entonces**
-     entra y ve su pantalla de inicio.
-  2. **Dado** un mail o una contraseña incorrectos, **cuando** intenta entrar, **entonces** ve un
-     único mensaje "El mail o la contraseña no son correctos" (no dice cuál de los dos falló).
-  3. **Dado** un usuario **inactivo** (W-39), **cuando** intenta entrar con su contraseña correcta,
-     **entonces** no entra y ve el mismo mensaje genérico.
-  4. **Dado** que marca "Recordarme en este equipo", **cuando** cierra el navegador y vuelve,
-     **entonces** sigue adentro; si no lo marca, al cerrar el navegador tiene que volver a entrar.
-  5. **Dado** que está adentro, **cuando** toca "Salir", **entonces** la sesión se cierra y
+- **F-01 (cambiado por ADR-015) · W-16**
+- **Como** cualquier persona de la empresa **quiero** entrar con mi mail y un código que me llega
+  por mail, desde la PC o el celular, **para** usar el sistema sin compartir usuario y sin tener que
+  acordarme de una contraseña.
+- **Criterios de aceptación** (ADR-015, 13-nov)
+  1. **Dado** un usuario activo, **cuando** escribe su mail y toca "Pedir código", **entonces** le
+     llega un mail (por cola, desde noreply) con un código de 6 dígitos, y la pantalla le pide el código.
+  2. **Dado** el código del mail, **cuando** lo escribe dentro de los 10 minutos, **entonces** entra y
+     ve su pantalla de inicio. El código sirve una sola vez.
+  3. **Dado** un mail que no existe o de un usuario **inactivo** (W-39), **cuando** pide el código,
+     **entonces** ve el mismo mensaje "Si el mail está registrado, te llegó un código." y no se manda nada.
+  4. **Dado** un código incorrecto, vencido (más de 10 minutos) o ya usado, **cuando** intenta entrar,
+     **entonces** ve "El código no es válido o venció." (el mismo mensaje para un inactivo o un mail
+     que no existe). Al 5.º intento fallido el código deja de servir y tiene que pedir otro.
+  5. **Dado** que pidió un código nuevo, **cuando** escribe el anterior, **entonces** no sirve.
+  6. **Dado** que está adentro, **cuando** cierra el navegador y vuelve dentro de los 90 días,
+     **entonces** sigue adentro; cada vez que lo usa se renuevan los 90 días (no hay "recordarme").
+  7. **Dado** que está adentro, **cuando** toca "Salir", **entonces** la sesión se cierra y
      cualquier pantalla interna lo devuelve al ingreso.
-  6. **Dado** 5 intentos fallidos seguidos desde el mismo mail, **cuando** intenta otra vez,
-     **entonces** el sistema le pide esperar un minuto (respuesta 429 con el sobre JSON).
-  7. **Dado** un celular (ancho 390 px), **cuando** abre el ingreso, **entonces** la pantalla se
+  8. **Dado** muchos pedidos de código o intentos seguidos desde el mismo mail o la misma IP,
+     **cuando** intenta otra vez, **entonces** el sistema le pide esperar (429 con el sobre JSON).
+  9. **Dado** un celular (ancho 390 px), **cuando** abre el ingreso, **entonces** la pantalla se
      usa sin zoom ni desplazamiento horizontal (W-16: "la misma pantalla sirve en la PC y en el
      celular").
+- ~~Criterios del 12-nov (mail y contraseña): 1. entra con mail y contraseña correctos · 2. mensaje
+  único "El mail o la contraseña no son correctos" · 3. inactivo con contraseña correcta no entra ·
+  4. "Recordarme en este equipo" · 5. Salir · 6. 429 tras 5 intentos fallidos · 7. celular 390 px.~~
+  **Reemplazados por ADR-015** (los que siguen valiendo pasaron arriba: el 5 al 7, el 6 al 8 y el 7 al 9).
 - **Permisos:** ninguno (pantalla pública).
-- **Dependencias:** HU-005 (existen usuarios).
+- **Dependencias:** HU-005 (existen usuarios); mail por cola configurado.
 - **DoR:** ✅ listo.
 
-#### HU-002 · Recuperar la contraseña por mail
+#### HU-002 · ~~Recuperar la contraseña por mail~~ — reemplazada por ADR-015
+> **13-nov (ADR-015):** ya no hay contraseña que recuperar: quien no puede entrar pide otro código
+> (HU-001). La historia queda tachada como registro; no se construye.
+
 - **F-01 · W-16**
-- **Como** cualquier persona **quiero** pedir un mail para elegir una contraseña nueva **para**
-  no depender de nadie si me la olvido.
-- **Criterios de aceptación**
-  1. **Dado** un mail de un usuario activo, **cuando** toca "Olvidé mi contraseña" y lo ingresa,
-     **entonces** recibe un mail (por cola, desde noreply) con un link para elegir una contraseña nueva.
-  2. **Dado** un mail que no existe o de un usuario inactivo, **cuando** pide recuperar, **entonces**
-     ve el mismo mensaje de confirmación que en el caso 1 y no se envía ningún mail.
-  3. **Dado** el link del mail, **cuando** elige una contraseña nueva válida, **entonces** puede
-     entrar con ella y la anterior deja de servir.
-  4. **Dado** un link ya usado o vencido (60 minutos), **cuando** lo abre, **entonces** ve que el
-     link no sirve más y puede pedir otro.
-- **Permisos:** ninguno.
-- **Dependencias:** HU-001; mail por cola configurado.
-- **DoR:** ✅ listo.
+- ~~**Como** cualquier persona **quiero** pedir un mail para elegir una contraseña nueva **para**~~
+  ~~no depender de nadie si me la olvido.~~
+- ~~**Criterios de aceptación**~~
+  1. ~~**Dado** un mail de un usuario activo, **cuando** toca "Olvidé mi contraseña" y lo ingresa,~~
+     ~~**entonces** recibe un mail (por cola, desde noreply) con un link para elegir una contraseña nueva.~~
+  2. ~~**Dado** un mail que no existe o de un usuario inactivo, **cuando** pide recuperar, **entonces**~~
+     ~~ve el mismo mensaje de confirmación que en el caso 1 y no se envía ningún mail.~~
+  3. ~~**Dado** el link del mail, **cuando** elige una contraseña nueva válida, **entonces** puede~~
+     ~~entrar con ella y la anterior deja de servir.~~
+  4. ~~**Dado** un link ya usado o vencido (60 minutos), **cuando** lo abre, **entonces** ve que el~~
+     ~~link no sirve más y puede pedir otro.~~
+- ~~**Permisos:** ninguno.~~
+- ~~**Dependencias:** HU-001; mail por cola configurado.~~
+- **DoR:** reemplazada (ADR-015).
 
 #### HU-003 · Ver mi perfil
 - **F-10 (parte semana 1) · W-19**
@@ -193,20 +209,23 @@ resolución del 12-nov; se suma la HU-025, transversal).
 - **Dependencias:** HU-001, HU-005.
 - **DoR:** ✅ listo.
 
-#### HU-004 · Cambiar mi contraseña
+#### HU-004 · ~~Cambiar mi contraseña~~ — reemplazada por ADR-015
+> **13-nov (ADR-015):** no hay contraseña que cambiar; Mi perfil (W-19) no tiene esa sección. La
+> historia queda tachada como registro; no se construye.
+
 - **F-10 · W-19**
-- **Como** cualquier persona **quiero** cambiar mi contraseña desde mi perfil **para** mantener
-  mi cuenta segura.
-- **Criterios de aceptación**
-  1. **Dado** su contraseña actual correcta y una nueva válida (mínimo 8 caracteres) repetida
-     igual, **cuando** guarda, **entonces** la nueva queda vigente y ve la confirmación.
-  2. **Dado** una contraseña actual incorrecta, **cuando** guarda, **entonces** ve el error en el
-     campo y no cambia nada (422).
-  3. **Dado** que cambió la contraseña, **cuando** otra sesión suya abierta en otro equipo hace
-     su siguiente pedido al servidor, **entonces** esa sesión queda cerrada.
-- **Permisos:** ninguno especial.
-- **Dependencias:** HU-003.
-- **DoR:** ✅ listo.
+- ~~**Como** cualquier persona **quiero** cambiar mi contraseña desde mi perfil **para** mantener~~
+  ~~mi cuenta segura.~~
+- ~~**Criterios de aceptación**~~
+  1. ~~**Dado** su contraseña actual correcta y una nueva válida (mínimo 8 caracteres) repetida~~
+     ~~igual, **cuando** guarda, **entonces** la nueva queda vigente y ve la confirmación.~~
+  2. ~~**Dado** una contraseña actual incorrecta, **cuando** guarda, **entonces** ve el error en el~~
+     ~~campo y no cambia nada (422).~~
+  3. ~~**Dado** que cambió la contraseña, **cuando** otra sesión suya abierta en otro equipo hace~~
+     ~~su siguiente pedido al servidor, **entonces** esa sesión queda cerrada.~~
+- ~~**Permisos:** ninguno especial.~~
+- ~~**Dependencias:** HU-003.~~
+- **DoR:** reemplazada (ADR-015).
 
 ### Épica B · Usuarios, sectores y permisos
 
@@ -221,18 +240,20 @@ resolución del 12-nov; se suma la HU-025, transversal).
      **entonces** ve "Ya hay un usuario con ese mail" y no se crea (422).
   3. **Dado** que falta nombre, mail o sector, **cuando** guarda, **entonces** ve el error en cada
      campo que falta (sector es obligatorio: todo usuario tiene sector).
-  4. **Dado** el usuario nuevo, **cuando** se guarda, **entonces** recibe un mail de bienvenida con
-     un link para elegir su contraseña que dura 7 días (mismo circuito que "Olvidé mi contraseña").
-  5. **Dado** un usuario activo que no usó el link a tiempo, **cuando** gerencia toca "Reenviar mail
-     de bienvenida" en W-15, **entonces** le llega un link nuevo y el anterior deja de servir; si ya
-     eligió su contraseña, el botón no aparece (por API, 422).
+  4. **Dado** el usuario nuevo, **cuando** se guarda, **entonces** puede entrar enseguida con su mail
+     pidiendo un código (HU-001); no se le manda ningún mail al darlo de alta (ADR-015).
+  5. **Dado** un doble clic en "Guardar", **cuando** llegan los dos envíos con la misma
+     `Idempotency-Key`, **entonces** se crea un solo usuario (ADR-011).
+  - ~~4. Recibe un mail de bienvenida con un link para elegir su contraseña que dura 7 días · 5.
+    "Reenviar mail de bienvenida" en W-15 con link nuevo que invalida el anterior.~~ **Reemplazados
+    por ADR-015** (13-nov): no hay contraseña ni mail de bienvenida.
   6. **Dado** "depende de", **cuando** se elige, **entonces** solo se ofrecen usuarios activos y
      no se puede elegir a sí mismo.
   7. **Dado** un usuario sin `usuarios:editar`, **cuando** llama al alta por API, **entonces**
      recibe 403 y no se crea nada.
 - **Permisos:** `usuarios:editar` (Dirección y las dos gerencias).
 - **Dependencias:** HU-007 (existen sectores), HU-009.
-- **DoR:** ✅ listo (resuelta DU-03: mail de bienvenida y reenvío).
+- **DoR:** ✅ listo (DU-03, mail de bienvenida y reenvío, reemplazada por ADR-015).
 
 #### HU-006 · Editar y desactivar un usuario
 - **F-58 · F-61 · W-39 · W-15**
@@ -249,8 +270,8 @@ resolución del 12-nov; se suma la HU-025, transversal).
      historial y como responsable en las obras donde lo era.
   4. **Dado** cualquier usuario, **cuando** se busca "borrar", **entonces** no existe la opción: solo
      Activo / Inactivo (W-39).
-  5. **Dado** un usuario inactivo, **cuando** se lo vuelve a Activo, **entonces** puede entrar con su
-     contraseña anterior.
+  5. **Dado** un usuario inactivo, **cuando** se lo vuelve a Activo, **entonces** puede volver a entrar
+     con su mail pidiendo un código (ADR-015; antes: "con su contraseña anterior").
   6. **Dado** que una persona intenta desactivarse a sí misma, **entonces** el sistema no lo permite
      (evita quedarse afuera por error).
 - **Permisos:** `usuarios:editar`.

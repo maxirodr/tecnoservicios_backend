@@ -10,3 +10,4 @@
 | 2026-11-12 | Juani (dev a cargo) | Aprueba arquitectura, modelo de datos, ADR-001…013, backlog de semana 1, matriz y todas las propuestas de `dudas.md` (DU-13: aviso al superior del solicitante, como dice el texto firmado) | Respuesta en sesión: "perfecto" |
 | 2026-11-12 | Juani (dev a cargo) | **Amplía D-022:** donde hay un documento se puede subir el archivo o poner el link, según aplique | ADR-014 · `docs/modelo-datos.md` (tabla `adjuntos`) |
 | 2026-11-12 | CTO / DBA | Arquitectura y modelo ajustados a ADR-014 | `docs/arquitectura.md`, `docs/modelo-datos.md` |
+| 2026-11-13 | Juani (dev a cargo) | **Cambia F-01:** se entra con el mail y un código por mail, sin contraseña; sesión de 90 días desde el último uso. Hay que avisarle al cliente | ADR-015 · `docs/especificacion/identidad.md` (RN-IDE-01…10) |
