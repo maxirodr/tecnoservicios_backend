@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Api\Support\ErrorLogContext;
 use App\Shared\Http\ApiExceptionRenderer;
 use App\Shared\Http\Middleware\RemoveStackHeaders;
+use App\Shared\Providers\SharedServiceProvider;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -25,6 +26,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->prepend(RemoveStackHeaders::class);
         $middleware->statefulApi();
+        // Límite general por usuario o IP (SEG-03): limitador `api` en SharedServiceProvider.
+        $middleware->throttleApi(SharedServiceProvider::LIMITE_API);
         // Proxies de confianza: config/trustedproxy.php (TRUSTED_PROXIES), nunca `*` (SEG-04).
     })
     ->withExceptions(function (Exceptions $exceptions): void {

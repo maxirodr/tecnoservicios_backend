@@ -104,6 +104,9 @@ return [
     // Token propio de GET /api/errors (bug-report NexoSmart). No es auth de usuario.
     'errors_token' => env('ERRORS_TOKEN'),
 
+    // Límite general de la API (SEG-03): pedidos por minuto por usuario (por IP si no hay sesión).
+    'api_requests_per_minute' => (int) env('API_REQUESTS_PER_MINUTE', 120),
+
     'previous_keys' => [
         ...array_filter(
             explode(',', (string) env('APP_PREVIOUS_KEYS', ''))
