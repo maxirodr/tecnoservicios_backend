@@ -258,7 +258,7 @@ QC) · — no aplica (historia reemplazada).
 
 ## 4. Bugs encontrados
 
-Ninguno se arregló (rol QC). Severidad: **bloqueante** (impide la prueba de la semana) · **media**
+Durante el QC no se arregló ninguno (rol QC); el estado de las correcciones está al final de esta sección. Severidad: **bloqueante** (impide la prueba de la semana) · **media**
 (una función no se puede usar bien en un caso de la entrega) · **menor** (se usa, pero confunde o
 desprolija).
 
@@ -325,6 +325,26 @@ desprolija).
   lo mismo. La maqueta W-07 los nombra "Presupuesto · OC · Carpeta de Drive". Ver diferencias (D-N3).
 - **O-03 · Tarjeta de obra en el celular:** "Pedidos abiertos: —" y debajo un "—" sin rótulo (el %
   gastado de la semana 3).
+
+### Estado de las correcciones (rama `fix/w1-qc`, 13-nov)
+
+Las 5 quedan arregladas, cada una con su test. Commits: front (`tecnoservicios_frontend`) y back
+(`tecnoservicios_backend`).
+
+| # | Estado | Arreglo | Commits | Tests |
+|---|---|---|---|---|
+| B-01 | ✅ arreglado | En el celular las tablas de la ficha (Presupuestos, OC/OT/contrato/mail, Certificados y otros documentos e Historial de cambios) se ven como tarjetas, una por fila, con el rótulo de cada dato arriba del valor; "editar" y "quitar" quedan dentro de la tarjeta. En PC no cambia. | front `c9bb557`, `fc2e79b` | `e2e/ficha-celular.spec.ts` (PC y Pixel 7: 4 botones dentro de los 412 px, ningún marco de tabla se desplaza, el nombre del archivo se lee de corrido, sin desplazamiento horizontal) |
+| B-02 | ✅ arreglado | Textos sin códigos: "Sector y jefatura los cambia gerencia desde Usuarios.", "…sale de la tabla de permisos de su sector.", "…una fila más en la tabla de permisos.", y las secciones no entregadas dicen "Va a estar disponible en una próxima entrega." | front `864078c` | `src/test/sinCodigosInternos.test.ts` (recorre todos los textos de `src/` y falla con W-XX, F-XX, HU-XX, DU-XX o RN-XX) + control en `src/test/setup.ts`: cualquier test que deje en pantalla un código falla |
+| B-03 | ✅ arreglado | La campana (PC y celular), "Avisos" y "Tareas" del celular se encienden con `VITE_MODULOS_ENTREGADOS` como el resto (`avisos`; "Tareas" con `pedidos`). En la semana 1 la barra del celular es Obras · Más. | front `45d642f` | `menuPara.test.ts`, `AppShell.test.tsx`, `navegacion.test.tsx`, `e2e/navegacion.spec.ts`, `e2e-integracion/barra.spec.ts` |
+| B-04 | ✅ arreglado (sigue la condición del entorno) | Si PHP corta la subida antes que la aplicación, el backend responde 413 con el tamaño: "El archivo pesa 25 MB y el máximo es 8 MB." (cuerpo más grande que `post_max_size`) o "El archivo pesa más de 8 MB, que es el máximo." (`upload_max_filesize` o multipart vacío). El máximo informado es el real del servidor (el menor entre 20 MB y PHP). El front ya frenaba antes de subir lo de más de 20 MB y muestra el mensaje del 413. **No se tocó el `php.ini`**: la condición del veredicto (≥ 21 MB en el entorno del cliente) sigue en pie. | back `b85d324`, `5692220` · front `d25199c` | `SubidaCortadaPorElServidorTest`, `LimiteDeSubidaTest`, `ErroresEnEspanolTest` · `AdjuntosField.test.tsx` (413) |
+| B-05 | ✅ arreglado | El backend arma el texto del historial y ahora reconoce los campos de importe (montos por rubro, total y monto del presupuesto) y los escribe como W-13: "MATERIALES: (vacío) → 1.000", "Monto del presupuesto: (vacío) → 2.500". Mismas reglas que el formateador del front (`es-AR`, hasta 2 decimales). Vale también para lo ya registrado. | back `630ff1b` | `ImporteLegibleTest`, `PresupuestoPorRubroTest::test_historial_muestra_los_importes_como_en_el_presupuesto_por_rubro` (+ los de privacidad ahora buscan el monto con y sin puntos) |
+
+Observaciones: **O-02** aplicada (front `1d22c9a`: los links del encabezado dicen "Presupuesto", "OC"
+—o el nombre del documento si es OT, contrato o mail— y "Carpeta de Drive"; test en
+`fichaLinks.test.tsx`). **O-03** aplicada (front `7290bb5`: en la tarjeta del celular el "—" dice
+"Gastado: —"). **O-01** no se tocó: el formato del campo de fecha lo pone el navegador según su
+idioma; se verifica en la PC del cliente. Además, el texto del 419 del front quedó igual al del
+backend: "La sesión expiró. Volvé a ingresar." (front `ba21a03`).
 
 ## 5. Diferencias contra la maqueta y el documento firmado
 
