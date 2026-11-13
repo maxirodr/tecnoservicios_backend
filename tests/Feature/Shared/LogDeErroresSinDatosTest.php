@@ -24,6 +24,7 @@ final class LogDeErroresSinDatosTest extends IdentidadTestCase
         config(['app.errors_token' => self::TOKEN]);
         Cache::flush();
         File::ensureDirectoryExists($this->directorioDeLogs());
+        File::delete(File::glob($this->directorioDeLogs().'/errors-*.log'));
     }
 
     protected function tearDown(): void
