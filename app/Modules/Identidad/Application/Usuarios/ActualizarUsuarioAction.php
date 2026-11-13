@@ -50,10 +50,15 @@ final class ActualizarUsuarioAction
         return DB::transaction(function () use ($usuario, $datos): User {
             $usuario->fill($datos);
             $cambios = $this->cambios($usuario);
+            $tocaAdministradores = isset($cambios['activo']) || isset($cambios['sector_id']);
+
+            if ($tocaAdministradores) {
+                $this->administradores->bloquear();
+            }
 
             $usuario->save();
 
-            if (isset($cambios['activo']) || isset($cambios['sector_id'])) {
+            if ($tocaAdministradores) {
                 $this->administradores->asegurar(isset($cambios['activo']) ? 'activo' : 'sector_id');
             }
 
