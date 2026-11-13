@@ -68,7 +68,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 'trace_short' => ErrorLogContext::shortTrace($e),
             ]);
 
-            // Sigue el reporte por defecto (laravel.log).
+            // Ya quedó en el canal `errors`: false corta el reporte por defecto (no se duplica en laravel.log).
             return false;
         });
 
