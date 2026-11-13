@@ -49,3 +49,15 @@ Plan (brief de agentes: rehacerlo con las mismas reglas; está en `tasks/brief-a
 - [ ] Mensajes de validación del backend en español (hoy las reglas sin mensaje propio responden en inglés)
 - [ ] QC `docs/qc/entrega-1.md` + notas de entrega para el cliente
 - [ ] Diseño pendiente: TL-03 (meta paginado), TL-07 (asociar con usuario), TL-08 (Shared → User), renombrar tests viejos a la regla
+
+### Cierre del día (2026-11-13)
+- [x] Mensajes del backend en español y sin jerga (lang/es a mano, 27 FormRequest cubiertos)
+- [x] QC `docs/qc/entrega-1.md`: apta (18 ✅ · 4 ⚠️ · 0 ❌); bugs B-01…B-05 arreglados
+- [x] Notas `docs/entregas/semana-1.md` (BORRADOR) + `CHANGELOG.md`
+- Suites en main: backend 518 / 2859; front unit 225, e2e mock 46, e2e real 42.
+- Semana 1 ≈ 98 % de lo nuestro. Para cerrar (Juani): staging/prod (límites de subida ≥ 21 MB), avisar ADR-014/015 al cliente, revisar y mandar notas.
+
+## Próxima sesión
+1. Levantar MariaDB (XAMPP) y Redis portable; verificar `select 1` y `PING`.
+2. Matriz de trazabilidad: sumar tests de los fixes de QC (B-01…B-05).
+3. Semana 2 (Pedidos / minuta): Sprint-0 de la semana — especificación `docs/especificacion/pedidos.md`, backlog HU, dudas; después tandas con agentes como en semana 1.
