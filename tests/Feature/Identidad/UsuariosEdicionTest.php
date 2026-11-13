@@ -9,7 +9,6 @@ use App\Modules\Identidad\Application\Usuarios\GuardaAdministradores;
 use App\Modules\Identidad\Application\Usuarios\ReglasDeJefatura;
 use App\Modules\Identidad\Domain\Models\Sector;
 use App\Modules\Identidad\Domain\Models\User;
-use Database\Factories\UserFactory;
 
 /** F-58 · F-61 · W-15 · W-39 · HU-006 (RN-IDE-20…27). */
 final class UsuariosEdicionTest extends IdentidadTestCase
@@ -95,14 +94,19 @@ final class UsuariosEdicionTest extends IdentidadTestCase
             ->assertOk()->assertJsonPath('data.activo', false);
 
         $this->assertDatabaseHas('users', ['id' => $carla->id, 'activo' => false]);
-        $registro = $this->actividad->de(User::class, 'editado')[0] ?? null;
-        $this->assertNotNull($registro);
-        $this->assertSame(['antes' => true, 'despues' => false], $registro['cambios']['activo']);
+        $registros = $this->actividades(User::class, 'editado');
+        $this->assertCount(1, $registros);
+        $this->assertSame($carla->id, $registros[0]->sujeto_id);
+        $this->assertSame($admin->id, $registros[0]->user_id);
+        $this->assertSame(['activo' => ['antes' => true, 'despues' => false]], $registros[0]->cambios);
 
-        // Reactivada, entra con su contraseña anterior (HU-006 criterio 5).
+        // Inactiva no recibe código; reactivada, vuelve a entrar con su mail (HU-006 criterio 5, ADR-015).
+        $this->app['auth']->forgetGuards();
+        $this->assertNull($this->pedirCodigo('carla@empresa-ejemplo.com'));
         $this->actingAs($admin)->patchJson("/api/usuarios/{$carla->id}", ['activo' => true])->assertOk();
         $this->app['auth']->forgetGuards();
-        $this->desdeElFront()->postJson('/api/auth/ingresar', ['email' => 'carla@empresa-ejemplo.com', 'password' => UserFactory::PASSWORD])
+        $codigo = (string) $this->pedirCodigo('carla@empresa-ejemplo.com');
+        $this->desdeElFront()->postJson('/api/auth/ingresar', ['email' => 'carla@empresa-ejemplo.com', 'codigo' => $codigo])
             ->assertOk();
     }
 
@@ -162,6 +166,26 @@ final class UsuariosEdicionTest extends IdentidadTestCase
         $this->assertDatabaseHas('users', ['id' => $diego->id, 'sector_id' => $diego->sector_id]);
 
         $this->usuarioDe('Gerencia de Operaciones');
+        $this->actingAs($diego)->patchJson("/api/usuarios/{$diego->id}", ['sector_id' => $compras])->assertOk();
+    }
+
+    public function test_guarda_de_administradores_cuenta_a_cualquier_activo_aunque_nunca_haya_ingresado(): void
+    {
+        // ADR-015: no hay "no eligió contraseña"; cualquier activo puede entrar con su mail, así que cuenta.
+        $diego = $this->administrador();
+        $compras = Sector::query()->where('nombre', 'Compras')->valueOrFail('id');
+        $direccion = Sector::query()->where('nombre', 'Dirección')->valueOrFail('id');
+
+        $this->actingAs($diego)->postJson('/api/usuarios', $this->datosDeAlta(['nombre' => 'Eva', 'email' => 'eva@empresa-ejemplo.com', 'sector_id' => $direccion]))
+            ->assertCreated();
+        $eva = User::query()->where('email', 'eva@empresa-ejemplo.com')->firstOrFail();
+
+        $this->actingAs($diego)->patchJson("/api/usuarios/{$eva->id}", ['activo' => false])->assertOk();
+        $this->actingAs($diego)->patchJson("/api/usuarios/{$diego->id}", ['sector_id' => $compras])
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.sector_id.0', GuardaAdministradores::SIN_ADMINISTRADOR);
+
+        $this->actingAs($diego)->patchJson("/api/usuarios/{$eva->id}", ['activo' => true])->assertOk();
         $this->actingAs($diego)->patchJson("/api/usuarios/{$diego->id}", ['sector_id' => $compras])->assertOk();
     }
 

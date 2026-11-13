@@ -9,13 +9,15 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 
 /**
- * "Olvidé mi contraseña" (identidad.md §8, RN-IDE-06/07): link de 60 minutos, sirve una vez.
+ * Mail de cuenta con el código para entrar (ADR-015, RN-IDE-02/08). Por la cola `mail`, después
+ * del commit del código.
  */
-final class RecuperacionMail extends QueuedMailable
+final class CodigoIngresoMail extends QueuedMailable
 {
     public function __construct(
         public readonly string $nombre,
-        public readonly string $url,
+        public readonly string $codigo,
+        public readonly int $minutos,
     ) {
         parent::__construct();
         $this->afterCommit();
@@ -23,11 +25,11 @@ final class RecuperacionMail extends QueuedMailable
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: 'Elegí una contraseña nueva');
+        return new Envelope(subject: 'Tu código para entrar a Tecnoservicios');
     }
 
     public function content(): Content
     {
-        return new Content(view: 'identidad.mail.recuperacion');
+        return new Content(view: 'identidad.mail.codigo');
     }
 }

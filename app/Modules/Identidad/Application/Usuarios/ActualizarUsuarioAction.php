@@ -8,21 +8,18 @@ use App\Modules\Identidad\Domain\MailNormalizado;
 use App\Modules\Identidad\Domain\Models\User;
 use App\Shared\Actividad\RegistroActividad;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 /**
  * F-58 / HU-006: editar datos, sector, jefatura y activo/inactivo. No se borra a nadie
- * (RN-IDE-20). Al desactivar, la cookie "recordarme" deja de servir y el middleware de usuario
- * activo corta sus sesiones en el próximo pedido. Guardas de RN-IDE-22 y RN-IDE-25.
+ * (RN-IDE-20). Al desactivar, el middleware de usuario activo corta sus sesiones en el próximo
+ * pedido (RN-IDE-10). Guardas de RN-IDE-22 y RN-IDE-25.
  */
 final class ActualizarUsuarioAction
 {
     public const NO_SE_DESACTIVA_A_SI_MISMO = 'No te podés desactivar a vos mismo.';
 
     private const CAMPOS = ['nombre', 'email', 'sector_id', 'jefe_id', 'telefono', 'activo'];
-
-    private const LARGO_REMEMBER_TOKEN = 60;
 
     public function __construct(
         private readonly ReglasDeJefatura $jefatura,
@@ -53,10 +50,6 @@ final class ActualizarUsuarioAction
         return DB::transaction(function () use ($usuario, $datos): User {
             $usuario->fill($datos);
             $cambios = $this->cambios($usuario);
-
-            if (isset($cambios['activo']) && ! $usuario->activo) {
-                $usuario->setRememberToken(Str::random(self::LARGO_REMEMBER_TOKEN));
-            }
 
             $usuario->save();
 

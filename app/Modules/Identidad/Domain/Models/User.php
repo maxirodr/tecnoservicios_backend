@@ -16,12 +16,12 @@ use Illuminate\Notifications\Notifiable;
 
 /**
  * Usuario del sistema (identidad.md §4.1). No tiene rol propio: lo que puede hacer sale de la celda
- * de su sector (F-60). No se borra: la baja es `activo = false` (RN-IDE-20).
+ * de su sector (F-60). No se borra: la baja es `activo = false` (RN-IDE-20). No tiene contraseña: entra
+ * con un código por mail (ADR-015).
  *
  * @property int $id
  * @property string $nombre
  * @property string $email
- * @property string|null $password
  * @property string|null $telefono
  * @property int $sector_id
  * @property int|null $jefe_id
@@ -29,8 +29,8 @@ use Illuminate\Notifications\Notifiable;
  * @property-read Sector $sector
  * @property-read User|null $jefe
  */
-#[Fillable(['nombre', 'email', 'password', 'telefono', 'sector_id', 'jefe_id', 'activo'])]
-#[Hidden(['password', 'remember_token'])]
+#[Fillable(['nombre', 'email', 'telefono', 'sector_id', 'jefe_id', 'activo'])]
+#[Hidden(['remember_token'])]
 #[UseFactory(UserFactory::class)]
 class User extends Authenticatable
 {
@@ -45,7 +45,6 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'password' => 'hashed',
             'activo' => 'boolean',
             'sector_id' => 'integer',
             'jefe_id' => 'integer',
@@ -78,9 +77,12 @@ class User extends Authenticatable
         return $this->hasMany(self::class, 'jefe_id');
     }
 
-    /** Todavía no usó el mail de bienvenida (RN-IDE-09). */
-    public function eligioContrasena(): bool
+    /**
+     * Sin contraseña (ADR-015): la sesión no se ata a un hash de contraseña. Sanctum guarda este valor
+     * en la sesión y lo compara en cada pedido; es fijo, así que no corta sesiones por sí solo.
+     */
+    public function getAuthPassword(): string
     {
-        return $this->password !== null;
+        return '';
     }
 }

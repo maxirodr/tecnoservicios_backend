@@ -14,9 +14,10 @@ Cualquier desvío del stack estándar de NexoSmart necesita un ADR aceptado por 
 | [006](ADR-006-permisos-matriz.md) | Permisos: matriz sector × función con nivel y alcance | Aceptada |
 | [007](ADR-007-rendicion-fuente-unica.md) | Rendición calculada desde una única fuente: los renglones | Aceptada |
 | [008](ADR-008-importes-y-cantidades.md) | Importes y cantidades: decimales exactos y value objects | Aceptada |
-| [009](ADR-009-autenticacion.md) | Autenticación: Sanctum SPA con cookie, mail + contraseña | Aceptada |
+| [009](ADR-009-autenticacion.md) | Autenticación: Sanctum SPA con cookie, mail + contraseña | Reemplazada en parte por ADR-015 |
 | [010](ADR-010-auditoria.md) | Registro de quién hizo qué: tabla de actividades | Aceptada |
 | [011](ADR-011-idempotencia.md) | Idempotencia en el backend con Idempotency-Key | Aceptada |
 | [012](ADR-012-avisos.md) | Avisos: sistema + mail en cola y recordatorio programado | Aceptada |
 | [013](ADR-013-tests-y-ci.md) | Tests contra MySQL real separado y CI en cada PR | Aceptada |
 | [014](ADR-014-adjuntos-archivo-o-link.md) | Adjuntos: archivo subido o link | Aceptada |
+| [015](ADR-015-ingreso-con-codigo-por-mail.md) | Ingreso con código por mail, sin contraseña | Aceptada |

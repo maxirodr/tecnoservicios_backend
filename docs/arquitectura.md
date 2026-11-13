@@ -184,9 +184,12 @@ src/
 ## 7. Seguridad (detalle en `seguridad.md`, semana 1)
 
 - Sanctum SPA, CSRF, cookies `Secure`/`HttpOnly`/`SameSite=Lax`, HTTPS forzado.
+- Ingreso sin contraseña: mail + código de 6 dígitos por mail (10 min, un uso, 5 intentos, guardado
+  hasheado); sesión de 90 días desde el último uso (ADR-015).
 - Autorización en **cada** endpoint por Policy + matriz; tests de IDOR.
 - Sin `X-Powered-By` ni `Server`; la raíz devuelve `{"status":"ok"}`; errores 500 sin detalle.
-- Throttle en login, recuperación y API general; logs sin datos personales ni importes.
+- Throttle al pedir el código de ingreso, al ingresar (por mail y por IP, ADR-015) y en la API general;
+  logs sin datos personales, importes ni códigos de ingreso.
 - Adjuntos: tipo validado por contenido, 20 MB máx., sin ejecutables/HTML/SVG, disco privado, descarga autorizada por la Policy del dueño con `attachment` + `nosniff`.
 - `.env` y `.claude/bug-report.json` fuera del repo; `/api/errors` protegido por token.
 

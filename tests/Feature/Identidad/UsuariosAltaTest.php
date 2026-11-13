@@ -6,10 +6,9 @@ namespace Tests\Feature\Identidad;
 
 use App\Modules\Identidad\Domain\Models\Sector;
 use App\Modules\Identidad\Domain\Models\User;
-use App\Modules\Identidad\Infrastructure\Mail\BienvenidaMail;
 use Illuminate\Support\Facades\Mail;
 
-/** F-58 · W-39 · W-15 · HU-005 (RN-IDE-19, RN-IDE-26). */
+/** F-58 · W-39 · W-15 · HU-005 (RN-IDE-09, RN-IDE-19, RN-IDE-26). */
 final class UsuariosAltaTest extends IdentidadTestCase
 {
     public function test_solo_usuarios_permisos_editar_da_de_alta_usuarios(): void
@@ -22,25 +21,46 @@ final class UsuariosAltaTest extends IdentidadTestCase
         $this->actingAs($calidad)->postJson('/api/usuarios', $this->datosDeAlta())->assertForbidden();
         $this->assertDatabaseMissing('users', ['email' => 'pablo@empresa-ejemplo.com']);
 
-        $this->actingAs($this->administrador())->postJson('/api/usuarios', $this->datosDeAlta())
+        $admin = $this->administrador();
+        $this->actingAs($admin)->postJson('/api/usuarios', $this->datosDeAlta())
             ->assertCreated()
             ->assertJsonPath('data.activo', true)
-            ->assertJsonPath('data.eligio_contrasena', false)
+            ->assertJsonMissingPath('data.eligio_contrasena')
             ->assertJsonPath('data.sector.nombre', 'Ingeniería de proyectos');
-        $this->assertDatabaseHas('users', ['email' => 'pablo@empresa-ejemplo.com', 'activo' => true, 'password' => null]);
-        $this->assertCount(1, $this->actividad->de(User::class, 'creado'));
+        $pablo = User::query()->where('email', 'pablo@empresa-ejemplo.com')->firstOrFail();
+        $this->assertTrue($pablo->activo);
+
+        $creado = $this->actividades(User::class, 'creado');
+        $this->assertCount(1, $creado);
+        $this->assertSame($pablo->id, $creado[0]->sujeto_id);
+        $this->assertSame($admin->id, $creado[0]->user_id);
     }
 
-    public function test_alta_de_usuario_manda_mail_para_elegir_contrasena(): void
+    public function test_alta_de_usuario_no_manda_mail_de_bienvenida(): void
     {
         Mail::fake();
 
-        $this->actingAs($this->administrador())->postJson('/api/usuarios', $this->datosDeAlta())->assertCreated();
+        $this->actingAs($this->administrador())->postJson('/api/usuarios', $this->datosDeAlta())
+            ->assertCreated()
+            ->assertJsonPath('message', 'Listo: Pablo ya puede entrar con su mail.');
 
-        Mail::assertQueued(BienvenidaMail::class, fn (BienvenidaMail $mail): bool => $mail->hasTo('pablo@empresa-ejemplo.com')
-            && $mail->altaPor === 'Diego'
-            && $mail->queue === 'mail'
-            && str_contains($mail->url, '/elegir-contrasena?token='));
+        Mail::assertNothingQueued();
+        Mail::assertNothingSent();
+    }
+
+    public function test_doble_envio_del_alta_crea_un_solo_usuario(): void
+    {
+        $admin = $this->administrador();
+        $clave = ['Idempotency-Key' => '7d1c3b2a-4e5f-4a6b-8c7d-9e0f1a2b3c4d'];
+
+        $primero = $this->actingAs($admin)->withHeaders($clave)->postJson('/api/usuarios', $this->datosDeAlta())->assertCreated();
+        $segundo = $this->actingAs($admin)->withHeaders($clave)->postJson('/api/usuarios', $this->datosDeAlta())
+            ->assertCreated()
+            ->assertHeader('Idempotent-Replayed', 'true');
+
+        $this->assertSame($primero->json('data.id'), $segundo->json('data.id'));
+        $this->assertSame(1, User::query()->where('email', 'pablo@empresa-ejemplo.com')->count());
+        $this->assertCount(1, $this->actividades(User::class, 'creado'));
     }
 
     public function test_mail_de_usuario_es_unico_incluso_entre_inactivos(): void

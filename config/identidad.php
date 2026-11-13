@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 return [
-    // URL del front (SPA): los links de los mails de cuenta apuntan a su pantalla "elegir contraseña".
+    // URL del front (SPA), para los links de los mails que apunten a una pantalla.
     'frontend_url' => rtrim((string) env('FRONTEND_URL', 'http://localhost:5310'), '/'),
 
     // RN-IDE-26: dominios de mail permitidos para dar de alta usuarios, separados por coma. Vacío = sin restricción.

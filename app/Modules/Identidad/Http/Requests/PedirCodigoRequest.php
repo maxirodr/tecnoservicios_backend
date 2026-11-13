@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Identidad\Http\Requests;
 
-/** `POST /api/auth/olvide-contrasena` (W-16, RN-IDE-06). */
-final class OlvideContrasenaRequest extends IdentidadRequest
+/** `POST /api/auth/pedir-codigo` (W-16, ADR-015, RN-IDE-02). */
+final class PedirCodigoRequest extends IdentidadRequest
 {
     /**
      * @return array<string, mixed>

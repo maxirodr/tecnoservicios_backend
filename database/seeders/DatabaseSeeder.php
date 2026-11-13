@@ -10,7 +10,8 @@ use Illuminate\Database\Seeder;
 
 /**
  * Datos ficticios para desarrollo (los nombres y mails de las maquetas). Sectores, funciones y la
- * matriz inicial ya vienen de las migraciones. Contraseña de todos: UserFactory::PASSWORD.
+ * matriz inicial ya vienen de las migraciones. Se entra pidiendo un código con el mail (ADR-015):
+ * en desarrollo, con MAIL_MAILER=log el código queda en storage/logs.
  */
 class DatabaseSeeder extends Seeder
 {
