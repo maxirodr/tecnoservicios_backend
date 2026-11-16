@@ -37,6 +37,33 @@ final class RegistroActividadTest extends TestCase
         $this->assertSame(['email' => ['antes' => 'viejo@example.com', 'despues' => 'nuevo@example.com']], $actividad->cambios);
     }
 
+    public function test_los_cambios_vuelven_de_la_base_en_el_orden_en_que_se_registraron(): void
+    {
+        $this->actingAs(User::factory()->create());
+        $cambios = [
+            'nombre' => ['antes' => 'Transportes Ejemplo', 'despues' => 'Transporte Ejemplo'],
+            'cuit' => ['antes' => null, 'despues' => '30000000015'],
+            'telefono' => ['antes' => null, 'despues' => '291 400-0000'],
+            'id' => ['antes' => 1, 'despues' => 2],
+        ];
+
+        $this->registro()->registrar(User::factory()->create(), 'editado', $cambios);
+
+        $this->assertSame($cambios, Actividad::query()->sole()->cambios);
+    }
+
+    public function test_actividades_guardadas_con_el_formato_anterior_se_siguen_leyendo(): void
+    {
+        $autor = User::factory()->create();
+        DB::table('actividades')->insert([
+            'sujeto_type' => $autor->getMorphClass(), 'sujeto_id' => $autor->id, 'user_id' => $autor->id,
+            'accion' => 'editado', 'cambios' => '{"email": {"antes": "a@example.com", "despues": "b@example.com"}}',
+            'created_at' => now(),
+        ]);
+
+        $this->assertSame(['email' => ['antes' => 'a@example.com', 'despues' => 'b@example.com']], Actividad::query()->sole()->cambios);
+    }
+
     public function test_accion_sin_cambios_guarda_cambios_vacios(): void
     {
         $this->actingAs(User::factory()->create());

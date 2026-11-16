@@ -52,11 +52,8 @@ final class ProxiesDeConfianzaTest extends TestCase
 
     public function test_trusted_proxies_se_lee_separado_por_comas_y_vacio_es_ninguno(): void
     {
-        putenv('TRUSTED_PROXIES= 127.0.0.1, 10.0.0.0/8 ,');
-        $this->assertSame(['127.0.0.1', '10.0.0.0/8'], $this->configLeida());
-
-        putenv('TRUSTED_PROXIES=');
-        $this->assertSame([], $this->configLeida());
+        $this->assertSame(['127.0.0.1', '10.0.0.0/8'], $this->configLeidaCon(' 127.0.0.1, 10.0.0.0/8 ,'));
+        $this->assertSame([], $this->configLeidaCon(''));
     }
 
     /**
@@ -68,6 +65,36 @@ final class ProxiesDeConfianzaTest extends TestCase
             ->withHeader('X-Forwarded-For', self::IP_FALSA)
             ->get('/api/_proxies/ip')
             ->assertOk();
+    }
+
+    /**
+     * Lee la config con TRUSTED_PROXIES fijado en las tres fuentes que consulta env()
+     * (,  y getenv): así el resultado no depende del .env de la máquina.
+     *
+     * @return list<string>
+     */
+    private function configLeidaCon(string $valor): array
+    {
+        $previo = [$_ENV['TRUSTED_PROXIES'] ?? null, $_SERVER['TRUSTED_PROXIES'] ?? null, getenv('TRUSTED_PROXIES')];
+        $_ENV['TRUSTED_PROXIES'] = $_SERVER['TRUSTED_PROXIES'] = $valor;
+        putenv('TRUSTED_PROXIES='.$valor);
+
+        try {
+            return $this->configLeida();
+        } finally {
+            [$env, $server, $getenv] = $previo;
+            if ($env === null) {
+                unset($_ENV['TRUSTED_PROXIES']);
+            } else {
+                $_ENV['TRUSTED_PROXIES'] = $env;
+            }
+            if ($server === null) {
+                unset($_SERVER['TRUSTED_PROXIES']);
+            } else {
+                $_SERVER['TRUSTED_PROXIES'] = $server;
+            }
+            putenv($getenv === false ? 'TRUSTED_PROXIES' : 'TRUSTED_PROXIES='.$getenv);
+        }
     }
 
     /**
