@@ -12,6 +12,8 @@ Datos creados (todos ficticios, prefijo QA-ADM):
   de QA-ADM Baja), "Dora" `qa-adm-dora@empresa-ejemplo.com` (id 8, Dirección), "QA-ADM Beto Editado"
   `qa-adm-beto@empresa-ejemplo.com` (id 9, QA-ADM Pruebas, depende de Ana), "QA-ADM Baja"
   `qa-adm-baja@empresa-ejemplo.com` (id 10, QA-ADM Doble Renombrado; dado de baja y reactivado).
+- Obras: 2-601-2026 "QA-ADM Obra de Ana" (id 12, responsable Ana) y 2-602-2026 "QA-ADM Obra ajena"
+  (id 13, responsable QA-ADM Beto), ambas Confirmadas, creadas por Diego.
 - Tabla de permisos: solo la fila "QA-ADM Pruebas" (Proveedores V, Usuarios y permisos V, Plazos V,
   Rendición V·sus obras). Plazos de la prioridad: se probaron 0/5 y quedaron otra vez en **1 / 7**.
 
@@ -65,6 +67,17 @@ código de Dora salió ~5 min tarde porque el worker se estaba levantando (no se
 - **Evidencia:** salida de `adm/14-sectores2.cjs` · `PATCH /api/sectores/14 → 200`
 - **Causa probable (opcional):** `src/features/identidad/components/SectorDialog.tsx` arma el texto sin comparar con el nombre anterior.
 
+### ADM-05 · Con "solo sus obras", el filtro "Responsable" del listado ofrece a toda la empresa
+- **Severidad:** baja
+- **Tipo:** funcional
+- **F-XX / pantalla:** F-15 · W-05 Listado de obras · `/obras` (filtro "Responsable")
+- **Persona:** QA-ADM Ana (sector QA-ADM Pruebas con Obras = Editar · solo sus obras)
+- **Pasos:** 1. Con Obras = Editar·solo sus obras, entrar a Obras. 2. Abrir el desplegable "Responsable".
+- **Esperado:** con alcance "solo sus obras" la persona solo ve obras donde ella es responsable, así que el filtro no le sirve: ocultarlo, o dejar solo "Todos" y ella (como ya hace el alta y la edición, que solo ofrecen "QA-ADM Ana Ñúñez 👷").
+- **Obtenido:** ofrece 15 personas ("Carla, Diego, Dora, Hernán, Laura, Pablo, …, Sofía"). Cualquiera que elija que no sea ella da una lista vacía "No hay obras en esta pestaña", y parece que esas personas no tienen obras. Visto en las 3 pestañas y al volver a entrar.
+- **Evidencia:** `capturas/ADM-o1-ana-listado-obras.png` · salida de `adm/16-alcance-propias.cjs` ("opciones Responsable: …")
+- **Causa probable (opcional):** el filtro usa `GET /api/usuarios/opciones` sin mirar el alcance de `obras` de la sesión.
+
 ## Cobertura
 
 | F-XX | Estado | Hallazgos | Qué probé |
@@ -76,6 +89,7 @@ código de Dora salió ~5 min tarde porque el worker se estaba levantando (no se
 | F-68 Plazos de la prioridad | ✅ | — | Diego (editar): vacío ("Completá un número entero de días."), −1 ("No puede ser negativo."), 1.5 ("Tiene que ser un número entero de días."), 3/2 y 3/3 ("Prioritario tiene que ser mayor que Urgente."), 400 ("Puede ser hasta 365 días."), letra "e"; ninguno manda pedido. 0/5 se guarda ("Guardamos los plazos. Valen para los pedidos que se carguen desde ahora."), F5 ok, "Normal: más de 5 días"; restaurado a 1/7 con doble clic (1 solo PUT). API con 1.5, "abc" y −1: 422 en español. Dora y Ana (Ver): solo texto "hasta 1 día", sin botón Guardar. |
 | F-10 Mi perfil | ✅ | — | Dora: nombre de espacios / 130 caracteres (errores al lado del campo, sin pedido), cambio de nombre con emoji y teléfono + F5 ok, vuelta al original; mail, sector y jefatura solo lectura; `PATCH /api/me` con mail/sector → "Este dato no se puede cambiar acá.". Diego: nombre vacío rechazado; guardar sin cambios ok (no se modificó su nombre). Laura: solo mirar. Sin sección de contraseña ni de avisos (RN-IDE-17/18) ✅. |
 | F-02 Menú | ✅ | — | Diego: Inicio · Obras · Proveedores · Usuarios; Dora (Dirección): Inicio · Obras · Proveedores · Usuarios, Proveedores sin alta, Obras sin "+ Nueva obra", Tabla de permisos editable, Plazos solo lectura (= §6.3); Laura: Inicio · Obras. Celular (Pixel 7) Diego: "Más" → Proveedores · Usuarios · Mi perfil · Salir; Usuarios y Tabla de permisos sin scroll horizontal de página. Laura por URL directa a `/usuarios`, `/usuarios/sectores`, `/usuarios/permisos`, `/usuarios/plazos`: "No tenés acceso a esta sección · Usuarios: tu sector no tiene permiso para ver esto. Si lo necesitás, pedíselo a gerencia." (sin 403 crudo); `/usuarios/999999`, `/usuarios/abc`, `/usuarios/sectores/999`: "No encontramos esta página · Revisá la dirección o volvé al inicio desde la barra.". API de Laura: 403 "No tenés permiso para hacer esto." en usuarios, sectores (alta), permisos y plazos. |
+| Alcance "solo sus obras" (F-15, F-17, F-19, F-20, F-03, F-48, RN-IDE-47) | ✅ | ADM-05 | Sector QA-ADM Pruebas con Obras = Editar·sus obras, Presupuesto por rubro = Ver·sus obras y Monto de obra = Ver·sus obras (al final volvió a Obras Ver·todas, Presupuesto y Monto Sin acceso, verificado por API). Diego creó 2-601-2026 "QA-ADM Obra de Ana" (id 12, responsable Ana) y 2-602-2026 "QA-ADM Obra ajena" (id 13, responsable QA-ADM Beto), las dos con oferta PDF. Con Ana: **listado** solo la suya, contadores (0/1/0) y las 3 pestañas por estado correctos; filtrar por "2-602" o por responsable Beto da vacío. **Ficha, editar y presupuesto por rubro de la ajena por URL directa:** "Obra no encontrada · Puede que el link esté mal o que no tengas acceso a esa obra. · Volver a Obras" (sin 403 crudo). **API sobre la ajena:** ficha, historial, PATCH, adicional y cambio de estado → 404 "Obra no encontrada."; documento sin adjuntos → 422 tanto en la ajena como en un id inexistente (no revela que exista); con adjunto válido → 404. **Propia:** ficha 200 con Editar, "+ agregar presupuesto adicional" y "Cambiar estado"; PATCH 200 (planta editada, se ve en el listado y el buscador); ponerle otro responsable (PATCH o alta por API) → 422 "Solo podés ponerte a vos como responsable de la obra."; en el alta y la edición el desplegable solo la ofrece a ella. **Descarga:** oferta propia 200 `application/pdf`; oferta de la ajena 404. **Presupuesto por rubro (Ver·sus obras):** propia 200, ajena 404; cargar montos → 403 "No tenés permiso para hacer esto.". **Monto de obra (Ver·sus obras):** `monto_obra` aparece en la ficha propia; `puede.cargar_monto_obra=false`. **Buscador general** (`/buscar?q=QA-ADM` y "2-602"): solo trae la propia. |
 | F-14 (usuarios/permisos) | ✅ | — | RN-IDE-37: sin pantalla en etapa 1; no aparece nada roto. En la base, `actividades` registra alta de sectores y usuarios, cada edición de usuario (campo, antes → después, quién) y cada celda de la tabla. |
 
 ## No probado
