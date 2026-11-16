@@ -113,6 +113,24 @@ final class PresupuestosTest extends ObrasTestCase
         $this->assertSame(2, Presupuesto::query()->count());
     }
 
+    /** PU-033 (RN-OBR-14): cualquier revisión mal escrita, larga o con espacios, dice cómo escribirla. */
+    public function test_revision_larga_o_mal_escrita_dice_como_escribirla(): void
+    {
+        $laura = $this->laura();
+        $obra = $this->crearObra($laura);
+        $principal = Presupuesto::query()->sole();
+
+        foreach (['versión dos', 'revisión número dos de la obra', 'rev dos'] as $revision) {
+            $this->actingAs($laura)->patchJson("/api/presupuestos/{$principal->id}", ['revision' => $revision])
+                ->assertUnprocessable()
+                ->assertJsonValidationErrors(['revision' => 'Escribí la revisión como REV01.']);
+        }
+
+        $this->actingAs($laura)->postJson("/api/obras/{$obra->id}/presupuestos", ['numero' => '2-131-2026', 'revision' => str_repeat('R', 25)])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['revision' => 'Escribí la revisión como REV01.']);
+    }
+
     public function test_revision_nueva_es_el_mismo_presupuesto_y_queda_en_el_historial(): void
     {
         $laura = $this->laura();
