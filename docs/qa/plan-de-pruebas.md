@@ -105,6 +105,10 @@ Se arman con factories + un `EscenarioRealistaSeeder` (solo base de tests) con:
   HEIC** del celular y otro con un PDF **y** un link; una carpeta de Drive (solo link).
 
 ### 4.3 Pedidos (semana 2)
+
+> Detalle por persona y por caso, con la jerarquía de 3 niveles y los destinatarios de cada aviso:
+> §9.1. Lo de abajo es la lista de formas de la minuta que el escenario tiene que cubrir.
+
 - Estados en la proporción de la minuta: casi todos Completada, algunos No iniciada, En curso y
   **Bloqueada siempre con motivo** ("esperando presupuesto", "reprogramar fecha").
 - Pedidos de la carga inicial **sin fecha de pedido** (solo 18 de 39 solapas la tienen), **sin
@@ -218,7 +222,7 @@ purga de huérfanos se prueba con el reloj fijado (`travelTo` + 24 h).
 | Entrega | Qué prueba el cliente (roadmap) | Qué mira QC además |
 |---|---|---|
 | Semana 1 · Base | Cargan 2 o 3 obras reales y sus usuarios. | Que cada persona entre y vea solo lo de su sector; que las obras con 2–3 presupuestos y las de solo total se carguen sin trabas. |
-| Semana 2 · Pedidos | Lo usan en paralelo con la minuta unos días. | Que ningún pedido cargado en la minuta en esos días falte en el sistema; avisos que llegan y mails que **no** llegan. |
+| Semana 2 · Pedidos | Lo usan en paralelo con la minuta unos días. | Que ningún pedido cargado en la minuta en esos días falte en el sistema; avisos que llegan y mails que **no** llegan; criterio global n.º 3 al 100 % (detalle: §9.6 y §9.7). |
 | Semana 3 · Gastos y rendición | Cargan las facturas de una obra en curso y la comparan con su rendición en Excel. | Diferencia por rubro = 0 (con EPP en INSUMOS); cada diferencia se explica o es un defecto. |
 | Semana 4 · Puesta en marcha | Arrancan; la minuta y las rendiciones en Excel quedan de consulta. | Conteos de la carga inicial contra el origen (pedidos abiertos, obras en ejecución, gastado por rubro). |
 
@@ -238,3 +242,259 @@ purga de huérfanos se prueba con el reloj fijado (`travelTo` + 24 h).
   (texto, estética).
 - Cada defecto lleva F-XX, W-XX, pasos, datos usados (ficticios) y el test que lo reproduce. Se cierra
   cuando ese test está en verde en la suite.
+
+## 9. Semana 2 · Pedidos (la minuta)
+
+> Historias: HU-026…HU-060 ([`../backlog.md`](../backlog.md) §6). Tests previstos por F-XX:
+> [`matriz-trazabilidad.md`](matriz-trazabilidad.md). Reglas: `../especificacion/pedidos.md` y
+> `avisos.md` (RN-PED, RN-AVI; las escribe el Analista en paralelo). Donde una regla depende de una
+> duda abierta (DU-Q01…DU-Q03 de PO + QA, DU-P01…DU-P24 del Analista) el test se escribe con la
+> propuesta y la cita en un comentario arriba del test (`// DU-P04`), así se encuentra y se cambia en
+> un lugar si Juani decide otra cosa.
+> Todo lo de esta sección es **ficticio**: ningún nombre de empleado, cliente o proveedor real y
+> ningún importe (los pedidos no tienen importes).
+
+### 9.1 Datos de prueba con la forma de la minuta (`EscenarioPedidosSeeder`, solo base de tests)
+
+Se suma al `EscenarioRealistaSeeder` (§4) y reusa sus obras. La **forma** sale del análisis de la
+minuta del 9-oct (755 pedidos, 42 solapas, 18 variantes de columnas); los valores son inventados.
+
+**Personas y jerarquía (3 niveles para "mi gente", más una rama aparte):**
+
+| Persona (ficticia) | Sector | Depende de | Para qué está |
+|---|---|---|---|
+| Dora | Dirección | — | sin jefe: un pedido que pide ella no genera aviso de superior (DU-13) |
+| Gastón | Gerencia de Operaciones | Dora | **nivel 1**: su gente = Hernán, Laura, Iván y Sofía |
+| Hernán | Jefatura de Proyectos | Gastón | **nivel 2**: su gente = Laura e Iván; aparece como "(yo)" en W-26 |
+| Laura | Ingeniería de proyectos | Hernán | **nivel 3**; solicitante frecuente (como hoy ingeniería) y responsable de dos obras |
+| Iván | Ingeniería de proyectos | Hernán | nivel 3; completa pedidos de otros (superior distinto al del solicitante) |
+| Sofía | Seguridad e Higiene | Gastón | otra rama de Operaciones |
+| Diego | Gerencia de Administración | Dora | **otra rama**: no debe ver la gente de Gastón |
+| Julia | Jefatura de Administración | Diego | jefatura de Compras y RRHH |
+| Carla | Compras | Julia | **la más cargada**: ≈ 4 de cada 10 pedidos a su nombre (como compras hoy) |
+| Rita | RRHH | Julia | habilitaciones, cursos |
+| Pablo | Calidad | Dora | pide pedidos sin obra (auditoría interna) |
+| Mario | Compras | Julia | segunda persona de Compras: pedidos "en el sector" llegan a Carla **y** a Mario |
+| Tomás | Compras | Julia | **inactivo**: no recibe avisos ni mails; aparece con "(inactivo)" en lo histórico |
+
+**Pedidos (unos 60, con las proporciones de la minuta):**
+
+- **Estados:** la mayoría Completada; el resto repartido en No iniciada, En curso y **Bloqueada
+  siempre con motivo** ("esperando presupuesto del taller", "buscar otra opción", "reprogramar
+  fecha", "falta el talle de botines de 3 personas").
+- **Con y sin obra:** 3 obras en ejecución con 5 a 15 pedidos cada una, 1 obra **Terminada con
+  pedidos abiertos** (para W-22), 1 obra Confirmada **sin presupuesto por rubro** con pedidos
+  (HU-019), y **pedidos sin obra** de Servicios generales: service de una camioneta, recarga de
+  matafuegos de la oficina, documentación para una auditoría interna, renovación del seguro de
+  vehículos. Un **pedido para varias obras** de un mismo cliente cargado sin obra ("Curso de
+  trabajo en altura · obras Piso nave 3 y Losa tanque B").
+- **Pedidos de 3 sectores distintos como propietario** en una misma obra: Compras (materiales,
+  alquileres, alojamiento), Seguridad e Higiene (programa de seguridad, habilitaciones) y Jefatura
+  de Administración (certificado), más uno de **Ingeniería pedido por Administración** ("Planilla de
+  cierre y control de obras": el sentido administración → operaciones).
+- **Período inicio–fin:** "Alojamiento 6 personas (26-oct al 6-nov)", "Alquiler de hidrolavadora
+  (14 al 23-oct)", un obrador; uno que cruza de un mes al siguiente (para el calendario).
+- **Varios archivos o links:** un pedido con link a una carpeta de Drive, uno a Maps y uno a la
+  página de un producto, más una foto subida (`foto-celular.heic` de §4.5); otro con un PDF.
+- **"Con quién / para quién" que no es proveedor:** el cliente ("Planta Ejemplo SA"), un área
+  interna ("SyH"), la propia empresa ("la empresa"), un tercero de servicio ("instituto de
+  capacitación de ejemplo") y un texto genérico ("Varios"), además de proveedores ficticios escritos
+  a mano de dos formas distintas (no se unifican: es texto libre).
+- **Prioridad:** calculada en los tres niveles con fechas frontera exactas (0, 1, 2, 7 y 8 días);
+  **corregida a mano** en algunos que no coinciden con la calculada (pasa en ~4 de cada 10 en la
+  minuta); un pedido con la **fecha de pedido corregida hacia atrás** (llegó antes por mail).
+- **En el sector sin persona:** un pedido de Compras en el sector (llega a Carla y a Mario).
+- **Completado por alguien cuyo superior no es el del solicitante:** pide Laura (jefe Hernán),
+  completa Carla (jefa Julia) → el aviso de superior va a **Hernán**, no a Julia (DU-13).
+- **Completado con la foto del remito** como comprobante de cierre y otro con un link al recibo.
+- **Completado y reabierto** ("falta tal cosa acá") y vuelto a completar.
+- **Reasignado** de Carla a Mario con la ida y vuelta intacta; uno reasignado al sector.
+- **Seguidores:** Gastón sigue dos pedidos de Laura; Hernán es a la vez **superior y seguidor** de un
+  pedido de Laura (debe recibir un solo aviso por evento).
+- **Pedido de Tomás (inactivo)** abierto como propietario (para DU-P09) y completados suyos en el
+  historial.
+- **Equipos en reparación:** 5 equipos, uno en cada estado (incluido "Para retiro"), las 3
+  aprobaciones, uno con el presupuesto del taller en PDF y el inventario como link, uno "Completada"
+  devuelto a pañol.
+
+Los pedidos de la **carga inicial** (sin fecha de pedido, sin solicitante, sin prioridad) son de la
+semana 4 (§4.3, DU-20): en la semana 2 todo pedido nace por el alta y cumple DU-14.
+
+### 9.2 Avisos y mail
+
+Con `Notification::fake` / `Mail::fake` / `Queue::fake` y la tabla `avisos` real. Cada caso verifica
+**a quién sí** y **a quién no** (lista cerrada de destinatarios, no "contiene").
+
+| Caso | Le llega (en el sistema) | Mail | **No** le llega |
+|---|---|---|---|
+| Laura crea un pedido para Carla | Carla | Carla (cola `mail`) | Laura (lo hizo ella), Hernán |
+| Laura crea un pedido para Compras en el sector | Carla y Mario | Carla y Mario | Tomás (inactivo), Laura |
+| Carla lo toma | Laura y los seguidores | nadie (por defecto) | Carla |
+| Carla lo bloquea "esperando presupuesto" | Laura y seguidores, con el motivo | nadie | Carla |
+| Laura comenta | Carla y seguidores | nadie | Laura |
+| Carla comenta | Laura y seguidores | nadie | Carla |
+| Gastón (tercero) comenta | Laura y Carla, y los otros seguidores | nadie | Gastón |
+| Carla completa | Laura (con el comentario), **Hernán** (superior de Laura), seguidores | nadie | Carla, **Julia** (superior de Carla) |
+| Laura le pide algo a Hernán (su jefe) y Hernán lo completa | Laura | nadie | Hernán: no se avisa como superior de Laura (lo hizo él) |
+| Dora pide y Carla completa | Dora | nadie | ningún superior (Dora no tiene jefe) |
+| Hernán es superior **y** seguidor; Carla completa | Hernán **un solo** aviso | nadie | — |
+| Laura reabre | Carla | nadie | Laura, Hernán |
+| Laura reasigna de Carla a Mario | Mario | Mario | Carla (no está en la tabla de avisos) |
+| Retomar un Bloqueada | nadie | nadie | (Retomar no avisa) |
+| Laura activó "completado" por mail en Mis avisos; Carla completa | Laura | **Laura** | — |
+| Seguidor con todo activado por mail | en el sistema | **nunca** por ser seguidor | — |
+
+- **Nunca a uno mismo:** un test por tipo de evento con el autor como posible destinatario.
+- **Recordatorio no repetido:** el comando corre 3 veces el mismo día (y dos procesos a la vez, con
+  `DatabaseTruncation` y commit real) → **un** aviso por pedido y fecha de entrega (`dedupe_key`
+  único); al cambiar la entrega, uno nuevo para la fecha nueva.
+- **Mail solo la asignación (por defecto):** después de recorrer todo el ciclo de un pedido (crear,
+  tomar, bloquear, retomar, comentar, completar, reabrir), `Mail::assertQueued` cuenta **exactamente
+  1** mail (el de la asignación) y `assertNotQueued` para el resto.
+- **Cola 1/s:** 5 mails encolados (pedido al sector de 5 personas) con el limitador de Redis: el job
+  se libera y reintenta en vez de mandar dos en el mismo segundo; los 5 llegan (verificado con el
+  reloj y el limitador, sin dormir el test).
+- **El mail no frena:** con el transporte de mail fallando, el pedido se crea igual y el aviso en el
+  sistema existe; el mail queda en `failed_jobs`.
+- **Campana en vivo (E2E real):** con dos sesiones abiertas (Laura y Carla), Laura crea el pedido y
+  el contador de Carla sube en ≤ 15 s sin recargar (ADR-005).
+
+### 9.3 Pruebas de tiempo
+
+- **Reloj fijo** con `Carbon::setTestNow` / `travelTo` en toda prueba que dependa de "hoy". Zona
+  horaria de la app: `America/Argentina/Buenos_Aires`. Día de referencia: **miércoles 18-nov-2026,
+  10:00** (semana del lunes 16 al domingo 22).
+- **Fechas relativas** en factories y seeders: `today()->addDays(n)`, nunca fechas escritas a mano,
+  así el escenario sirve cualquier día.
+- **Prioridad:** entrega a +0, +1 (urgente), +2, +7 (prioritario), +8 (normal) días de la fecha de
+  pedido; fecha de pedido corregida a −3 días; cambio de plazos en W-50 entre dos altas (el primero
+  no cambia).
+- **Vencidos:** abierto con entrega el martes 17 → vencido; con entrega hoy (miércoles 18) → **no**
+  vencido ("hoy"); Completada con entrega pasada → no vencido; Bloqueada con entrega pasada →
+  vencido. Corte del día a las 00:00 de Argentina: `travelTo('2026-11-18 23:59')` y `'2026-11-19
+  00:00'` (DU-P14).
+- **Esta semana (W-04):** reloj el miércoles 18; entregas el lunes 16 y martes 17 (vencidas), el
+  miércoles 18, el domingo 22 (esta semana) y el lunes 23 (no). Ningún pedido cuenta en dos
+  columnas. Repetir con el reloj en domingo 22 y en lunes 23 (cambio de semana).
+- **Recordatorio:** reloj el martes 17 a las 7:00, 8:00 y 15:00 con entregas el miércoles 18
+  (DU-P21: desde las 8:00); entrega el lunes 23 con el reloj el domingo 22 (días corridos, DU-Q01) y el
+  viernes 20 (no debe salir todavía); pedido creado el martes 17 a las 16:00 con entrega el
+  miércoles 18 → recordatorio en la corrida siguiente; pedido creado con entrega hoy → sin
+  recordatorio, con aviso de asignación.
+- **Calendario:** período que cruza de noviembre a diciembre aparece en los dos meses; vista semana
+  del 16 al 22.
+
+### 9.4 IDOR y alcance "propios" en Pedidos
+
+La configuración inicial es Pedidos **E·T** para todos, así que estas pruebas **cambian la celda**
+(nunca "usuario admin"; §1): Calidad pasa a Pedidos **V·P** o **E·P** ("propios" = los que pidió,
+tiene, sigue o de su gente; `identidad.md` §6.1).
+
+- Con la celda en propios, Pablo (Calidad) pide por id un pedido de Laura a Carla en el que no está
+  → la misma respuesta que un pedido que no existe ("Pedido no encontrado", sin confirmar que existe;
+  como la ficha de obra fuera de alcance; el código exacto lo fija spec pedidos.md). Igual para:
+  detalle, recorrido, comentar, seguir, editar, tomar, completar, reasignar, reabrir, bajar un
+  adjunto del pedido (404 de `GET /api/adjuntos/{id}`).
+- **Listas:** Todos los pedidos, Servicios generales, calendario, buscador, Excel exportado, pestaña
+  Pedidos de la obra **no incluyen** pedidos ajenos. Los **conteos** (columna "pedidos abiertos" y
+  fila Servicios generales) cuentan **todos** los abiertos (propuesta DU-P17): se prueba que el número
+  no abre nada y que la pestaña sí filtra. Un pedido que Pablo **sigue** sí aparece.
+- **Mi gente con propios:** Gastón con la celda en propios ve los pedidos de Laura (su gente
+  indirecta) y no los de Carla (otra rama).
+- **Avisos ajenos:** `GET`/`PATCH` de un aviso de otra persona → 404; el contador nunca cuenta avisos
+  de otro.
+- **Asignación masiva:** `solicitante_id`, `estado`, `completado_por`, `prioridad_manual` sin la
+  marca, `propietario_id` en la edición → se ignoran o se rechazan.
+- **Sin acceso:** RRHH con Pedidos en Sin acceso → 403 en listas y en el alta; el ítem de la barra no
+  aparece; Equipos en reparación con su propia celda (403 y adjuntos 404).
+- **Cambio de celda en vivo:** se pasa la celda de E·T a V·P y el **próximo** pedido de esa persona ya
+  rige (sin volver a entrar).
+
+### 9.5 Celular
+
+- Proyecto Playwright **celular** (390×844, emulación de teléfono) obligatorio para W-41, W-42, W-43 y
+  W-47; tag `@celular` en los caminos críticos de la suite real.
+- **Sin desplazamiento horizontal** medido en cada pantalla de pedidos (`scrollWidth ≤
+  clientWidth`), y todos los botones dentro del ancho (mismo criterio que el arreglo de B-01).
+- **Completar con la foto del remito:** `setInputFiles` con `foto-celular.heic` en el campo del
+  comprobante; el pedido queda Completada y el adjunto se baja desde la PC.
+- **Un pedido en menos de un minuto (criterio global n.º 4):** el E2E mide desde que toca "+ Nuevo
+  pedido" hasta "✓ Pedido creado" con los datos de un pedido real ficticio; falla si pasa de 60 s
+  (en la máquina de CI, sin red lenta simulada). QC lo repite a mano con una persona del cliente.
+- **Barra de abajo:** Tareas · Obras · Avisos · Más con la semana 2 encendida; "Más" según el sector
+  (Laura sin Proveedores ni Usuarios).
+- QC recorre en un teléfono real (Android y, si hay, iPhone) Mis tareas, avisos, detalle, comentar,
+  completar con foto, nuevo pedido y obras.
+
+### 9.6 Criterio de aceptación global n.º 3 · "Ningún pedido se atrasa sin que el propietario se entere antes"
+
+**Qué quiere decir, verificable:** para todo pedido abierto con fecha de entrega `E`, su
+propietario (o cada persona activa del sector, si está sin persona) tiene **antes de `E`** al menos
+un aviso dentro del sistema del pedido (asignación o reasignación en el momento, **y** "vence
+mañana" el día anterior si seguía abierto), y la asignación le llegó **también por mail**. Además,
+el día `E` y después lo ve marcado en Mis tareas (hoy / vencido).
+
+**Prueba automática (feature, reloj fijado):** `CriterioGlobalTresTest::test_ningun_pedido_se_atrasa_sin_que_el_propietario_se_entere_antes`
+1. Arma el escenario de §9.1 con 20 pedidos abiertos de entregas entre −2 y +10 días, propietarios
+   de 4 sectores, uno en el sector sin persona, uno reasignado, uno con la entrega cambiada, uno
+   Bloqueada y uno con la entrega hoy.
+2. Avanza el reloj **hora por hora** durante 12 días corriendo el scheduler real
+   (`schedule:run` con `travelTo`), y en el medio aplica las acciones del escenario (tomar,
+   reasignar, cambiar la entrega, completar algunos).
+3. Para **cada** pedido que estuvo abierto al llegar su entrega, verifica en `avisos`: existe un
+   aviso `asignado` o `reasignado` para su propietario de ese momento con `created_at` anterior a la
+   entrega, y uno `vence_manana` con `created_at` del día anterior (salvo los cargados con entrega
+   hoy o pasada); y en la cola de mail, el mail de asignación a ese propietario. Verifica también que
+   ninguno de esos avisos le llegó a quien hizo la acción y que el recordatorio no se repitió.
+4. Los completados antes de la víspera **no** tienen recordatorio.
+
+Tests de apoyo (matriz, §3 fila 3): `test_asignar_pedido_crea_aviso_al_propietario` ·
+`test_pedido_al_sector_avisa_a_todas_sus_personas_activas` · `test_asignacion_envia_mail_por_cola_al_propietario` ·
+`test_reasignar_pedido_avisa_al_nuevo_propietario_por_mail` · `test_recordatorio_se_crea_un_dia_antes_si_sigue_abierto` ·
+`test_pedido_bloqueado_tambien_recibe_recordatorio` · `test_cambiar_la_entrega_genera_recordatorio_para_la_fecha_nueva` ·
+`test_recordatorio_no_se_duplica_si_el_scheduler_corre_dos_veces` · `test_pedido_con_entrega_pasada_y_abierto_figura_vencido` ·
+`test_el_recordatorio_esta_programado_en_el_scheduler`.
+
+**E2E (real):** `pedidos.spec.ts › cargo un pedido y le llega el aviso al propietario` [cel]: Laura
+crea un pedido para Carla; en la sesión de Carla la campana sube sin recargar, el pedido está en Mis
+tareas y el mail de asignación aparece en el log de mail de la suite.
+
+**Con el cliente (QC, durante los días en paralelo):** al final de cada día QC saca de la base del
+entorno de prueba la lista de pedidos **abiertos cuya entrega fue ese día o antes** y, para cada
+uno, busca en `avisos` el de asignación (y, si correspondía, el de "vence mañana") del propietario
+con fecha anterior a la entrega, y en el log de la cola el mail. **Objetivo: 100 %.** Cada pedido
+que falle es un defecto **crítico** (rompe un criterio firmado) con su test que lo reproduce. Revisa
+aparte los pedidos que estuvieron "en el sector" sin persona y los de personas que se desactivaron
+(DU-P09, DU-Q02). Además verifica en el entorno que el scheduler y el worker de mail estuvieron arriba todo
+el período (HU-060): si se cayeron, el resultado no cuenta y se repite.
+
+### 9.7 Uso en paralelo con la minuta (la prueba del cliente)
+
+- **Antes:** el entorno del cliente con la semana 2 encendida, worker de mail y scheduler en
+  Supervisord, subida ≥ 21 MB (B-04), las obras y usuarios reales que cargaron en la semana 1 con su
+  "depende de" completo (sin eso no hay "mi gente" ni aviso al superior). QC verifica con un pedido
+  de prueba ficticio que llegan el aviso, el mail y, al día siguiente, el recordatorio; después lo
+  borra de la vista del cliente completándolo con "prueba".
+- **Durante (unos días):** cada pedido nuevo de la minuta se carga también en el sistema. QC
+  compara **cada día**: filas nuevas de la minuta vs. pedidos nuevos del sistema (por obra y tarea);
+  estado de cada uno en los dos lados; los que no se cargaron en el sistema se anotan con el porqué
+  (le faltó un campo, no tenía acceso, le costó) como **hallazgo**, sin agregar funciones fuera del
+  documento.
+- **Mails que no tienen que llegar:** QC pregunta a 3 personas (la más cargada, un solicitante
+  frecuente y una jefatura) si recibieron algún mail que no fuera de asignación o de lo que
+  activaron; se verifica en el log de la cola.
+- **Después:** informe de QC de la entrega 2 (`../qc/entrega-2.md`) con el criterio n.º 3 medido,
+  la comparación minuta ↔ sistema y los hallazgos.
+
+### 9.8 Entrada y salida de la semana 2
+
+Además de lo general de §6:
+
+- **Entrada:** la matriz tiene los tests previstos de las 27 F-XX de la semana (✔, 16-nov); las
+  historias "sí o sí" del backlog §6.1 sin dudas abiertas que cambien sus criterios (DU-P01, DU-P02,
+  DU-P05, DU-P08, DU-P19, DU-P21 y DU-Q01 son las que tocan a esas historias: pedírselas a Juani primero); spec
+  `pedidos.md` y `avisos.md` publicadas.
+- **Salida:** `CriterioGlobalTresTest` en verde; E2E real de crear → avisar → tomar → completar con
+  foto en PC y celular; ningún test de pedidos con `markTestSkipped` sin DU; `seguridad.md` con la
+  revisión de Pedidos (alcance propios, IDOR de pedidos, avisos y adjuntos de pedido y equipo);
+  revisión del Tech Lead con TL-03/07/08 cerrados (HU-059).

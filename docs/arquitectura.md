@@ -120,8 +120,8 @@ sequenceDiagram
 
 ### 4.2 Completar un pedido (F-31, D-030)
 `POST /api/pedidos/{id}/completar` con `comentario` (obligatorio) y comprobantes
-(opcionales: ids de adjuntos ya subidos, archivo o link) → Policy: solo el propietario → `PedidoStateMachine` valida `en_curso|bloqueada → completada`
-(y `no_iniciada → completada` si el documento lo admite, ver especificación) → guarda cierre +
+(opcionales: ids de adjuntos ya subidos, archivo o link) → Policy: el propietario (o, si está en el sector, una persona del sector) → `PedidoStateMachine` valida
+`no_iniciada|en_curso → completada` (desde `bloqueada` primero se retoma; DU-15, `especificacion/pedidos.md`) → guarda cierre +
 actividad → `PedidoCompletado` → avisos al solicitante, a su superior (`jefe_id`) y a los
 seguidores, dentro del sistema.
 
