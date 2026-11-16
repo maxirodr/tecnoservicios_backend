@@ -36,8 +36,6 @@ final class IdentidadServiceProvider extends ModuleServiceProvider
 
     public const LIMITE_INGRESO = 'identidad-ingreso';
 
-    public const DEMASIADOS_CODIGOS = 'Ya pediste varios códigos. Probá de nuevo en unos minutos.';
-
     public const DEMASIADOS_INTENTOS = 'Demasiados intentos. Probá de nuevo en un minuto.';
 
     /** RN-IDE-06: pedir código, 3 cada 10 minutos por mail y 20 por hora por IP. */
@@ -105,9 +103,9 @@ final class IdentidadServiceProvider extends ModuleServiceProvider
 
         RateLimiter::for(self::LIMITE_PEDIR_CODIGO, fn (Request $request): array => [
             Limit::perMinutes(self::MINUTOS_POR_MAIL, self::CODIGOS_POR_MAIL)->by('mail|'.$mail($request))
-                ->response(self::demasiados(self::DEMASIADOS_CODIGOS)),
+                ->response(self::demasiadosCodigos()),
             Limit::perHour(self::CODIGOS_POR_IP_POR_HORA)->by('ip|'.$request->ip())
-                ->response(self::demasiados(self::DEMASIADOS_CODIGOS)),
+                ->response(self::demasiadosCodigos()),
         ]);
 
         RateLimiter::for(self::LIMITE_INGRESO, fn (Request $request): array => [
@@ -116,6 +114,27 @@ final class IdentidadServiceProvider extends ModuleServiceProvider
             Limit::perMinute(self::INGRESOS_POR_IP_POR_MINUTO)->by('ip|'.$request->ip())
                 ->response(self::demasiados(self::DEMASIADOS_INTENTOS)),
         ]);
+    }
+
+    /** PU-016: cuánto esperar, según el `Retry-After` del limitador, redondeado hacia arriba en minutos. */
+    public static function mensajeDemasiadosCodigos(int $segundos): string
+    {
+        $minutos = max(1, (int) ceil($segundos / 60));
+
+        return 'Ya pediste varios códigos. Probá de nuevo en '.$minutos.($minutos === 1 ? ' minuto.' : ' minutos.');
+    }
+
+    /**
+     * @return Closure(Request, array<string, string>): JsonResponse
+     */
+    private static function demasiadosCodigos(): Closure
+    {
+        return static fn (Request $request, array $headers): JsonResponse => ApiResponse::error(
+            self::mensajeDemasiadosCodigos((int) ($headers['Retry-After'] ?? 60)),
+            429,
+            null,
+            $headers,
+        );
     }
 
     /**
