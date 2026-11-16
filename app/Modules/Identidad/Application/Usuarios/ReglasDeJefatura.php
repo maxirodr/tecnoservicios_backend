@@ -6,6 +6,7 @@ namespace App\Modules\Identidad\Application\Usuarios;
 
 use App\Modules\Identidad\Contracts\Jerarquia;
 use App\Modules\Identidad\Domain\Models\User;
+use App\Shared\Texto;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -42,7 +43,7 @@ final class ReglasDeJefatura
         }
 
         if (in_array($jefe->id, $this->jerarquia->subordinados($usuario), true)) {
-            $this->rechazar("Así se arma un círculo: {$jefe->nombre} ya depende de {$usuario->nombre}.");
+            $this->rechazar(Texto::conPunto("Así se arma un círculo: {$jefe->nombre} ya depende de {$usuario->nombre}"));
         }
     }
 

@@ -10,6 +10,20 @@ use Illuminate\Support\Str;
 /** F-56 · F-42 (alta rápida, mismo endpoint) · W-38 · HU-021 (RN-PRV-04…07, 10). */
 final class AltaProveedorTest extends ProveedoresTestCase
 {
+    /** PU-034: un nombre que termina en punto no deja doble punto en los mensajes. */
+    public function test_nombre_terminado_en_punto_no_deja_doble_punto(): void
+    {
+        $carla = $this->quienEdita();
+
+        $this->actingAs($carla)->postJson('/api/proveedores', ['nombre' => 'Corralón Ejemplo S.R.L.'])
+            ->assertCreated()
+            ->assertJsonPath('message', 'Guardamos Corralón Ejemplo S.R.L.');
+
+        $this->actingAs($carla)->postJson('/api/proveedores', ['nombre' => 'corralon EJEMPLO srl'])
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.nombre.0', 'Ya existe Corralón Ejemplo S.R.L.');
+    }
+
     public function test_alta_solo_con_nombre(): void
     {
         $carla = $this->quienEdita();

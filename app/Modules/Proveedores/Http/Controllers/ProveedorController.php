@@ -20,6 +20,7 @@ use App\Modules\Proveedores\Http\Resources\ProveedorResumenResource;
 use App\Shared\Http\ApiExceptionRenderer;
 use App\Shared\Http\RespondsWithEnvelope;
 use App\Shared\Http\UsuarioAutenticado;
+use App\Shared\Texto;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -53,7 +54,7 @@ final class ProveedorController
             return $this->duplicado($duplicado);
         }
 
-        return $this->created($this->ficha($user, $proveedor->load('rubroHabitual')), "Guardamos {$proveedor->nombre}.");
+        return $this->created($this->ficha($user, $proveedor->load('rubroHabitual')), Texto::conPunto("Guardamos {$proveedor->nombre}"));
     }
 
     public function update(GuardarProveedorRequest $request, int $proveedor, EditarProveedorAction $editar): JsonResponse
