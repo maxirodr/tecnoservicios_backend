@@ -61,9 +61,9 @@ final class LimiteGeneralApiTest extends IdentidadTestCase
     public function test_sin_sesion_el_limite_se_cuenta_por_ip(): void
     {
         for ($i = 0; $i < self::LIMITE; $i++) {
-            $this->getJson('/api/health')->assertOk();
+            $this->getJson('/api/errors')->assertUnauthorized();
         }
 
-        $this->getJson('/api/health')->assertStatus(self::TOO_MANY_REQUESTS)->assertJsonPath('data', null);
+        $this->getJson('/api/errors')->assertStatus(self::TOO_MANY_REQUESTS)->assertJsonPath('data', null);
     }
 }

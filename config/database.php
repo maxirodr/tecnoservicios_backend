@@ -63,6 +63,8 @@ return [
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                // Conectar no espera más que esto: /api/health responde rápido aunque MySQL no esté (PU-020).
+                PDO::ATTR_TIMEOUT => (int) env('DB_CONNECT_TIMEOUT', 2),
             ]) : [],
         ],
 
@@ -83,6 +85,8 @@ return [
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                // Conectar no espera más que esto: /api/health responde rápido aunque MySQL no esté (PU-020).
+                PDO::ATTR_TIMEOUT => (int) env('DB_CONNECT_TIMEOUT', 2),
             ]) : [],
         ],
 
@@ -166,6 +170,10 @@ return [
             'backoff_algorithm' => env('REDIS_BACKOFF_ALGORITHM', 'decorrelated_jitter'),
             'backoff_base' => env('REDIS_BACKOFF_BASE', 100),
             'backoff_cap' => env('REDIS_BACKOFF_CAP', 1000),
+            // Timeouts cortos (segundos): con Redis caído nada espera el default de 5-60 s (PU-020).
+            'timeout' => (float) env('REDIS_TIMEOUT', 1),
+            'read_timeout' => (float) env('REDIS_READ_TIMEOUT', 3),
+            'read_write_timeout' => (float) env('REDIS_READ_TIMEOUT', 3),
         ],
 
         'cache' => [
@@ -179,6 +187,10 @@ return [
             'backoff_algorithm' => env('REDIS_BACKOFF_ALGORITHM', 'decorrelated_jitter'),
             'backoff_base' => env('REDIS_BACKOFF_BASE', 100),
             'backoff_cap' => env('REDIS_BACKOFF_CAP', 1000),
+            // Timeouts cortos (segundos): con Redis caído nada espera el default de 5-60 s (PU-020).
+            'timeout' => (float) env('REDIS_TIMEOUT', 1),
+            'read_timeout' => (float) env('REDIS_READ_TIMEOUT', 3),
+            'read_write_timeout' => (float) env('REDIS_READ_TIMEOUT', 3),
         ],
 
     ],
