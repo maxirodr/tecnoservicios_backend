@@ -61,3 +61,17 @@ Plan (brief de agentes: rehacerlo con las mismas reglas; está en `tasks/brief-a
 1. Levantar MariaDB (XAMPP) y Redis portable; verificar `select 1` y `PING`.
 2. Matriz de trazabilidad: sumar tests de los fixes de QC (B-01…B-05).
 3. Semana 2 (Pedidos / minuta): Sprint-0 de la semana — especificación `docs/especificacion/pedidos.md`, backlog HU, dudas; después tandas con agentes como en semana 1.
+
+## Prueba de usuario semana 1 (2026-11-16)
+Reporte: `docs/qa/prueba-usuario/semana-1/` (45 hallazgos PU-001…045: 2 bloq · 3 altas · 18 medias · 22 bajas).
+Juani aprobó PU-043 (ñ ≠ n en duplicados de proveedor), PU-044 (buscar proveedor por CUIT) y PU-045 (pista en el ingreso + gerencia destraba el bloqueo desde Usuarios).
+Arreglos en ramas, **sin mergear y sin verificar** (los agentes se cortaron a mitad):
+- Backend `fix/w1-prueba-usuario-back`: 11 commits (401 JSON, 4xx fuera de `errors`, búsqueda con signos, links con ñ, minutos de espera, health sin Redis + cola de mail, revisión, fechas del historial, doble punto, 409 por edición vieja con `updated_at`, ñ + CUIT, quitar bloqueo de ingreso). Falta: correr pint/phpstan/suite completa; DU-Q04…Q06 en dudas.md ya escritos, revisar bitácora/ADR-015/especificaciones.
+- Front `fix/w1-pu-formularios` (carpeta principal): último commit `wip` con todo lo hecho; faltan tests de PegarLink y verificar todo.
+- Front `fix/w1-pu-listas` (worktree `../tecnoservicios_frontend_listas`): último commit `wip`; verificar.
+### Próxima sesión
+1. Revisar cada rama contra su lista de PU (prompts de los agentes en esta sesión), completar lo que falte y dejar suites en verde.
+2. Front: UI de PU-045 (bloqueo en Usuarios + pista "¿No te llegó?…" en el ingreso) y fechas del historial si quedan en el front.
+3. Mergear las 3 ramas, `npm run e2e` y `npm run e2e:integracion`, re-probar los PU graves; borrar ramas y el worktree.
+4. Actualizar el prompt de la prueba: worker `--queue=mail,default`, iPhone SE 375×667.
+5. Semana 2: Juani confirma las 27 dudas (DU-P01…P24, DU-Q01…Q03) → tandas de Pedidos y Avisos.
