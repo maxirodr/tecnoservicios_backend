@@ -64,7 +64,7 @@ final class ObraController
     public function update(ActualizarObraRequest $request, int $obra, BuscarObra $buscar, ActualizarObraAction $actualizar, FichaObraQuery $ficha): JsonResponse
     {
         $user = $this->usuario($request);
-        $actualizar->handle($user, $buscar->editable($user, $obra), $request->datos(), $request->contactos());
+        $actualizar->handle($user, $buscar->editable($user, $obra), $request->datos(), $request->contactos(), $request->versionEsperada());
 
         return $this->ok(new ObraFichaResource($ficha->handle($user, $buscar->visible($user, $obra))), 'Guardamos los cambios.');
     }

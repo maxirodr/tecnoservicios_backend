@@ -62,7 +62,7 @@ final class ProveedorController
         $user = $this->usuario($request);
 
         try {
-            $editado = $editar->handle($user, $this->buscar($proveedor), $request->datos());
+            $editado = $editar->handle($user, $this->buscar($proveedor), $request->datos(), $request->versionEsperada());
         } catch (ProveedorDuplicado $duplicado) {
             return $this->duplicado($duplicado);
         }

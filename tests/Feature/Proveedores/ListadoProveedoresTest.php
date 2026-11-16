@@ -108,6 +108,7 @@ final class ListadoProveedoresTest extends ProveedoresTestCase
                 'telefono' => '291 000-0002',
                 'email' => 'ventas@corralon-centro.com',
                 'puede' => ['editar' => false, 'ver_gastado' => true],
+                'updated_at' => $proveedor->updated_at?->toIso8601String(),
             ]);
 
         $this->actingAs($this->quienEdita())->getJson("/api/proveedores/{$proveedor->id}")

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Identidad\Http\Resources;
 
 use App\Modules\Identidad\Domain\Models\User;
+use App\Shared\Concurrencia\VersionDeFila;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -47,6 +48,8 @@ final class UsuarioResource extends JsonResource
             'activo' => $user->activo,
             'sector' => ['id' => $user->sector->id, 'nombre' => $user->sector->nombre],
             'jefe' => $jefe === null ? null : ['id' => $jefe->id, 'nombre' => $jefe->nombre],
+            // Versión para el bloqueo optimista de la edición (PU-002).
+            'updated_at' => VersionDeFila::iso($user->updated_at),
             ...($this->aCargo ?? []),
         ];
     }

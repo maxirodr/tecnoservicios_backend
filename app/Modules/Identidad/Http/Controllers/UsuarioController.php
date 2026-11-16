@@ -55,7 +55,7 @@ final class UsuarioController
 
     public function update(ActualizarUsuarioRequest $request, int $usuario, ActualizarUsuarioAction $actualizar, ACargoDelUsuarioQuery $aCargo): JsonResponse
     {
-        $user = $actualizar->handle($this->usuario($request), $this->buscar($usuario), $request->datos());
+        $user = $actualizar->handle($this->usuario($request), $this->buscar($usuario), $request->datos(), $request->versionEsperada());
         $user->load(['sector', 'jefe']);
 
         return $this->ok(UsuarioResource::detalle($user, $aCargo->handle($user)), 'Guardamos los cambios.');

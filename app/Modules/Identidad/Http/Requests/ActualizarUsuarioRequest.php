@@ -6,6 +6,8 @@ namespace App\Modules\Identidad\Http\Requests;
 
 use App\Modules\Identidad\Http\Rules\DominioPermitido;
 use App\Modules\Identidad\Http\Rules\MailDisponible;
+use App\Shared\Concurrencia\VersionDeFila;
+use Carbon\CarbonImmutable;
 use Illuminate\Validation\Rule;
 
 /** `PATCH /api/usuarios/{id}` (W-39): solo los campos que vienen. */
@@ -26,7 +28,14 @@ final class ActualizarUsuarioRequest extends IdentidadRequest
             'jefe_id' => ['sometimes', 'nullable', 'integer', Rule::exists('users', 'id')],
             'telefono' => ['sometimes', 'nullable', 'string', 'max:50'],
             'activo' => ['sometimes', 'required', 'boolean'],
+            ...VersionDeFila::reglas(),
         ];
+    }
+
+    /** `updated_at` que tenía el usuario al abrir el formulario (PU-002). */
+    public function versionEsperada(): ?CarbonImmutable
+    {
+        return VersionDeFila::desde($this->input(VersionDeFila::CAMPO));
     }
 
     /**

@@ -10,7 +10,10 @@ use App\Modules\Obras\Application\Acceso\AccesoObra;
 use App\Modules\Obras\Domain\Models\Obra;
 use App\Modules\Obras\Domain\Models\ObraContacto;
 use App\Shared\Actividad\RegistroActividad;
+use App\Shared\Concurrencia\VersionDeFila;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Connection;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -36,17 +39,24 @@ final readonly class ActualizarObraAction
      * @param  array<string, mixed>  $datos  solo los campos que vinieron
      * @param  array<string, array<string, string>>  $contactos  tipo => campo => valor
      *
-     * @throws ValidationException
+     * @throws ValidationException|HttpResponseException 409 si la obra cambió desde `$version` (PU-002)
      */
-    public function handle(User $actor, Obra $obra, array $datos, array $contactos): Obra
+    public function handle(User $actor, Obra $obra, array $datos, array $contactos, ?CarbonInterface $version = null): Obra
     {
-        return $this->db->transaction(function () use ($actor, $obra, $datos, $contactos): Obra {
+        return $this->db->transaction(function () use ($actor, $obra, $datos, $contactos, $version): Obra {
+            VersionDeFila::bloquearYVerificar($obra, $version);
             $obra->load(['responsable', 'contactos']);
+            $cambiosDeContactos = $this->cambiarContactos($obra, $contactos);
             $cambios = [
                 ...$this->cambiarResponsable($actor, $obra, $datos),
                 ...$this->cambiarDatos($obra, $datos),
-                ...$this->cambiarContactos($obra, $contactos),
+                ...$cambiosDeContactos,
             ];
+
+            // Los contactos son otra tabla: la obra igual cambia de versión.
+            if ($cambiosDeContactos !== [] && ! $obra->wasChanged()) {
+                $obra->touch();
+            }
 
             if ($cambios !== []) {
                 $this->actividad->registrar($obra, self::ACCION, $cambios);
