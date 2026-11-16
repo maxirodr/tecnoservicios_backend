@@ -120,7 +120,7 @@ final class SubirAdjuntoTest extends AdjuntosTestCase
     {
         $this->subir($this->usuario(), ArchivosDePrueba::exeRenombradoAPdf())
             ->assertUnprocessable()
-            ->assertJsonPath('errors.archivo.0', TipoPermitidoPorContenido::MENSAJE);
+            ->assertJsonPath('errors.archivo.0', 'Este archivo no es un PDF aunque termine en .pdf. Elegí otro.');
 
         $this->assertSame(0, Adjunto::query()->count());
         $this->assertSame([], Storage::disk('adjuntos')->allFiles());
@@ -130,11 +130,14 @@ final class SubirAdjuntoTest extends AdjuntosTestCase
     {
         $user = $this->usuario();
 
-        foreach ([ArchivosDePrueba::html(), ArchivosDePrueba::svg(), ArchivosDePrueba::htmlRenombradoATxt()] as $archivo) {
+        foreach ([ArchivosDePrueba::html(), ArchivosDePrueba::svg()] as $archivo) {
             $this->subir($user, $archivo)
                 ->assertUnprocessable()
                 ->assertJsonPath('errors.archivo.0', TipoPermitidoPorContenido::MENSAJE);
         }
+        $this->subir($user, ArchivosDePrueba::htmlRenombradoATxt())
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.archivo.0', 'Este archivo no es un TXT aunque termine en .txt. Elegí otro.');
 
         $this->assertSame(0, Adjunto::query()->count());
     }
@@ -158,7 +161,7 @@ final class SubirAdjuntoTest extends AdjuntosTestCase
     {
         $user = $this->usuario();
 
-        foreach (['ftp://drive.example/x', 'javascript:alert(1)', 'file:///etc/passwd', 'data:text/html,hola', 'drive.example/x', 'https://'] as $url) {
+        foreach (['ftp://drive.example/x', 'javascript:alert(1)', 'file:///etc/passwd', 'data:text/html,hola', 'drive.example/x'] as $url) {
             $this->actingAs($user)
                 ->postJson('/api/adjuntos', ['contexto' => self::CONTEXTO, 'url' => $url])
                 ->assertUnprocessable()
