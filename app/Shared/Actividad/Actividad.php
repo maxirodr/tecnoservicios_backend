@@ -38,14 +38,14 @@ final class Actividad extends Model
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, string|class-string>
      */
     protected function casts(): array
     {
         return [
             'sujeto_id' => 'integer',
             'user_id' => 'integer',
-            'cambios' => 'array',
+            'cambios' => CambiosOrdenados::class,
             'created_at' => 'datetime',
         ];
     }
