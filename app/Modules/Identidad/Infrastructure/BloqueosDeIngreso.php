@@ -6,6 +6,7 @@ namespace App\Modules\Identidad\Infrastructure;
 
 use App\Modules\Identidad\Domain\Models\BloqueoIngreso;
 use App\Modules\Identidad\Domain\Models\User;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -33,6 +34,24 @@ final class BloqueosDeIngreso
                 'bloqueos_cumplidos' => $bloqueo->bloqueos_cumplidos,
             ]);
         }
+    }
+
+    /**
+     * Gerencia destraba el ingreso (PU-045, DU-Q06): borra el bloqueo activo y el contador. Devuelve
+     * hasta cuándo estaba bloqueado, o null si no había bloqueo activo (no toca nada: idempotente).
+     */
+    public function quitarActivo(User $user): ?Carbon
+    {
+        $bloqueo = BloqueoIngreso::query()->where('user_id', $user->id)->lockForUpdate()->first();
+
+        if ($bloqueo === null || ! $bloqueo->bloqueado()) {
+            return null;
+        }
+
+        $hasta = $bloqueo->bloqueado_hasta;
+        $bloqueo->delete();
+
+        return $hasta;
     }
 
     /** Ingreso exitoso: el contador vuelve a cero. */

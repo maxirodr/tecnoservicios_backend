@@ -678,6 +678,35 @@ un tercero → DU-P23 · la edición no avisa → DU-P24.
 - **¿Cambia lo que ve el cliente?** Sí (el rótulo de una columna) → **decide Juani** (menor).
 - **Afecta:** HU-050 criterio 8.
 
+#### DU-Q04 · ¿La "ñ" cuenta como "n" para el proveedor repetido? — ✅ resuelta (Juani, 16-nov-2026)
+- **Fuente:** PU-043 (prueba de usuario, semana 1) · RN-PRV-04 (cada proveedor se carga una vez) ·
+  RN-PRV-08 (aviso de parecidos).
+- **Por qué importa:** "Corralón Ñandú" y "Corralon Nandu" pueden ser dos proveedores distintos; con la
+  ñ tomada como n el segundo no se podía cargar.
+- **Resuelto:** para el **repetido** la ñ **no** es n (son dos proveedores distintos); el segundo aparece en
+  "Parecidos ya cargados" (aviso que deja guardar). Para **buscar** la ñ sigue contando como n: "nandu"
+  encuentra "Ñandú". La clave única (`nombre_clave`) conserva la ñ y la columna pasa a `utf8mb4_bin`
+  (migración `2026_11_16_100000`).
+- **Afecta:** RN-PRV-03, RN-PRV-04 (`especificacion/proveedores.md`).
+
+#### DU-Q05 · Buscar proveedores por CUIT — ✅ resuelta (Juani, 16-nov-2026)
+- **Fuente:** PU-044 (el buscador muestra el CUIT pero no encuentra por él) · RN-PRV-03 · F-03.
+- **Resuelto:** el buscador de proveedores (listado W-14 y grupo Proveedores del buscador general) también
+  encuentra por **CUIT**, con o sin guiones, espacios o puntos, cuando lo escrito tiene **al menos 4
+  dígitos** y nada más. Por rubro **no** se busca.
+- **Afecta:** RN-PRV-03 (`especificacion/proveedores.md`).
+
+#### DU-Q06 · Ingreso bloqueado: ¿cómo se entera la persona y quién la destraba? — ✅ resuelta (Juani, 16-nov-2026)
+- **Fuente:** PU-045 · ADR-015 (enmienda 2026-11-13, bloqueo progresivo) · RN-IDE-49.
+- **Por qué importa:** la persona bloqueada espera un código que nunca llega y gerencia no tenía cómo
+  ver ni quitar el bloqueo.
+- **Resuelto:** (1) pedir código sigue **sin revelar** el bloqueo (ADR-015); la pantalla de ingreso suma la
+  ayuda "¿No te llegó? Si probaste varias veces, esperá una hora o pedile a gerencia que lo revise." (front);
+  (2) en Usuarios se ve si una persona está bloqueada y hasta cuándo (`bloqueo_ingreso`), y quien tiene
+  `usuarios_permisos = editar` lo quita con `DELETE /api/usuarios/{id}/bloqueo-ingreso` ("Destrabamos el
+  ingreso de {nombre}."), que queda en la actividad del usuario (`bloqueo_ingreso_quitado`).
+- **Afecta:** RN-IDE-50 (`especificacion/identidad.md`), ADR-015 (enmienda 2026-11-16).
+
 Nota para el Arquitecto (no es duda, es una inconsistencia de documento): `arquitectura.md` §4.2 dice
 que completar valida `en_curso|bloqueada → completada`; lo resuelto es **desde No iniciada o En curso**
 y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir ese párrafo.

@@ -73,3 +73,16 @@
 - **Consecuencia:** el techo pasa de ≈2.160 intentos por día a 15 por hora y luego 15 cada 24 h; la persona
   bloqueada espera o pide a gerencia que revise. Los límites por mail e IP de arriba siguen iguales.
 - Tests: `BloqueoProgresivoTest` (RN-IDE-49).
+
+## Enmienda 2026-11-16: quitar un bloqueo desde Usuarios
+
+- **Decide:** Juani · **Origen:** PU-045 de la prueba de usuario de la semana 1 (DU-Q06).
+- El ingreso **sigue sin revelar** el bloqueo: `POST /api/auth/pedir-codigo` responde igual que siempre.
+  La pantalla de ingreso suma una ayuda fija: "¿No te llegó? Si probaste varias veces, esperá una hora o
+  pedile a gerencia que lo revise."
+- En Usuarios (W-15/W-39) cada usuario trae `bloqueo_ingreso`: `null` o `{"hasta": ISO-8601}`.
+- Quien tiene `usuarios_permisos = editar` quita un bloqueo activo con
+  `DELETE /api/usuarios/{id}/bloqueo-ingreso` (idempotente; 200 "Destrabamos el ingreso de {nombre}.").
+  Borra la fila de `bloqueos_ingreso` (contador y reincidencia en cero) y queda en la actividad del
+  usuario (`bloqueo_ingreso_quitado`, antes = hasta cuándo estaba bloqueado).
+- Tests: `QuitarBloqueoIngresoTest` (RN-IDE-50).

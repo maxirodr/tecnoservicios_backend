@@ -28,7 +28,7 @@ final class ListarUsuariosQuery
     public function handle(?string $buscar, ?int $sectorId, string $activo): LengthAwarePaginator
     {
         return User::query()
-            ->with(['sector', 'jefe'])
+            ->with(['sector', 'jefe', 'bloqueoIngreso'])
             ->when($buscar !== null && $buscar !== '', fn (Builder $query): Builder => $query->where(
                 fn (Builder $texto): Builder => $texto
                     ->where('nombre', 'like', TextoLike::contiene((string) $buscar))

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -75,6 +76,16 @@ class User extends Authenticatable
     public function dependientes(): HasMany
     {
         return $this->hasMany(self::class, 'jefe_id');
+    }
+
+    /**
+     * Bloqueo progresivo del ingreso (SEG-01), si alguna vez quemó códigos.
+     *
+     * @return HasOne<BloqueoIngreso, $this>
+     */
+    public function bloqueoIngreso(): HasOne
+    {
+        return $this->hasOne(BloqueoIngreso::class, 'user_id');
     }
 
     /**
