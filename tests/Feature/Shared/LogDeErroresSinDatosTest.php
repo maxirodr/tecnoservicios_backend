@@ -41,16 +41,8 @@ final class LogDeErroresSinDatosTest extends IdentidadTestCase
         $this->desdeElFront()->postJson('/api/auth/ingresar', ['email' => self::MAIL, 'codigo' => '987654'])
             ->assertUnprocessable();
 
-        $log = $this->contenidoDelLog();
-        $this->assertStringContainsString('ValidationException', $log);
-        $this->assertStringNotContainsString(self::MAIL, $log);
-        $this->assertStringNotContainsString('987654', $log);
-
-        $respuesta = $this->withToken(self::TOKEN)->getJson('/api/errors?search=ValidationException')
-            ->assertOk()
-            ->assertJsonPath('errors.0.input', ['email', 'codigo'])
-            ->assertJsonPath('errors.0.validation_errors', ['codigo']);
-        $this->assertStringNotContainsString(self::MAIL, (string) $respuesta->getContent());
+        // PU-039: una validación fallida es una respuesta esperada, no un error del sistema.
+        $this->assertSame('', $this->contenidoDelLog());
     }
 
     public function test_error_de_servidor_registra_las_claves_y_la_url_sin_query_string(): void

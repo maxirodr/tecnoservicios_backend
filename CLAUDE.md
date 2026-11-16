@@ -116,6 +116,6 @@ No se toca `routes/api.php`.
 ## Bug-report (NexoSmart)
 
 `GET /api/health` (público) y `GET /api/errors` (token `ERRORS_TOKEN`, Bearer o `?token=`; 10 fallos/h
-→ ban 24 h). Los errores de servidor y las validaciones fallidas se registran en el canal `errors`
+→ ban 24 h). Solo los errores del sistema (5xx, excepciones inesperadas, jobs fallidos) se registran en el canal `errors`
 (`storage/logs/errors-YYYY-MM-DD.log`). `.claude/bug-report.json` (URL de prod + token) está en
 `.gitignore`. Contrato: `~/.claude/bug-reporting-autofixing/spec/error-endpoint-spec.md`.

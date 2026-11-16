@@ -181,7 +181,7 @@ final class IngresoTest extends IdentidadTestCase
 
         $contenido = (string) file_get_contents($log);
         unlink($log);
-        $this->assertStringContainsString('ValidationException', $contenido, 'La validación fallida sí se registra');
+        $this->assertStringNotContainsString('ValidationException', $contenido, 'Una validación fallida no es un error del sistema');
         $this->assertStringNotContainsString('482913', $contenido);
     }
 

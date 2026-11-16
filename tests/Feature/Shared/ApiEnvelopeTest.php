@@ -66,6 +66,18 @@ final class ApiEnvelopeTest extends TestCase
             ->assertExactJson(['data' => null, 'message' => 'Tenés que ingresar para seguir.', 'errors' => null]);
     }
 
+    /** PU-005: un link de la API abierto en el navegador (sin Accept JSON) pide ingresar, no da 500. */
+    #[Test]
+    public function sin_sesion_y_sin_accept_json_la_api_responde_401_en_json(): void
+    {
+        foreach (['/api/obras/1', '/api/adjuntos/2', '/api/me'] as $url) {
+            $this->get($url)
+                ->assertUnauthorized()
+                ->assertHeader('Content-Type', 'application/json')
+                ->assertExactJson(['data' => null, 'message' => 'Tenés que ingresar para seguir.', 'errors' => null]);
+        }
+    }
+
     #[Test]
     public function forbidden_requests_get_403_in_envelope_without_internal_message(): void
     {

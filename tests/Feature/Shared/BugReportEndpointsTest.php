@@ -56,16 +56,18 @@ final class BugReportEndpointsTest extends TestCase
     }
 
     #[Test]
-    public function validation_failures_are_reported_as_warnings_with_validation_errors(): void
+    public function expected_client_errors_are_not_reported_to_the_errors_channel(): void
     {
         Route::middleware('api')->post('api/_bug-report/validate', fn (Request $request) => $request->validate(['nombre' => ['required']]));
+        Route::middleware('api')->get('api/_bug-report/{status}', fn (string $status) => abort((int) $status));
 
         $this->postJson('/api/_bug-report/validate')->assertUnprocessable();
+        foreach ([401, 403, 404, 409, 429] as $status) {
+            $this->getJson('/api/_bug-report/'.$status)->assertStatus($status);
+        }
+        $this->getJson('/api/obras/1')->assertUnauthorized();
 
-        $this->withToken(self::TOKEN)->getJson('/api/errors?search=ValidationException')
-            ->assertOk()
-            ->assertJsonPath('errors.0.level', 'WARNING')
-            ->assertJsonPath('errors.0.validation_errors', ['nombre']);
+        $this->assertSame([], File::glob(dirname($this->logFile).'/errors-*.log'));
     }
 
     #[Test]
