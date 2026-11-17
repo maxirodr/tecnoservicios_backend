@@ -8,6 +8,7 @@ use App\Modules\Identidad\Contracts\Permisos;
 use App\Modules\Identidad\Domain\Enums\ClaveFuncion;
 use App\Modules\Identidad\Domain\Enums\Nivel;
 use App\Modules\Identidad\Domain\Models\User;
+use App\Modules\Proveedores\Domain\Cuit;
 use App\Modules\Proveedores\Domain\Models\Proveedor;
 use App\Modules\Proveedores\Infrastructure\Consultas\Alfabetico;
 use App\Modules\Proveedores\Infrastructure\Consultas\PorNombre;
@@ -16,8 +17,9 @@ use App\Shared\Busqueda\FuenteBusqueda;
 use App\Shared\Busqueda\ResultadoBusqueda;
 
 /**
- * Grupo "Proveedores" del buscador general (F-03, HU-022 crit. 3): por nombre, igual que el buscador
- * de W-14 (RN-PRV-03), solo para quien tiene Proveedores ≥ ver.
+ * Grupo "Proveedores" del buscador general (F-03, HU-022 crit. 3): por nombre o CUIT, igual que el
+ * buscador de W-14 (RN-PRV-03), solo para quien tiene Proveedores ≥ ver. Cada resultado trae el CUIT
+ * formateado (o null) para que se vea por qué apareció (PU-137).
  */
 final readonly class ProveedoresEnBuscador implements FuenteBusqueda
 {
@@ -38,6 +40,7 @@ final readonly class ProveedoresEnBuscador implements FuenteBusqueda
         return new ResultadoBusqueda($cantidad, array_values($primeros->map(static fn (Proveedor $proveedor): array => [
             'id' => $proveedor->id,
             'nombre' => $proveedor->nombre,
+            'cuit' => $proveedor->cuit === null ? null : Cuit::formatear($proveedor->cuit),
             'rubro_habitual' => $proveedor->rubroHabitual === null
                 ? null
                 : ['clave' => $proveedor->rubroHabitual->clave, 'nombre' => $proveedor->rubroHabitual->nombre],

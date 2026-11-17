@@ -155,6 +155,7 @@ POST que crean con `Idempotency-Key`.
 | `GET /api/proveedores?buscar=&page=` | — | `[{id, nombre, rubro_habitual: {clave, nombre}\|null, es_generico}]` paginado | 403 |
 | `GET /api/proveedores/opciones?buscar=` | — | `[{id, nombre, cuit, rubro_habitual, es_generico}]` máx. 20 (para el combobox de la factura) | 403 (sin `proveedores` ≥ ver ni `gastos` = editar) |
 | `GET /api/proveedores/parecidos?nombre=&cuit=&excluir_id=` | — | `[{id, nombre, cuit, motivo: "nombre"\|"cuit"}]` máx. 5 | 403 |
+| `GET /api/buscar?q=` (grupo de `ProveedoresEnBuscador`) | — | `{tipo: "proveedores", cantidad, resultados: [{id, nombre, cuit: "30-71234567-9"\|null, rubro_habitual: {clave, nombre}\|null, es_generico}]}` (RN-PRV-03; `cuit` para mostrar con qué coincidió, PU-137) | grupo ausente sin `proveedores` ≥ ver |
 | `POST /api/proveedores` | `{nombre, cuit?, telefono?, email?, rubro_habitual?: "materiales"}` | `Proveedor` (201) | 403 · 422 (`errors.nombre` / `errors.cuit` + `errors.existente: {id, nombre}`) |
 | `GET /api/proveedores/{id}` | — | `Proveedor` | 403 · 404 |
 | `PATCH /api/proveedores/{id}` | mismos campos, opcionales | `Proveedor` | 403 · 404 · 422 (incluye RN-PRV-13) |
