@@ -26,7 +26,7 @@ final class PerfilController
 
     public function update(ActualizarPerfilRequest $request, ActualizarPerfilAction $actualizar, UsuarioActualQuery $usuarioActual): JsonResponse
     {
-        $user = $actualizar->handle($this->usuario($request), $request->datos());
+        $user = $actualizar->handle($this->usuario($request), $request->datos(), $request->versionEsperada());
 
         return $this->ok(new UsuarioActualResource($usuarioActual->handle($user)), 'Guardamos tus datos.');
     }

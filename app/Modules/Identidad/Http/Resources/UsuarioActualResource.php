@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Identidad\Http\Resources;
 
 use App\Modules\Identidad\Application\Perfil\UsuarioActual;
+use App\Shared\Concurrencia\VersionDeFila;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -35,6 +36,8 @@ final class UsuarioActualResource extends JsonResource
                 static fn (array $celda): array => ['nivel' => $celda['nivel']->value, 'alcance' => $celda['alcance']->value],
                 $this->resource->permisos,
             ),
+            // Versión que Mi perfil devuelve en `PATCH /api/me` (PU-108).
+            'updated_at' => VersionDeFila::iso($user->updated_at),
         ];
     }
 }
