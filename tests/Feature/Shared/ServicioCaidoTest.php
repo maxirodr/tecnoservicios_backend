@@ -32,7 +32,7 @@ final class ServicioCaidoTest extends TestCase
             Route::get('mysql', fn () => throw new QueryException('mysql', 'select 1', [], new PDOException('SQLSTATE[HY000] [2002] Connection refused', 2002)));
             Route::get('mysql-se-fue', fn () => throw new QueryException('mysql', 'select 1', [], new PDOException('SQLSTATE[HY000]: General error: 2006 MySQL server has gone away')));
             Route::get('predis', fn () => throw new StreamInitException('Connection refused [tcp://127.0.0.1:6379]'));
-            Route::get('predis-comunicacion', fn () => throw new ConnectionException(Mockery::mock(NodeConnectionInterface::class), 'Connection reset by peer'));
+            Route::get('predis-comunicacion', fn () => throw new ConnectionException($this->createStub(NodeConnectionInterface::class), 'Connection reset by peer'));
             Route::get('sql-roto', fn () => throw new QueryException('mysql', 'select * from no_existe', [], new PDOException("SQLSTATE[42S02]: Base table or view not found: 1146 Table 'no_existe' doesn't exist")));
             Route::get('duplicado', fn () => throw new QueryException('mysql', 'insert', [], new PDOException("SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'x'")));
         });
