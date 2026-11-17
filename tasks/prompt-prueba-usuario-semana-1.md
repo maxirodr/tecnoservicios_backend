@@ -60,7 +60,7 @@ falta; sí es hallazgo si aparece a medio hacer, roto o con un error.
 | **UX writer / revisor de claridad** | Lee cada mensaje, toast, estado vacío, confirmación y error con ojos del cliente: ¿está en español rioplatense claro, sin jerga, dice qué pasó y qué hacer? Marca todo texto técnico, en inglés, ambiguo o que culpa al usuario. |
 | **QA de carga y loaders** | Verifica la regla: **el loader va solo en el componente que se está recargando** (botón que guarda, tabla que filtra, sección que trae datos). Nada de spinner de página completa al refrescar, al hacer polling o al guardar una parte; nada de pantalla que parpadea, salta (layout shift) o se vacía mientras recarga; nada de loaders que quedan girando para siempre ni acciones sin ninguna señal de que están pasando. Usá red lenta (DevTools/Playwright: "Slow 3G" o `route` con demora) para verlos. |
 | **QA de backend, cola y workers** | Vigila logs y procesos: `storage\logs\*.log`, canal `errors`, `/api/errors`, salida del `queue:work` y del `schedule:work`. Cada 5xx, excepción, job fallido (`failed_jobs`), mail que no sale o sale dos veces, o tarea programada que falla es un hallazgo, **aunque la pantalla lo haya disimulado**. Revisa también la pestaña Network: toda respuesta 5xx o 4xx inesperada se reporta. |
-| **QA celular y accesibilidad** | Repite los caminos críticos en viewport Pixel 7 (412×915) e iPhone SE (375×667): nada se corta, no hay scroll horizontal, los botones se tocan, los formularios se pueden completar con el teclado del celu. Navegación con teclado y foco visible en PC. |
+| **QA celular y accesibilidad** | Repite los caminos críticos en viewport Pixel 7 (412×915) e iPhone SE (375×667; en Playwright forzar el viewport, el preset "iPhone SE" es 320×568): nada se corta, no hay scroll horizontal, los botones se tocan, los formularios se pueden completar con el teclado del celu. Navegación con teclado y foco visible en PC. |
 | **QC final** | Revisa el reporte consolidado: cada hallazgo es reproducible, tiene evidencia, severidad justificada y no está duplicado. Firma en el reporte. |
 
 Regla de paralelo: hay **un solo entorno**. Los subagentes pueden navegar en paralelo, pero cada uno
@@ -97,7 +97,10 @@ No uses la base de desarrollo (`tecnoservicios`) ni las de tests (`tecnoservicio
    Recién ahí: `php artisan migrate:fresh --seed` (solo sobre esa base).
 6. Procesos (cada uno en background, con las variables de arriba):
    - API: `php artisan serve --host=127.0.0.1 --port=8340 --no-reload`
-   - Worker: `php artisan queue:work --tries=3` (producción usa Supervisord; acá lo corremos a mano)
+   - Workers, iguales a `config/supervisor.php` (producción usa Supervisord; acá se corren a mano):
+     `php artisan queue:work redis --queue=default --sleep=3 --tries=3 --backoff=10` y
+     `php artisan queue:work redis --queue=mail --sleep=1 --rest=1 --tries=5 --backoff=30`
+     (sin el de `mail` no sale ningún código de ingreso)
    - Scheduler: `php artisan schedule:work`
    - Front: en el frontend, `VITE_API_URL=http://localhost:8340 npm run dev -- --port 5316 --strictPort`
 7. Smoke: `GET http://127.0.0.1:8340/api/health` → 200; abrir `http://localhost:5316` → pantalla de ingreso.
