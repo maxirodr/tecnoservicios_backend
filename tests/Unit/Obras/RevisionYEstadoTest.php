@@ -34,6 +34,19 @@ final class RevisionYEstadoTest extends TestCase
         Revision::desde('versión final');
     }
 
+    /** PU-122: REV00 tiene bien el formato; el mensaje dice desde dónde se cuenta. */
+    public function test_revision_cero_dice_que_empiezan_en_rev01(): void
+    {
+        foreach (['REV00', 'REV0', 'rev 0', 'R0', '0'] as $escrita) {
+            try {
+                Revision::desde($escrita);
+                $this->fail("Aceptó {$escrita}");
+            } catch (ValorInvalido $error) {
+                $this->assertSame('Las revisiones empiezan en REV01.', $error->getMessage(), $escrita);
+            }
+        }
+    }
+
     public function test_se_avanza_y_se_vuelve_de_a_un_paso(): void
     {
         $this->assertTrue(ObraEstado::Confirmada->puedePasarA(ObraEstado::EnEjecucion));

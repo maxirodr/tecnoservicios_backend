@@ -199,6 +199,21 @@ final class AltaObraTest extends ObrasTestCase
             ->assertJsonValidationErrors(['presupuesto.numero' => 'El número trae REV02 pero la revisión dice REV01.']);
     }
 
+    /** PU-122: la revisión cero dice desde dónde se cuenta; otro texto sigue pidiendo el formato. */
+    public function test_revision_cero_da_422_con_las_revisiones_empiezan_en_rev01(): void
+    {
+        $laura = $this->laura();
+        $oferta = $this->subir($laura, 'presupuesto');
+
+        $this->actingAs($laura)->postJson('/api/obras', $this->alta($laura, $oferta, ['presupuesto' => ['numero' => '2-131-2026', 'revision' => 'REV00']]))
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['presupuesto.revision' => 'Las revisiones empiezan en REV01.']);
+
+        $this->actingAs($laura)->postJson('/api/obras', $this->alta($laura, $oferta, ['presupuesto' => ['numero' => '2-131-2026', 'revision' => 'versión final']]))
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['presupuesto.revision' => 'Escribí la revisión como REV01.']);
+    }
+
     public function test_fechas_previstas_son_opcionales_y_fin_no_anterior_al_inicio(): void
     {
         $laura = $this->laura();
