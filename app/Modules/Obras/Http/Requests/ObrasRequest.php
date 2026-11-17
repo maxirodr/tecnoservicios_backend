@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Modules\Obras\Http\Requests;
 
 use App\Modules\Obras\Domain\Valores\Revision;
-use App\Shared\Adjuntos\Http\Rules\LinkHttp;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -47,16 +46,6 @@ abstract class ObrasRequest extends FormRequest
             'adicionales.*.revision.max' => Revision::MENSAJE,
             'presupuesto_principal.revision.max' => Revision::MENSAJE,
         ];
-    }
-
-    /** El link de la carpeta se valida y se guarda codificado (tildes y eñe, PU-010). */
-    protected function prepareForValidation(): void
-    {
-        $link = $this->input('carpeta_drive_url');
-
-        if (is_string($link)) {
-            $this->merge(['carpeta_drive_url' => LinkHttp::normalizar($link)]);
-        }
     }
 
     protected function textoONull(string $campo): ?string

@@ -33,7 +33,6 @@ final class ClientesSugeridosRequest extends ObrasRequest
 
     protected function prepareForValidation(): void
     {
-        parent::prepareForValidation();
         $this->recortarBusqueda('buscar', self::LARGO_MAXIMO);
     }
 }

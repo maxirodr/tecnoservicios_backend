@@ -10,8 +10,9 @@ use Illuminate\Contracts\Validation\ValidationRule;
 /**
  * Un link solo se acepta si es http:// o https:// con un dominio de verdad (HU-025 criterio 4):
  * nada de `javascript:`, `file:`, `ftp:`, `data:`, texto suelto ni dominios sin punto ("https://hola").
- * Los links con tildes o eñe (carpetas de OneDrive en castellano) se aceptan: se validan y se guardan
- * codificados (`normalizar`). El mensaje dice el motivo real del rechazo (PU-010, PU-026).
+ * Los links con tildes o eñe (carpetas de OneDrive en castellano) se aceptan: se validan normalizados
+ * (`normalizar`, como la barra del navegador) y se guardan como los escribió la persona, legibles
+ * (PU-129). El mensaje dice el motivo real del rechazo (PU-010, PU-026).
  */
 final class LinkHttp implements ValidationRule
 {

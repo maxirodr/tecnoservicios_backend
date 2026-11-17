@@ -130,8 +130,8 @@ final class AltaObraTest extends ObrasTestCase
             ->assertJsonPath('data.carpeta_drive_url', 'https://drive.example/obra');
     }
 
-    /** PU-010 / PU-026: la carpeta con eñe se guarda codificada; un dominio sin punto no es un link. */
-    public function test_carpeta_drive_con_enie_se_guarda_codificada(): void
+    /** PU-010 / PU-026 / PU-129: la carpeta con eñe se acepta y se guarda como se escribió; un dominio sin punto no es un link. */
+    public function test_carpeta_drive_con_enie_se_guarda_legible(): void
     {
         $laura = $this->laura();
 
@@ -141,7 +141,7 @@ final class AltaObraTest extends ObrasTestCase
 
         $this->actingAs($laura)->postJson('/api/obras', $this->alta($laura, $this->subir($laura, 'presupuesto'), ['carpeta_drive_url' => 'https://drive.example/año-2027']))
             ->assertCreated()
-            ->assertJsonPath('data.carpeta_drive_url', 'https://drive.example/a%C3%B1o-2027');
+            ->assertJsonPath('data.carpeta_drive_url', 'https://drive.example/año-2027');
     }
 
     public function test_aprobacion_con_numero_sin_tipo_se_toma_como_oc(): void

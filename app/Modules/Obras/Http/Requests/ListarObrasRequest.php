@@ -51,7 +51,6 @@ final class ListarObrasRequest extends ObrasRequest
 
     protected function prepareForValidation(): void
     {
-        parent::prepareForValidation();
         $this->recortarBusqueda('buscar', ReglasObra::LARGO_NOMBRE_TRABAJO);
     }
 }
