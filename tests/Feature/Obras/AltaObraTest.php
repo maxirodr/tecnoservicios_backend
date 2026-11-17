@@ -173,7 +173,8 @@ final class AltaObraTest extends ObrasTestCase
 
         $this->actingAs($laura)->postJson('/api/obras', $this->alta($laura, $oferta, ['presupuesto' => ['numero' => '2-31-2026', 'revision' => 'REV02']]))
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['presupuesto.numero' => "El presupuesto 2-031-2026 ya está en la obra 'Piso industrial nave 3'."])
+            ->assertJsonValidationErrors(['presupuesto.numero' => 'Ese N.º de presupuesto ya está en Piso industrial nave 3.'])
+            ->assertJsonPath('message', 'Ese N.º de presupuesto ya está en Piso industrial nave 3.')
             ->assertJsonPath('data.obra.id', $existente->id);
     }
 

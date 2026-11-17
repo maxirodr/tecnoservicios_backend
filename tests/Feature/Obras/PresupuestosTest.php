@@ -79,7 +79,21 @@ final class PresupuestosTest extends ObrasTestCase
 
         $this->actingAs($laura)->postJson("/api/obras/{$obra->id}/presupuestos", ['numero' => '2-131-2026', 'revision' => 'REV02'])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['numero' => "El presupuesto 2-131-2026 ya está en la obra 'Piso industrial nave 3'."]);
+            ->assertJsonValidationErrors(['numero' => 'Ese N.º de presupuesto ya está en Piso industrial nave 3.'])
+            ->assertJsonPath('data.obra', ['id' => $obra->id, 'nombre_trabajo' => 'Piso industrial nave 3']);
+    }
+
+    /** PU-128: el mismo aviso (y la misma obra para el link) en Editar obra; sin doble punto. */
+    public function test_numero_repetido_en_editar_obra_trae_la_obra_y_no_repite_el_punto(): void
+    {
+        $laura = $this->laura();
+        $existente = $this->crearObra($laura, null, ['nombre_trabajo' => 'Montaje Sur S.R.L.', 'presupuesto' => ['numero' => '2-700-2026']]);
+        $obra = $this->crearObra($laura);
+
+        $this->actingAs($laura)->patchJson("/api/obras/{$obra->id}", ['presupuesto_principal' => ['numero' => '2-700-2026']])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['presupuesto_principal.numero' => 'Ese N.º de presupuesto ya está en Montaje Sur S.R.L.'])
+            ->assertJsonPath('data.obra', ['id' => $existente->id, 'nombre_trabajo' => 'Montaje Sur S.R.L.']);
     }
 
     public function test_obra_terminada_admite_adicional(): void
