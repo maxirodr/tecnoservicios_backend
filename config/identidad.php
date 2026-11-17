@@ -11,4 +11,7 @@ return [
         static fn (string $dominio): string => strtolower(trim($dominio)),
         explode(',', (string) env('MAIL_DOMINIOS_PERMITIDOS', '')),
     ))),
+
+    // SOLO servidores de prueba: el código de ingreso se muestra en pantalla y no se manda mail.
+    'codigo_en_pantalla' => (bool) env('IDENTIDAD_CODIGO_EN_PANTALLA', false),
 ];
