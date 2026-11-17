@@ -83,3 +83,19 @@ Arreglos en ramas, **sin mergear y sin verificar** (los agentes se cortaron a mi
 - [x] Ramas mergeadas y worktree borrados.
 - Flaky: `EditarObraPantalla.test.tsx` "guarda los datos de la obra y, aparte, solo lo que cambió del principal" falló 1 vez bajo carga; solo pasa.
 - [ ] Re-probar en el navegador los PU graves (001–005).
+
+### Ronda 2 de la prueba de usuario (2026-11-17) — arreglada, falta verificar integración
+Reportes: `docs/qa/prueba-usuario/semana-1-ronda-2/` (✅32 ⚠️12 ❌1 de los 45; 39 nuevos PU-101…139). **Todos arreglados y en `main` y `staging`.**
+- [x] Backend (`917ff77`, `c310564`): obra + presupuesto principal en un solo `PATCH /api/obras/{id}` con `presupuesto_principal` y versión (PU-101/102); cambios de presupuesto suben `obras.updated_at`; `PATCH /api/me` con `updated_at` (PU-108); 503 si cae MySQL/Redis (PU-138); health < 3 s con MySQL caído, `HEALTH_DB_TIMEOUT=1` (PU-139); buscadores recortan en vez de 422 (PU-118); textos únicos (PU-128/133/122); links guardados legibles (PU-129); `cuit` en el buscador (PU-137); 2 decimales con centavos (PU-113). Suite 573 ok, pint, larastan 0.
+- [x] Front (`2189d78`, `e2605e5`): formularios (PU-103…109, 111, 112, 114, 115, 120, 121, 127, 136), textos/listas/celular (PU-110, 113, 116, 117, 119, 122…126, 128…135, 137, 138), subruta `VITE_BASE_PATH`. Vitest 389 ok, typecheck/lint/format/build ok, **e2e mock 46/46**.
+- [x] `docs/deploy.md`: staging en `https://clientes.nexosmart.com.ar/tecnoservicios/` (nginx, `.env`, pasos, verificación).
+- [x] Rama `staging` creada en los dos repos = `main`.
+
+#### Pendiente para retomar
+1. **`npm run e2e:integracion`** (backend 8320 + front 5312, base `tecnoservicios_integracion`; MySQL y Redis arriba en Laragon). No se corrió después de la ronda 2: cambió el contrato de Editar obra y Mi perfil, puede haber specs con textos viejos. Si algo cambia, arreglar en `main` y adelantar `staging` (`git push origin main:staging`).
+2. **Ronda 3 de QA** (re-test corto): reusar `tasks/prompt-prueba-usuario-semana-1-ronda-2.md` apuntando a los PU-101…139 y a los ⚠️/❌ de `verificacion.md`, salida en `docs/qa/prueba-usuario/semana-1-ronda-3/`.
+3. **Deploy de staging (Juani):** seguir `docs/deploy.md`. Front compilado con `VITE_BASE_PATH=/tecnoservicios` y `VITE_API_URL=https://clientes.nexosmart.com.ar/tecnoservicios`. Backend: `SESSION_PATH=/tecnoservicios`, `SESSION_DOMAIN`, `SANCTUM_STATEFUL_DOMAINS`, `ERRORS_TOKEN` nuevo, `HEALTH_DB_TIMEOUT=1`, workers con `php artisan supervisor:sync`, Redis con AOF, `upload_max_filesize`/`post_max_size` ≥ 21M. Después: `.claude/bug-report.json` con la URL de staging.
+4. Con MySQL caído, la API (no el health) tarda ~8 s en dar el 503 porque Laravel reintenta la conexión; decidir si bajar los reintentos.
+5. UX tomada por los agentes, para que Juani la valide: "Estamos guardando. Esperá unos segundos." al intentar salir mientras guarda; Cancelar/Escape en diálogos con cambios pregunta; aviso no bloqueante "Revisá la fecha: es de {año}." (< 2000 o > año actual + 10); REV00 → "Las revisiones empiezan en REV01." (el relevamiento no usa REV00); "Guardar proveedor" no se deshabilita ante un repetido (el aviso pasa a rojo).
+6. Semana 2: Juani confirma las 27 dudas (DU-P01…P24, DU-Q01…Q03 al final de `docs/dudas.md`) → tandas de Pedidos y Avisos.
+7. Avisar al cliente ADR-014 y ADR-015 (+ enmienda); revisar y mandar las notas de la semana 1 (BORRADOR).
