@@ -59,7 +59,7 @@ final class ErroresEnEspanolTest extends TestCase
 
     public function test_sesion_vencida_da_419_en_espanol(): void
     {
-        $this->assertMensaje($this->getJson('/api/_errores/csrf'), 419, 'La sesión expiró. Volvé a ingresar.');
+        $this->assertMensaje($this->getJson('/api/_errores/csrf'), 419, 'Tu sesión venció. Volvé a ingresar.');
     }
 
     public function test_demasiadas_solicitudes_da_429_en_espanol(): void
@@ -69,7 +69,7 @@ final class ErroresEnEspanolTest extends TestCase
         $this->assertMensaje(
             $this->getJson('/api/_errores/limitado'),
             429,
-            'Fueron demasiadas acciones seguidas. Esperá unos segundos y volvé a intentar.',
+            'Hiciste muchos intentos seguidos. Probá de nuevo en unos segundos.',
         );
     }
 
@@ -88,7 +88,7 @@ final class ErroresEnEspanolTest extends TestCase
         return [
             'sin permiso' => [403, 'No tenés permiso para hacer esto.'],
             'no encontrado' => [404, 'No encontramos lo que buscabas.'],
-            'sesión vencida' => [419, 'La sesión expiró. Volvé a ingresar.'],
+            'sesión vencida' => [419, 'Tu sesión venció. Volvé a ingresar.'],
             'en mantenimiento' => [503, 'El sistema no está disponible en este momento. Probá de nuevo en unos minutos.'],
         ];
     }

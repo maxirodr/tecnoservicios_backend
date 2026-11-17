@@ -17,6 +17,6 @@ return [
 
     'failed' => 'El mail o el código no son correctos.',
     'password' => 'La clave no es correcta.',
-    'throttle' => 'Demasiados intentos. Probá de nuevo en :seconds segundos.',
+    'throttle' => 'Hiciste muchos intentos seguidos. Probá de nuevo en :seconds segundos.',
 
 ];

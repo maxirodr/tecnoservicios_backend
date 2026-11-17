@@ -36,7 +36,7 @@ final class IdentidadServiceProvider extends ModuleServiceProvider
 
     public const LIMITE_INGRESO = 'identidad-ingreso';
 
-    public const DEMASIADOS_INTENTOS = 'Demasiados intentos. Probá de nuevo en un minuto.';
+    public const DEMASIADOS_INTENTOS = 'Hiciste muchos intentos seguidos. Probá de nuevo en un minuto.';
 
     /** RN-IDE-06: pedir código, 3 cada 10 minutos por mail y 20 por hora por IP. */
     private const CODIGOS_POR_MAIL = 3;

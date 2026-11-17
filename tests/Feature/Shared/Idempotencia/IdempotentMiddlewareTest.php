@@ -146,7 +146,8 @@ final class IdempotentMiddlewareTest extends TestCase
         $this->enviar($user, $clave, ['tarea' => 'x'])
             ->assertConflict()
             ->assertHeader('Retry-After', '1')
-            ->assertJsonPath('data', null);
+            ->assertJsonPath('data', null)
+            ->assertJsonPath('message', 'Todavía estamos guardando lo anterior. Probá de nuevo en unos segundos.');
 
         $this->assertSame(0, $this->ejecuciones);
     }
