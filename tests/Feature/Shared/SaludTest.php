@@ -67,6 +67,33 @@ final class SaludTest extends TestCase
         $this->assertLessThan(self::SEGUNDOS_MAXIMOS, $segundos, "El health tardó {$segundos} s");
     }
 
+    /**
+     * PU-139: con la base caída se la consulta una sola vez, sin los reintentos de Laravel, y el cache y
+     * la cola que viven en la base dan false sin volver a esperarla.
+     */
+    public function test_con_la_base_caida_responde_503_rapido_sin_reintentar_en_cache_ni_cola(): void
+    {
+        config([
+            'database.connections.caida' => [...(array) config('database.connections.mysql'), 'port' => 1],
+            'database.default' => 'caida',
+            'cache.default' => 'database',
+            'queue.default' => 'database',
+            'session.driver' => 'array',
+        ]);
+
+        $inicio = microtime(true);
+        $respuesta = $this->get('/api/health');
+        $segundos = microtime(true) - $inicio;
+
+        $respuesta->assertStatus(503)
+            ->assertJsonPath('data.status', 'degraded')
+            ->assertJsonPath('data.services.database', false)
+            ->assertJsonPath('data.services.cache', false)
+            ->assertJsonPath('data.services.cola_mail', false)
+            ->assertJsonPath('data.services.redis', null);
+        $this->assertLessThan(self::SEGUNDOS_MAXIMOS, $segundos, "El health tardó {$segundos} s");
+    }
+
     public function test_el_health_no_pasa_por_el_limitador_general_ni_por_la_sesion_que_viven_en_redis(): void
     {
         $route = Route::getRoutes()->getByName('health');

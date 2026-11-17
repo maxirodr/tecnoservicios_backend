@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\Support\SondaDeBase;
 use App\Http\Controllers\Controller;
 use App\Shared\Http\ApiResponse;
 use Illuminate\Contracts\Queue\Queue;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redis;
 use Throwable;
 
@@ -18,22 +18,29 @@ use Throwable;
  * Responde rápido aunque Redis o MySQL estén caídos (timeouts cortos en config/database.php, PU-020)
  * y avisa si la cola de mails no avanza (PU-021): sin ese worker nadie recibe el código para entrar.
  * `redis` es null si ni el cache, ni la sesión, ni la cola lo usan (no aplica: no se lo consulta).
+ * Un servicio caído se consulta una sola vez (PU-139): lo que vive en él da false sin volver a esperar.
  */
 final class HealthController extends Controller
 {
-    public function index(): JsonResponse
+    private const CACHE = ['cache.default', 'cache.stores.%s.driver'];
+
+    private const COLA = ['queue.default', 'queue.connections.%s.driver'];
+
+    public function index(SondaDeBase $base): JsonResponse
     {
-        $cacheEnRedis = $this->usaRedis('cache.default', 'cache.stores.%s.driver');
-        $colaEnRedis = $this->usaRedis('queue.default', 'queue.connections.%s.driver');
+        $cacheEnRedis = $this->usa('redis', ...self::CACHE);
+        $colaEnRedis = $this->usa('redis', ...self::COLA);
         $redis = $cacheEnRedis || $colaEnRedis || config('session.driver') === 'redis' ? $this->checkRedis() : null;
+        $database = $base->responde();
+        $cacheCaido = ($cacheEnRedis && $redis === false) || (! $database && $this->usa('database', ...self::CACHE));
+        $colaCaida = ($colaEnRedis && $redis === false) || (! $database && $this->usa('database', ...self::COLA));
 
         $services = [
             'app' => true,
-            'database' => $this->checkDatabase(),
-            // Con Redis caído no se vuelve a esperar a lo que vive en Redis.
-            'cache' => $cacheEnRedis && $redis === false ? false : $this->checkCache(),
+            'database' => $database,
+            'cache' => $cacheCaido ? false : $this->checkCache(),
             'redis' => $redis,
-            'cola_mail' => $colaEnRedis && $redis === false ? false : $this->checkColas(),
+            'cola_mail' => $colaCaida ? false : $this->checkColas(),
         ];
 
         $allHealthy = ! in_array(false, $services, true);
@@ -45,17 +52,6 @@ final class HealthController extends Controller
         ];
 
         return ApiResponse::success($health, null, $allHealthy ? 200 : 503);
-    }
-
-    private function checkDatabase(): bool
-    {
-        try {
-            DB::connection()->select('select 1');
-
-            return true;
-        } catch (Throwable) {
-            return false;
-        }
     }
 
     private function checkCache(): bool
@@ -102,8 +98,8 @@ final class HealthController extends Controller
         }
     }
 
-    private function usaRedis(string $claveDefault, string $claveDriver): bool
+    private function usa(string $driver, string $claveDefault, string $claveDriver): bool
     {
-        return config(sprintf($claveDriver, (string) config($claveDefault))) === 'redis';
+        return config(sprintf($claveDriver, (string) config($claveDefault))) === $driver;
     }
 }

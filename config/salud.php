@@ -17,4 +17,7 @@ return [
 
     'limite_cache_store' => env('HEALTH_LIMIT_STORE', 'file'),
 
+    // Un solo intento de conexión a la base, con este timeout (PU-139): todo caído responde en < 3 s.
+    'timeout_base_segundos' => (int) env('HEALTH_DB_TIMEOUT', 1),
+
 ];
