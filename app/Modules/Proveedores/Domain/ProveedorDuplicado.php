@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Proveedores\Domain;
 
+use App\Shared\Texto;
 use DomainException;
 
 /**
@@ -27,17 +28,11 @@ final class ProveedorDuplicado extends DomainException
 
     public static function porNombre(int $id, string $nombre): self
     {
-        return new self(self::CAMPO_NOMBRE, self::frase("Ya existe {$nombre}"), $id, $nombre);
+        return new self(self::CAMPO_NOMBRE, Texto::conPunto("Ya existe {$nombre}"), $id, $nombre);
     }
 
     public static function porCuit(int $id, string $nombre): self
     {
-        return new self(self::CAMPO_CUIT, self::frase("Ese CUIT ya es de {$nombre}"), $id, $nombre);
-    }
-
-    /** "Ya existe Hormigonera Sur S.R.L." sin doble punto. */
-    private static function frase(string $texto): string
-    {
-        return str_ends_with($texto, '.') ? $texto : $texto.'.';
+        return new self(self::CAMPO_CUIT, Texto::conPunto("Ese CUIT ya es de {$nombre}"), $id, $nombre);
     }
 }

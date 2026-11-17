@@ -8,6 +8,8 @@ use App\Modules\Identidad\Domain\Models\User;
 use App\Modules\Proveedores\Domain\Models\Proveedor;
 use App\Modules\Proveedores\Domain\ProveedorDuplicado;
 use App\Shared\Actividad\RegistroActividad;
+use App\Shared\Concurrencia\VersionDeFila;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -25,15 +27,18 @@ final readonly class EditarProveedorAction
     /**
      * @param  array<string, mixed>  $datos  solo las columnas que vinieron
      *
+     * Con `$version` vieja responde 409 sin guardar (PU-002, `VersionDeFila`).
+     *
      * @throws ProveedorDuplicado
      */
-    public function handle(User $autor, Proveedor $proveedor, array $datos): Proveedor
+    public function handle(User $autor, Proveedor $proveedor, array $datos, ?CarbonInterface $version = null): Proveedor
     {
         if ($proveedor->es_generico) {
             throw ValidationException::withMessages(['proveedor' => 'El proveedor genérico no se modifica.']);
         }
 
-        return $this->unicidad->guardar($datos, $proveedor->id, fn (): Proveedor => DB::transaction(function () use ($autor, $proveedor, $datos): Proveedor {
+        return $this->unicidad->guardar($datos, $proveedor->id, fn (): Proveedor => DB::transaction(function () use ($autor, $proveedor, $datos, $version): Proveedor {
+            VersionDeFila::bloquearYVerificar($proveedor, $version);
             $antes = $proveedor->only(array_keys($datos));
             $proveedor->fill($datos);
 

@@ -8,6 +8,7 @@ use App\Modules\Obras\Application\Obras\FichaObra;
 use App\Modules\Obras\Domain\Models\ObraContacto;
 use App\Modules\Obras\Domain\Models\ObraDocumento;
 use App\Modules\Obras\Domain\Models\Presupuesto;
+use App\Shared\Concurrencia\VersionDeFila;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -41,6 +42,8 @@ final class ObraFichaResource extends JsonResource
             'terminada_at' => $obra->terminada_at?->format(DATE_ATOM),
             'terminada_por' => $obra->terminadaPor === null ? null : ObraFilaResource::usuario($obra->terminadaPor),
             'created_at' => $obra->created_at->toIso8601String(),
+            // Versión para el bloqueo optimista de la edición (PU-002).
+            'updated_at' => VersionDeFila::iso($obra->updated_at),
             'created_by' => ObraFilaResource::usuario($obra->creadaPor),
             'presupuestos' => $obra->presupuestos->map(static fn (Presupuesto $p): array => (new PresupuestoResource($p, $conMontoObra))->toArray($request))->values()->all(),
             'contactos' => $contactos,

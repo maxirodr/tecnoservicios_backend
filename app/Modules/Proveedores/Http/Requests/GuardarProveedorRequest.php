@@ -6,6 +6,8 @@ namespace App\Modules\Proveedores\Http\Requests;
 
 use App\Modules\Proveedores\Domain\Cuit;
 use App\Modules\Rendicion\Domain\Models\Rubro;
+use App\Shared\Concurrencia\VersionDeFila;
+use Carbon\CarbonImmutable;
 use Closure;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -32,7 +34,14 @@ final class GuardarProveedorRequest extends ProveedoresRequest
             'telefono' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'string', 'email', 'max:190'],
             'rubro_habitual' => ['nullable', 'string', Rule::exists(Rubro::class, 'clave')],
+            ...VersionDeFila::reglas(),
         ];
+    }
+
+    /** `updated_at` que tenía el proveedor al abrir el formulario (PU-002). */
+    public function versionEsperada(): ?CarbonImmutable
+    {
+        return VersionDeFila::desde($this->input(VersionDeFila::CAMPO));
     }
 
     /**

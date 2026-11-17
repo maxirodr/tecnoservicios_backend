@@ -7,6 +7,8 @@ namespace App\Modules\Identidad\Application\Usuarios;
 use App\Modules\Identidad\Domain\MailNormalizado;
 use App\Modules\Identidad\Domain\Models\User;
 use App\Shared\Actividad\RegistroActividad;
+use App\Shared\Concurrencia\VersionDeFila;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -30,7 +32,7 @@ final class ActualizarUsuarioAction
     /**
      * @param  array{nombre?: string, email?: string, sector_id?: int, jefe_id?: int|null, telefono?: string|null, activo?: bool}  $datos
      */
-    public function handle(User $actor, User $usuario, array $datos): User
+    public function handle(User $actor, User $usuario, array $datos, ?CarbonInterface $version = null): User
     {
         $datos = array_intersect_key($datos, array_flip(self::CAMPOS));
 
@@ -47,7 +49,8 @@ final class ActualizarUsuarioAction
             $datos['email'] = MailNormalizado::de($datos['email']);
         }
 
-        return DB::transaction(function () use ($usuario, $datos): User {
+        return DB::transaction(function () use ($usuario, $datos, $version): User {
+            VersionDeFila::bloquearYVerificar($usuario, $version);
             $usuario->fill($datos);
             $cambios = $this->cambios($usuario);
             $tocaAdministradores = isset($cambios['activo']) || isset($cambios['sector_id']);

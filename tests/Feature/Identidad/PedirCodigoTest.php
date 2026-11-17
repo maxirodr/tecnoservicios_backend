@@ -8,7 +8,6 @@ use App\Modules\Identidad\Application\Auth\EnviarCodigoJob;
 use App\Modules\Identidad\Application\Auth\PedirCodigoAction;
 use App\Modules\Identidad\Domain\Models\CodigoIngreso;
 use App\Modules\Identidad\Domain\Models\User;
-use App\Modules\Identidad\IdentidadServiceProvider;
 use App\Modules\Identidad\Infrastructure\Mail\CodigoIngresoMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -144,10 +143,17 @@ final class PedirCodigoTest extends IdentidadTestCase
 
         $this->postJson('/api/auth/pedir-codigo', ['email' => 'carla@empresa-ejemplo.com'])
             ->assertTooManyRequests()
-            ->assertExactJson(['data' => null, 'message' => IdentidadServiceProvider::DEMASIADOS_CODIGOS, 'errors' => null]);
+            ->assertExactJson(['data' => null, 'message' => 'Ya pediste varios códigos. Probá de nuevo en 10 minutos.', 'errors' => null]);
         Mail::assertQueuedCount(3);
 
-        $this->travel(11)->minutes();
+        // PU-016: el mensaje dice cuánto falta, redondeado hacia arriba, y en singular al final.
+        $this->travel(9)->minutes();
+        $this->travel(30)->seconds();
+        $this->postJson('/api/auth/pedir-codigo', ['email' => 'carla@empresa-ejemplo.com'])
+            ->assertTooManyRequests()
+            ->assertJsonPath('message', 'Ya pediste varios códigos. Probá de nuevo en 1 minuto.');
+
+        $this->travel(2)->minutes();
         $this->postJson('/api/auth/pedir-codigo', ['email' => 'carla@empresa-ejemplo.com'])->assertOk();
     }
 
@@ -157,7 +163,9 @@ final class PedirCodigoTest extends IdentidadTestCase
             $this->postJson('/api/auth/pedir-codigo', ['email' => "persona{$i}@empresa-ejemplo.com"])->assertOk();
         }
 
-        $this->postJson('/api/auth/pedir-codigo', ['email' => 'otra@empresa-ejemplo.com'])->assertTooManyRequests();
+        $this->postJson('/api/auth/pedir-codigo', ['email' => 'otra@empresa-ejemplo.com'])
+            ->assertTooManyRequests()
+            ->assertJsonPath('message', 'Ya pediste varios códigos. Probá de nuevo en 60 minutos.');
         $this->withServerVariables(['REMOTE_ADDR' => '10.0.0.2'])
             ->postJson('/api/auth/pedir-codigo', ['email' => 'otra@empresa-ejemplo.com'])->assertOk();
     }

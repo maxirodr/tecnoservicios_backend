@@ -9,6 +9,7 @@ use App\Modules\Identidad\Application\Usuarios\ActualizarUsuarioAction;
 use App\Modules\Identidad\Application\Usuarios\CrearUsuarioAction;
 use App\Modules\Identidad\Application\Usuarios\ListarUsuariosQuery;
 use App\Modules\Identidad\Application\Usuarios\OpcionesUsuariosQuery;
+use App\Modules\Identidad\Application\Usuarios\QuitarBloqueoIngresoAction;
 use App\Modules\Identidad\Domain\Models\User;
 use App\Modules\Identidad\Http\Requests\ActualizarUsuarioRequest;
 use App\Modules\Identidad\Http\Requests\CrearUsuarioRequest;
@@ -18,6 +19,7 @@ use App\Modules\Identidad\Http\Resources\UsuarioOpcionResource;
 use App\Modules\Identidad\Http\Resources\UsuarioResource;
 use App\Shared\Http\RespondsWithEnvelope;
 use App\Shared\Http\UsuarioAutenticado;
+use App\Shared\Texto;
 use Illuminate\Http\JsonResponse;
 
 /** F-58 · F-61 · W-15 · W-39: usuarios. La autorización (matriz) va en las rutas. */
@@ -43,7 +45,7 @@ final class UsuarioController
         $user = $crear->handle($request->datos());
 
         // ADR-015: no hay mail de bienvenida; la persona entra pidiendo un código con su mail.
-        return $this->created(new UsuarioResource($user->load(['sector', 'jefe'])), "Listo: {$user->nombre} ya puede entrar con su mail.");
+        return $this->created(new UsuarioResource($user->load(['sector', 'jefe', 'bloqueoIngreso'])), "Listo: {$user->nombre} ya puede entrar con su mail.");
     }
 
     public function show(int $usuario, ACargoDelUsuarioQuery $aCargo): JsonResponse
@@ -55,14 +57,24 @@ final class UsuarioController
 
     public function update(ActualizarUsuarioRequest $request, int $usuario, ActualizarUsuarioAction $actualizar, ACargoDelUsuarioQuery $aCargo): JsonResponse
     {
-        $user = $actualizar->handle($this->usuario($request), $this->buscar($usuario), $request->datos());
-        $user->load(['sector', 'jefe']);
+        $user = $actualizar->handle($this->usuario($request), $this->buscar($usuario), $request->datos(), $request->versionEsperada());
+        $user->load(['sector', 'jefe', 'bloqueoIngreso']);
 
         return $this->ok(UsuarioResource::detalle($user, $aCargo->handle($user)), 'Guardamos los cambios.');
     }
 
+    /** PU-045 · DU-Q06: `DELETE /api/usuarios/{id}/bloqueo-ingreso`, idempotente. */
+    public function quitarBloqueoIngreso(int $usuario, QuitarBloqueoIngresoAction $quitar, ACargoDelUsuarioQuery $aCargo): JsonResponse
+    {
+        $user = $this->buscar($usuario);
+        $quitar->handle($user);
+        $user->load(['sector', 'jefe', 'bloqueoIngreso']);
+
+        return $this->ok(UsuarioResource::detalle($user, $aCargo->handle($user)), Texto::conPunto("Destrabamos el ingreso de {$user->nombre}"));
+    }
+
     private function buscar(int $id): User
     {
-        return User::query()->with(['sector', 'jefe'])->findOrFail($id);
+        return User::query()->with(['sector', 'jefe', 'bloqueoIngreso'])->findOrFail($id);
     }
 }

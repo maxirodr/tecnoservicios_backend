@@ -51,6 +51,9 @@ final readonly class EtiquetasHistorial
 
     private const IMPORTES = ['monto_obra', CargarMontosAction::CLAVE_TOTAL];
 
+    /** Fechas: se leen como en la ficha, dd/mm/aaaa (PU-032). */
+    private const FECHAS = ['fecha_inicio_prevista', 'fecha_fin_prevista', 'fecha'];
+
     public function __construct(private CatalogoRubros $rubros) {}
 
     public function campo(string $campo): string
@@ -91,6 +94,10 @@ final readonly class EtiquetasHistorial
 
         if ($this->esImporte($campo) && Importe::esDecimal($texto) && Importe::decimales($texto) <= Importe::ESCALA) {
             return Importe::desde($texto)->legible();
+        }
+
+        if (in_array($campo, self::FECHAS, true) && preg_match('/^(\d{4})-(\d{2})-(\d{2})/', $texto, $fecha) === 1) {
+            return "{$fecha[3]}/{$fecha[2]}/{$fecha[1]}";
         }
 
         return match ($campo) {

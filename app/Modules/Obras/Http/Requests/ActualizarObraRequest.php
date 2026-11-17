@@ -6,6 +6,8 @@ namespace App\Modules\Obras\Http\Requests;
 
 use App\Modules\Obras\Domain\Enums\TipoContacto;
 use App\Modules\Obras\Domain\Models\ObraContacto;
+use App\Shared\Concurrencia\VersionDeFila;
+use Carbon\CarbonImmutable;
 use Illuminate\Validation\Rule;
 
 /**
@@ -29,7 +31,14 @@ final class ActualizarObraRequest extends ObrasRequest
             'responsable_id' => ['sometimes', 'integer', Rule::exists('users', 'id')],
             'contactos' => ['sometimes', 'array'],
             ...ReglasObra::contactos(false),
+            ...VersionDeFila::reglas(),
         ];
+    }
+
+    /** `updated_at` que tenía la obra al abrir el formulario (PU-002). */
+    public function versionEsperada(): ?CarbonImmutable
+    {
+        return VersionDeFila::desde($this->input(VersionDeFila::CAMPO));
     }
 
     /**

@@ -115,6 +115,20 @@ final class FichaYEdicionTest extends ObrasTestCase
             ->assertJsonPath('data.5.que', 'Creó la obra');
     }
 
+    /** PU-032: el historial muestra las fechas como la ficha (dd/mm/aaaa), no en formato técnico. */
+    public function test_historial_muestra_las_fechas_previstas_como_la_ficha(): void
+    {
+        $laura = $this->laura();
+        $obra = $this->crearObra($laura);
+
+        $this->actingAs($laura)->patchJson("/api/obras/{$obra->id}", ['fecha_fin_prevista' => '2027-03-31'])->assertOk();
+        $this->actingAs($laura)->patchJson("/api/obras/{$obra->id}", ['fecha_fin_prevista' => '2027-04-30'])->assertOk();
+
+        $this->actingAs($laura)->getJson("/api/obras/{$obra->id}/historial")
+            ->assertJsonPath('data.0.que', 'Fin previsto: 31/03/2027 → 30/04/2027')
+            ->assertJsonPath('data.1.que', 'Fin previsto: (vacío) → 31/03/2027');
+    }
+
     public function test_guardar_sin_cambios_no_registra(): void
     {
         $laura = $this->laura();

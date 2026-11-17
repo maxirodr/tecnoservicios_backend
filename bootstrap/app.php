@@ -15,7 +15,6 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -28,15 +27,16 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->prepend(RemoveStackHeaders::class);
         $middleware->append(SecurityHeaders::class);
         $middleware->statefulApi();
+        // API-only: sin sesión nunca se redirige (no existe la ruta `login`); el renderer responde 401 JSON.
+        $middleware->redirectGuestsTo(null);
         // Límite general por usuario o IP (SEG-03): limitador `api` en SharedServiceProvider.
         $middleware->throttleApi(SharedServiceProvider::LIMITE_API);
         // Proxies de confianza: config/trustedproxy.php (TRUSTED_PROXIES), nunca `*` (SEG-04).
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        // Error logging (NexoSmart bug-report): todo error de servidor y toda validación fallida
-        // va al canal `errors` con contexto; lo lee GET /api/errors.
-        // Laravel ignora ValidationException por defecto: se reactiva solo para este canal (el callback corta con false).
-        $exceptions->stopIgnoring(ValidationException::class);
+        // Error logging (NexoSmart bug-report): solo errores del sistema (5xx, excepciones inesperadas)
+        // van al canal `errors` con contexto; lo lee GET /api/errors. Las respuestas esperadas
+        // (422, 401, 403, 404, 409, 429) no se registran: Laravel ya ignora ValidationException.
         $exceptions->report(function (Throwable $e) {
             $request = request();
 
@@ -48,18 +48,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             $route = $request->route();
-            $baseContext = ErrorLogContext::fromRequest($request);
-
-            if ($e instanceof ValidationException) {
-                Log::channel('errors')->warning($e->getMessage(), $baseContext + [
-                    'exception_class' => 'ValidationException',
-                    'validation_errors' => ErrorLogContext::validationFields($e->errors()),
-                ]);
-
-                return false;
-            }
-
-            Log::channel('errors')->error($e->getMessage(), $baseContext + [
+            Log::channel('errors')->error($e->getMessage(), ErrorLogContext::fromRequest($request) + [
                 'exception_class' => $e::class,
                 'route_name' => $route instanceof Route ? $route->getName() : null,
                 'user_agent' => $request->userAgent(),

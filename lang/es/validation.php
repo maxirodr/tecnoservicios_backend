@@ -248,6 +248,7 @@ return [
         // Obras: presupuestos (adicional suelto, principal del alta y adicionales del alta)
         'numero' => 'N.º de presupuesto',
         'revision' => 'revisión',
+        'updated_at' => 'versión que tenías abierta',
         'oferta' => 'oferta técnica',
         'aprobacion' => 'aprobación',
         'aprobacion.tipo' => 'tipo de aprobación',

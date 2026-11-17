@@ -89,6 +89,11 @@ final class SubirAdjuntoRequest extends FormRequest
                 ApiResponse::error(LimiteDeSubida::delServidor()->mensaje(), Response::HTTP_REQUEST_ENTITY_TOO_LARGE),
             );
         }
+
+        $url = $this->input('url');
+        if (is_string($url)) {
+            $this->merge(['url' => LinkHttp::normalizar($url)]);
+        }
     }
 
     public function archivo(): ?UploadedFile

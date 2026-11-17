@@ -46,6 +46,17 @@ final class BuscadorGeneralTest extends TestCase
             ]);
     }
 
+    /** PU-009: igual que Obras, buscar solo signos no trae proveedores. */
+    public function test_buscar_solo_signos_no_trae_proveedores(): void
+    {
+        foreach (['%%', '--', '__', '..', "''", '😀😀'] as $buscar) {
+            $this->actingAs($this->usuarioDe('Compras'))->getJson('/api/buscar?q='.urlencode($buscar))
+                ->assertOk()
+                ->assertJsonPath('data.grupos.1.tipo', 'proveedores')
+                ->assertJsonPath('data.grupos.1.cantidad', 0);
+        }
+    }
+
     public function test_buscar_parte_del_numero_encuentra_la_obra(): void
     {
         $this->actingAs($this->usuarioDe('Dirección'))->getJson('/api/buscar?q=087')

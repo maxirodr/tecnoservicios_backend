@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Proveedores\Http\Resources;
 
 use App\Modules\Proveedores\Domain\Models\Proveedor;
+use App\Shared\Concurrencia\VersionDeFila;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -42,6 +43,8 @@ final class ProveedorResource extends JsonResource
             'telefono' => $proveedor->telefono,
             'email' => $proveedor->email,
             'puede' => ['editar' => $this->puedeEditar, 'ver_gastado' => $this->puedeVerGastado],
+            // Versión para el bloqueo optimista de la edición (PU-002).
+            'updated_at' => VersionDeFila::iso($proveedor->updated_at),
         ];
     }
 }

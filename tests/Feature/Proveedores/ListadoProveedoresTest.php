@@ -42,6 +42,19 @@ final class ListadoProveedoresTest extends ProveedoresTestCase
         $this->assertSame([], $this->nombres($user, '100%'));
     }
 
+    /** PU-009: buscar solo signos o emojis no es "sin buscar": no trae la lista entera. */
+    public function test_buscar_solo_signos_no_trae_resultados(): void
+    {
+        $this->proveedor('Corralón Centro');
+        $this->proveedor('Hormigonera Sur S.R.L.');
+        $user = $this->quienVe();
+
+        foreach (['%%', '_', '--', '__', '..', "''", '😀😀'] as $buscar) {
+            $this->assertSame([], $this->nombres($user, $buscar), "Buscando {$buscar}");
+        }
+        $this->assertCount(3, $this->nombres($user, '  '));
+    }
+
     public function test_listado_trae_cuit_rubro_habitual_y_marca_generico_paginado(): void
     {
         Proveedor::factory()->llamado('Corralón Centro')->conCuit('30000000007')->deRubro('materiales')->create();
@@ -95,6 +108,7 @@ final class ListadoProveedoresTest extends ProveedoresTestCase
                 'telefono' => '291 000-0002',
                 'email' => 'ventas@corralon-centro.com',
                 'puede' => ['editar' => false, 'ver_gastado' => true],
+                'updated_at' => $proveedor->updated_at?->toIso8601String(),
             ]);
 
         $this->actingAs($this->quienEdita())->getJson("/api/proveedores/{$proveedor->id}")
