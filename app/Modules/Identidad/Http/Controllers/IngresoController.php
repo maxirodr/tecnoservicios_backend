@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Identidad\Http\Controllers;
 
+use App\Modules\Identidad\Application\Auth\EmitirCodigoDePruebaAction;
 use App\Modules\Identidad\Application\Auth\IngresarAction;
 use App\Modules\Identidad\Application\Auth\PedirCodigoAction;
 use App\Modules\Identidad\Application\Auth\SesionWeb;
@@ -20,8 +21,16 @@ final class IngresoController
 {
     use RespondsWithEnvelope;
 
-    public function pedirCodigo(PedirCodigoRequest $request, PedirCodigoAction $pedir): JsonResponse
+    public function pedirCodigo(PedirCodigoRequest $request, PedirCodigoAction $pedir, EmitirCodigoDePruebaAction $dePrueba): JsonResponse
     {
+        if (config('identidad.codigo_en_pantalla') === true) {
+            $codigo = $dePrueba->handle($request->string('email')->toString());
+
+            return $this->noContent($codigo === null
+                ? PedirCodigoAction::RESPUESTA
+                : "Modo de prueba: tu código es {$codigo} (no se envía mail).");
+        }
+
         $pedir->handle($request->string('email')->toString());
 
         // RN-IDE-02: la misma respuesta exista o no el usuario.
