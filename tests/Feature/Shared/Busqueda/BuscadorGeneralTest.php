@@ -41,6 +41,7 @@ final class BuscadorGeneralTest extends TestCase
             ->assertJsonPath('data.grupos.1.resultados.0', [
                 'id' => Proveedor::query()->where('nombre', 'Tanques Ejemplo SRL')->valueOrFail('id'),
                 'nombre' => 'Tanques Ejemplo SRL',
+                'cuit' => null,
                 'rubro_habitual' => null,
                 'es_generico' => false,
             ]);

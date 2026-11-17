@@ -66,5 +66,6 @@ final class EnieYCuitEnBusquedaTest extends ProveedoresTestCase
         $this->assertIsArray($proveedores);
         $this->assertSame(1, $proveedores['cantidad']);
         $this->assertSame('Corralón Centro', $proveedores['resultados'][0]['nombre']);
+        $this->assertSame('30-71234567-9', $proveedores['resultados'][0]['cuit'], 'PU-137: el resultado muestra el CUIT con el que coincidió');
     }
 }
