@@ -203,7 +203,7 @@ final class PresupuestoPorRubroTest extends ObrasTestCase
 
         $this->assertContains('Monto del presupuesto: (vacío) → 2.500', $lineas);
         $this->assertContains('MATERIALES: (vacío) → 1.000', $lineas);
-        $this->assertContains('LOGISTICA: (vacío) → 12.400.000,5', $lineas);
+        $this->assertContains('LOGISTICA: (vacío) → 12.400.000,50', $lineas);
         $this->assertContains('Presupuesto por rubro: sin cargar → por rubro', $lineas);
         $this->assertSame([], preg_grep('/\d\.\d{2}(?!\d)/', $lineas), 'Ningún importe con punto decimal crudo.');
     }
