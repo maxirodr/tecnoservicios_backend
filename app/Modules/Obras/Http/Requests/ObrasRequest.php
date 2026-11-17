@@ -45,6 +45,7 @@ abstract class ObrasRequest extends FormRequest
             'revision.max' => Revision::MENSAJE,
             'presupuesto.revision.max' => Revision::MENSAJE,
             'adicionales.*.revision.max' => Revision::MENSAJE,
+            'presupuesto_principal.revision.max' => Revision::MENSAJE,
         ];
     }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Obras\Application\Presupuestos;
 
 use App\Modules\Identidad\Domain\Models\User;
+use App\Modules\Obras\Application\Obras\VersionDeObra;
 use App\Modules\Obras\Domain\Models\Obra;
 use App\Modules\Obras\Domain\Models\Presupuesto;
 use App\Shared\Actividad\RegistroActividad;
@@ -32,9 +33,11 @@ final readonly class AgregarPresupuestoAction
     public function handle(User $actor, Obra $obra, DatosPresupuesto $datos): Presupuesto
     {
         return $this->db->transaction(function () use ($actor, $obra, $datos): Presupuesto {
+            VersionDeObra::bloquear($obra->id);
             $this->numeros->exigir($datos->numero, 'numero');
             $presupuesto = $this->presupuestos->handle($obra, $datos, false, $actor->id, '');
             $this->actividad->registrar($obra, self::ACCION, ['presupuesto' => ['antes' => null, 'despues' => $datos->numero]]);
+            VersionDeObra::subir($obra->id);
 
             return $presupuesto;
         });

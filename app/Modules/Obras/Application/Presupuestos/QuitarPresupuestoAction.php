@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Obras\Application\Presupuestos;
 
+use App\Modules\Obras\Application\Obras\VersionDeObra;
 use App\Modules\Obras\Domain\Models\Presupuesto;
 use App\Shared\Actividad\RegistroActividad;
 use Illuminate\Database\Connection;
@@ -33,6 +34,8 @@ final readonly class QuitarPresupuestoAction
         }
 
         $this->db->transaction(function () use ($presupuesto): void {
+            VersionDeObra::bloquear($presupuesto->obra_id);
+
             if ($presupuesto->montos()->lockForUpdate()->exists()) {
                 throw ValidationException::withMessages(['presupuesto' => ['Este presupuesto ya tiene montos por rubro cargados: no se puede quitar.']]);
             }
@@ -40,6 +43,7 @@ final readonly class QuitarPresupuestoAction
             $this->adjuntos->quitar($presupuesto->adjuntos->modelKeys(), $presupuesto);
             $presupuesto->delete();
             $this->actividad->registrar($presupuesto->obra, self::ACCION, ['presupuesto' => ['antes' => $presupuesto->numero, 'despues' => null]]);
+            VersionDeObra::subir($presupuesto->obra_id);
         });
     }
 }

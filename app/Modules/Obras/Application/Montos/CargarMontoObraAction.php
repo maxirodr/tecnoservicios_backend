@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Obras\Application\Montos;
 
+use App\Modules\Obras\Application\Obras\VersionDeObra;
 use App\Modules\Obras\Domain\Models\Presupuesto;
 use App\Shared\Actividad\RegistroActividad;
 use App\Shared\Domain\Importe;
@@ -25,12 +26,14 @@ final readonly class CargarMontoObraAction
     public function handle(Presupuesto $presupuesto, ?Importe $monto): Presupuesto
     {
         return $this->db->transaction(function () use ($presupuesto, $monto): Presupuesto {
+            VersionDeObra::bloquear($presupuesto->obra_id);
             $antes = $presupuesto->monto_obra;
             $presupuesto->monto_obra = $monto?->valor;
             $presupuesto->save();
 
             if ($antes !== $presupuesto->monto_obra) {
                 $this->actividad->registrar($presupuesto, self::ACCION, ['monto_obra' => ['antes' => $antes, 'despues' => $presupuesto->monto_obra]]);
+                VersionDeObra::subir($presupuesto->obra_id);
             }
 
             return $presupuesto;
