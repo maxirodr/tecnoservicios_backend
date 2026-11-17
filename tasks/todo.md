@@ -75,3 +75,10 @@ Arreglos en ramas, **sin mergear y sin verificar** (los agentes se cortaron a mi
 3. Mergear las 3 ramas, `npm run e2e` y `npm run e2e:integracion`, re-probar los PU graves; borrar ramas y el worktree.
 4. Actualizar el prompt de la prueba: worker `--queue=mail,default`, iPhone SE 375×667.
 5. Semana 2: Juani confirma las 27 dudas (DU-P01…P24, DU-Q01…Q03) → tandas de Pedidos y Avisos.
+
+### Revisión arreglos de la prueba de usuario (2026-11-17)
+- [x] Backend `fix/w1-prueba-usuario-back` en main: 557 tests / 3091, pint y larastan 0. PU-043/044/045 hechos y documentados (DU-Q04…Q06, ADR-015 enmienda).
+- [x] Front `fix/w1-pu-formularios` + `fix/w1-pu-listas` en main (conflictos resueltos en EditarObra y Proveedores) + UI de PU-045: vitest 310 ok, typecheck/lint/format ok, e2e mock 46/46.
+- [ ] `npm run e2e:integracion`: el primer intento falló porque faltaba la base `tecnoservicios_integracion` en esta máquina (health ahora da 503 sin base; ya creada); el segundo lo cortó Claude Code por poca RAM. Volver a correrlo.
+- [ ] Borrar ramas mergeadas (back y front) y el worktree `../tecnoservicios_frontend_listas`.
+- [ ] Re-probar en el navegador los PU graves (001–005).
