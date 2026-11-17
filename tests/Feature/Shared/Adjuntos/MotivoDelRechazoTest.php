@@ -7,6 +7,7 @@ namespace Tests\Feature\Shared\Adjuntos;
 use App\Shared\Adjuntos\Adjunto;
 use App\Shared\Adjuntos\Http\Rules\LinkHttp;
 use App\Shared\Adjuntos\Http\Rules\TipoPermitidoPorContenido;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Testing\TestResponse;
 use Tests\Feature\Shared\Adjuntos\Support\AdjuntosTestCase;
@@ -80,6 +81,9 @@ final class MotivoDelRechazoTest extends AdjuntosTestCase
             ->assertJsonPath('errors.archivo.0', 'Este archivo no es un Excel aunque termine en .xlsx. Elegí otro.');
     }
 
+    /**
+     * @return TestResponse<JsonResponse>
+     */
     private function pegar(string $url): TestResponse
     {
         return $this->actingAs($this->usuario())

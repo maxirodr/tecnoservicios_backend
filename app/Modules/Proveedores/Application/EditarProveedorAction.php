@@ -10,7 +10,6 @@ use App\Modules\Proveedores\Domain\ProveedorDuplicado;
 use App\Shared\Actividad\RegistroActividad;
 use App\Shared\Concurrencia\VersionDeFila;
 use Carbon\CarbonInterface;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -28,7 +27,9 @@ final readonly class EditarProveedorAction
     /**
      * @param  array<string, mixed>  $datos  solo las columnas que vinieron
      *
-     * @throws ProveedorDuplicado|HttpResponseException 409 si cambió desde `$version` (PU-002)
+     * Con `$version` vieja responde 409 sin guardar (PU-002, `VersionDeFila`).
+     *
+     * @throws ProveedorDuplicado
      */
     public function handle(User $autor, Proveedor $proveedor, array $datos, ?CarbonInterface $version = null): Proveedor
     {

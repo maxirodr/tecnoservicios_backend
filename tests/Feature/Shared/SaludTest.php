@@ -35,7 +35,7 @@ final class SaludTest extends TestCase
     protected function tearDown(): void
     {
         if ($this->encolado) {
-            Queue::connection('redis')->clear($this->cola);
+            Queue::connection('database')->clear($this->cola);
         }
 
         parent::tearDown();
@@ -81,20 +81,30 @@ final class SaludTest extends TestCase
 
     public function test_job_de_mail_sin_levantar_hace_mas_de_lo_permitido_marca_la_cola_caida(): void
     {
-        config(['queue.default' => 'redis', 'salud.cola_max_segundos' => 120]);
-        $this->encolar(now()->subSeconds(300)->getTimestamp());
+        config(['queue.default' => 'database', 'salud.cola_max_segundos' => 120]);
+        $this->encolar(segundosAtras: 300);
 
         $this->getJson('/api/health')
             ->assertStatus(503)
             ->assertJsonPath('data.status', 'degraded')
-            ->assertJsonPath('data.services.cola_mail', false)
-            ->assertJsonPath('data.services.redis', true);
+            ->assertJsonPath('data.services.cola_mail', false);
+    }
+
+    public function test_si_nada_usa_redis_no_se_lo_consulta(): void
+    {
+        config(['cache.default' => 'array', 'queue.default' => 'sync', 'session.driver' => 'array']);
+
+        $this->getJson('/api/health')
+            ->assertOk()
+            ->assertJsonPath('data.status', 'ok')
+            ->assertJsonPath('data.services.redis', null)
+            ->assertJsonPath('data.services.cola_mail', true);
     }
 
     public function test_job_reciente_en_la_cola_no_es_problema(): void
     {
-        config(['queue.default' => 'redis', 'salud.cola_max_segundos' => 120]);
-        $this->encolar(now()->subSeconds(10)->getTimestamp());
+        config(['queue.default' => 'database', 'salud.cola_max_segundos' => 120]);
+        $this->encolar(segundosAtras: 10);
 
         $this->getJson('/api/health')
             ->assertOk()
@@ -111,9 +121,12 @@ final class SaludTest extends TestCase
         $this->getJson('/api/health')->assertStatus(429)->assertHeader('Retry-After')->assertJsonPath('data', null);
     }
 
-    private function encolar(int $creadoEn): void
+    /** Un job pendiente que entró a la cola hace `$segundosAtras` (la cola de la base, sin depender de Redis). */
+    private function encolar(int $segundosAtras): void
     {
         $this->encolado = true;
-        Queue::connection('redis')->pushRaw((string) json_encode(['uuid' => (string) Str::uuid(), 'createdAt' => $creadoEn]), $this->cola);
+        $this->travel(-$segundosAtras)->seconds();
+        Queue::connection('database')->pushRaw((string) json_encode(['uuid' => (string) Str::uuid()]), $this->cola);
+        $this->travelBack();
     }
 }

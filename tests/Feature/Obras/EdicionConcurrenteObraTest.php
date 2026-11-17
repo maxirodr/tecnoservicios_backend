@@ -20,7 +20,7 @@ final class EdicionConcurrenteObraTest extends ObrasTestCase
 
         $this->actingAs($laura)->getJson("/api/obras/{$obra->id}")
             ->assertOk()
-            ->assertJsonPath('data.updated_at', Obra::query()->findOrFail($obra->id)->updated_at?->toIso8601String());
+            ->assertJsonPath('data.updated_at', Obra::query()->findOrFail($obra->id)->updated_at->toIso8601String());
     }
 
     public function test_guardar_con_una_version_vieja_da_409_y_no_cambia_nada(): void
