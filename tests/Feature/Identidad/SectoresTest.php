@@ -86,10 +86,18 @@ final class SectoresTest extends IdentidadTestCase
     public function test_no_se_saca_un_sector_con_usuarios_activos(): void
     {
         $calidad = Sector::query()->where('nombre', 'Calidad')->firstOrFail();
-        $this->usuarioDe('Calidad');
+        $admin = $this->administrador();
         $this->usuarioDe('Calidad');
 
-        $this->actingAs($this->administrador())->deleteJson("/api/sectores/{$calidad->id}")
+        // PU-124: singular con un usuario; el listado trae la cantidad para no ofrecer el botón.
+        $this->actingAs($admin)->deleteJson("/api/sectores/{$calidad->id}")
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.sector.0', 'Antes de sacar Calidad, pasá a su usuario a otro sector.');
+        $this->actingAs($admin)->getJson('/api/sectores')
+            ->assertJsonFragment(['id' => $calidad->id, 'nombre' => 'Calidad', 'usuarios_activos' => 1, 'activo' => true]);
+
+        $this->usuarioDe('Calidad');
+        $this->actingAs($admin)->deleteJson("/api/sectores/{$calidad->id}")
             ->assertUnprocessable()
             ->assertJsonPath('errors.sector.0', 'Antes de sacar Calidad, pasá a sus 2 usuarios a otro sector.');
         $this->assertDatabaseHas('sectores', ['id' => $calidad->id, 'activo' => true]);

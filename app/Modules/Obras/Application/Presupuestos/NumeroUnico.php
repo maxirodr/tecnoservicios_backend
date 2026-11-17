@@ -6,6 +6,7 @@ namespace App\Modules\Obras\Application\Presupuestos;
 
 use App\Modules\Obras\Domain\Models\Presupuesto;
 use App\Shared\Http\ApiResponse;
+use App\Shared\Texto;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
@@ -32,7 +33,8 @@ final class NumeroUnico
         }
 
         $obra = $existente->obra;
-        $mensaje = "El presupuesto {$numero} ya está en la obra '{$obra->nombre_trabajo}'.";
+        // PU-128: el mismo texto que el aviso con link del front, sin comillas (la obra va en `data.obra`).
+        $mensaje = Texto::conPunto("Ese N.º de presupuesto ya está en {$obra->nombre_trabajo}");
 
         throw new HttpResponseException(new JsonResponse(
             ApiResponse::body(['obra' => ['id' => $obra->id, 'nombre_trabajo' => $obra->nombre_trabajo]], $mensaje, [$campo => [$mensaje]]),

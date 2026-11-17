@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Obras\Application\Montos;
 
+use App\Modules\Obras\Application\Obras\VersionDeObra;
 use App\Modules\Obras\Domain\Enums\ModoCarga;
 use App\Modules\Obras\Domain\Events\PresupuestoMontosCambiados;
 use App\Modules\Obras\Domain\Models\Presupuesto;
@@ -38,6 +39,7 @@ final readonly class CargarMontosAction
     public function handle(Presupuesto $presupuesto, ModoCarga $modo, array $montos): void
     {
         $this->db->transaction(function () use ($presupuesto, $modo, $montos): void {
+            VersionDeObra::bloquear($presupuesto->obra_id);
             $presupuesto = Presupuesto::query()->lockForUpdate()->findOrFail($presupuesto->id);
             $antes = $this->actuales($presupuesto);
             $idsPorClave = $this->rubros->presupuestables()->pluck('id', 'clave');
@@ -67,6 +69,7 @@ final readonly class CargarMontosAction
             if ($cambios !== []) {
                 $this->actividad->registrar($presupuesto, self::ACCION, $cambios);
                 $this->eventos->dispatch(new PresupuestoMontosCambiados($presupuesto->obra_id));
+                VersionDeObra::subir($presupuesto->obra_id);
             }
         });
     }

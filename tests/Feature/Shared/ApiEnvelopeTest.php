@@ -135,7 +135,7 @@ final class ApiEnvelopeTest extends TestCase
         $this->getJson('/api/_envelope/throttled')
             ->assertTooManyRequests()
             ->assertHeader('Retry-After')
-            ->assertExactJson(['data' => null, 'message' => 'Fueron demasiadas acciones seguidas. Esperá unos segundos y volvé a intentar.', 'errors' => null]);
+            ->assertExactJson(['data' => null, 'message' => 'Hiciste muchos intentos seguidos. Probá de nuevo en unos segundos.', 'errors' => null]);
     }
 
     #[Test]

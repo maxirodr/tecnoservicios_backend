@@ -8,6 +8,7 @@ use App\Modules\Identidad\Contracts\Permisos;
 use App\Modules\Identidad\Domain\Enums\ClaveFuncion;
 use App\Modules\Identidad\Domain\Enums\Nivel;
 use App\Modules\Identidad\Domain\Models\User;
+use App\Shared\Http\RecortaBusqueda;
 
 /**
  * `GET /api/proveedores/opciones?buscar=` (F-42): el combobox de la factura. Lo usa quien ve la base
@@ -16,6 +17,10 @@ use App\Modules\Identidad\Domain\Models\User;
  */
 final class OpcionesProveedoresRequest extends ProveedoresRequest
 {
+    use RecortaBusqueda;
+
+    private const LARGO_MAXIMO = 150;
+
     public function authorize(): bool
     {
         $user = $this->user();
@@ -32,11 +37,17 @@ final class OpcionesProveedoresRequest extends ProveedoresRequest
      */
     public function rules(): array
     {
-        return ['buscar' => ['nullable', 'string', 'max:150']];
+        return ['buscar' => ['nullable', 'string', 'max:'.self::LARGO_MAXIMO]];
     }
 
     public function buscar(): ?string
     {
         return $this->textoOpcional('buscar');
+    }
+
+    /** Sugerencias: más largo que el máximo se recorta, nunca 422 (PU-118). */
+    protected function prepareForValidation(): void
+    {
+        $this->recortarBusqueda('buscar', self::LARGO_MAXIMO);
     }
 }

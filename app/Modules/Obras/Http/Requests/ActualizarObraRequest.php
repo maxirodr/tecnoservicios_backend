@@ -4,18 +4,28 @@ declare(strict_types=1);
 
 namespace App\Modules\Obras\Http\Requests;
 
+use App\Modules\Obras\Application\Obras\ActualizarObraAction;
+use App\Modules\Obras\Application\Presupuestos\DatosAprobacion;
 use App\Modules\Obras\Domain\Enums\TipoContacto;
 use App\Modules\Obras\Domain\Models\ObraContacto;
+use App\Modules\Obras\Http\Requests\Concerns\EditaPresupuesto;
 use App\Shared\Concurrencia\VersionDeFila;
 use Carbon\CarbonImmutable;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 /**
- * `PATCH /api/obras/{id}` (W-23): campos de ObraAlta sin presupuestos (se editan aparte) + contactos.
- * Mismas validaciones que el alta (HU-016 c. 6). `estado` se ignora (HU-016 c. 4, RN-OBR-22).
+ * `PATCH /api/obras/{id}` (W-23): campos de ObraAlta + contactos y, opcional, `presupuesto_principal`
+ * con los mismos campos y reglas que `PATCH /api/presupuestos/{id}` (PU-101: todo en una transacción y
+ * bajo la versión de la obra). Mismas validaciones que el alta (HU-016 c. 6). `estado` se ignora
+ * (HU-016 c. 4, RN-OBR-22). Los adicionales se editan aparte.
  */
 final class ActualizarObraRequest extends ObrasRequest
 {
+    use EditaPresupuesto;
+
+    private const PRINCIPAL = ActualizarObraAction::PREFIJO_PRINCIPAL;
+
     private const CAMPOS = [
         'nombre_trabajo', 'cliente', 'planta', 'fecha_inicio_prevista', 'fecha_fin_prevista', 'carpeta_drive_url',
     ];
@@ -31,8 +41,19 @@ final class ActualizarObraRequest extends ObrasRequest
             'responsable_id' => ['sometimes', 'integer', Rule::exists('users', 'id')],
             'contactos' => ['sometimes', 'array'],
             ...ReglasObra::contactos(false),
+            self::PRINCIPAL => ['sometimes', 'array'],
+            ...$this->reglasEdicionPresupuesto(self::PRINCIPAL),
             ...VersionDeFila::reglas(),
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator): void {
+            if ($this->exists(self::PRINCIPAL)) {
+                $this->validarEdicionPresupuesto($validator, self::PRINCIPAL);
+            }
+        });
     }
 
     /** `updated_at` que tenía la obra al abrir el formulario (PU-002). */
@@ -63,6 +84,16 @@ final class ActualizarObraRequest extends ObrasRequest
         }
 
         return $datos;
+    }
+
+    /**
+     * Cambios del presupuesto principal; vacío si no vino `presupuesto_principal`.
+     *
+     * @return array{numero?: string, revision?: string|null, descripcion?: string|null, oferta?: int|null, aprobacion?: DatosAprobacion|null}
+     */
+    public function presupuestoPrincipal(): array
+    {
+        return $this->exists(self::PRINCIPAL) ? $this->datosEdicionPresupuesto(self::PRINCIPAL) : [];
     }
 
     /**

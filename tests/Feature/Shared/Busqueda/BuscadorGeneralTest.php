@@ -110,11 +110,12 @@ final class BuscadorGeneralTest extends TestCase
             ->assertJsonCount(10, 'data.grupos.1.resultados');
     }
 
-    public function test_texto_demasiado_largo_es_rechazado(): void
+    /** PU-118: el buscador no falla por largo; busca con los primeros 100 caracteres. */
+    public function test_texto_demasiado_largo_se_recorta(): void
     {
         $this->actingAs($this->usuarioDe('Compras'))->getJson('/api/buscar?q='.Str::repeat('a', 101))
-            ->assertUnprocessable()
-            ->assertJsonValidationErrors('q');
+            ->assertOk()
+            ->assertJsonPath('errors', null);
     }
 
     private function usuarioDe(string $sector): User

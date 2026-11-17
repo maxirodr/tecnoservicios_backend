@@ -31,12 +31,15 @@ final class ApiExceptionRenderer
         405 => 'Esa acción no está disponible.',
         409 => 'Alguien cambió esto mientras lo tenías abierto. Recargá y volvé a intentar.',
         413 => 'Lo que enviaste es demasiado grande. Si es un archivo, probá con uno más liviano.',
-        419 => 'La sesión expiró. Volvé a ingresar.',
+        419 => 'Tu sesión venció. Volvé a ingresar.',
         422 => 'Los datos enviados no son válidos.',
-        429 => 'Fueron demasiadas acciones seguidas. Esperá unos segundos y volvé a intentar.',
+        429 => 'Hiciste muchos intentos seguidos. Probá de nuevo en unos segundos.',
         500 => 'El sistema tuvo un problema. Volvé a intentar en un momento.',
         503 => 'El sistema no está disponible en este momento. Probá de nuevo en unos minutos.',
     ];
+
+    /** `Retry-After` del 503 por base o Redis caídos. */
+    private const SEGUNDOS_PARA_REINTENTAR = 30;
 
     public function __construct(private readonly bool $debug) {}
 
@@ -63,6 +66,13 @@ final class ApiExceptionRenderer
                 413,
             ),
             $exception instanceof HttpExceptionInterface => $this->renderHttpException($exception),
+            // Sin conexión con la base o con Redis (PU-138): 503, no 500; igual va al canal `errors`.
+            ServicioCaido::es($exception) => ApiResponse::error(
+                self::messageFor(503),
+                503,
+                null,
+                ['Retry-After' => (string) self::SEGUNDOS_PARA_REINTENTAR],
+            ),
             default => $this->renderServerError($exception),
         };
     }

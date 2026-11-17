@@ -7,8 +7,11 @@ namespace App\Modules\Obras\Application\Obras;
 use App\Modules\Identidad\Domain\Enums\ClaveFuncion;
 use App\Modules\Identidad\Domain\Models\User;
 use App\Modules\Obras\Application\Acceso\AccesoObra;
+use App\Modules\Obras\Application\Presupuestos\ActualizarPresupuestoAction;
+use App\Modules\Obras\Application\Presupuestos\DatosAprobacion;
 use App\Modules\Obras\Domain\Models\Obra;
 use App\Modules\Obras\Domain\Models\ObraContacto;
+use App\Modules\Obras\Domain\Models\Presupuesto;
 use App\Shared\Actividad\RegistroActividad;
 use App\Shared\Concurrencia\VersionDeFila;
 use Carbon\CarbonInterface;
@@ -19,11 +22,14 @@ use Illuminate\Validation\ValidationException;
 /**
  * F-20 / HU-016: editar los datos de la obra y sus contactos. Cada dato que cambia queda en el
  * historial con antes → después; guardar sin cambios no registra (RN-OBR-26). El estado no se edita
- * acá (RN-OBR-22): el FormRequest no lo deja pasar.
+ * acá (RN-OBR-22): el FormRequest no lo deja pasar. El presupuesto principal se corrige en la misma
+ * transacción y bajo la misma versión (PU-101): con conflicto no se guarda nada.
  */
 final readonly class ActualizarObraAction
 {
     public const ACCION = 'editado';
+
+    public const PREFIJO_PRINCIPAL = 'presupuesto_principal';
 
     private const CAMPOS = [
         'nombre_trabajo', 'cliente', 'planta', 'fecha_inicio_prevista', 'fecha_fin_prevista', 'carpeta_drive_url',
@@ -33,18 +39,25 @@ final readonly class ActualizarObraAction
         private Connection $db,
         private AccesoObra $acceso,
         private RegistroActividad $actividad,
+        private ActualizarPresupuestoAction $presupuestos,
     ) {}
 
     /**
      * @param  array<string, mixed>  $datos  solo los campos que vinieron
      * @param  array<string, array<string, string>>  $contactos  tipo => campo => valor
+     * @param  array{numero?: string, revision?: string|null, descripcion?: string|null, oferta?: int|null, aprobacion?: DatosAprobacion|null}  $principal  cambios del presupuesto principal
      *
      * @throws ValidationException|HttpResponseException 409 si la obra cambió desde `$version` (PU-002)
      */
-    public function handle(User $actor, Obra $obra, array $datos, array $contactos, ?CarbonInterface $version = null): Obra
+    public function handle(User $actor, Obra $obra, array $datos, array $contactos, ?CarbonInterface $version = null, array $principal = []): Obra
     {
-        return $this->db->transaction(function () use ($actor, $obra, $datos, $contactos, $version): Obra {
+        return $this->db->transaction(function () use ($actor, $obra, $datos, $contactos, $version, $principal): Obra {
             VersionDeFila::bloquearYVerificar($obra, $version);
+
+            if ($principal !== []) {
+                $this->presupuestos->handle($this->principal($obra), $principal, self::PREFIJO_PRINCIPAL);
+            }
+
             $obra->load(['responsable', 'contactos']);
             $cambiosDeContactos = $this->cambiarContactos($obra, $contactos);
             $cambios = [
@@ -64,6 +77,12 @@ final readonly class ActualizarObraAction
 
             return $obra;
         });
+    }
+
+    /** El principal se corrige con los mismos permisos que la obra (`editable`, ya verificado). */
+    private function principal(Obra $obra): Presupuesto
+    {
+        return Presupuesto::query()->with('adjuntos')->where('obra_id', $obra->id)->where('es_principal', true)->firstOrFail();
     }
 
     /**

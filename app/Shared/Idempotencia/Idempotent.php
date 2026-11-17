@@ -135,7 +135,7 @@ final readonly class Idempotent
     private function enCurso(): Response
     {
         return ApiResponse::error(
-            'Esta operación todavía se está procesando. Probá de nuevo en unos segundos.',
+            'Todavía estamos guardando lo anterior. Probá de nuevo en unos segundos.',
             409,
             null,
             ['Retry-After' => (string) self::SEGUNDOS_REINTENTO],

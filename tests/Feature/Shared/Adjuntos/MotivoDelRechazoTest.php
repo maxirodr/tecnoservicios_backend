@@ -15,11 +15,11 @@ use Tests\Feature\Shared\Adjuntos\Support\AdjuntosTestCase;
 /** PU-010, PU-011, PU-026, PU-030: links con tildes y mensajes que dicen el motivo real del rechazo. */
 final class MotivoDelRechazoTest extends AdjuntosTestCase
 {
-    public function test_link_con_enie_y_tildes_se_acepta_y_se_guarda_codificado(): void
+    public function test_link_con_enie_y_tildes_se_acepta_y_se_guarda_como_se_escribio(): void
     {
         $this->pegar('https://drive.example/oferta-ñandú?v=técnica')
             ->assertCreated()
-            ->assertJsonPath('data.url', 'https://drive.example/oferta-%C3%B1and%C3%BA?v=t%C3%A9cnica')
+            ->assertJsonPath('data.url', 'https://drive.example/oferta-ñandú?v=técnica')
             ->assertJsonPath('data.nombre', 'drive.example');
 
         $this->pegar('https://drive.example/oferta-%C3%B1and%C3%BA')
@@ -27,11 +27,11 @@ final class MotivoDelRechazoTest extends AdjuntosTestCase
             ->assertJsonPath('data.url', 'https://drive.example/oferta-%C3%B1and%C3%BA');
     }
 
-    public function test_dominio_con_enie_se_guarda_en_punycode_y_se_muestra_legible(): void
+    public function test_dominio_con_enie_se_acepta_y_se_muestra_legible(): void
     {
         $this->pegar('https://ñandú.example/carpeta')
             ->assertCreated()
-            ->assertJsonPath('data.url', 'https://xn--and-6ma2c.example/carpeta')
+            ->assertJsonPath('data.url', 'https://ñandú.example/carpeta')
             ->assertJsonPath('data.nombre', 'ñandú.example');
     }
 
