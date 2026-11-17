@@ -14,6 +14,10 @@ use App\Shared\Adjuntos\Http\Rules\LinkHttp;
  */
 final class ReglasObra
 {
+    public const LARGO_NOMBRE_TRABAJO = 200;
+
+    public const LARGO_CLIENTE = 150;
+
     private const FORMATO_FECHA = 'date_format:Y-m-d';
 
     /**
@@ -24,8 +28,8 @@ final class ReglasObra
         $obligatorio = $alta ? 'required' : 'sometimes';
 
         return [
-            'nombre_trabajo' => [$obligatorio, 'string', 'max:200'],
-            'cliente' => [$obligatorio, 'string', 'max:150'],
+            'nombre_trabajo' => [$obligatorio, 'string', 'max:'.self::LARGO_NOMBRE_TRABAJO],
+            'cliente' => [$obligatorio, 'string', 'max:'.self::LARGO_CLIENTE],
             'planta' => ['nullable', 'string', 'max:150'],
             'fecha_inicio_prevista' => ['nullable', self::FORMATO_FECHA],
             'fecha_fin_prevista' => ['nullable', self::FORMATO_FECHA],

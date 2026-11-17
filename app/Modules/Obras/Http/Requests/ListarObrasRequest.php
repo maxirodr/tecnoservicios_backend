@@ -5,11 +5,17 @@ declare(strict_types=1);
 namespace App\Modules\Obras\Http\Requests;
 
 use App\Modules\Obras\Domain\Enums\ObraEstado;
+use App\Shared\Http\RecortaBusqueda;
 use Illuminate\Validation\Rule;
 
-/** `GET /api/obras?estado=&buscar=&responsable_id=&page=` (W-05). Abre en En ejecución (RN-OBR-01). */
+/**
+ * `GET /api/obras?estado=&buscar=&responsable_id=&page=` (W-05). Abre en En ejecución (RN-OBR-01).
+ * `buscar` hasta el largo del nombre del trabajo; más largo se recorta, no da 422 (PU-118).
+ */
 final class ListarObrasRequest extends ObrasRequest
 {
+    use RecortaBusqueda;
+
     /**
      * @return array<string, mixed>
      */
@@ -17,7 +23,7 @@ final class ListarObrasRequest extends ObrasRequest
     {
         return [
             'estado' => ['nullable', Rule::enum(ObraEstado::class)],
-            'buscar' => ['nullable', 'string', 'max:100'],
+            'buscar' => ['nullable', 'string', 'max:'.ReglasObra::LARGO_NOMBRE_TRABAJO],
             'responsable_id' => ['nullable', 'integer'],
             'page' => ['nullable', 'integer', 'min:1'],
         ];
@@ -41,5 +47,11 @@ final class ListarObrasRequest extends ObrasRequest
     public function pagina(): int
     {
         return max(1, $this->integer('page', 1));
+    }
+
+    protected function prepareForValidation(): void
+    {
+        parent::prepareForValidation();
+        $this->recortarBusqueda('buscar', ReglasObra::LARGO_NOMBRE_TRABAJO);
     }
 }
