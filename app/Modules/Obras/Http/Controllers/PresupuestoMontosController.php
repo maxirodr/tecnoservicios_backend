@@ -47,7 +47,7 @@ final class PresupuestoMontosController
         $encontrado = $this->buscar->presupuestoVisible($user, $presupuesto);
         $this->buscar->exigir($this->acceso->cargarMontos($user, $encontrado->obra));
 
-        $cargar->handle($encontrado, $request->modo(), $request->montos());
+        $cargar->handle($encontrado, $request->modo(), $request->montos(), $request->versionEsperada());
 
         return $this->ok($consulta->handle($encontrado->obra, $this->acceso->verMontoObra($user, $encontrado->obra)), 'Guardamos los montos.');
     }
@@ -58,7 +58,7 @@ final class PresupuestoMontosController
         $encontrado = $this->buscar->presupuestoVisible($user, $presupuesto);
         $this->buscar->exigir($this->acceso->cargarMontoObra($user, $encontrado->obra));
 
-        $cargar->handle($encontrado, $request->montoObra());
+        $cargar->handle($encontrado, $request->montoObra(), $request->versionEsperada());
         $encontrado = Presupuesto::query()->with(['adjuntos.subidoPor', 'creadoPor'])->findOrFail($encontrado->id);
 
         return $this->ok(new PresupuestoResource($encontrado, true), 'Guardamos el monto del presupuesto.');

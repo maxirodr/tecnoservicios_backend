@@ -8,7 +8,9 @@ use App\Modules\Obras\Application\Montos\CargarMontosAction;
 use App\Modules\Obras\Application\Montos\CatalogoRubros;
 use App\Modules\Obras\Domain\Enums\ModoCarga;
 use App\Modules\Obras\Http\Rules\ImporteValido;
+use App\Shared\Concurrencia\VersionDeFila;
 use App\Shared\Domain\Importe;
+use Carbon\CarbonImmutable;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
@@ -16,6 +18,7 @@ use Illuminate\Validation\Validator;
  * `PUT /api/presupuestos/{id}/montos` (W-13): `{modo: por_rubro, montos: {clave: "1500000.00"|null}}`
  * o `{modo: solo_total, total: "25650000.00"}`. Lista cerrada: EPP o un rubro inexistente ("insumo")
  * dan 422 (HU-018 c. 3). Importes como string decimal, sin negativos ni más de 2 decimales.
+ * Con `updated_at` (el del presupuesto en el GET), 409 si cambió desde entonces (PU-201).
  */
 final class CargarMontosRequest extends ObrasRequest
 {
@@ -31,6 +34,7 @@ final class CargarMontosRequest extends ObrasRequest
             'montos' => [Rule::requiredIf($modo === ModoCarga::PorRubro->value), 'prohibited_unless:modo,'.ModoCarga::PorRubro->value, 'array'],
             'montos.*' => ['nullable', new ImporteValido],
             'total' => [Rule::requiredIf($modo === ModoCarga::SoloTotal->value), 'prohibited_unless:modo,'.ModoCarga::SoloTotal->value, new ImporteValido],
+            ...VersionDeFila::reglas(),
         ];
     }
 
@@ -69,5 +73,11 @@ final class CargarMontosRequest extends ObrasRequest
         }
 
         return $montos;
+    }
+
+    /** `updated_at` que tenía el presupuesto cuando se abrió la pantalla (PU-201). */
+    public function versionEsperada(): ?CarbonImmutable
+    {
+        return VersionDeFila::desde($this->input(VersionDeFila::CAMPO));
     }
 }
