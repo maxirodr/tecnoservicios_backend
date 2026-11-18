@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api\Support;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Throwable;
 
 /**
@@ -31,10 +32,29 @@ final class ErrorLogContext
             'action' => $route instanceof Route ? $route->getActionName() : 'unknown',
             'method' => $request->method(),
             'url' => $request->url(),
-            'user_id' => $request->user()?->getAuthIdentifier(),
+            'user_id' => self::userId(),
             'ip' => $request->ip(),
             'input' => self::inputKeys($request->all()),
         ];
+    }
+
+    /**
+     * PU-202: el id del usuario **sin consultar la base**. `$request->user()` carga el usuario y, con
+     * MySQL caído, el reporte del error volvía a esperar la conexión hasta el `max_execution_time`.
+     * Si el guard (`web`, de sesión) ya lo resolvió, se usa ese; si no, el id que guardó la sesión al ingresar.
+     */
+    private static function userId(): int|string|null
+    {
+        $guard = Auth::guard();
+        if ($guard->hasUser()) {
+            $id = $guard->user()?->getAuthIdentifier();
+        } elseif ($guard->getSession()->isStarted()) {
+            $id = $guard->getSession()->get($guard->getName());
+        } else {
+            $id = null;
+        }
+
+        return is_int($id) || is_string($id) ? $id : null;
     }
 
     /**

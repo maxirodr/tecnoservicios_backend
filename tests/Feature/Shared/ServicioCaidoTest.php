@@ -7,9 +7,11 @@ namespace Tests\Feature\Shared;
 use App\Modules\Identidad\Domain\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Mockery;
+use PDO;
 use PDOException;
 use Predis\Connection\ConnectionException;
 use Predis\Connection\NodeConnectionInterface;
@@ -82,5 +84,42 @@ final class ServicioCaidoTest extends TestCase
             // La transacción del test vive en la conexión de siempre: se la devuelve para deshacerla.
             config(['database.default' => $default]);
         }
+    }
+
+    public function test_con_la_base_caida_y_sesion_por_cookie_da_503_rapido_y_queda_en_el_log(): void
+    {
+        // PU-202: con la sesión (no `actingAs`), el usuario se carga de la base caída. El reporte del error
+        // no puede volver a consultarla, y la conexión no se reintenta: antes eran 500 en más de 30 s.
+        $user = User::factory()->create();
+        $canal = Mockery::spy(LoggerInterface::class);
+        Log::shouldReceive('channel')->with('errors')->andReturn($canal);
+        $default = config('database.default');
+        config([
+            'database.connections.caida' => [
+                ...(array) config('database.connections.mysql'),
+                'port' => 1,
+                'options' => [PDO::ATTR_TIMEOUT => 1],
+            ],
+            'database.default' => 'caida',
+        ]);
+
+        try {
+            $inicio = microtime(true);
+            $this->withSession([Auth::guard()->getName() => $user->getKey()])
+                ->getJson('/api/me')
+                ->assertStatus(503)
+                ->assertHeader('Retry-After')
+                ->assertJsonPath('message', self::NO_DISPONIBLE);
+            $segundos = microtime(true) - $inicio;
+        } finally {
+            config(['database.default' => $default]);
+        }
+
+        // Un solo intento de conexión de hasta 1 s (sin el arreglo: 4 por consulta y una consulta más en el log).
+        $this->assertLessThan(2.5, $segundos);
+        $canal->shouldHaveReceived('error')->once()->withArgs(
+            fn (string $mensaje, array $contexto): bool => $contexto['user_id'] === $user->getKey()
+                && $contexto['exception_class'] === QueryException::class,
+        );
     }
 }

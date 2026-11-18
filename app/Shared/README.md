@@ -12,6 +12,7 @@ Lo registra `Providers/SharedServiceProvider.php` (rutas en `routes.php`, prefij
 - `Actividad/` — registro de quién hizo qué (ADR-010, F-14).
 - `Idempotencia/` — middleware `idempotent` (ADR-011).
 - `Adjuntos/` — archivo subido o link (ADR-014, HU-025).
+- `Database/` — conector de MySQL que, con la base caída, intenta conectar una sola vez por pedido o job (`BasesCaidas`, `scoped`): el 503 sale en ~`DB_CONNECT_TIMEOUT` (PU-202).
 
 Funciones transversales del documento firmado que viven acá o se apoyan en esto: F-03 (buscador general), F-13 (uso desde el celular: mismo API), F-14 (registro de quién hizo qué).
 
