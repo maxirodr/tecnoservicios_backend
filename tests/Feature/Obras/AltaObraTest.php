@@ -212,6 +212,11 @@ final class AltaObraTest extends ObrasTestCase
         $this->actingAs($laura)->postJson('/api/obras', $this->alta($laura, $oferta, ['presupuesto' => ['numero' => '2-131-2026', 'revision' => 'versión final']]))
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['presupuesto.revision' => 'Escribí la revisión como REV01.']);
+
+        // O-4 (ronda 3): fuera de rango, el mensaje dice el rango.
+        $this->actingAs($laura)->postJson('/api/obras', $this->alta($laura, $oferta, ['presupuesto' => ['numero' => '2-131-2026', 'revision' => 'REV100']]))
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['presupuesto.revision' => 'La revisión va de REV01 a REV99.']);
     }
 
     public function test_fechas_previstas_son_opcionales_y_fin_no_anterior_al_inicio(): void
