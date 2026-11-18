@@ -47,6 +47,22 @@ final class RevisionYEstadoTest extends TestCase
         }
     }
 
+    /** O-4 (ronda 3): REV100 tiene bien el formato; el mensaje dice el rango, no "escribila como REV01". */
+    public function test_revision_de_mas_de_dos_cifras_dice_el_rango(): void
+    {
+        foreach (['REV100', 'rev 100', 'REV0100', 'R999', '100'] as $escrita) {
+            try {
+                Revision::desde($escrita);
+                $this->fail("Aceptó {$escrita}");
+            } catch (ValorInvalido $error) {
+                $this->assertSame('La revisión va de REV01 a REV99.', $error->getMessage(), $escrita);
+            }
+        }
+
+        $this->assertSame('REV99', Revision::desde('REV99')->valor);
+        $this->assertSame('REV99', Revision::desde('REV099')->valor);
+    }
+
     public function test_se_avanza_y_se_vuelve_de_a_un_paso(): void
     {
         $this->assertTrue(ObraEstado::Confirmada->puedePasarA(ObraEstado::EnEjecucion));

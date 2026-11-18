@@ -9,6 +9,8 @@ use App\Shared\Actividad\RegistroActividad;
 use App\Shared\Adjuntos\Console\PurgarAdjuntosHuerfanosCommand;
 use App\Shared\Adjuntos\ContextosAdjuntos;
 use App\Shared\Busqueda\FuentesBusqueda;
+use App\Shared\Database\BasesCaidas;
+use App\Shared\Database\ConectorMySqlSinReintentos;
 use App\Shared\Idempotencia\Idempotent;
 use App\Shared\Idempotencia\PurgarIdempotencyKeysCommand;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -32,6 +34,10 @@ final class SharedServiceProvider extends ModuleServiceProvider
         $this->app->bind(RegistroActividad::class, EloquentRegistroActividad::class);
         $this->app->singleton(ContextosAdjuntos::class);
         $this->app->singleton(FuentesBusqueda::class);
+
+        // PU-202: con MySQL caído, un solo intento de conexión por pedido (o job); el resto falla al instante.
+        $this->app->scoped(BasesCaidas::class);
+        $this->app->bind('db.connector.mysql', ConectorMySqlSinReintentos::class);
     }
 
     public function boot(): void

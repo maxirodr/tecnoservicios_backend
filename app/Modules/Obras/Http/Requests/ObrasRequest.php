@@ -36,7 +36,8 @@ abstract class ObrasRequest extends FormRequest
             'exists' => 'No existe o no está disponible.',
             'in' => 'El valor no es válido.',
             'enum' => 'El valor no es válido.',
-            'date_format' => 'La fecha tiene que tener el formato AAAA-MM-DD.',
+            // PU-209: las fechas se escriben siempre dd/mm/aaaa (la API recibe AAAA-MM-DD del front).
+            'date_format' => 'Escribí la fecha como dd/mm/aaaa, por ejemplo 31/12/2099.',
             'after_or_equal' => 'La fecha de fin no puede ser anterior a la de inicio.',
             'prohibited' => 'Este dato no se puede cambiar acá.',
             'distinct' => 'Está repetido.',

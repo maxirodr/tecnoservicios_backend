@@ -54,7 +54,8 @@ final readonly class DescripcionActividad
             CambiarEstadoObraAction::ACCION => ['Cambió el estado: '.self::estado($primero['antes'] ?? null).' → '.self::estado($primero['despues'] ?? null)],
             AgregarPresupuestoAction::ACCION => ['Agregó el presupuesto adicional '.self::texto($primero['despues'] ?? null)],
             QuitarPresupuestoAction::ACCION => ['Quitó el presupuesto adicional '.self::texto($primero['antes'] ?? null)],
-            AgregarDocumentoAction::ACCION => ['Agregó '.self::documento($cambios)." '".self::texto($primero['despues'] ?? null)."'"],
+            // PU-208: sin comillas, como el resto del historial (criterio de PU-128).
+            AgregarDocumentoAction::ACCION => ['Agregó '.self::documento($cambios).' '.self::texto($primero['despues'] ?? null)],
             QuitarDocumentoAction::ACCION => ['Quitó '.self::documento($cambios).' '.self::texto($primero['antes'] ?? null)],
             AdjuntosService::ACCION_AGREGADO => $this->adjuntos($cambios, $prefijo, 'agregado', 'despues'),
             AdjuntosService::ACCION_QUITADO => $this->adjuntos($cambios, $prefijo, 'quitado', 'antes'),

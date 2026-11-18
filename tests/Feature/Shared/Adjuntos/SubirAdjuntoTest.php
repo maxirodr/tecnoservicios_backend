@@ -103,7 +103,7 @@ final class SubirAdjuntoTest extends AdjuntosTestCase
             ->assertCreated()
             ->assertJsonPath('data.tipo', 'link')
             ->assertJsonPath('data.url', 'https://drive.example/oc-ejemplo')
-            ->assertJsonPath('data.nombre', 'drive.example')
+            ->assertJsonPath('data.nombre', 'oc-ejemplo')
             ->assertJsonPath('data.descarga', null)
             ->assertJsonPath('data.mime', null);
     }

@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Api\Support;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Throwable;
 
 /**
@@ -31,10 +32,32 @@ final class ErrorLogContext
             'action' => $route instanceof Route ? $route->getActionName() : 'unknown',
             'method' => $request->method(),
             'url' => $request->url(),
-            'user_id' => $request->user()?->getAuthIdentifier(),
+            'user_id' => self::userId(),
             'ip' => $request->ip(),
             'input' => self::inputKeys($request->all()),
         ];
+    }
+
+    /**
+     * PU-202: el id del usuario **sin consultar la base**. `$request->user()` carga el usuario y, con
+     * MySQL caído, el reporte del error volvía a esperar la conexión hasta el `max_execution_time`.
+     * Si el guard en uso ya lo resolvió (`auth:sanctum` lo cambia a `sanctum`), se usa ese; si no, el id
+     * que guardó en la sesión el guard `web` al ingresar (Sanctum SPA).
+     */
+    private static function userId(): int|string|null
+    {
+        $enUso = Auth::guard();
+        $sesion = Auth::guard('web');
+
+        if ($enUso->hasUser()) {
+            $id = $enUso->user()?->getAuthIdentifier();
+        } elseif ($sesion->getSession()->isStarted()) {
+            $id = $sesion->getSession()->get($sesion->getName());
+        } else {
+            $id = null;
+        }
+
+        return is_int($id) || is_string($id) ? $id : null;
     }
 
     /**

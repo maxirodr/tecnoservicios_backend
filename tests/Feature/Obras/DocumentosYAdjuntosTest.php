@@ -40,7 +40,7 @@ final class DocumentosYAdjuntosTest extends ObrasTestCase
             ->assertJsonPath('data.adjuntos.1.tipo', 'link');
 
         $this->actingAs($laura)->getJson("/api/obras/{$obra->id}")->assertJsonPath('data.documentos.0.nombre', 'Plano de la nave');
-        $this->actingAs($laura)->getJson("/api/obras/{$obra->id}/historial")->assertJsonPath('data.0.que', "Agregó el documento 'Plano de la nave'");
+        $this->actingAs($laura)->getJson("/api/obras/{$obra->id}/historial")->assertJsonPath('data.0.que', 'Agregó el documento Plano de la nave');
     }
 
     public function test_obra_terminada_admite_certificado_final(): void
@@ -104,7 +104,7 @@ final class DocumentosYAdjuntosTest extends ObrasTestCase
         $this->assertSame(0, Adjunto::query()->count());
         Storage::disk('adjuntos')->assertMissing($ruta);
         $this->actingAs($laura)->getJson("/api/obras/{$obra->id}/historial")
-            ->assertJsonPath('data.0.que', "Quitó el certificado 'Certificado N.º 1' (certificado-1.pdf, 1 link)");
+            ->assertJsonPath('data.0.que', 'Quitó el certificado Certificado N.º 1 (certificado-1.pdf, 1 link)');
     }
 
     public function test_documentos_exigen_obras_editar_y_alcance(): void

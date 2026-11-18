@@ -6,11 +6,12 @@ namespace App\Shared\Adjuntos\Application;
 
 use App\Modules\Identidad\Domain\Models\User;
 use App\Shared\Adjuntos\Adjunto;
+use App\Shared\Adjuntos\NombreDeLink;
 use App\Shared\Adjuntos\TipoAdjunto;
 
 /**
- * Crea un adjunto temporal de tipo link. Sin etiqueta, se usa el dominio ("drive.google.com", obras.md §4.8),
- * legible aunque el link se guarde codificado ("xn--…" → "ñandú.example").
+ * Crea un adjunto temporal de tipo link. Con "Nombre para mostrar", va ese; sin él, la última parte del
+ * link, legible, o el dominio si no tiene camino (`NombreDeLink`, PU-207: la misma regla que el front).
  */
 final class RegistrarLinkAction
 {
@@ -22,16 +23,8 @@ final class RegistrarLinkAction
             'contexto' => $contexto,
             'tipo' => TipoAdjunto::Link,
             'url' => $url,
-            'nombre' => $etiqueta !== '' ? $etiqueta : self::dominioLegible($url),
+            'nombre' => $etiqueta !== '' ? $etiqueta : NombreDeLink::de($url),
             'subido_por' => $user->getKey(),
         ]);
-    }
-
-    private static function dominioLegible(string $url): string
-    {
-        $host = (string) parse_url($url, PHP_URL_HOST);
-        $legible = idn_to_utf8($host, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
-
-        return $legible === false || $legible === '' ? $host : $legible;
     }
 }

@@ -63,8 +63,8 @@ return [
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-                // Conectar no espera más que esto: /api/health responde rápido aunque MySQL no esté (PU-020).
-                PDO::ATTR_TIMEOUT => (int) env('DB_CONNECT_TIMEOUT', 2),
+                // Conectar no espera más que esto (PU-020, PU-202): con MySQL caído, el 503 sale en ~1 s (un solo intento por pedido).
+                PDO::ATTR_TIMEOUT => (int) env('DB_CONNECT_TIMEOUT', 1),
             ]) : [],
         ],
 
@@ -85,8 +85,8 @@ return [
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-                // Conectar no espera más que esto: /api/health responde rápido aunque MySQL no esté (PU-020).
-                PDO::ATTR_TIMEOUT => (int) env('DB_CONNECT_TIMEOUT', 2),
+                // Conectar no espera más que esto (PU-020, PU-202): con MySQL caído, el 503 sale en ~1 s (un solo intento por pedido).
+                PDO::ATTR_TIMEOUT => (int) env('DB_CONNECT_TIMEOUT', 1),
             ]) : [],
         ],
 
