@@ -31,6 +31,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $monto_obra
  * @property int $created_by
  * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property-read Obra $obra
  * @property-read User $creadoPor
  * @property-read Collection<int, Adjunto> $adjuntos

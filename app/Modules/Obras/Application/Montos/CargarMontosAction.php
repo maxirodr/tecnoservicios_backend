@@ -10,14 +10,20 @@ use App\Modules\Obras\Domain\Events\PresupuestoMontosCambiados;
 use App\Modules\Obras\Domain\Models\Presupuesto;
 use App\Modules\Obras\Domain\Models\PresupuestoMonto;
 use App\Shared\Actividad\RegistroActividad;
+use App\Shared\Concurrencia\VersionDeFila;
 use App\Shared\Domain\Importe;
+use Carbon\CarbonInterface;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Connection;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 /**
  * F-48 / HU-018 (W-13): carga o corrige lo presupuestado de un presupuesto, o por rubro o solo el
  * total, no mezclado (RN-OBR-31): lo nuevo reemplaza lo cargado. Cada valor que cambia queda en el
  * historial con antes → después (RN-OBR-33) y la rendición se entera (`PresupuestoMontosCambiados`).
+ * Con la versión del presupuesto que leyó la pantalla (`updated_at`, PU-201): si otra pestaña o
+ * persona guardó desde entonces, 409 y no se pisa nada. Guardar un cambio sube la versión del
+ * presupuesto y la de la obra.
  */
 final readonly class CargarMontosAction
 {
@@ -35,12 +41,15 @@ final readonly class CargarMontosAction
     /**
      * @param  array<string, Importe|null>  $montos  clave de rubro presupuestable => importe (por rubro)
      *                                               o ['total' => importe] (solo total)
+     *
+     * @throws HttpResponseException 409 si el presupuesto cambió desde `$version` (PU-201)
      */
-    public function handle(Presupuesto $presupuesto, ModoCarga $modo, array $montos): void
+    public function handle(Presupuesto $presupuesto, ModoCarga $modo, array $montos, ?CarbonInterface $version = null): void
     {
-        $this->db->transaction(function () use ($presupuesto, $modo, $montos): void {
+        $this->db->transaction(function () use ($presupuesto, $modo, $montos, $version): void {
+            // Primero la obra y después el presupuesto, el mismo orden que Editar obra: sin deadlocks.
             VersionDeObra::bloquear($presupuesto->obra_id);
-            $presupuesto = Presupuesto::query()->lockForUpdate()->findOrFail($presupuesto->id);
+            VersionDeFila::bloquearYVerificar($presupuesto, $version);
             $antes = $this->actuales($presupuesto);
             $idsPorClave = $this->rubros->presupuestables()->pluck('id', 'clave');
 
@@ -63,10 +72,11 @@ final readonly class CargarMontosAction
             if ($presupuesto->modo_carga !== $modo) {
                 $cambios['modo_carga'] = ['antes' => $presupuesto->modo_carga->value, 'despues' => $modo->value];
                 $presupuesto->modo_carga = $modo;
-                $presupuesto->save();
             }
 
             if ($cambios !== []) {
+                // Los montos son otra tabla: el presupuesto igual cambia de versión (PU-201).
+                $presupuesto->touch();
                 $this->actividad->registrar($presupuesto, self::ACCION, $cambios);
                 $this->eventos->dispatch(new PresupuestoMontosCambiados($presupuesto->obra_id));
                 VersionDeObra::subir($presupuesto->obra_id);

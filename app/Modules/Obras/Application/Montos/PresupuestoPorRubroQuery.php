@@ -9,12 +9,14 @@ use App\Modules\Obras\Domain\Models\Obra;
 use App\Modules\Obras\Domain\Models\Presupuesto;
 use App\Modules\Obras\Domain\Models\PresupuestoMonto;
 use App\Modules\Rendicion\Domain\Models\Rubro;
+use App\Shared\Concurrencia\VersionDeFila;
 use App\Shared\Domain\Importe;
 
 /**
  * W-13 (`GET /api/obras/{id}/presupuesto-por-rubro`, RN-OBR-32/37): una columna por presupuesto y
  * "Total de la obra" = suma por rubro de todos. Un presupuesto "solo total" suma en el Total y
  * muestra "—" (null) en los rubros. `monto_obra` solo viaja si `$conMontoObra` (RN-OBR-36).
+ * `updated_at` es la versión de cada presupuesto: los PUT de montos la piden de vuelta (PU-201).
  */
 final readonly class PresupuestoPorRubroQuery
 {
@@ -51,6 +53,7 @@ final readonly class PresupuestoPorRubroQuery
                 'modo_carga' => $presupuesto->modo_carga->value,
                 'montos' => $montos,
                 'total' => $total,
+                'updated_at' => VersionDeFila::iso($presupuesto->updated_at),
                 ...($conMontoObra ? ['monto_obra' => $presupuesto->monto_obra] : []),
             ];
         }

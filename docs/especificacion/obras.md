@@ -401,8 +401,16 @@ con pedidos nuevos), 422.
 | Método y ruta | Payload | Respuesta `data` | Errores |
 |---|---|---|---|
 | `GET /api/obras/{id}/presupuesto-por-rubro` | — | ver abajo | 403 · 404 |
-| `PUT /api/presupuestos/{id}/montos` | `{modo: "por_rubro", montos: {"materiales": "10900000.00", "insumos": "1500000.00", "subcontratos": null, …}}` o `{modo: "solo_total", total: "25650000.00"}` | igual que el GET de la obra | 403 · 404 · 422 (rubro no presupuestable, negativo, más de 2 decimales) |
-| `PUT /api/presupuestos/{id}/monto-obra` | `{monto_obra: "36500000.00" \| null}` | `Presupuesto` | 403 (sin `monto_obra = editar`) · 422 |
+| `PUT /api/presupuestos/{id}/montos` | `{modo: "por_rubro", montos: {"materiales": "10900000.00", "insumos": "1500000.00", "subcontratos": null, …}, updated_at?}` o `{modo: "solo_total", total: "25650000.00", updated_at?}` | igual que el GET de la obra | 403 · 404 · 409 (el presupuesto cambió desde `updated_at`) · 422 (rubro no presupuestable, negativo, más de 2 decimales, `updated_at` que no es fecha) |
+| `PUT /api/presupuestos/{id}/monto-obra` | `{monto_obra: "36500000.00" \| null, updated_at?}` | `Presupuesto` | 403 (sin `monto_obra = editar`) · 409 (ídem) · 422 |
+
+**Conflicto de edición (PU-201).** Cada presupuesto del GET trae su versión, `updated_at` (ISO 8601). Los dos
+PUT la reciben de vuelta tal como la leyó la pantalla; si el presupuesto se guardó desde entonces (otra pestaña u
+otra persona), responden **409** `{data: null, message: "Alguien cambió esto mientras lo tenías abierto. Actualizá y
+revisá.", errors: {updated_at: [ese mensaje]}}` y no guardan nada, igual que Editar obra (PU-002). Sin `updated_at`,
+guardan como siempre. Guardar un cambio de montos, de modo o de monto de la obra sube la versión del presupuesto y
+la de la obra (`obras.updated_at`, PU-101); guardar lo mismo no la cambia. Si la pantalla manda los dos PUT del mismo
+presupuesto, el de `monto-obra` va con el `updated_at` que devolvió el de `montos`.
 
 ```json
 // GET /api/obras/12/presupuesto-por-rubro
@@ -411,9 +419,10 @@ con pedidos nuevos), 422.
   "presupuestos": [
     { "id": 30, "numero": "2-131-2026", "revision": "REV01", "es_principal": true, "modo_carga": "por_rubro",
       "montos": { "materiales": "10900000.00", "insumos": "1500000.00", "subcontratos": "4500000.00", … },
-      "total": "25650000.00" },
+      "total": "25650000.00", "updated_at": "2026-11-18T10:00:00-03:00" },
     { "id": 31, "numero": "2-131-2026 A1", "revision": null, "es_principal": false, "modo_carga": "por_rubro",
-      "montos": { "materiales": "1500000.00", "subcontratos": null, … }, "total": "3250000.00" }
+      "montos": { "materiales": "1500000.00", "subcontratos": null, … }, "total": "3250000.00",
+      "updated_at": "2026-11-18T10:05:00-03:00" }
   ],
   "total_obra": { "por_rubro": { "materiales": "12400000.00", … }, "total": "28900000.00" }
 }
