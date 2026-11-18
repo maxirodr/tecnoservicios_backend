@@ -20,7 +20,7 @@ final class MotivoDelRechazoTest extends AdjuntosTestCase
         $this->pegar('https://drive.example/oferta-ñandú?v=técnica')
             ->assertCreated()
             ->assertJsonPath('data.url', 'https://drive.example/oferta-ñandú?v=técnica')
-            ->assertJsonPath('data.nombre', 'drive.example');
+            ->assertJsonPath('data.nombre', 'oferta-ñandú');
 
         $this->pegar('https://drive.example/oferta-%C3%B1and%C3%BA')
             ->assertCreated()
@@ -29,9 +29,10 @@ final class MotivoDelRechazoTest extends AdjuntosTestCase
 
     public function test_dominio_con_enie_se_acepta_y_se_muestra_legible(): void
     {
-        $this->pegar('https://ñandú.example/carpeta')
+        // Sin camino, el nombre es el dominio (PU-207).
+        $this->pegar('https://ñandú.example/')
             ->assertCreated()
-            ->assertJsonPath('data.url', 'https://ñandú.example/carpeta')
+            ->assertJsonPath('data.url', 'https://ñandú.example/')
             ->assertJsonPath('data.nombre', 'ñandú.example');
     }
 

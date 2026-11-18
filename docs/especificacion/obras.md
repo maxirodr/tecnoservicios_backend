@@ -162,7 +162,7 @@ documentos de la obra en este módulo; pedidos, gastos, retiros y equipos en sem
 
 | Dato | Archivo | Link |
 |---|---|---|
-| Qué se guarda | el archivo en disco privado (`storage/app/private/adjuntos/AAAA/MM/`, nombre UUID), `nombre` original, `mime` detectado, `tamano_bytes` | `url` y `nombre` (etiqueta; si viene vacía se usa el dominio, p. ej. "drive.google.com") |
+| Qué se guarda | el archivo en disco privado (`storage/app/private/adjuntos/AAAA/MM/`, nombre UUID), `nombre` original, `mime` detectado, `tamano_bytes` | `url` y `nombre`: el "Nombre para mostrar" o, si viene vacío, la última parte del link, decodificada ("https://drive.example/Obras/oferta%20año.pdf" → "oferta año.pdf"; se saltean `view`, `edit`…) y, si no tiene camino, el dominio legible. Es la regla del front (`nombreDeLink.ts`), así ficha, tabla e historial dicen lo mismo (PU-207, `NombreDeLink`; los links ya guardados con el dominio se recalcularon con la migración `2026_11_18_100000`, idempotente, que también corrige su línea "agregado (…)" del historial cuando se puede emparejar sin dudas) |
 | Validación | tipo **por contenido** (no por extensión): PDF, JPG, PNG, WEBP, **HEIC/HEIF**, XLSX/XLS, DOCX/DOC, CSV, TXT. Rechaza ejecutables, HTML, SVG y todo lo demás. Máximo **20 MB** (`ADJUNTOS_MAX_MB`) | `http://` o `https://`, ≤ 1000 caracteres; rechaza `javascript:`, `file:`, `ftp:`, `data:` y texto sin esquema |
 | Cómo se ve | nombre + tamaño ("oferta-2-131-2026.pdf · 1,2 MB"), botón para bajarlo y "quitar" | etiqueta + ícono de link, se abre en pestaña nueva, y "quitar" |
 | Cómo se baja | solo por `GET /api/adjuntos/{id}` (§10.5), con la Policy del recurso dueño | directo desde su `url` |
@@ -218,7 +218,7 @@ documentos de la obra en este módulo; pedidos, gastos, retiros y equipos en sem
 ### Historial de cambios (F-20, F-14, W-23)
 
 - **RN-OBR-26** Cada alta, cambio de dato, presupuesto agregado o editado, cambio de montos, contacto, certificado o documento, adjunto agregado o quitado y cambio de estado queda en `actividades` con **quién, cuándo y qué cambió (antes → después)**, en la misma transacción. *(F-14, F-20, ADR-010)*
-- **RN-OBR-27** Se muestra abajo de W-23, el más nuevo arriba, con **Cuándo · Quién · Qué cambió**, en palabras del cliente: "N.º de OC: (vacío) → 4500-000123", "Archivo de la OC: agregado (oc-4500-000123.pdf)", "Link a la oferta técnica: cambiado" (los adjuntos se informan como agregado/cambiado/quitado con el nombre del archivo o la etiqueta del link, **sin la URL** ni la ruta), "Agregó el presupuesto adicional 2-131-2026 A1", "Contacto comprador: mail corregido", "Cambió el estado: En ejecución → Terminada", "Creó la obra". *(W-23)*
+- **RN-OBR-27** Se muestra abajo de W-23, el más nuevo arriba, con **Cuándo · Quién · Qué cambió**, en palabras del cliente: "N.º de OC: (vacío) → 4500-000123", "Archivo de la OC: agregado (oc-4500-000123.pdf)", "Link a la oferta técnica: cambiado" (los adjuntos se informan como agregado/cambiado/quitado con el nombre del archivo o el del link (§4.8: "Nombre para mostrar" o la última parte del link, nunca solo el dominio; PU-207), **sin la URL** ni la ruta), "Agregó el presupuesto adicional 2-131-2026 A1", "Contacto comprador: mail corregido", "Cambió el estado: En ejecución → Terminada", "Creó la obra". *(W-23)*
 - **RN-OBR-28** Las líneas del historial sobre **montos por rubro** solo las ve quien tiene `presupuesto_rubro` ≥ ver, y las de **monto de la obra** solo quien tiene `monto_obra` ≥ ver (los demás no las ven, ni sus valores). *(cap. 3)*
 
 ### Estados (F-21, F-22, W-22)
