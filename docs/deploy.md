@@ -91,7 +91,7 @@ location = /tecnoservicios { return 301 /tecnoservicios/; }
 
 ### Verificar
 - `curl -s https://clientes.nexosmart.com.ar/tecnoservicios/api/health` → 200 `{"status":"ok",…}`.
-- `curl -s https://clientes.nexosmart.com.ar/tecnoservicios/api/me` → 401 "Tenés que ingresar para seguir.".
+- `curl -s https://clientes.nexosmart.com.ar/tecnoservicios/api/me` → 401 "Tu sesión venció. Volvé a ingresar.".
 - Abrir `/tecnoservicios/obras` directo y recargar: carga la app (no 404).
 - Ingresar con mail + código (llega el mail: worker `mail` vivo), recargar y seguir adentro.
 - Checklist de `docs/seguridad.md` (§ primer deploy) y `.claude/bug-report.json` con la URL de staging y el `ERRORS_TOKEN`.

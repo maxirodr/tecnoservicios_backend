@@ -63,7 +63,7 @@ final class ApiEnvelopeTest extends TestCase
     {
         $this->getJson('/api/_envelope/unauthenticated')
             ->assertUnauthorized()
-            ->assertExactJson(['data' => null, 'message' => 'Tenés que ingresar para seguir.', 'errors' => null]);
+            ->assertExactJson(['data' => null, 'message' => 'Tu sesión venció. Volvé a ingresar.', 'errors' => null]);
     }
 
     /** PU-005: un link de la API abierto en el navegador (sin Accept JSON) pide ingresar, no da 500. */
@@ -74,7 +74,7 @@ final class ApiEnvelopeTest extends TestCase
             $this->get($url)
                 ->assertUnauthorized()
                 ->assertHeader('Content-Type', 'application/json')
-                ->assertExactJson(['data' => null, 'message' => 'Tenés que ingresar para seguir.', 'errors' => null]);
+                ->assertExactJson(['data' => null, 'message' => 'Tu sesión venció. Volvé a ingresar.', 'errors' => null]);
         }
     }
 

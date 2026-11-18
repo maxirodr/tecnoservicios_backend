@@ -25,7 +25,9 @@ final class ApiExceptionRenderer
 {
     private const STATUS_MESSAGES = [
         400 => 'No pudimos procesar lo que enviaste. Revisá los datos y volvé a intentar.',
-        401 => 'Tenés que ingresar para seguir.',
+        // PU-206: el mismo texto que el front para la sesión vencida. Sin sesión en la SPA nunca se muestra
+        // (va directo a Ingreso); el backend no distingue "venció" de "nunca ingresó" (la cookie vence con ella).
+        401 => 'Tu sesión venció. Volvé a ingresar.',
         403 => 'No tenés permiso para hacer esto.',
         404 => 'No encontramos lo que buscabas.',
         405 => 'Esa acción no está disponible.',
