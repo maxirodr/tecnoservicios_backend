@@ -106,3 +106,13 @@ Reportes: `docs/qa/prueba-usuario/semana-1-ronda-2/` (✅32 ⚠️12 ❌1 de los
 - [x] `npm run e2e:integracion` 42/42 (3 corridas: 7,9 · 7,2 · 6,7 min). Los 6 fallos eran specs desactualizados por PU-112 (nombre del link = última parte del path), PU-006/114 (confirmación de cambios sin guardar al cancelar un diálogo sucio) y PU-124 (sacar sector con gente: aviso de entrada, sin botón). Sin bugs de producto.
 - Suites en main: backend 576 / 3228, pint y larastan 0; front unit 389, e2e mock 46, e2e real 42; typecheck/lint/format/build ok. Front main `1914ea8`.
 - [ ] Ronda 3 de QA: `tasks/prompt-prueba-usuario-semana-1-ronda-3.md` (52 PU, 8 roles; salida en `docs/qa/prueba-usuario/semana-1-ronda-3/`).
+
+### Ronda 3 de la prueba de usuario (2026-11-18) — arreglada
+Reporte: `docs/qa/prueba-usuario/semana-1-ronda-3/` (de 52 PU: ✅43 ⚠️9 ❌0; 11 nuevos PU-201…212, 0 regresiones).
+- [x] PU-201 (bloqueante): conflicto de montos en presupuesto por rubro → 409 con `updated_at` por presupuesto, como Editar obra.
+- [x] PU-202 (alta): MySQL caído → 503 en ~1,2 s (antes 500 a los 38 s) y queda en `errors`; conector sin reintentos, `DB_CONNECT_TIMEOUT=1`.
+- [x] PU-203…212 y O-4 (REV01–REV99 en back y front). Fechas en toda la app: `dd/mm/aaaa` y `dd/mm/aaaa HH:MM`.
+- Dos migraciones de datos idempotentes (nombres de links por el path, sin comillas en "Quitó…"): correr `migrate` en el deploy.
+- Suites en main: backend 598 / 3375, pint y larastan 0; front unit 412, e2e mock 53 (+7 salteados de celular en PC), **e2e real 42/42**; typecheck/lint/format/build ok.
+- [ ] Juani decide 3 detalles de `observaciones.md`: O-1 (destino tras "Estamos guardando"; Escape mientras guarda sin aviso) y O-3 (marca de fecha lejana en la ficha).
+- [ ] Deploy de staging con lo nuevo (`docs/deploy.md`, incluye `migrate --force`).
