@@ -12,7 +12,7 @@ use Illuminate\Database\Connection;
 
 /**
  * RN-OBR-23/24: quita un certificado o documento con sus archivos y links (el archivo físico se
- * borra). Historial: "Quitó el certificado 'Certificado N.º 1' (certificado-1.pdf, 1 link)".
+ * borra). Historial: "Quitó el certificado Certificado N.º 1 (certificado-1.pdf, 1 link)", sin comillas (PU-208).
  */
 final readonly class QuitarDocumentoAction
 {
@@ -31,7 +31,7 @@ final readonly class QuitarDocumentoAction
             $this->adjuntos->quitar($documento->adjuntos->modelKeys(), $documento);
             $documento->delete();
             $this->actividad->registrar($documento->obra, self::ACCION, [
-                $documento->tipo->value => ['antes' => "'{$documento->nombre}'{$detalle}", 'despues' => null],
+                $documento->tipo->value => ['antes' => "{$documento->nombre}{$detalle}", 'despues' => null],
             ]);
         });
     }

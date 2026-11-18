@@ -315,7 +315,7 @@ del pedido, cap. 7). Al pasar a Terminada no se avisa a nadie.
 | 26 | Link `ftp://servidor-ejemplo/plano.pdf` o `javascript:alert(1)` como documento | 422 "El link tiene que empezar con http:// o https://." |
 | 27 | Carla (Compras) intenta subir un archivo para la **carpeta de Drive** de la obra | No hay opción de archivo: `carpeta_drive_url` es solo link; si llega un id de adjunto en ese campo, 422. |
 | 28 | Sofía (Ingeniería, Obras = Ver·solo sus obras) pide `GET /api/adjuntos/{id}` de la oferta de una obra donde no es responsable | 404 (RN-IDE-47); con una obra suya, 200 con `Content-Disposition: attachment`, el MIME detectado y `X-Content-Type-Options: nosniff`. |
-| 29 | Se quita el certificado N.º 1, que tenía un PDF y un link | Se borran el documento, el archivo físico y el link; historial "Quitó el certificado 'Certificado N.º 1' (certificado-1.pdf, 1 link)". |
+| 29 | Se quita el certificado N.º 1, que tenía un PDF y un link | Se borran el documento, el archivo físico y el link; historial "Quitó el certificado Certificado N.º 1 (certificado-1.pdf, 1 link)", sin comillas (PU-208; también "Agregó el certificado Certificado N.º 1"). |
 | 30 | Alta con `presupuesto.oferta` = id de un adjunto ya usado en otra obra | 422 "Ese adjunto no se puede usar acá." (RN-IDE-46). |
 
 ## 10. Contrato de API sugerido
