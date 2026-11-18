@@ -1,0 +1,32 @@
+# Nueva obra · corrida 2 · Hernán PC 1366 · red lenta 2,5 s en POST
+  [oferta técnica] Enter en "Pegar link": foco=INPUT "" · ocupado=— · vivos=[] · ok · enCampo=true
+  [oferta técnica] escrito sin mover el foco → valor del campo Link = "https://drive.example/QA4-CEL/escrito-sin-tocar.pdf"
+  [oferta técnica] Tab hasta "Cancelar": true (INPUT "" → BUTTON "Agregar link" → BUTTON "Cancelar")
+  [oferta técnica] Enter en "Cancelar" del link: foco=BUTTON "Pegar link" · ocupado=— · vivos=[] · ok · enCampo=true
+  [oferta técnica] Enter otra vez (debería ser "Pegar link"): foco=INPUT "" · ocupado=— · vivos=[] · ok · enCampo=true
+  [oferta técnica] Tab hasta "Agregar link": true (INPUT "" → BUTTON "Agregar link")
+  [oferta técnica] Agregar link +0,25 s: foco=BUTTON "Agregar link Agregando el link…" [aria-busy] · ocupado="Agregar link Agregando el link…" disabled=false aria-disabled=true · vivos=[] · ok · enCampo=true
+  [oferta técnica] Agregar link terminado: foco=A "oferta foco ñ 2.pdf (link, se abre en ot" · ocupado=— · vivos=["oferta foco ñ 2.pdf\n(link, se abre en otra pestaña)\nquitar"] · ok · enCampo=true
+  [oferta técnica]   y un Tab: foco=BUTTON "Quitar oferta foco ñ 2.pdf" · ocupado=— · vivos=["oferta foco ñ 2.pdf\n(link, se abre en otra pestaña)\nquitar"] · ok · enCampo=true
+  [oferta técnica] Tab hasta "quitar": true ()
+  [oferta técnica] Enter en "quitar": foco=BUTTON "Subir archivo" · ocupado=— · vivos=[] · ok · enCampo=true
+  [oferta técnica] Enter en "Subir archivo" abre el selector: true
+  [oferta técnica] subiendo +0,2 s: foco=BUTTON "Cancelar QA4-CEL plano ñandú.pdf" · ocupado=— · vivos=["QA4-CEL plano ñandú.pdf\n· subiendo…\ncancelar"] · ok · enCampo=true
+  [oferta técnica] archivo subido: foco=BUTTON "QA4-CEL plano ñandú.pdf · 1 KB" · ocupado=— · vivos=["QA4-CEL plano ñandú.pdf\n· 1 KB\nquitar"] · ok · enCampo=true
+  [oferta técnica] Tab hasta "quitar" del archivo: true
+  [oferta técnica] Enter en "quitar" del archivo: foco=BUTTON "Subir archivo" · ocupado=— · vivos=[] · ok · enCampo=true
+  [oferta técnica] link final agregado: foco=A "oferta foco ñ 2.pdf (link, se abre en ot" · ocupado=— · vivos=["oferta foco ñ 2.pdf\n(link, se abre en otra pestaña)\nquitar"] · ok · enCampo=true
+  [OC] Enter en "Pegar link": foco=INPUT "" · ocupado=— · vivos=["oferta foco ñ 2.pdf\n(link, se abre en otra pestaña)\nquitar"] · ok · enCampo=true
+  [OC] escrito sin mover el foco → valor del campo Link = "https://drive.example/QA4-CEL/escrito-sin-tocar.pdf"
+  [OC] Tab hasta "Cancelar": true (INPUT "" → BUTTON "Agregar link" → BUTTON "Cancelar")
+  [OC] Enter en "Cancelar" del link: foco=BUTTON "Pegar link" · ocupado=— · vivos=["oferta foco ñ 2.pdf\n(link, se abre en otra pestaña)\nquitar"] · ok · enCampo=true
+  [OC] Enter otra vez (debería ser "Pegar link"): foco=INPUT "" · ocupado=— · vivos=["oferta foco ñ 2.pdf\n(link, se abre en otra pestaña)\nquitar"] · ok · enCampo=true
+  [OC] Tab hasta "Agregar link": true (INPUT "" → BUTTON "Agregar link")
+  [OC] Agregar link +0,25 s: foco=BUTTON "Agregar link Agregando el link…" [aria-busy] · ocupado="Agregar link Agregando el link…" disabled=false aria-disabled=true · vivos=["oferta foco ñ 2.pdf\n(link, se abre en otra pestaña)\nquitar"] · ok · enCampo=true
+  [OC] Agregar link terminado: foco=A "oc 2.pdf (link, se abre en otra pestaña)" · ocupado=— · vivos=["oferta foco ñ 2.pdf\n(link, se abre en otra pestaña)\nquitar","oc 2.pdf\n(link, se abre en otra pestaña)\nquitar"] · ok · enCampo=true
+  [OC]   y un Tab: foco=BUTTON "Quitar oc 2.pdf" · ocupado=— · vivos=["oferta foco ñ 2.pdf\n(link, se abre en otra pestaña)\nquitar","oc 2.pdf\n(link, se abre en otra pestaña)\nquitar"] · ok · enCampo=true
+  [OC] Tab hasta "quitar": true ()
+  [OC] Enter en "quitar": foco=BUTTON "Subir archivo" · ocupado=— · vivos=["oferta foco ñ 2.pdf\n(link, se abre en otra pestaña)\nquitar"] · ok · enCampo=true
+  [OC] link final agregado: foco=A "oc 2.pdf (link, se abre en otra pestaña)" · ocupado=— · vivos=["oferta foco ñ 2.pdf\n(link, se abre en otra pestaña)\nquitar","oc 2.pdf\n(link, se abre en otra pestaña)\nquitar"] · ok · enCampo=true
+  guardada → url=/obras/10 · avisos=["Obra creada. Ya se le pueden cargar pedidos."]
+  consola/red: limpia

@@ -1,0 +1,23 @@
+﻿id	sujeto_type	sujeto_id	user_id	accion	cambios	created_at
+8	presupuesto	1	1	adjunto_agregado	[{"campo":"presupuesto","antes":null,"despues":"drive.example"}]	2026-11-18 13:42:14
+12	presupuesto	3	1	adjunto_agregado	[{"campo":"presupuesto","antes":null,"despues":"drive.example"}]	2026-11-18 13:42:31
+18	presupuesto	6	1	adjunto_agregado	[{"campo":"presupuesto","antes":null,"despues":"drive.example"}]	2026-11-18 13:42:40
+20	presupuesto	7	1	adjunto_agregado	[{"campo":"presupuesto","antes":null,"despues":"drive.example"}]	2026-11-18 13:42:57
+23	presupuesto	8	1	adjunto_agregado	[{"campo":"presupuesto","antes":null,"despues":"drive.example"}]	2026-11-18 13:43:10
+28	obra	5	1	editado	[{"campo":"carpeta_drive_url","antes":null,"despues":"https:\\/\\/drive.example\\/Obras%202026\\/carpeta-%C3%B1and%C3%BA-a%C3%B1o"}]	2026-11-18 13:44:03
+31	obra_documento	1	1	adjunto_agregado	[{"campo":"documento_obra","antes":null,"despues":"drive.example"}]	2026-11-18 13:47:07
+32	obra_documento	1	1	adjunto_agregado	[{"campo":"documento_obra","antes":null,"despues":"drive.example"}]	2026-11-18 13:47:07
+33	obra_documento	1	1	adjunto_agregado	[{"campo":"documento_obra","antes":null,"despues":"drive.example"}]	2026-11-18 13:47:07
+34	obra_documento	1	1	adjunto_agregado	[{"campo":"documento_obra","antes":null,"despues":"drive.google.com"}]	2026-11-18 13:47:07
+44	presupuesto	9	1	adjunto_agregado	[{"campo":"presupuesto","antes":null,"despues":"drive.example"}]	2026-11-18 13:49:35
+49	presupuesto	10	2	adjunto_agregado	[{"campo":"presupuesto","antes":null,"despues":"drive.example"}]	2026-11-18 13:50:03
+54	obra_documento	2	1	adjunto_agregado	[{"campo":"documento_obra","antes":null,"despues":"drive.example"}]	2026-11-18 13:50:49
+61	obra_documento	3	2	adjunto_agregado	[{"campo":"documento_obra","antes":null,"despues":"drive.example"}]	2026-11-18 13:52:06
+111	presupuesto	11	1	adjunto_agregado	[{"campo":"presupuesto","antes":null,"despues":"drive.example"}]	2026-11-18 14:08:44
+119	presupuesto	12	1	adjunto_agregado	[{"campo":"aprobacion","antes":null,"despues":"drive.example"}]	2026-11-18 14:12:13
+123	presupuesto	13	2	adjunto_agregado	[{"campo":"presupuesto","antes":null,"despues":"drive.example"}]	2026-11-18 14:18:45
+128	obra_documento	11	2	adjunto_agregado	[{"campo":"documento_obra","antes":null,"despues":"drive.example"}]	2026-11-18 14:24:19
+136	presupuesto	14	1	adjunto_agregado	[{"campo":"presupuesto","antes":null,"despues":"drive.example"}]	2026-11-18 14:28:02
+139	presupuesto	15	2	adjunto_agregado	[{"campo":"presupuesto","antes":null,"despues":"drive.example"}]	2026-11-18 14:28:11
+141	obra_documento	12	1	adjunto_agregado	[{"campo":"documento_obra","antes":null,"despues":"drive.example"}]	2026-11-18 14:28:27
+150	presupuesto	16	10	adjunto_agregado	[{"campo":"presupuesto","antes":null,"despues":"drive.example"}]	2026-11-18 14:44:19

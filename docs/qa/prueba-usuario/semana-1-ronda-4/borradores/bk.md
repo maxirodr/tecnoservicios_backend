@@ -1,6 +1,6 @@
 # Borrador BK · QA backend, cola y health · Ronda 4 · Parte 1 (sin cortes)
 
-- **Fecha:** 2026-11-18, 13:59–14:5x (hora local; los logs del back están en UTC = local + 3 h).
+- **Fecha:** 2026-11-18, 13:59–14:51 (hora local; los logs del back están en UTC = local + 3 h).
 - **Commits probados:** back `74beea5` (rama `qa/prueba-usuario-semana-1-ronda-4`, desde `staging`) · front `15b544f` (`staging`).
 - **Personas / sesiones:** Diego (`sesiones\diego.json`), solo `GET` con fetch para la medición en seco de PU-202 (sin navegador). Sin sesión para los 401.
 - **Ingresos reales gastados:** 0. Códigos pedidos: 0.
@@ -38,14 +38,25 @@ Base propia `tecnoservicios_prueba_r4_mig` (`CREATE DATABASE IF NOT EXISTS`), va
 
 ### Línea de base (cada ~10 min, `BK\linea-base.log`)
 
-LINEA_BASE_TABLA
+| hora local | health | failed_jobs / cola Redis | canal `errors` desde 14:00 (archivo y `GET /api/errors`) | 4xx en `errors` | `laravel.log` no-DEBUG desde 14:00 | mails (dup.) | procesos `proc4` | memoria libre |
+|---|---|---|---|---|---|---|---|---|
+| 14:00 | 200 · 0,72 s | 0 / 0 | 0 · 0 (total 54, todas previas) | 0 | 0 | 25 (0) | 5 vivos | 3,1 GB |
+| 14:10 | 200 · 1,05 s | 0 / 0 | 0 · 0 | 0 | 0 | 25 (0) | 5 vivos | 3,4 GB |
+| 14:20 | 200 · 0,53 s | 0 / 0 | 0 · 0 | 0 | 0 | 27 (0) | 5 vivos | 8,8 GB |
+| 14:30 | 200 · 0,31 s | 0 / 0 | 0 · 0 | 0 | 1: `WARNING ingreso.bloqueado` (user 9, 17:23:29 UTC) | 29 (0) | 5 vivos | 3,9 GB |
+| 14:40 | 200 · 0,22 s | 0 / 0 | 0 · 0 | 0 | ídem (1) | 29 (0) | 5 vivos | 8,7 GB |
+| 14:50 | 200 · 0,25 s | 0 / 0 | 0 · 0 | 0 | ídem (1) | 29 (0) | 5 vivos | 9,5 GB |
+
+- Salidas `proc4\*.out|*.err` (api, wdef, wmail, sched): 0 líneas con FAIL/Exception/ERROR/Fatal en todas las corridas; los 5 PID de `pids.txt` siguen siendo el mismo programa (se compara la línea de comando).
+- El único `WARNING` es `ingreso.bloqueado`: el bloqueo progresivo de un usuario de prueba de otro rol (esperado, PU-045); no es excepción.
+- Health siempre 200 con los 5 servicios en `true` (0,22–1,05 s).
 
 - `GET /api/errors`: con `Authorization: Bearer` (también acepta `?token=`; se usó el header para que el token no quede en la salida de `artisan serve`). El token no se escribió en ningún archivo de la ronda.
 - Las 54 entradas del canal `errors` del día son **anteriores a la ronda 4** (cortes de la ronda 3 y pruebas de desarrollo a las 13:02–13:15 local contra el puerto 3399); ninguna de tipo 4xx.
 
 ## Hallazgos nuevos
 
-HALLAZGOS
+Ninguno en la parte 1 (sin 5xx, excepciones ni jobs fallidos).
 
 ## Decisiones aprobadas
 No le tocan a BK en la parte 1 (401 "Tu sesión venció…" verificado arriba desde el back).
@@ -53,7 +64,7 @@ No le tocan a BK en la parte 1 (401 "Tu sesión venció…" verificado arriba de
 ## Lo que no pude probar y por qué
 - PU-202, PU-203, PU-020, PU-138 y el corte del worker de mail: requieren parar servicios; quedan para la parte 2 con `BK\plan-cortes.md`.
 - No abrí navegador (consigna de la parte 1): el `cortes-app.mjs` adaptado no se probó en seco; es el primer paso de la parte 2.
-- Memoria libre al empezar: 3,1 GB (menos de los 6 GB del §3). Los tiempos de la línea de base no se vieron afectados, pero conviene revisarla antes de los cortes.
+- Memoria libre entre 3,1 y 9,5 GB (varias veces por debajo de los 6 GB del §3). Los tiempos no se vieron afectados, pero conviene revisarla antes de los cortes.
 
 ## Firma
 BK · parte 1: línea de base, 401 sin sesión, migraciones (idempotencia en base propia), scheduler y plan de cortes de la parte 2. Sin cortes, sin ingresos.

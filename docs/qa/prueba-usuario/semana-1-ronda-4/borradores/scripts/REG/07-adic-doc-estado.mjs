@@ -1,0 +1,64 @@
+import { abrir, ctx, vigilar, contarEnvios, FRONT, DIR, sleep, texto, alertas, cap, db } from './lib.mjs';
+const ID = '9';
+const f1 = (t) => t.replace(/\n+/g, ' | ');
+await abrir(async (b) => {
+  const c = await ctx(b, 'diego'); const p = await c.newPage(); vigilar(p, 'ade');
+  const env = contarEnvios(p, /\/api\/(?!adjuntos)/);
+  await p.goto(`${FRONT}/obras/${ID}`); await p.waitForLoadState('networkidle'); await sleep(400);
+  // ---- adicional: link → quitar → archivo; OC archivo → quitar → link
+  await p.getByRole('button', { name: '+ agregar presupuesto adicional' }).first().click(); await sleep(600);
+  let d = p.getByRole('dialog').first();
+  await d.locator('input[name=numero]').fill('2-981-2026 A1');
+  await d.locator('input[name=revision]').fill('REV02');
+  const g = d.getByRole('group');
+  console.log('grupos:', await g.evaluateAll((es) => es.map((e) => e.getAttribute('aria-label') || e.querySelector('legend')?.innerText)));
+  const of = g.nth(1), oc = g.nth(2);
+  await of.getByRole('button', { name: 'Pegar link' }).click();
+  await of.getByLabel('Link').fill('https://drive.example/QA4-REG/adicional año 1.pdf');
+  await of.getByRole('button', { name: 'Agregar link' }).click(); await of.getByText('quitar').waitFor();
+  await of.getByRole('button', { name: /quitar/i }).first().click(); await sleep(400);
+  await of.locator('input[type=file]').setInputFiles(`${DIR}/oferta año 2026.pdf`); await of.getByText('quitar').waitFor({ timeout: 15000 });
+  console.log('of adic:', f1(await of.innerText()));
+  await d.locator('select[name=aprobacion_tipo]').selectOption({ label: 'Mail de aprobación' });
+  await oc.locator('input[type=file]').setInputFiles(`${DIR}/oc ñandú 01.pdf`); await oc.getByText('quitar').waitFor({ timeout: 15000 });
+  await oc.getByRole('button', { name: /quitar/i }).first().click(); await sleep(400);
+  await oc.getByRole('button', { name: 'Pegar link' }).click();
+  await oc.getByLabel('Link').fill('https://drive.example/QA4-REG/mail aprobación ñ.eml');
+  await oc.getByRole('button', { name: 'Agregar link' }).click(); await oc.getByText('quitar').waitFor();
+  console.log('oc adic:', f1(await oc.innerText()));
+  await d.locator('input[name=descripcion]').fill('QA4-REG ampliación baño ñ');
+  await d.getByRole('button', { name: /Guardar y cargar montos/ }).dblclick();
+  await sleep(3000);
+  console.log('ADIC envíos:', env.join(' ; '), '· url', p.url(), 'alertas', await alertas(p));
+  await cap(p, 'REG-ok-adicional-rubro', false);
+  // volver a la ficha
+  await p.goto(`${FRONT}/obras/${ID}`); await p.waitForLoadState('networkidle'); await sleep(400);
+  const fila = p.getByRole('row').filter({ hasText: '2-981-2026 A1' }); console.log('fila adic:', f1(await fila.first().innerText()));
+  // ---- documento: 2 archivos + 1 link, quitar uno
+  env.length = 0;
+  await p.getByRole('button', { name: '+ agregar certificado o documento' }).first().click(); await sleep(600);
+  d = p.getByRole('dialog').first();
+  await d.locator('select[name=tipo]').selectOption({ label: 'Certificado' });
+  await d.locator('input[name=fecha]').fill('2026-11-15');
+  await d.locator('input[name=nombre]').fill('QA4-REG Certificado Ñ 1');
+  await d.locator('input[type=file]').setInputFiles(`${DIR}/oferta año 2026.pdf`); await d.getByText('quitar').first().waitFor({ timeout: 15000 });
+  await d.getByRole('button', { name: 'Pegar link' }).click();
+  await d.getByLabel('Link').fill('https://drive.example/QA4-REG/certificado ñ 1 firmado.pdf');
+  await d.getByRole('button', { name: 'Agregar link' }).click(); await sleep(800);
+  await d.locator('input[type=file]').setInputFiles(`${DIR}/oc ñandú 01.pdf`); await sleep(2500);
+  console.log('doc antes de quitar:', f1(await d.innerText()));
+  await d.getByRole('button', { name: /quitar/i }).last().click(); await sleep(500);
+  console.log('doc tras quitar:', f1(await d.innerText()));
+  await d.getByRole('button', { name: 'Guardar' }).dblclick();
+  await sleep(3000);
+  console.log('DOC envíos:', env.join(' ; '), 'alertas', await alertas(p), 'dlg', await p.getByRole('dialog').count());
+  console.log('fila doc:', f1(await p.getByRole('row').filter({ hasText: 'QA4-REG Certificado Ñ 1' }).first().innerText().catch(() => 'NO')));
+  await cap(p, 'REG-ok-documento');
+  // ---- estado
+  env.length = 0;
+  await p.getByRole('button', { name: 'Cambiar estado / pasar a Terminada' }).click(); await sleep(500);
+  d = p.getByRole('dialog').first();
+  await d.getByRole('button', { name: 'Pasar a En ejecución' }).dblclick(); await sleep(3000);
+  console.log('ESTADO envíos:', env.join(' ; '), 'alertas', await alertas(p), 'estado:', f1((await texto(p)).slice(0, 200)));
+  console.log('DB adj doc:', db(`select a.tipo,a.nombre from adjuntos a where a.sujeto_type='obra_documento' and a.sujeto_id=(select max(id) from obra_documentos where obra_id=${ID})`).replace(/\n/g,' || '));
+});

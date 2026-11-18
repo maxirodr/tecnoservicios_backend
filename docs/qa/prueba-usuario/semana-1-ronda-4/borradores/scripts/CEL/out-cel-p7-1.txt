@@ -1,0 +1,252 @@
+
+## Obras (Diego) · /obras
+controles medidos=14 · chicos(<44)=3
+   - a "2-411-2026 · QA4-A Obra conflictos 1" 87×21
+   - a "2-414-2026 · QA4-A Obra conflictos 4" 87×21
+   - a "2-981-2026 · QA4-REG Obra completa Añelo" 87×21
+desborde página 412/412 ok=true · deslizables: div.pestanas-tabs.deslizable 413/380
+   fuera de pantalla: button "Terminadas (0)" R429 (dentro de deslizable)
+   tablas: table 380px thead=block/abs marco="tabla-marco obras-tabla" td.display=block
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+   tarjetas de Obras (Diego, pestaña inicial): 3
+     · [0] 380×148 enfocables=1 link="2-411-2026 · QA4-A Obra conflictos 1" /obras/1 · toques: abre, abre, abre, abre, abre, abre · "2-411-2026 · QA4-A Obra conflictos 1 REV01 QA4-A Obra conflictos 1 QA4"
+     · [1] 380×148 enfocables=1 link="2-414-2026 · QA4-A Obra conflictos 4" /obras/4 · toques: abre, abre, abre, abre, abre, abre · "2-414-2026 · QA4-A Obra conflictos 4 REV01 QA4-A Obra conflictos 4 QA4"
+     · [2] 380×165 enfocables=1 link="2-981-2026 · QA4-REG Obra completa Añelo" /obras/9 · toques: abre, abre, abre, NO (a.barra-inferior__item active), NO (a.barra-inferior__item), NO (a.barra-inferior__item) · "2-981-2026 · QA4-REG Obra completa Añelo REV01 + 1 adicional QA4-REG O"
+   toque en el nombre del trabajo de la 1.ª tarjeta → /obras/1 (esperado /obras/1)
+
+## Obras · Confirmadas · /obras?estado=confirmada
+controles medidos=18 · chicos(<44)=7
+   - a "2-4127-2026 · QA4-CEL Obra foco 2" 96×21
+   - a "2-1970-2026 · QA4-A Obra salida 1970" 96×21
+   - a "2-9102-2026 · QA4-A Obra salida 9102" 96×21
+   - a "2-9903-2026 · QA4-A Obra salida 9903" 96×21
+   - a "2-941-2026 · QA4-B Obra links ñ" 87×21
+   - a "2-413-2026 · QA4-A Obra conflictos 3" 87×21
+   - a "2-412-2026 · QA4-A Obra conflictos 2" 87×21
+desborde página 412/412 ok=true · deslizables: div.pestanas-tabs.deslizable 414/380
+   fuera de pantalla: button "Terminadas (0)" R430 (dentro de deslizable)
+   tablas: table 380px thead=block/abs marco="tabla-marco obras-tabla" td.display=block
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+   tarjetas de Obras (Diego, Confirmadas): 7
+     · [0] 380×148 enfocables=1 link="2-4127-2026 · QA4-CEL Obra foco 2" /obras/10 · toques: abre, abre, abre, abre, abre, abre · "2-4127-2026 · QA4-CEL Obra foco 2 REV01 QA4-CEL Obra foco 2 QA4-CEL Cl"
+     · [1] 380×148 enfocables=1 link="2-1970-2026 · QA4-A Obra salida 1970" /obras/8 · toques: abre, abre, abre, abre, abre, abre · "2-1970-2026 · QA4-A Obra salida 1970 REV01 QA4-A Obra salida 1970 QA4-"
+     · [2] 380×148 enfocables=1 link="2-9102-2026 · QA4-A Obra salida 9102" /obras/7 · toques: abre, abre, abre, NO (a.barra-inferior__item active), NO (a.barra-inferior__item), NO (a.barra-inferior__item) · "2-9102-2026 · QA4-A Obra salida 9102 REV01 QA4-A Obra salida 9102 QA4-"
+     · [3] 380×148 enfocables=1 link="2-9903-2026 · QA4-A Obra salida 9903" /obras/6 · toques: fuera-de-vista, fuera-de-vista, fuera-de-vista, fuera-de-vista, fuera-de-vista, fuera-de-vista · "2-9903-2026 · QA4-A Obra salida 9903 REV01 QA4-A Obra salida 9903 QA4-"
+     · [4] 380×165 enfocables=1 link="2-941-2026 · QA4-B Obra links ñ" /obras/5 · toques: fuera-de-vista, fuera-de-vista, fuera-de-vista, fuera-de-vista, fuera-de-vista, fuera-de-vista · "2-941-2026 · QA4-B Obra links ñ REV02 + 1 adicional QA4-B Obra links ñ"
+     · [5] 380×165 enfocables=1 link="2-413-2026 · QA4-A Obra conflictos 3" /obras/3 · toques: fuera-de-vista, fuera-de-vista, fuera-de-vista, fuera-de-vista, fuera-de-vista, fuera-de-vista · "2-413-2026 · QA4-A Obra conflictos 3 REV68 QA4-A Obra conflictos 3 QA4"
+     · [6] 380×165 enfocables=1 link="2-412-2026 · QA4-A Obra conflictos 2" /obras/2 · toques: fuera-de-vista, fuera-de-vista, fuera-de-vista, fuera-de-vista, fuera-de-vista, fuera-de-vista · "2-412-2026 · QA4-A Obra conflictos 2 REV01 + 1 adicional QA4-A Obra co"
+   toque en el nombre del trabajo de la 1.ª tarjeta → /obras/10 (esperado /obras/10)
+
+## Ficha obra QA4-CEL (10) · /obras/10
+controles medidos=34 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   tablas: table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block | table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block | table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block
+   fechas dd/mm/aaaa: 7 · partidas/cortadas: 0
+   contactos: "ana.foco.qa4cel.contacto.largo@cliente-ejemplo.com" 346×46 | "291 400-0041" 97×44 | "beto.foco@cliente-ejemplo.com" 226×44 | "291 400-0042" 97×44
+
+## Diálogo agregar documento · /obras/10
+controles medidos=42 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   tablas: table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block | table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block | table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block
+   fechas dd/mm/aaaa: 7 · partidas/cortadas: 0
+
+## Diálogo presupuesto adicional · /obras/10
+controles medidos=47 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   tablas: table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block | table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block | table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block
+   fechas dd/mm/aaaa: 7 · partidas/cortadas: 0
+
+## Diálogo cambiar estado · /obras/10
+controles medidos=39 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   tablas: table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block | table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block | table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block
+   fechas dd/mm/aaaa: 7 · partidas/cortadas: 0
+
+## Diálogo editar documento · /obras/10
+controles medidos=46 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   tablas: table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block | table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block | table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block
+   fechas dd/mm/aaaa: 7 · partidas/cortadas: 0
+
+## Ficha obra QA4-B (5, fechas lejanas; solo mirar) · /obras/5
+controles medidos=27 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   tablas: table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block | table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block | table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block
+   fechas dd/mm/aaaa: 5 · partidas/cortadas: 0
+   "Revisá la fecha": "01/01/1900 · Revisá la fecha" marca 114→233 (1 línea/s) contenedor 200px dentro=true color=rgb(122, 79, 0) | "30/06/2099 · Revisá la fecha" marca 33→346 (2 línea/s) contenedor 313px dentro=true color=rgb(122, 79, 0) | "15/03/1999 · Revisá la fecha" marca 100→204 (1 línea/s) contenedor 175px dentro=true color=rgb(122, 79, 0)
+
+## Presupuesto por rubro · /obras/10/presupuesto-por-rubro
+controles medidos=21 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   tablas: table 380px thead=block marco="tabla-marco tabla-marco--tarjetas" td.display=block
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+   volver: "‹ Volver a la obra" 104×44
+
+## Nueva obra · /obras/nueva
+controles medidos=31 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+
+## Editar obra · /obras/10/editar
+controles medidos=28 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   tablas: table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block
+   fechas dd/mm/aaaa: 13 · partidas/cortadas: 0
+
+## Proveedores · /proveedores
+controles medidos=14 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+
+## Diálogo nuevo proveedor · /proveedores
+controles medidos=21 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+
+## Ficha proveedor QA4-CEL (5) · /proveedores/5
+controles medidos=8 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+   ‹ Proveedores / contacto: "Proveedores" 0×0 | "‹ Proveedores" 97×44
+
+## Diálogo editar proveedor · /proveedores/5
+controles medidos=17 · chicos(<44)=2
+   - a "QA4-CEL Ferretería SE 2" 147×19
+   - a "QA4-CEL Ferretería P7 1" 148×19
+desborde página 412/412 ok=true · deslizables: —
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+
+## Buscador general · /buscar?q=QA4
+controles medidos=22 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+
+## Mi perfil · /perfil
+controles medidos=8 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+
+## Más · /mas
+controles medidos=9 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+
+## Usuarios · /usuarios
+controles medidos=25 · chicos(<44)=6
+   - button[button] "Carla" 34×44
+   - button[button] "Diego" 40×44
+   - button[button] "Dora" 33×44
+   - button[button] "Laura" 37×44
+   - button[button] "Pablo" 38×44
+   - button[button] "Sofía" 34×44
+desborde página 412/412 ok=true · deslizables: ul.deslizable 511/380
+   fuera de pantalla: a "Plazos de la prioridad" R527 (dentro de deslizable)
+   tablas: table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+
+## Diálogo agregar usuario · /usuarios
+controles medidos=25 · chicos(<44)=6
+   - button[button] "Carla" 34×44
+   - button[button] "Diego" 40×44
+   - button[button] "Dora" 33×44
+   - button[button] "Laura" 37×44
+   - button[button] "Pablo" 38×44
+   - button[button] "Sofía" 34×44
+desborde página 412/412 ok=true · deslizables: ul.deslizable 511/380
+   fuera de pantalla: a "Plazos de la prioridad" R527 (dentro de deslizable)
+   tablas: table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+
+## Ficha de usuario Laura · /usuarios
+controles medidos=25 · chicos(<44)=6
+   - button[button] "Carla" 34×44
+   - button[button] "Diego" 40×44
+   - button[button] "Dora" 33×44
+   - button[button] "Laura" 37×44
+   - button[button] "Pablo" 38×44
+   - button[button] "Sofía" 34×44
+desborde página 412/412 ok=true · deslizables: ul.deslizable 511/380
+   fuera de pantalla: a "Plazos de la prioridad" R527 (dentro de deslizable)
+   tablas: table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+
+## Sectores · /usuarios/sectores
+controles medidos=32 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: ul.deslizable 510/380
+   fuera de pantalla: a "Plazos de la prioridad" R526 (dentro de deslizable)
+   tablas: table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+
+## Diálogo agregar sector · /usuarios/sectores
+controles medidos=35 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: ul.deslizable 510/380
+   fuera de pantalla: a "Plazos de la prioridad" R526 (dentro de deslizable)
+   tablas: table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+
+## Tabla de permisos · /usuarios/permisos
+controles medidos=197 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: ul.deslizable 515/380 | div.tabla-marco.tabla-marco--deslizable.deslizable 1820/378
+   fuera de pantalla: a "Plazos de la prioridad" R531 (dentro de deslizable) | th "Equipos en reparación" R467 (dentro de deslizable) | th "Obras" R604 (dentro de deslizable) | th "Estado de obra" R741 (dentro de deslizable) | th "Presupuesto por rubro" R878 (dentro de deslizable) | th "Monto de obra y ganancia" R1015 (dentro de deslizable) | th "Gastos y facturas" R1152 (dentro de deslizable) | th "Rendición" R1289 (dentro de deslizable) | th "Control por cantidad" R1426 (dentro de deslizable) | th "Proveedores" R1563 (dentro de deslizable) | th "Usuarios y permisos" R1700 (dentro de deslizable) | th "Plazos de la prioridad" R1837 (dentro de deslizable) | td "Editar
+Ver
+Sin acceso" R467 (dentro de deslizable) | select "Editar
+Ver
+Sin acceso" R455 (dentro de deslizable) | td "Editar
+Ver
+Sin acceso
+tod" R604 (dentro de deslizable)
+   tablas: table 1820px thead=table-header-group marco="tabla-marco tabla-marco--deslizable deslizable" td.display=table-cell
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+
+## Plazos de la prioridad · /usuarios/plazos
+controles medidos=12 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: ul.deslizable 518/380
+   fuera de pantalla: a "Plazos de la prioridad" R534 (dentro de deslizable)
+   tablas: table 378px thead=table-header-group marco="tabla-marco" td.display=table-cell
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+
+consola/red diego: limpia
+
+## Presupuesto por rubro (Carla) · /obras/10/presupuesto-por-rubro
+controles medidos=20 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   tablas: table 380px thead=block marco="tabla-marco tabla-marco--tarjetas" td.display=block
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+   volver: "‹ Volver a la obra" 104×44
+
+## Proveedores (Carla) · /proveedores
+controles medidos=14 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+
+## Ficha proveedor (Carla) · /proveedores/7
+controles medidos=8 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+   ‹ Proveedores / contacto: "Proveedores" 0×0 | "‹ Proveedores" 97×44
+
+consola/red carla: limpia
+
+## Obras (Hernán) · /obras
+controles medidos=14 · chicos(<44)=3
+   - a "2-411-2026 · QA4-A Obra conflictos 1" 87×21
+   - a "2-414-2026 · QA4-A Obra conflictos 4" 87×21
+   - a "2-981-2026 · QA4-REG Obra completa Añelo" 87×21
+desborde página 412/412 ok=true · deslizables: div.pestanas-tabs.deslizable 413/380
+   fuera de pantalla: button "Terminadas (0)" R429 (dentro de deslizable)
+   tablas: table 380px thead=block/abs marco="tabla-marco obras-tabla" td.display=block
+   fechas dd/mm/aaaa: 0 · partidas/cortadas: 0
+   tarjetas de Obras (Hernán): 3
+     · [0] 380×148 enfocables=1 link="2-411-2026 · QA4-A Obra conflictos 1" /obras/1 · toques: abre, abre, abre, abre, abre, abre · "2-411-2026 · QA4-A Obra conflictos 1 REV01 QA4-A Obra conflictos 1 QA4"
+     · [1] 380×148 enfocables=1 link="2-414-2026 · QA4-A Obra conflictos 4" /obras/4 · toques: abre, abre, abre, abre, abre, abre · "2-414-2026 · QA4-A Obra conflictos 4 REV01 QA4-A Obra conflictos 4 QA4"
+     · [2] 380×165 enfocables=1 link="2-981-2026 · QA4-REG Obra completa Añelo" /obras/9 · toques: abre, abre, abre, NO (a.barra-inferior__item active), NO (a.barra-inferior__item), NO (a.barra-inferior__item) · "2-981-2026 · QA4-REG Obra completa Añelo REV01 + 1 adicional QA4-REG O"
+   toque en el nombre del trabajo de la 1.ª tarjeta → /obras/1 (esperado /obras/1)
+
+## Ficha (Hernán) · /obras/10
+controles medidos=34 · chicos(<44)=0
+desborde página 412/412 ok=true · deslizables: —
+   tablas: table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block | table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block | table 380px thead=block/abs marco="tabla-marco tabla-marco--tarjetas" td.display=block
+   fechas dd/mm/aaaa: 7 · partidas/cortadas: 0
+   contactos: "ana.foco.qa4cel.contacto.largo@cliente-ejemplo.com" 346×46 | "291 400-0041" 97×44 | "beto.foco@cliente-ejemplo.com" 226×44 | "291 400-0042" 97×44
+
+consola/red hernan: limpia

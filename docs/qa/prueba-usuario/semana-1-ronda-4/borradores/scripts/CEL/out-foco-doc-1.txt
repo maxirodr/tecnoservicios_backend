@@ -1,0 +1,28 @@
+# Hernán /obras/10 · documento 1 · red normal
+  grupo: Archivos o links *
+  [diálogo] Enter en "Pegar link": foco=INPUT "" (dentro del diálogo) · ocupado=— · vivos=[] · ok · enCampo=true · enDiálogo=true
+  [diálogo] escrito sin mover el foco → valor del campo Link = "https://drive.example/QA4-CEL/escrito-sin-tocar.pdf"
+  [diálogo] Tab hasta "Cancelar": true (INPUT "" → BUTTON "Agregar link" → BUTTON "Cancelar")
+  [diálogo] Enter en "Cancelar" del link: foco=BUTTON "Pegar link" (dentro del diálogo) · ocupado=— · vivos=[] · ok · enCampo=true · enDiálogo=true
+  [diálogo] Enter otra vez (debería ser "Pegar link"): foco=INPUT "" (dentro del diálogo) · ocupado=— · vivos=[] · ok · enCampo=true · enDiálogo=true
+  [diálogo] Tab hasta "Agregar link": true (INPUT "" → BUTTON "Agregar link")
+  [diálogo] Agregar link +0,25 s: foco=BUTTON "Agregar link Agregando el link…" [aria-busy] (dentro del diálogo) · ocupado="Agregar link Agregando el link…" disabled=false aria-disabled=true · vivos=[] · ok · enCampo=true · enDiálogo=true
+  [diálogo] Agregar link terminado: foco=A "doc teclado ñ 1.pdf (link, se abre en ot" (dentro del diálogo) · ocupado=— · vivos=["doc teclado ñ 1.pdf\n(link, se abre en otra pestaña)\nquitar"] · ok · enCampo=true · enDiálogo=true
+  [diálogo]   y un Tab: foco=BUTTON "Quitar doc teclado ñ 1.pdf" (dentro del diálogo) · ocupado=— · vivos=["doc teclado ñ 1.pdf\n(link, se abre en otra pestaña)\nquitar"] · ok · enCampo=true · enDiálogo=true
+  [diálogo] Tab hasta "quitar": true ()
+  [diálogo] Enter en "quitar": foco=BUTTON "Subir archivo" (dentro del diálogo) · ocupado=— · vivos=[] · ok · enCampo=true · enDiálogo=true
+  [diálogo] Enter en "Subir archivo" abre el selector: true
+  [diálogo] subiendo +0,2 s: foco=BUTTON "Subir archivo" (dentro del diálogo) · ocupado=— · vivos=["QA4-CEL plano ñandú.pdf\n· subiendo…\ncancelar"] · ok · enCampo=true · enDiálogo=true
+  [diálogo] archivo subido: foco=BUTTON "Subir archivo" (dentro del diálogo) · ocupado=— · vivos=["QA4-CEL plano ñandú.pdf\n· 1 KB\nquitar"] · ok · enCampo=true · enDiálogo=true
+  [diálogo] Tab hasta "quitar" del archivo: false
+  [diálogo] Enter en "quitar" del archivo: foco=BUTTON "Subir archivo" (dentro del diálogo) · ocupado=— · vivos=["QA4-CEL plano ñandú.pdf\n· 1 KB\nquitar"] · ok · enCampo=true · enDiálogo=true
+  [diálogo] link final agregado: foco=A "doc teclado ñ 1.pdf (link, se abre en ot" (dentro del diálogo) · ocupado=— · vivos=["QA4-CEL plano ñandú.pdf\n· 1 KB\nquitar\ndoc teclado ñ 1.pdf\n(l"] · ok · enCampo=true · enDiálogo=true
+  RESUMEN: pasos con foco fuera del campo/diálogo o en body = ninguno
+  antes: foco=BUTTON "Guardar" (dentro del diálogo) · ocupado=— · vivos=["QA4-CEL plano ñandú.pdf\n· 1 KB\nquitar\ndoc teclado ñ 1.pdf\n(l"]
+  durante (0,3 s): foco=BUTTON "Guardar Guardando…" [aria-busy] (dentro del diálogo) · ocupado="Guardar Guardando…" disabled=false aria-disabled=true · vivos=["QA4-CEL plano ñandú.pdf\n· 1 KB\nquitar\ndoc teclado ñ 1.pdf\n(l"]
+  nombre del botón ocupado (textContent)="GuardarGuardando…" · getByRole(button,{name:/Guardando/}).count=1
+  ariaSnapshot del botón: - button "Guardando…" [disabled]
+  durante (1,8 s): foco=BUTTON "+ agregar certificado o documento" · ocupado=— · vivos=["Agregamos el documento a la obra."]
+  después: foco=BUTTON "+ agregar certificado o documento" · ocupado=— · vivos=["Agregamos el documento a la obra."] · url=/obras/10
+  diálogo abierto al final: 0
+  consola/red: limpia

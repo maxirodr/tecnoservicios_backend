@@ -1,0 +1,50 @@
+﻿id	nombre	url
+1	qa3a-2-701-2026	https://drive.example/qa3a-2-701-2026
+2	qa3a-2-701-2026	https://drive.example/qa3a-2-701-2026
+3	qa3a-2-702-2026	https://drive.example/qa3a-2-702-2026
+7	qa3a-2-703-2026	https://drive.example/qa3a-2-703-2026
+8	qa3a-2-704-2026	https://drive.example/qa3a-2-704-2026
+9	qa3a-2-705-2026	https://drive.example/qa3a-2-705-2026
+10	oferta-ñandú	https://drive.example/oferta-%C3%B1and%C3%BA
+11	sin-s	http://drive.example/sin-s
+12	Plano nave año.pdf	https://drive.example/Obras%202026/Plano%20nave%20a%C3%B1o.pdf
+13	1AbCdEfGh	https://drive.google.com/file/d/1AbCdEfGh/view
+14	QA3-B link lento ñ	https://drive.example/QA3-B%20link%20lento%20%C3%B1
+15	QA3-B link lento ñ	https://drive.example/QA3-B%20link%20lento%20%C3%B1
+16	QA3-B link lento ñ	https://drive.example/QA3-B%20link%20lento%20%C3%B1
+17	QA3-B link lento ñ	https://drive.example/QA3-B%20link%20lento%20%C3%B1
+18	oferta tecnica ñandú.pdf	https://drive.example/QA3-C/oferta%20tecnica%20%C3%B1and%C3%BA.pdf
+19	oferta tecnica ñandú.pdf	https://drive.example/QA3-C/oferta%20tecnica%20%C3%B1and%C3%BA.pdf
+20	certificado 1.pdf	https://drive.example/QA3-C/certificado%201.pdf
+21	adicional 1.pdf	https://drive.example/QA3-C/adicional%201.pdf
+22	oferta repetida.pdf	https://drive.example/QA3-C/oferta%20repetida.pdf
+23	certificado 2.pdf	https://drive.example/QA3-C/certificado%202.pdf
+24	adicional 2.pdf	https://drive.example/QA3-C/adicional%202.pdf
+25	oferta repetida.pdf	https://drive.example/QA3-C/oferta%20repetida.pdf
+38	qa3a-tmp-2848	https://drive.example/qa3a-tmp-2848
+39	qa3a-tmp-5789	https://drive.example/qa3a-tmp-5789
+40	qa3a-tmp-1056	https://drive.example/qa3a-tmp-1056
+41	qa3a-tmp-9833	https://drive.example/qa3a-tmp-9833
+42	qa3a-tmp-5169	https://drive.example/qa3a-tmp-5169
+43	oferta año ñandú.pdf	https://drive.example/Obras%202026/oferta%20a%C3%B1o%20%C3%B1and%C3%BA.pdf
+44	oferta año ñandú.pdf	https://drive.example/Obras%202026/oferta%20a%C3%B1o%20%C3%B1and%C3%BA.pdf
+45	qa3a-alta-410	https://drive.example/qa3a-alta-410
+47	qa3a-tmp-7543	https://drive.example/qa3a-tmp-7543
+48	oferta año.pdf	https://drive.example/QA3-REG/oferta%20a%C3%B1o.pdf
+51	oc 001.pdf	https://drive.example/QA3-REG/oc%20001.pdf
+52	oferta-1.pdf	https://drive.example/QA3-CEL/oferta-1.pdf
+53	oferta-1.pdf	https://drive.example/QA3-CEL/oferta-1.pdf
+54	oferta-1.pdf	https://drive.example/QA3-CEL/oferta-1.pdf
+55	doc-foco-1.pdf	https://drive.example/QA3-CEL/doc-foco-1.pdf
+56	doc-teclado-3.pdf	https://drive.example/QA3-CEL/doc-teclado-3.pdf
+57	sin-guardar-1.pdf	https://drive.example/QA3-CEL/sin-guardar-1.pdf
+58	doc-teclado-4.pdf	https://drive.example/QA3-CEL/doc-teclado-4.pdf
+59	sin-guardar-2.pdf	https://drive.example/QA3-CEL/sin-guardar-2.pdf
+60	sin-guardar-3.pdf	https://drive.example/QA3-CEL/sin-guardar-3.pdf
+61	oferta-2.pdf	https://drive.example/QA3-CEL/oferta-2.pdf
+62	adicional.pdf	https://drive.example/QA3-REG/adicional.pdf
+63	oferta-3.pdf	https://drive.example/QA3-CEL/oferta-3.pdf
+65	cert año.pdf	https://drive.example/QA3-REG/cert%20a%C3%B1o.pdf
+66	oferta vencida.pdf	https://drive.example/QA3-REG/oferta%20vencida.pdf
+68	oferta vuelta.pdf	https://drive.example/QA3-REG/oferta%20vuelta.pdf
+69	oferta vuelta.pdf	https://drive.example/QA3-REG/oferta%20vuelta.pdf

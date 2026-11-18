@@ -1,0 +1,10 @@
+# p7 · Hernán · /obras/10 · documento con red lenta 5 s
+  [documento] tras tocar "Cancelar" guardando: aviso="Estamos guardando. Esperá unos segundos." rect=37,584 278×20 enPantalla=true recortado=false · botones: "Cancelar" 167,616 88×44 | "Guardar Guardando…" 268,616 107×44 · página 412/412 · diálogo scrollW 378/378
+  [documento] tras tocar afuera: aviso="Estamos guardando. Esperá unos segundos." rect=37,584 278×20 enPantalla=true recortado=false · botones: "Cancelar" 167,616 88×44 | "Guardar Guardando…" 268,616 107×44 · página 412/412 · diálogo scrollW 378/378
+  [documento] al terminar: diálogos=0 · avisos=["Agregamos el documento a la obra."]
+  consola/red: limpia
+# p7 · Carla · /proveedores · Nuevo proveedor con red lenta 5 s
+  [proveedor] tras tocar "Cancelar" guardando: aviso="Estamos guardando. Esperá unos segundos." rect=37,759 278×20 enPantalla=true recortado=false · botones: "Cancelar" 98,791 88×44 | "Guardar proveedor Guardando…" 198,791 177×44 · página 412/412 · diálogo scrollW 378/378
+  [proveedor] tras tocar afuera: aviso="Estamos guardando. Esperá unos segundos." rect=37,759 278×20 enPantalla=true recortado=false · botones: "Cancelar" 98,791 88×44 | "Guardar proveedor Guardando…" 198,791 177×44 · página 412/412 · diálogo scrollW 378/378
+  [proveedor] al terminar: diálogos=0 · avisos=["Dimos de alta a QA4-CEL Ferretería P7 1.",""]
+  consola/red: limpia

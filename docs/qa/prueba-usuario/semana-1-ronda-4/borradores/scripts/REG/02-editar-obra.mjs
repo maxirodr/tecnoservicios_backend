@@ -1,0 +1,36 @@
+import { abrir, ctx, vigilar, contarEnvios, FRONT, DIR, sleep, texto, alertas, cap, db } from './lib.mjs';
+const ID = process.argv[2] ?? '9';
+await abrir(async (b) => {
+  const c = await ctx(b, 'diego'); const p = await c.newPage(); vigilar(p, 'edit');
+  const env = contarEnvios(p);
+  await p.goto(`${FRONT}/obras/${ID}/editar`); await p.waitForLoadState('networkidle'); await sleep(500);
+  const of = p.getByRole('group', { name: /oferta técnica/ }).first();
+  console.log('oferta inicial:', (await of.innerText()).replace(/\n+/g, ' | '));
+  await of.getByRole('button', { name: /quitar/i }).first().click(); await sleep(400);
+  await of.getByRole('button', { name: 'Pegar link' }).click();
+  await of.getByLabel('Link').fill('https://drive.example/QA4-REG/oferta revisada ñ v2.pdf');
+  await of.getByRole('button', { name: 'Agregar link' }).click(); await of.getByText('quitar').waitFor();
+  console.log('oferta tras link:', (await of.innerText()).replace(/\n+/g, ' | '));
+  const oc = p.getByRole('group', { name: /OC \/ OT \/ contrato/ }).first();
+  console.log('oc inicial:', (await oc.innerText()).replace(/\n+/g, ' | '));
+  await oc.getByRole('button', { name: /quitar/i }).first().click(); await sleep(400);
+  await oc.locator('input[type=file]').setInputFiles(`${DIR}/oc ñandú 01.pdf`);
+  await oc.getByText('quitar').waitFor({ timeout: 15000 });
+  console.log('oc tras archivo:', (await oc.innerText()).replace(/\n+/g, ' | '));
+  await p.getByLabel('Fin previsto').fill('2027-04-30');
+  await p.getByLabel('Planta (si aplica)').fill('Planta Añelo Norte');
+  await p.getByLabel('Comprador · teléfono').fill('291 400-0000');
+  await cap(p, 'REG-ok-editar-obra-antes');
+  await p.getByRole('button', { name: 'Guardar cambios' }).dblclick();
+  await p.waitForURL(/\/obras\/\d+$/, { timeout: 20000 }).catch(() => console.log('no navegó'));
+  await sleep(1500);
+  console.log('envíos:', env.filter((e) => !e.includes('adjuntos')).join(' ; '));
+  console.log('url', p.url(), 'alertas', await alertas(p));
+  console.log((await texto(p)).slice(0, 700));
+  // historial
+  await p.goto(`${FRONT}/obras/${ID}/editar`); await p.waitForLoadState('networkidle'); await sleep(800);
+  const h = await p.locator('main').innerText();
+  console.log('HIST:', h.slice(h.indexOf('Historial')).slice(0, 1800));
+  await cap(p, 'REG-ok-editar-obra-historial');
+  console.log('DB adj presup/aprob:', db(`select a.contexto,a.tipo,a.nombre from adjuntos a where a.sujeto_type='presupuesto' and a.sujeto_id=(select id from presupuestos where obra_id=${ID} and es_principal=1)`).replace(/\n/g,' || '));
+});
