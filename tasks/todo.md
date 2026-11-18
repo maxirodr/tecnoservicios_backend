@@ -99,3 +99,10 @@ Reportes: `docs/qa/prueba-usuario/semana-1-ronda-2/` (✅32 ⚠️12 ❌1 de los
 5. UX tomada por los agentes, para que Juani la valide: "Estamos guardando. Esperá unos segundos." al intentar salir mientras guarda; Cancelar/Escape en diálogos con cambios pregunta; aviso no bloqueante "Revisá la fecha: es de {año}." (< 2000 o > año actual + 10); REV00 → "Las revisiones empiezan en REV01." (el relevamiento no usa REV00); "Guardar proveedor" no se deshabilita ante un repetido (el aviso pasa a rojo).
 6. Semana 2: Juani confirma las 27 dudas (DU-P01…P24, DU-Q01…Q03 al final de `docs/dudas.md`) → tandas de Pedidos y Avisos.
 7. Avisar al cliente ADR-014 y ADR-015 (+ enmienda); revisar y mandar las notas de la semana 1 (BORRADOR).
+
+### Integración después de la ronda 2 (2026-11-18)
+- [x] `staging` traído a `main` en los dos repos (staging ⊂ main; desde ahora `git push origin main:staging` es fast-forward).
+- [x] `IDENTIDAD_CODIGO_EN_PANTALLA` (estaba solo en staging) ahora en main **con traba**: con `APP_ENV=production` se ignora siempre (`CodigoEnPantallaTest`, 3 tests; el de producción falla sin la traba).
+- [x] `npm run e2e:integracion` 42/42 (3 corridas: 7,9 · 7,2 · 6,7 min). Los 6 fallos eran specs desactualizados por PU-112 (nombre del link = última parte del path), PU-006/114 (confirmación de cambios sin guardar al cancelar un diálogo sucio) y PU-124 (sacar sector con gente: aviso de entrada, sin botón). Sin bugs de producto.
+- Suites en main: backend 576 / 3228, pint y larastan 0; front unit 389, e2e mock 46, e2e real 42; typecheck/lint/format/build ok. Front main `1914ea8`.
+- [ ] Ronda 3 de QA: `tasks/prompt-prueba-usuario-semana-1-ronda-3.md` (52 PU, 8 roles; salida en `docs/qa/prueba-usuario/semana-1-ronda-3/`).
