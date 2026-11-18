@@ -8,6 +8,7 @@ use App\Modules\Identidad\Domain\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Mockery;
@@ -17,6 +18,7 @@ use Predis\Connection\ConnectionException;
 use Predis\Connection\NodeConnectionInterface;
 use Predis\Connection\Resource\Exception\StreamInitException;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Tests\TestCase;
 
 /** PU-138: sin base o sin Redis el sistema responde 503 "no está disponible", no 500. */
@@ -36,6 +38,7 @@ final class ServicioCaidoTest extends TestCase
             Route::get('predis', fn () => throw new StreamInitException('Connection refused [tcp://127.0.0.1:6379]'));
             Route::get('predis-comunicacion', fn () => throw new ConnectionException($this->createStub(NodeConnectionInterface::class), 'Connection reset by peer'));
             Route::get('sql-roto', fn () => throw new QueryException('mysql', 'select * from no_existe', [], new PDOException("SQLSTATE[42S02]: Base table or view not found: 1146 Table 'no_existe' doesn't exist")));
+            Route::middleware('auth:sanctum')->get('con-sesion', fn () => throw new RuntimeException('falla propia'));
             Route::get('duplicado', fn () => throw new QueryException('mysql', 'insert', [], new PDOException("SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'x'")));
         });
     }
@@ -120,6 +123,27 @@ final class ServicioCaidoTest extends TestCase
         $canal->shouldHaveReceived('error')->once()->withArgs(
             fn (string $mensaje, array $contexto): bool => $contexto['user_id'] === $user->getKey()
                 && $contexto['exception_class'] === QueryException::class,
+        );
+    }
+
+    public function test_el_log_de_un_error_con_sesion_lleva_el_usuario_sin_volver_a_consultarlo(): void
+    {
+        // PU-202: después de `auth:sanctum` el guard en uso es `sanctum`; el log toma el usuario ya cargado.
+        $user = User::factory()->create();
+        $canal = Mockery::spy(LoggerInterface::class);
+        Log::shouldReceive('channel')->with('errors')->andReturn($canal);
+        $consultas = 0;
+
+        $this->withSession([Auth::guard('web')->getName() => $user->getKey()]);
+        DB::listen(function () use (&$consultas): void {
+            $consultas++;
+        });
+
+        $this->getJson('/api/_caido/con-sesion')->assertStatus(500);
+
+        $this->assertSame(1, $consultas, 'Solo la del usuario al autenticar; el log no vuelve a consultar.');
+        $canal->shouldHaveReceived('error')->once()->withArgs(
+            fn (string $mensaje, array $contexto): bool => $contexto['user_id'] === $user->getKey(),
         );
     }
 }

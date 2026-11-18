@@ -41,15 +41,18 @@ final class ErrorLogContext
     /**
      * PU-202: el id del usuario **sin consultar la base**. `$request->user()` carga el usuario y, con
      * MySQL caído, el reporte del error volvía a esperar la conexión hasta el `max_execution_time`.
-     * Si el guard (`web`, de sesión) ya lo resolvió, se usa ese; si no, el id que guardó la sesión al ingresar.
+     * Si el guard en uso ya lo resolvió (`auth:sanctum` lo cambia a `sanctum`), se usa ese; si no, el id
+     * que guardó en la sesión el guard `web` al ingresar (Sanctum SPA).
      */
     private static function userId(): int|string|null
     {
-        $guard = Auth::guard();
-        if ($guard->hasUser()) {
-            $id = $guard->user()?->getAuthIdentifier();
-        } elseif ($guard->getSession()->isStarted()) {
-            $id = $guard->getSession()->get($guard->getName());
+        $enUso = Auth::guard();
+        $sesion = Auth::guard('web');
+
+        if ($enUso->hasUser()) {
+            $id = $enUso->user()?->getAuthIdentifier();
+        } elseif ($sesion->getSession()->isStarted()) {
+            $id = $sesion->getSession()->get($sesion->getName());
         } else {
             $id = null;
         }
