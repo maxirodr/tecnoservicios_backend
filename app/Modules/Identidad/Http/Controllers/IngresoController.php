@@ -23,7 +23,8 @@ final class IngresoController
 
     public function pedirCodigo(PedirCodigoRequest $request, PedirCodigoAction $pedir, EmitirCodigoDePruebaAction $dePrueba): JsonResponse
     {
-        if (config('identidad.codigo_en_pantalla') === true) {
+        // Traba: en producción se ignora aunque alguien deje la variable prendida (sería entrar sin el mail).
+        if (config('identidad.codigo_en_pantalla') === true && ! app()->isProduction()) {
             $codigo = $dePrueba->handle($request->string('email')->toString());
 
             return $this->noContent($codigo === null
