@@ -17,6 +17,10 @@
 > final, con su propuesta; decide Juani. Las que tocan la prueba del cliente de la semana 2: DU-P01, DU-P02,
 > DU-P05, DU-P08, DU-P19, DU-P21 y DU-Q01.
 >
+> **19-nov-2026: las 27 resueltas.** Juani aprobó todas las propuestas tal como están escritas (DU-Q01…DU-Q03 y
+> DU-P01…DU-P24, la parte (b) de DU-P10 incluida). Las técnicas (DU-P10 (a), DU-P16, DU-P17, DU-P20 y DU-P22) van
+> con su propuesta por decisión del Tech Lead. No queda ningún criterio ⛔ en el [backlog](backlog.md).
+>
 > Lo que el Documento del sistema firmado (v1.1, 4-nov-2026) no dice y hace falta para escribir
 > un criterio de aceptación verificable. Regla de oro: no se agrega, quita ni cambia funcionalidad;
 > cada propuesta es **la más cercana a cómo trabajan hoy**, con su fuente.
@@ -634,7 +638,8 @@ semana" → DU-P14 · texto del buscador → DU-P15 · conteo con alcance propio
 DU-P06 · bloque "varias obras" de W-25 → DU-P13 · seguidores después de crear → DU-P11 · comentario de
 un tercero → DU-P23 · la edición no avisa → DU-P24.
 
-#### DU-Q01 · Recordatorio de una entrega del lunes: ¿el domingo?
+#### DU-Q01 · Recordatorio de una entrega del lunes: ¿el domingo? — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-37 y cap. 4.2 ("un día antes de la fecha de entrega") · DU-04 (la prioridad va en días
   corridos, sin feriados) · DU-P21 (la hora: desde las 8:00) · criterio global n.º 3 ("ningún pedido
   se atrasa sin que el propietario se entere **antes**").
@@ -648,7 +653,8 @@ un tercero → DU-P23 · la edición no avisa → DU-P24.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 - **Afecta:** HU-048 criterio 6.
 
-#### DU-Q02 · Sacar un sector, o desactivar a su última persona activa, con pedidos "en el sector"
+#### DU-Q02 · Sacar un sector, o desactivar a su última persona activa, con pedidos "en el sector" — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** DU-A07 (con usuarios activos no se saca; con historia se archiva) · DU-A08 (desactivar a
   quien tiene gente u obras: se avisa y no se reasigna nada solo) · DU-16 (un pedido en el sector sin
   persona les llega a las personas activas del sector) · DU-P02 (no se puede **dejar** un pedido en
@@ -665,7 +671,8 @@ un tercero → DU-P23 · la edición no avisa → DU-P24.
 - **¿Cambia lo que ve el cliente?** Sí (un mensaje en W-40 y otro en W-39) → **decide Juani** (menor).
 - **Afecta:** HU-058 criterios 1 y 3.
 
-#### DU-Q03 · Equipos en reparación: ¿qué fecha es la columna "Fecha"?
+#### DU-Q03 · Equipos en reparación: ¿qué fecha es la columna "Fecha"? — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** W-49 (columna "Fecha" sin aclarar; "para qué sirve: … y **cuándo vuelve**"; en el ejemplo
   las notas dicen "Lista para retirar desde el 18-oct") · su solapa de hoy ("fechas") ·
   `modelo-datos.md` (`equipos_reparacion.fecha`, una sola) · DU-P18 (obligatorios, orden y borrado;
@@ -721,7 +728,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
 
 ### Semana 2 · Pedidos
 
-#### DU-P01 · Pedidos con la tabla restringida: qué alcanza con Ver, a quién se le puede asignar y qué pasa con lo propio
+#### DU-P01 · Pedidos con la tabla restringida: qué alcanza con Ver, a quién se le puede asignar y qué pasa con lo propio — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** `identidad.md` §6.1 ("No son filas: Inicio / Mis tareas / Pedidos que pedí / Tareas que sigo") y
   RN-IDE-39 (el propietario toma, bloquea y completa; quien lo pidió reabre: reglas fijas) vs. RN-IDE-35 ("Sin
   acceso oculta la función del menú y responde 403") · cap. 3 ("le pueden pedir a cualquiera").
@@ -738,7 +746,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   HU-030, HU-032 y HU-055.
 - **¿Cambia lo que ve el cliente?** Sí (solo si alguna vez ponen un sector en Sin acceso) → **decide Juani**.
 
-#### DU-P02 · Pedido en el sector: quién bloquea, completa, reasigna y comenta (complementa DU-16)
+#### DU-P02 · Pedido en el sector: quién bloquea, completa, reasigna y comenta (complementa DU-16) — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** DU-16 ("lo puede tomar cualquiera de ellas y, al tomarlo, pasa a ser su propietario") · W-31 ("lo
   toma el primero que pueda") · F-29, F-31, F-32 (acciones del propietario) · DU-22 (comentario "a la otra parte").
 - **Por qué importa:** DU-16 solo dice "tomar". Sin propietario no está claro quién puede completar directo (DU-15
@@ -750,7 +759,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   sector sin usuarios activos ("Pañol y Logística no tiene usuarios activos: elegí una persona.").
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 
-#### DU-P03 · ¿Se puede bloquear un pedido que todavía no se tomó?
+#### DU-P03 · ¿Se puede bloquear un pedido que todavía no se tomó? — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** cap. 4.2 ("Lo toma: pasa a En curso… Si algo lo traba, se marca Bloqueada") · cap. 7 estados ·
   análisis de la minuta §7 (hoy cambian el desplegable directo; "esperando presupuesto") · DU-15 (completar desde
   No iniciada) · W-30 ("Retomar → vuelve a En curso").
@@ -760,7 +770,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   pasa a En curso (W-30), sin importar desde dónde se bloqueó. Igual criterio que DU-15.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 
-#### DU-P04 · Al reasignar, ¿cambia el estado?
+#### DU-P04 · Al reasignar, ¿cambia el estado? — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** W-31 ("Hoy cambian el propietario a mano en la minuta"; "La ida y vuelta anterior no se pierde") ·
   F-32 · cap. 7 estados.
 - **Por qué importa:** un pedido En curso o Bloqueado que pasa a otra persona puede quedar "En curso" sin que el
@@ -771,7 +782,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   hilo de comentarios y viaja en el aviso.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 
-#### DU-P05 · Editar (W-32): el sector y la obra
+#### DU-P05 · Editar (W-32): el sector y la obra — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** W-32 (muestra "Sector Compras ▾" editable y no muestra la obra; "Se pueden cambiar fechas, texto,
   links y aclaraciones") · W-31 (reasignar a persona o sector, con aviso) · F-38 (persona y su sector).
 - **Por qué importa:** (a) cambiar el sector desde Editar dejaría al propietario en un sector que no es el suyo y
@@ -782,7 +794,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   historial ("Obra: Piso industrial nave 3 → Reparación de losa tanque B").
 - **¿Cambia lo que ve el cliente?** Sí (dos detalles de W-32) → **decide Juani**.
 
-#### DU-P06 · Pedido cargado por error
+#### DU-P06 · Pedido cargado por error — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-24…F-38 (no hablan de borrar) · criterio del documento de no borrar (W-39 usuario inactivo, W-34
   gasto anulado) · DU-A17 (obras y principales no se borran) · D-030 ("todo el recorrido queda registrado").
 - **Por qué importa:** en la semana de uso en paralelo con la minuta se van a cargar pedidos repetidos o de prueba.
@@ -791,7 +804,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   ni botón de borrar.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 
-#### DU-P07 · Prioridad corregida a mano: quién la cambia al editar y cómo vuelve a la calculada (complementa DU-A13)
+#### DU-P07 · Prioridad corregida a mano: quién la cambia al editar y cómo vuelve a la calculada (complementa DU-A13) — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-26 ("Quien carga el pedido la puede corregir a mano") · W-32 ("Prioridad (sola) Normal 11 días";
   "Si cambia la entrega se recalcula") · DU-A13 (la manual se mantiene y se muestra la calculada como sugerencia).
 - **Por qué importa:** cualquiera con Pedidos = Editar puede editar (F-33); si cualquiera puede pisar la prioridad
@@ -802,7 +816,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   recalcula si cambia la entrega **o la fecha de pedido**.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 
-#### DU-P08 · Fechas del pedido: ¿qué combinaciones se aceptan?
+#### DU-P08 · Fechas del pedido: ¿qué combinaciones se aceptan? — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-25 ("se completa sola con el día de carga y se puede corregir (para pedidos que llegaron antes por
   mail)").
 - **Por qué importa:** una fecha de pedido futura (error de tipeo) achica la anticipación y da una prioridad
@@ -814,7 +829,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   del período no puede ser anterior al inicio.
 - **¿Cambia lo que ve el cliente?** Sí (mensajes y qué se puede guardar) → **decide Juani**.
 
-#### DU-P09 · Propietario inactivo con pedidos abiertos
+#### DU-P09 · Propietario inactivo con pedidos abiertos — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** W-39 ("Un usuario inactivo no entra, pero sus pedidos e historial quedan") · RN-IDE-24 / DU-A08
   (obras y gente a cargo "quedan como están") · F-65 (reabrir avisa al propietario) · F-37 · criterio n.º 3.
 - **Por qué importa:** los pedidos de alguien que se fue no le avisan a nadie, y si se reabre uno que completó,
@@ -825,7 +841,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   a quién pasárselo en el mismo paso** (persona o sector) y el aviso va al nuevo propietario.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 
-#### DU-P10 · Carga inicial: pedidos sin solicitante y ajustes al modelo (complementa DU-20)
+#### DU-P10 · Carga inicial: pedidos sin solicitante y ajustes al modelo (complementa DU-20) — ✅ resuelta (19-nov-2026)
+- **Decisión (19-nov-2026):** (a) técnica, Tech Lead: va la propuesta; (b) Juani: va la propuesta.
 - **Fuente:** DU-20 ("solicitante vacío si no figura, fecha de pedido vacía si no figura", "marcados carga
   inicial") · análisis de la minuta §1 (solicitante en el 22 %) · F-65 (reabre "quien lo pidió") ·
   `modelo-datos.md` (`solicitante_id` y `fecha_pedido` obligatorios, sin columna de carga inicial).
@@ -837,7 +854,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   solicitante ni al superior.
 - **¿Cambia lo que ve el cliente?** (a) No → **decisión técnica** (DBA + Tech Lead). (b) Sí → **decide Juani**.
 
-#### DU-P11 · Seguidores después de crear el pedido
+#### DU-P11 · Seguidores después de crear el pedido — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-38 ("si hace falta otra persona, se la suma como seguidora") · W-08 ("Seguidores (opcional) +
   Agregar seguidor" al crear) · W-28 ("Botón 'Seguir' en cualquier pedido y 'dejar de seguir' desde acá") · W-09 y
   W-32 (no tienen "agregar seguidor") · tabla de avisos del cap. 7 (no hay aviso de "te sumaron").
@@ -847,7 +865,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   "Seguir" / "dejar de seguir". Al sumarse no se avisa (el pedido aparece en su "Tareas que sigo").
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 
-#### DU-P12 · Pasar la obra a Terminada (W-22): ¿quien cierra completa o reasigna pedidos ajenos? (complementa DU-12)
+#### DU-P12 · Pasar la obra a Terminada (W-22): ¿quien cierra completa o reasigna pedidos ajenos? (complementa DU-12) — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** W-22 ("completar · reasignar" en cada pedido abierto; "Cambian el estado el responsable de obra y
   administración") · F-31 (completa el propietario) · F-32 (reasignan el propietario y quien lo pidió) · DU-12
   (no frena).
@@ -858,7 +877,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   Terminada igual.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 
-#### DU-P13 · W-25: "Pedidos que sirven a varias obras" como sección aparte
+#### DU-P13 · W-25: "Pedidos que sirven a varias obras" como sección aparte — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-36 ("Los de varias obras de un mismo cliente van acá, nombrando las obras en la tarea") · W-25 (dos
   tablas: pedidos sin obra y "Pedidos que sirven a varias obras").
 - **Por qué importa:** para separarlos en otra tabla el sistema necesitaría una marca nueva ("sirve a varias
@@ -867,7 +887,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   buscador los encuentra por el nombre de la obra escrito en la tarea.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 
-#### DU-P14 · Vencido, "esta semana" y orden de las vistas de jefatura
+#### DU-P14 · Vencido, "esta semana" y orden de las vistas de jefatura — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-04 / W-01 ("vencidos marcados"; ejemplo con hoy 19-oct: "16-oct · vencido", "20-oct · mañana") ·
   F-12 / W-04 ("vencidas y las que vencen esta semana"; "semana del 19 al 25-oct") · W-26 ("con abiertas y vencidas
   arriba"; incluye "Hernán (yo)") · W-03 (semana de lunes a domingo).
@@ -880,7 +901,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   abiertas, y también personas sin tareas abiertas ("sin tareas abiertas"). Calendario "Mi gente": sin incluirme.
 - **¿Cambia lo que ve el cliente?** Sí (menor) → **decide Juani**.
 
-#### DU-P15 · Buscador: ¿en qué texto del pedido busca?
+#### DU-P15 · Buscador: ¿en qué texto del pedido busca? — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-03 ("pedidos por texto") · W-18 ("texto del pedido") · análisis de la minuta §4 (el proveedor se
   escribe en la columna "PROVEEDOR", que acá es "con quién").
 - **Por qué importa:** si solo busca en la tarea, "Corralón Centro" no encuentra el pedido que lo tiene en "con
@@ -890,7 +912,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   Pedidos); así se lee el ejemplo de W-18, donde "tanque" trae pedidos de "Reparación de losa tanque B".
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 
-#### DU-P16 · Exportar a Excel (W-24): qué columnas y cuánto
+#### DU-P16 · Exportar a Excel (W-24): qué columnas y cuánto — ✅ resuelta (19-nov-2026)
+- **Decisión (técnica, Tech Lead, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** W-24 ("Exportar lo filtrado a Excel") · F-35.
 - **Por qué importa:** el documento no dice columnas, formato ni si baja la página o todo.
 - **Propuesta:** `.xlsx` con **todo lo filtrado** (sin paginar), en el orden de la tabla y respetando el alcance;
@@ -898,7 +921,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   Completado; nombre `pedidos-AAAA-MM-DD.xlsx`. La librería la elige el Tech Lead.
 - **¿Cambia lo que ve el cliente?** No (detalle de un archivo aprobado) → **decisión técnica**.
 
-#### DU-P17 · "Pedidos abiertos" del listado de obras con alcance "propias"
+#### DU-P17 · "Pedidos abiertos" del listado de obras con alcance "propias" — ✅ resuelta (19-nov-2026)
+- **Decisión (técnica, Tech Lead, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** RN-OBR-03, RN-OBR-08 · contrato `Obras\Application\Ports\PedidosDeObra::contarAbiertosPorObra(ids)`
   (no recibe al usuario) · ADR-006.
 - **Por qué importa:** si un sector tiene Pedidos con alcance "propias", el número de la columna podría contar
@@ -908,7 +932,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   (con alcance "todas" no cambia nada).
 - **¿Cambia lo que ve el cliente?** No → **decisión técnica**.
 
-#### DU-P18 · Equipos en reparación: obligatorios, cambios, borrado y orden
+#### DU-P18 · Equipos en reparación: obligatorios, cambios, borrado y orden — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-67 · W-49 (columnas; "+ Agregar equipo"; "la marca una persona, no el sistema") · análisis de la
   minuta §9 (solapa de 26 filas con presupuesto en link) · ADR-014 (`equipo_presupuesto`, `equipo_inventario`).
 - **Por qué importa:** el documento no dice qué es obligatorio, si estado y aprobación siguen un orden, si se borra
@@ -920,7 +945,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   como archivo o link en el formulario (W-49 no tiene columna: se ve en el detalle de la fila).
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 
-#### DU-P20 · Selector de obras al cargar un pedido
+#### DU-P20 · Selector de obras al cargar un pedido — ✅ resuelta (19-nov-2026)
+- **Decisión (técnica, Tech Lead, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** W-08 ("Obra * ▾") · `GET /api/obras` exige Obras ≥ Ver (obras.md §7) · `ObrasConsulta` (sin
   búsqueda).
 - **Por qué importa:** quien puede pedir (Pedidos = Editar) tiene que poder elegir cualquier obra aunque su sector
@@ -933,7 +959,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
 
 ### Semana 2 · Avisos
 
-#### DU-P19 · ¿Qué avisos se pueden pedir por mail? (W-19 vs. F-37 y F-31)
+#### DU-P19 · ¿Qué avisos se pueden pedir por mail? (W-19 vs. F-37 y F-31) — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-09 ("la asignación… también por mail… cada persona puede activar más avisos por mail") · W-19
   (casillas: asignado ✓, tomado, completado, **vence mañana**; la tabla no tiene "reabren un pedido que completé")
   · F-37 ("Dentro del sistema, sin llenar el mail") · F-31 ("y, **dentro del sistema**, a su superior") · cap. 7
@@ -946,7 +973,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   el aviso al superior (F-31).
 - **¿Cambia lo que ve el cliente?** Sí (W-19) → **decide Juani**.
 
-#### DU-P21 · ¿A qué hora sale el recordatorio "vence mañana"?
+#### DU-P21 · ¿A qué hora sale el recordatorio "vence mañana"? — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-37 · W-02 y W-45 ("hoy 8:00 · recordatorio a 1 día de la entrega") · ADR-012 (comando cada hora).
 - **Por qué importa:** si corre a medianoche, el aviso aparece "a las 0:00"; si corre una sola vez, un pedido
   cargado más tarde con entrega mañana se queda sin recordatorio.
@@ -955,7 +983,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   se recuerda el domingo, días corridos): DU-Q01.
 - **¿Cambia lo que ve el cliente?** Sí (menor) → **decide Juani**.
 
-#### DU-P22 · Avisos viejos y avisos de pedidos que ya no se pueden ver
+#### DU-P22 · Avisos viejos y avisos de pedidos que ya no se pueden ver — ✅ resuelta (19-nov-2026)
+- **Decisión (técnica, Tech Lead, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-64 ("la lista completa, con los leídos y los no leídos") · ADR-006 (la tabla de permisos cambia
   cuando quieren).
 - **Por qué importa:** no está dicho si los avisos se purgan, ni qué pasa al abrir el aviso de un pedido al que la
@@ -964,7 +993,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   ya no se puede ver sigue en la lista y al abrirlo se ve "No tenés acceso a este pedido." (404 del pedido).
 - **¿Cambia lo que ve el cliente?** No → **decisión técnica**.
 
-#### DU-P23 · Comentario de un tercero y comentario en un pedido en el sector (complementa DU-22)
+#### DU-P23 · Comentario de un tercero y comentario en un pedido en el sector (complementa DU-22) — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** DU-22 ("comenta el solicitante → al propietario; comenta el propietario → al solicitante; y a los
   seguidores") · F-30 ("Quien pidió, propietario **y quien lo ve**") · DU-16.
 - **Por qué importa:** DU-22 no cubre a quien comenta sin ser ninguna de las dos partes (un seguidor, una
@@ -973,7 +1003,8 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
   el autor); si el pedido está en el sector, "el propietario" son **las personas activas del sector**.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 
-#### DU-P24 · Cambian la fecha de entrega (o la tarea) de mi pedido: ¿me avisa?
+#### DU-P24 · Cambian la fecha de entrega (o la tarea) de mi pedido: ¿me avisa? — ✅ resuelta (19-nov-2026)
+- **Decisión (Juani, 19-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** tabla de avisos del cap. 7 (no incluye la edición) · W-32 (historial con el valor anterior) · F-37 ·
   criterio de aceptación n.º 3.
 - **Por qué importa:** si quien pidió adelanta la entrega, el propietario puede no enterarse hasta el recordatorio.

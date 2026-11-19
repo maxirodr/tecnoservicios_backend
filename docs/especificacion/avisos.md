@@ -8,7 +8,7 @@
 > Los eventos que disparan avisos y sus datos están en [`pedidos.md`](pedidos.md) §8.
 > Lo "Propuesto" del documento está **aprobado**. Resueltas que se aplican: DU-13 (superior **del solicitante**),
 > DU-16 (pedido en el sector: aviso y recordatorio a todo el sector), DU-22 (comentario: a la otra parte y a los
-> seguidores, nunca al autor). Lo nuevo (abierto, `docs/dudas.md`): **DU-P19, DU-P21…DU-P24** de esta especificación,
+> seguidores, nunca al autor). Lo nuevo (`docs/dudas.md`, **resuelto el 19-nov-2026: va la propuesta**): **DU-P19, DU-P21…DU-P24** de esta especificación,
 > **DU-P09** (propietario inactivo, de `pedidos.md`) y **DU-Q01** (PO + QA: el recordatorio de un lunes sale el domingo).
 > Personas, obras y textos de este archivo son **ficticios** (los de las maquetas).
 
@@ -70,15 +70,15 @@ propietario se entere antes** (criterio de aceptación n.º 3). El sistema avisa
 
 | Tipo (`tipo`) | En W-19 / W-45 | Lo recibe | En el sistema | Por mail por defecto | ¿Se puede cambiar el mail? |
 |---|---|---|---|---|---|
-| `asignado` | "Me asignan un pedido" · Asignado | el propietario nuevo (o las personas del sector) | siempre | **sí** | no: siempre por mail (propuesta DU-P19) |
-| `reasignado` | "Me reasignan un pedido" · Reasignado | el propietario nuevo (o las personas del sector) | siempre | **sí** | no: siempre por mail (propuesta DU-P19) |
+| `asignado` | "Me asignan un pedido" · Asignado | el propietario nuevo (o las personas del sector) | siempre | **sí** | no: siempre por mail (resuelta DU-P19) |
+| `reasignado` | "Me reasignan un pedido" · Reasignado | el propietario nuevo (o las personas del sector) | siempre | **sí** | no: siempre por mail (resuelta DU-P19) |
 | `tomado` | "Toman (En curso) un pedido que pedí" · Tomado | solicitante, seguidores | siempre | no | sí |
 | `completado` | "Completan un pedido que pedí" · Completado | solicitante, seguidores | siempre | no | sí |
 | `completado_gente` | (no tiene fila en W-19) · Completado (de mi gente) | el superior del solicitante | siempre | no | **no**: solo en el sistema (F-31 "dentro del sistema, a su superior") |
 | `bloqueado` | "Bloquean un pedido que pedí, con el motivo" · Bloqueado | solicitante, seguidores | siempre | no | sí |
 | `comentado` | "Comentan en un pedido mío" · Comentario nuevo | la otra parte, seguidores | siempre | no | sí |
-| `reabierto` | "Reabren un pedido que completé" (fila nueva en W-19, propuesta DU-P19) · Reabierto | el propietario | siempre | no | sí |
-| `vence_manana` | "Vence mañana una tarea mía" · Vence mañana | el propietario (o las personas del sector) | siempre | no | **no**: solo en el sistema (F-37 "sin llenar el mail") — la casilla "vence mañana" de W-19 no va (propuesta DU-P19) |
+| `reabierto` | "Reabren un pedido que completé" (fila nueva en W-19, resuelta DU-P19) · Reabierto | el propietario | siempre | no | sí |
+| `vence_manana` | "Vence mañana una tarea mía" · Vence mañana | el propietario (o las personas del sector) | siempre | no | **no**: solo en el sistema (F-37 "sin llenar el mail") — la casilla "vence mañana" de W-19 no va (resuelta DU-P19) |
 
 ## 5. Reglas de negocio
 
@@ -88,7 +88,7 @@ propietario se entere antes** (criterio de aceptación n.º 3). El sistema avisa
 - **RN-AVI-02** **Nadie recibe aviso de lo que hizo él mismo** (el actor se saca siempre de los destinatarios). *(ADR-012, resuelta DU-22)*
 - **RN-AVI-03** **Solo reciben avisos los usuarios activos**: un inactivo no entra y no se le genera ni aviso ni mail. *(W-39, RN-IDE-10)*
 - **RN-AVI-04** **Un solo aviso por persona y por evento.** Si alguien tiene dos papeles en el mismo evento (por ejemplo, es seguidor y además el superior de quien pidió), recibe uno solo, el de su papel más directo: propietario > solicitante > superior > seguidor. *(técnica, para no duplicar)*
-- **RN-AVI-05** **Solo generan avisos los eventos de la tabla §6.** Retomar, editar (aunque cambie la entrega), seguir, sumar un seguidor y los equipos en reparación **no** avisan. *(cap. 7 "Avisos del pedido"; edición: propuesta DU-P24)*
+- **RN-AVI-05** **Solo generan avisos los eventos de la tabla §6.** Retomar, editar (aunque cambie la entrega), seguir, sumar un seguidor y los equipos en reparación **no** avisan. *(cap. 7 "Avisos del pedido"; edición: resuelta DU-P24)*
 - **RN-AVI-06** Cada aviso tiene un **`dedupe_key` único** (§6): un reintento del listener o un doble envío no lo duplica, y el mail sale **solo si el aviso se acaba de crear**. *(ADR-011, ADR-012)*
 - **RN-AVI-07** El texto se arma en el backend con las **palabras del cliente** y con la **foto del momento** (`datos`): si después cambia la tarea o la obra, el aviso viejo conserva lo que decía. Comentarios y motivos se recortan a 200 caracteres ("…"). *(W-02, W-45)*
 
@@ -97,21 +97,21 @@ propietario se entere antes** (criterio de aceptación n.º 3). El sistema avisa
 - **RN-AVI-08** **Asignación** (al crear): al **propietario**, en el sistema y por mail. Si quien carga es el propietario, no hay aviso. *(cap. 7 "Le asignan un pedido → al propietario, en el sistema y por mail", F-09)*
 - **RN-AVI-09** **Reasignación**: al **nuevo propietario**, en el sistema y por mail, con el comentario si lo hay. Si se deja **en el sector**, a **todas las personas activas del sector** (menos quien reasigna). El propietario anterior y quien lo pidió **no** reciben aviso (la tabla del cap. 7 no los nombra; lo ven en el pedido). *(cap. 7 "o se lo reasignan", F-32, resuelta DU-16)*
 - **RN-AVI-10** **Tomado** (pasa a En curso) y **bloqueado** (con el motivo): a **quien lo pidió** y a los **seguidores**. *(cap. 7 "El pedido pasa a En curso → al que lo pidió", "Bloquean… un pedido mío → al que lo pidió", F-07)*
-- **RN-AVI-11** **Comentario nuevo**: a **la otra parte** (comenta quien lo pidió → al propietario; comenta el propietario → a quien lo pidió) y a los **seguidores**, nunca al autor. Si comenta **un tercero** (un seguidor u otra persona con Pedidos = Editar), a quien lo pidió **y** al propietario, y a los seguidores. Si el pedido está **en el sector**, "el propietario" son las personas activas del sector. Solo en el sistema, salvo que la persona lo active por mail. *(resuelta DU-22; tercero y sector: propuesta DU-P23)*
+- **RN-AVI-11** **Comentario nuevo**: a **la otra parte** (comenta quien lo pidió → al propietario; comenta el propietario → a quien lo pidió) y a los **seguidores**, nunca al autor. Si comenta **un tercero** (un seguidor u otra persona con Pedidos = Editar), a quien lo pidió **y** al propietario, y a los seguidores. Si el pedido está **en el sector**, "el propietario" son las personas activas del sector. Solo en el sistema, salvo que la persona lo active por mail. *(resuelta DU-22; tercero y sector: resuelta DU-P23)*
 - **RN-AVI-12** **Completado**: a **quien lo pidió**, con el comentario de cierre y la marca "· comprobante" si tiene; a **su superior** (`Jerarquia::superior` **del solicitante**, tipo `completado_gente`, **solo dentro del sistema**); y a los **seguidores**. Si quien lo pidió no tiene jefatura (Dirección) o su superior está inactivo, no hay aviso extra; si el superior es quien completó, tampoco (RN-AVI-02). *(cap. 7 "Al que lo pidió y a su superior", F-31, W-02, resuelta DU-13)*
-- **RN-AVI-13** **Reabierto**: al **propietario**, con el comentario ("falta algo"). Si el propietario está inactivo, quien reabre elige en el mismo paso a quién pasárselo y el aviso va a ese nuevo propietario (o a las personas activas del sector). *(cap. 7 "reabren un pedido que completé → al propietario", F-65; inactivo: propuesta DU-P09)*
+- **RN-AVI-13** **Reabierto**: al **propietario**, con el comentario ("falta algo"). Si el propietario está inactivo, quien reabre elige en el mismo paso a quién pasárselo y el aviso va a ese nuevo propietario (o a las personas activas del sector). *(cap. 7 "reabren un pedido que completé → al propietario", F-65; inactivo: resuelta DU-P09)*
 - **RN-AVI-14** **Seguidores**: reciben, **dentro del sistema**, los mismos avisos que quien lo pidió: **tomado, bloqueado, comentario nuevo y completado**. No reciben asignación, reasignación, reapertura ni recordatorio. *(F-07, W-28 "Quien sigue un pedido recibe dentro del sistema los mismos avisos que quien lo pidió")*
 - **RN-AVI-15** Pedido de **carga inicial sin solicitante**: los avisos "a quien lo pidió" y "a su superior" no tienen destinatario; los de los seguidores y el propietario salen igual. *(resuelta DU-20, `pedidos.md` RN-PED-61)*
 
 ### Recordatorio "vence mañana" (F-37)
 
 - **RN-AVI-16** Un comando programado (`avisos:recordatorios`, **cada hora** con `schedule:work` bajo Supervisord, nunca crontab) busca los pedidos **abiertos** (No iniciada, En curso, Bloqueada) con **fecha de entrega = mañana** (días **corridos**, zona Argentina) por `Pedidos\Contracts\PedidosParaRecordar` y crea el aviso **`vence_manana`** para el **propietario** o, si está en el sector, para **todas las personas activas del sector**. **Solo dentro del sistema**, nunca por mail. *(F-37, cap. 4.2 "sin llenar el mail", ADR-012, resueltas DU-04 y DU-16)*
-- **RN-AVI-17** Sale **a partir de las 8:00** (hora de Argentina; W-02 "hoy 8:00 · recordatorio"): la primera corrida desde las 8:00 genera los del día y las siguientes de cada hora levantan lo que se cargó después (un pedido cargado a las 15:00 con entrega mañana recibe el recordatorio en la corrida de las 16:00). *(W-02; hora: propuesta DU-P21; días corridos también para el recordatorio — un pedido para el lunes se recuerda el domingo: propuesta DU-Q01)*
+- **RN-AVI-17** Sale **a partir de las 8:00** (hora de Argentina; W-02 "hoy 8:00 · recordatorio"): la primera corrida desde las 8:00 genera los del día y las siguientes de cada hora levantan lo que se cargó después (un pedido cargado a las 15:00 con entrega mañana recibe el recordatorio en la corrida de las 16:00). *(W-02; hora: resuelta DU-P21; días corridos también para el recordatorio — un pedido para el lunes se recuerda el domingo: resuelta DU-Q01)*
 - **RN-AVI-18** **No se repite**: `dedupe_key = recordatorio:{pedido}:{fecha_entrega}:{persona}`. Si cambian la entrega a otro día, puede salir otro recordatorio para la fecha nueva. No sale para pedidos que vencen **hoy** o ya vencidos (eso lo marcan las listas en rojo), ni para completados. No va al solicitante ni a los seguidores. *(F-37, ADR-012 — la clave suma la persona porque un pedido en el sector tiene varios destinatarios)*
 
 ### Por mail (F-09, F-10)
 
-- **RN-AVI-19** **Por defecto, por mail llega solo la asignación y la reasignación**; cada persona puede activar más en Mi perfil (§4.3). **Nunca** por mail: "vence mañana" (F-37) y "completado de mi gente" (F-31). *(F-09, W-19 "Por mail llega solo la asignación", D-031; qué se puede activar: propuesta DU-P19)*
+- **RN-AVI-19** **Por defecto, por mail llega solo la asignación y la reasignación**; cada persona puede activar más en Mi perfil (§4.3). **Nunca** por mail: "vence mañana" (F-37) y "completado de mi gente" (F-31). *(F-09, W-19 "Por mail llega solo la asignación", D-031; qué se puede activar: resuelta DU-P19)*
 - **RN-AVI-20** El mail sale **siempre por la cola `mail`** (`AvisoPedidoMail extends App\Shared\Mail\QueuedMailable`; worker a **1 mail por segundo**, Resend en producción), **desde noreply** con reply-to configurable (`MAIL_REPLY_TO_*`), **uno por persona**. Al enviarse se vuelve a mirar que la persona siga activa y con el mail activado para ese tipo; si no, no se manda. Nunca `Mail::send()` crudo. *(ADR-012, CLAUDE.md regla 8)*
 - **RN-AVI-21** El mail es corto, en las palabras del cliente: asunto (§6), quién y qué, tarea, obra (o "Servicios generales"), entrega, prioridad, el comentario o motivo si lo hay, el botón **"Ver el pedido"** (`FRONTEND_URL/pedidos/{id}`; pide ingresar si no hay sesión) y al pie "Este aviso es automático. Respondé desde el sistema, en el pedido. Podés elegir qué avisos te llegan por mail en Mi perfil." Sin importes ni adjuntos. *(F-09, D-031)*
 
@@ -121,11 +121,11 @@ propietario se entere antes** (criterio de aceptación n.º 3). El sistema avisa
 - **RN-AVI-23** Tocando la campana se abre el panel **"Avisos"** con los **5 más recientes** (los no leídos con ●), cada uno con su texto y "hace 10 min" / "hoy 8:00" / "viernes 11:05"; abajo **"Marcar todo como leído"** y **"Ver todos los avisos"** (W-45), y la nota "Por mail llega solo la asignación; el resto, acá adentro. Cada uno puede sumar más avisos por mail en su perfil (W-19)." **Tocando un aviso** se marca leído y se abre el pedido (W-09). *(W-02)*
 - **RN-AVI-24** **Todos los avisos** (W-45): lista completa, **la más nueva arriba**, paginada de a 25, con **Todos · No leídos (n) · Leídos** y **Tipo: todos ▾**; columnas **● · Aviso · Obra · Cuándo** ("Piso nave 3" o "Servicios generales"; "19-oct 9:20"); "Marcar todo como leído". Tocando uno se marca leído y se abre el pedido. *(F-64, W-45)*
 - **RN-AVI-25** **Celular** (W-41): "Avisos" en la barra de abajo con el contador; la pantalla es la misma lista (no leídos con ●, "hace 10 min"), en tarjetas. *(F-13, W-41, RN-IDE-15)*
-- **RN-AVI-26** Cada uno ve y marca **solo sus avisos**: un id ajeno responde **404**. Marcar leído es idempotente (marcar uno ya leído deja la fecha original). Los avisos **no se borran** en la Etapa 1. Si el pedido de un aviso ya no se puede ver (cambió la tabla de permisos), el aviso sigue en la lista y al abrirlo se ve "No tenés acceso a este pedido." (404 del pedido). *(ADR-006; sin purga y pedido no visible: propuesta DU-P22)*
+- **RN-AVI-26** Cada uno ve y marca **solo sus avisos**: un id ajeno responde **404**. Marcar leído es idempotente (marcar uno ya leído deja la fecha original). Los avisos **no se borran** en la Etapa 1. Si el pedido de un aviso ya no se puede ver (cambió la tabla de permisos), el aviso sigue en la lista y al abrirlo se ve "No tenés acceso a este pedido." (404 del pedido). *(ADR-006; sin purga y pedido no visible: resuelta DU-P22)*
 
 ### Mi perfil · Mis avisos (F-10; W-19)
 
-- **RN-AVI-27** En **Mi perfil** se enciende la sección **"Mis avisos"** (RN-IDE-18): tabla **Aviso · En el sistema · Además por mail**, una fila por tipo de §4.3 que tiene fila en W-19 (más "Reabren un pedido que completé", propuesta DU-P19), "siempre" en la columna del sistema y una casilla en la de mail. Asignación y reasignación se ven **tildadas y sin poder destildarse**; el resto se tilda o destilda y se guarda al tocar la casilla. El cambio vale **desde el próximo aviso**. *(F-10, W-19, RN-IDE-18)*
+- **RN-AVI-27** En **Mi perfil** se enciende la sección **"Mis avisos"** (RN-IDE-18): tabla **Aviso · En el sistema · Además por mail**, una fila por tipo de §4.3 que tiene fila en W-19 (más "Reabren un pedido que completé", resuelta DU-P19), "siempre" en la columna del sistema y una casilla en la de mail. Asignación y reasignación se ven **tildadas y sin poder destildarse**; el resto se tilda o destilda y se guarda al tocar la casilla. El cambio vale **desde el próximo aviso**. *(F-10, W-19, RN-IDE-18)*
 
 ### Contratos que expone Avisos
 
@@ -183,16 +183,16 @@ Los avisos **no son una fila de la matriz** (`identidad.md` §6.1: "Avisos" es d
 | 9 | Completa un pedido que pidió Diego (Dirección, sin jefe) | Solo Diego; no hay aviso a un superior. |
 | 10 | Laura comenta en un pedido de Carla seguido por Sofía | `comentado` a Carla y a Sofía; no a Laura. |
 | 11 | Carla responde | `comentado` a Laura y a Sofía; no a Carla. |
-| 12 | Sofía (seguidora) comenta | A Laura y a Carla (propuesta DU-P23); no a Sofía. |
-| 13 | Comentan en un pedido que está en el sector Compras | "El propietario" son las personas activas de Compras (propuesta DU-P23). |
+| 12 | Sofía (seguidora) comenta | A Laura y a Carla (resuelta DU-P23); no a Sofía. |
+| 13 | Comentan en un pedido que está en el sector Compras | "El propietario" son las personas activas de Compras (resuelta DU-P23). |
 | 13b | Pedido abierto de Carla con entrega el lunes | El recordatorio sale el **domingo** desde las 8:00 (días corridos, DU-Q01); el lunes el pedido aparece en Mis tareas como "hoy". |
 | 14 | Lunes 9:00: pedido abierto de Carla con entrega el martes | A partir de las 8:00 del lunes, `vence_manana` a Carla, solo en el sistema. La corrida de las 10:00 no lo repite. |
-| 15 | El mismo pedido: el lunes a las 11 le cambian la entrega al miércoles | El martes a las 8:00 sale otro recordatorio (clave con la fecha nueva). Carla no recibe aviso por la edición (propuesta DU-P24). |
+| 15 | El mismo pedido: el lunes a las 11 le cambian la entrega al miércoles | El martes a las 8:00 sale otro recordatorio (clave con la fecha nueva). Carla no recibe aviso por la edición (resuelta DU-P24). |
 | 16 | Pedido con entrega hoy, o completado, o con entrega mañana pero ya Completada | No hay recordatorio. |
 | 17 | Pedido en el sector con entrega mañana | Recordatorio a cada persona activa del sector. |
 | 18 | Pedido Bloqueado con entrega mañana | Recordatorio al propietario (sigue abierto). |
 | 19 | Laura activó "Completan un pedido que pedí" por mail | Al completarse le llega también el mail; a Hernán (su superior) nunca por mail. |
-| 20 | Laura intenta destildar "Me asignan un pedido" | 422 "La asignación siempre llega por mail." (propuesta DU-P19). |
+| 20 | Laura intenta destildar "Me asignan un pedido" | 422 "La asignación siempre llega por mail." (resuelta DU-P19). |
 | 21 | Laura intenta activar "Vence mañana" por mail | 422 "Este aviso llega solo dentro del sistema." |
 | 22 | A Carla le asignan un pedido y antes de que salga el mail la desactivan | El aviso queda; el mail no se manda (RN-AVI-20). |
 | 23 | Carla pide `POST /api/avisos/{id}/leido` de un aviso de Laura | 404. |

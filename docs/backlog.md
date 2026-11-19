@@ -22,7 +22,7 @@
 > **16-nov-2026 (semana 2 bajada a historias):** semana 1 cerrada y en `main` (QC apta, B-01…B-05
 > arreglados con su test). La §6 detalla la semana 2 en **35 historias (HU-026…HU-060)**; 22 tienen
 > un criterio ⛔ que depende de dudas nuevas abiertas (**DU-Q01…DU-Q03** de PO + QA y **DU-P01…DU-P24** del
-> Analista; decide Juani). Las semanas 3 y 4 siguen como épicas (§7).
+> Analista; decide Juani). **19-nov-2026: Juani las resolvió todas (va la propuesta); no queda ningún ⛔.** Las semanas 3 y 4 siguen como épicas (§7).
 >
 > Trazabilidad completa F-XX ↔ W-XX ↔ tests: [`qa/matriz-trazabilidad.md`](qa/matriz-trazabilidad.md).
 > Estrategia de pruebas: [`qa/plan-de-pruebas.md`](qa/plan-de-pruebas.md).
@@ -770,13 +770,13 @@ resolución del 12-nov; se suma la HU-025, transversal).
 > y `especificacion/avisos.md`; acá los criterios citan "spec pedidos.md" o "spec avisos.md" sin
 > número. Si la spec y un criterio no coinciden, se corrige el criterio antes de construir.
 
-**35 historias** (HU-026…HU-060) en 12 épicas. Resumen de estado DoR: **35 ✅ listas**; **22 de
-ellas con uno o más criterios puntuales ⛔** hasta que Juani resuelva las dudas nuevas: DU-Q01…DU-Q03
+**35 historias** (HU-026…HU-060) en 12 épicas. Resumen de estado DoR: **35 ✅ listas, sin criterios ⛔**: las
+dudas que trababan criterios de 22 de ellas se resolvieron el 19-nov-2026 (va la propuesta): DU-Q01…DU-Q03
 (PO + QA) y DU-P01…DU-P24 (Analista, abiertas en paralelo al escribir `especificacion/pedidos.md` y
 `avisos.md`), todas al final de [`dudas.md`](dudas.md). Cada historia se construye con la propuesta
 de su duda; si la decisión es otra, cambia **solo** el criterio marcado, no la historia.
 
-| Épica | Historias | ✅ | Con criterio ⛔ (duda abierta) |
+| Épica | Historias | ✅ | Criterio que dependía de una duda (resuelta el 19-nov) |
 |---|---|---|---|
 | H · Crear y seguir pedidos | HU-026…HU-031 | 6 | HU-026 (P01, P08), HU-027 (P07), HU-029 (P01, P23), HU-030 (P11), HU-031 (P05, P06, P08) |
 | I · Estados y cierre | HU-032…HU-037 | 6 | HU-032 (P01), HU-033 (P03), HU-034 (P02), HU-035 (P04), HU-036 (P09) |
@@ -855,7 +855,7 @@ que salir no salgan.
   3. **Dado** el campo "Fecha de pedido", **cuando** abre el formulario, **entonces** viene con
      el día de hoy y la puede corregir hacia atrás (un pedido que llegó antes por mail). Una fecha
      de pedido futura se rechaza; una entrega anterior a la fecha de pedido queda **Urgente**
-     (identidad.md RN-IDE-41). Tope de la fecha de pedido: **⛔ DU-P08**.
+     (identidad.md RN-IDE-41). Tope de la fecha de pedido: **DU-P08 ✅**.
   4. **Dado** "Con quién / para quién", **cuando** escribe cualquier texto (un proveedor, el
      cliente, un área, la propia empresa), **entonces** se guarda tal cual: es texto libre, como
      la columna PROVEEDOR de la minuta, y **no** se elige de la base de proveedores.
@@ -865,7 +865,7 @@ que salir no salgan.
      con el suyo (se puede cambiar el sector antes de elegir a la persona: el desplegable de
      personas se filtra por sector). No se puede cargar un segundo propietario: otra persona va
      como seguidora (HU-030). Una persona de un sector con Pedidos en Sin acceso igual ve y
-     resuelve lo suyo: **⛔ DU-P01**.
+     resuelve lo suyo: **DU-P01 ✅**.
   7. **Dado** que cualquiera le puede pedir a cualquiera, **cuando** una persona de Calidad le pide
      algo a Compras, o Administración le pide a Ingeniería (la planilla de cierre), **entonces**
      se crea igual (los dos sentidos, cap. 4.2).
@@ -881,7 +881,7 @@ que salir no salgan.
 - **Reglas:** spec pedidos.md (alta, obligatorios, fechas).
 - **Permisos:** `pedidos:editar` (inicial: todos los sectores, E·T).
 - **Dependencias:** HU-059 (contratos), HU-005 (usuarios), HU-012 (obras), HU-027 (prioridad).
-- **DoR:** ✅ listo, salvo los criterios 3 y 6 (⛔ DU-P08, DU-P01: se construyen con la propuesta).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 #### HU-027 · Prioridad automática, corregible a mano
 - **F-26 · F-68 (parte semana 2) · W-08 · W-32 · W-50**
@@ -901,14 +901,14 @@ que salir no salgan.
   5. **Dado** un pedido cargado, **cuando** se edita la fecha de entrega (HU-031), **entonces** la
      prioridad se recalcula con los plazos **vigentes** en ese momento; si había sido corregida a
      mano, se mantiene la manual y el formulario muestra la calculada como sugerencia (resuelta
-     DU-A13; RN-IDE-43). Quién la corrige al editar y cómo vuelve a la calculada: **⛔ DU-P07**
+     DU-A13; RN-IDE-43). Quién la corrige al editar y cómo vuelve a la calculada: **DU-P07 ✅**
      (propuesta: solo quien lo pidió, con "Usar la calculada").
   6. **Dado** el cálculo, **entonces** el backend lo hace con `PlazosPrioridad::calcular` (no confía
      en la prioridad calculada que mande el front) y guarda la prioridad en el pedido.
 - **Reglas:** identidad.md RN-IDE-41…44 · spec pedidos.md.
 - **Permisos:** los de crear y editar el pedido.
 - **Dependencias:** HU-011 (W-50), HU-026.
-- **DoR:** ✅ listo, salvo el criterio 5 en lo de DU-P07 (⛔).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 #### HU-028 · Archivos o links del pedido
 - **F-27 · ADR-014 (contexto `pedido`) · W-08 · W-43**
@@ -959,10 +959,10 @@ que salir no salgan.
      no encontrado" (sobre JSON, sin confirmar que existe).
 - **Reglas:** spec pedidos.md (detalle, comentarios).
 - **Permisos:** ver: `pedidos:ver` con su alcance; comentar: quien lo pidió, el propietario y
-  cualquiera que lo vea con `pedidos:editar` (spec pedidos.md). Lo propio con Sin acceso: **⛔ DU-P01**;
-  comentario de un tercero o en un pedido en el sector: **⛔ DU-P23**.
+  cualquiera que lo vea con `pedidos:editar` (spec pedidos.md). Lo propio con Sin acceso: **DU-P01 ✅**;
+  comentario de un tercero o en un pedido en el sector: **DU-P23 ✅**.
 - **Dependencias:** HU-026.
-- **DoR:** ✅ listo, salvo lo de DU-P01 y DU-P23 (⛔).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 #### HU-030 · Seguir un pedido y Tareas que sigo
 - **F-07 · F-38 (seguidores) · W-08 · W-09 · W-28**
@@ -974,7 +974,7 @@ que salir no salgan.
      entrega, estado y "dejar de seguir".
   2. **Dado** el alta del pedido, **cuando** quien carga agrega seguidores, **entonces** quedan
      como seguidores (F-38: "si hace falta otra persona, se la suma como seguidora"). Después de
-     creado, cada uno se suma o se saca a sí mismo: **⛔ DU-P11**. Sumarse no avisa a nadie.
+     creado, cada uno se suma o se saca a sí mismo: **DU-P11 ✅**. Sumarse no avisa a nadie.
   3. **Dado** un seguidor, **cuando** toman, bloquean, comentan o completan el pedido, **entonces**
      recibe **dentro del sistema** el mismo aviso que el solicitante, y **nunca por mail** por ser
      seguidor (HU-046).
@@ -986,7 +986,7 @@ que salir no salgan.
 - **Reglas:** spec pedidos.md (seguidores) · spec avisos.md (destinatarios).
 - **Permisos:** `pedidos:editar` sobre un pedido que puede ver (spec pedidos.md; F-07 "cualquiera").
 - **Dependencias:** HU-026, HU-046.
-- **DoR:** ✅ listo, salvo el criterio 2 en lo de DU-P11 (⛔).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 #### HU-031 · Editar un pedido con registro del cambio
 - **F-33 · F-14 (pedidos) · W-32**
@@ -999,25 +999,25 @@ que salir no salgan.
   2. **Dado** que cambia uno o más datos y guarda, **entonces** abajo, en "Historial de cambios",
      aparece una línea por dato con quién, cuándo, valor anterior y valor nuevo ("Fecha de
      entrega: 21-10 → 23-10 (la prioridad sigue Normal: 9 → 11 días)").
-  3. **Dado** obra y sector, **entonces** se cambian según **⛔ DU-P05** (propuesta: la obra se
+  3. **Dado** obra y sector, **entonces** se cambian según **DU-P05 ✅** (propuesta: la obra se
      puede corregir en Editar, con registro; el sector se ve sin desplegable y se cambia con
      Reasignar, HU-035). El propietario y el estado nunca se cambian desde Editar (tienen sus botones).
   4. **Dado** que guarda sin cambiar nada, **entonces** no se agrega ninguna línea.
   5. **Dado** que cambia la entrega, **entonces** la prioridad se recalcula según HU-027 c5 y, si el
      pedido sigue abierto, el recordatorio "vence mañana" se calcula con la fecha nueva (HU-048).
-  6. **Dado** las validaciones del alta (HU-026, incluida **⛔ DU-P08**), **entonces** aplican igual.
+  6. **Dado** las validaciones del alta (HU-026, incluida **DU-P08 ✅**), **entonces** aplican igual.
   7. **Dado** `pedidos:ver` (o sin acceso), **cuando** edita por API, **entonces** 403.
   8. **Dado** un pedido **Completada**, **cuando** se edita, **entonces** se permite igual (corregir
      un link o una aclaración) y queda en el historial.
   9. **Dado** un pedido cargado por error (repetido, o a la persona equivocada), **entonces** se
-     sigue **⛔ DU-P06** (propuesta: no se borra; se completa con el comentario "Cargado por error",
+     sigue **DU-P06 ✅** (propuesta: no se borra; se completa con el comentario "Cargado por error",
      como el criterio de no borrar de W-34 y W-39).
   10. **Dado** que se edita la entrega o la tarea, **entonces** no se avisa a nadie (la edición no
-      está en la tabla de avisos del cap. 7; **⛔ DU-P24**).
+      está en la tabla de avisos del cap. 7; **DU-P24 ✅**).
 - **Reglas:** spec pedidos.md (edición) · ADR-010.
 - **Permisos:** `pedidos:editar` con su alcance (F-33 "según la tabla de permisos").
 - **Dependencias:** HU-026, HU-027, HU-028.
-- **DoR:** ✅ listo, salvo los criterios 3, 6, 9 y 10 (⛔ DU-P05, DU-P08, DU-P06, DU-P24).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 ### Épica I · Estados y cierre
 
@@ -1039,16 +1039,16 @@ que salir no salgan.
      ve "Ya lo tomó {persona}." (409).
 - **Reglas:** spec pedidos.md (estados, `PedidoStateMachine`).
 - **Permisos:** ser el propietario (o del sector, si está en el sector); regla fija, no matriz. Con
-  Pedidos en Sin acceso: **⛔ DU-P01**.
+  Pedidos en Sin acceso: **DU-P01 ✅**.
 - **Dependencias:** HU-026, HU-046.
-- **DoR:** ✅ listo, salvo lo de DU-P01 (⛔).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 #### HU-033 · Bloquear con motivo y retomar
 - **F-29 · W-30 · W-42**
 - **Como** propietario **quiero** marcar un pedido como Bloqueada con el motivo, como hoy en la
   minuta, **para** que quien lo pidió sepa por qué está trabado y lo destrabe.
 - **Criterios de aceptación**
-  1. **Dado** un pedido En curso (o No iniciada: **⛔ DU-P03**) del que es propietario, **cuando** toca "Bloquear…" y
+  1. **Dado** un pedido En curso (o No iniciada: **DU-P03 ✅**) del que es propietario, **cuando** toca "Bloquear…" y
      escribe el motivo, **entonces** pasa a **Bloqueada**, se ve en rojo en las listas, el motivo
      queda en el detalle y en el recorrido, y avisa al solicitante y a los seguidores **con el
      motivo** (HU-046).
@@ -1064,7 +1064,7 @@ que salir no salgan.
 - **Reglas:** spec pedidos.md.
 - **Permisos:** propietario.
 - **Dependencias:** HU-032.
-- **DoR:** ✅ listo, salvo bloquear desde No iniciada (⛔ DU-P03).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 #### HU-034 · Completar con comentario y comprobante
 - **F-31 · ADR-014 (contexto `comprobante_cierre`) · W-29 · W-42**
@@ -1085,7 +1085,7 @@ que salir no salgan.
      avisos (HU-046, HU-047).
   5. **Dado** un pedido **Bloqueada**, **cuando** intenta completarlo, **entonces** 409 "Primero
      retomalo." (resuelta DU-15).
-  6. **Dado** un pedido **en el sector** (sin persona), **entonces** se sigue **⛔ DU-P02** (propuesta:
+  6. **Dado** un pedido **en el sector** (sin persona), **entonces** se sigue **DU-P02 ✅** (propuesta:
      cualquier persona activa del sector lo puede completar y queda como propietaria; DU-16 resuelta
      solo dice "tomar").
   7. **Dado** un pedido ya Completada, **cuando** se vuelve a enviar "completar" (doble clic),
@@ -1094,7 +1094,7 @@ que salir no salgan.
 - **Reglas:** spec pedidos.md · spec avisos.md · ADR-014.
 - **Permisos:** propietario.
 - **Dependencias:** HU-028, HU-032, HU-046.
-- **DoR:** ✅ listo, salvo el criterio 6 (⛔ DU-P02).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 #### HU-035 · Reasignar a otra persona o dejarlo en el sector
 - **F-32 · W-31**
@@ -1114,13 +1114,13 @@ que salir no salgan.
   5. **Dado** un tercero (ni propietario ni solicitante), **cuando** intenta reasignar por API,
      **entonces** 403.
   6. **Dado** un pedido Completada, **entonces** no se reasigna (409): primero se reabre (HU-036).
-  7. **Dado** el estado al reasignar, **entonces** sigue **⛔ DU-P04** (propuesta: el estado no cambia,
+  7. **Dado** el estado al reasignar, **entonces** sigue **DU-P04 ✅** (propuesta: el estado no cambia,
      como hoy que solo cambian el nombre). Dejarlo en un sector sin usuarios activos no se puede
      (propuesta DU-P02).
 - **Reglas:** spec pedidos.md · spec avisos.md.
 - **Permisos:** propietario o solicitante del pedido (F-32).
 - **Dependencias:** HU-026, HU-046, HU-047.
-- **DoR:** ✅ listo, salvo el criterio 7 (⛔ DU-P04, DU-P02).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 #### HU-036 · Reabrir un pedido completado
 - **F-65 · W-09**
@@ -1136,11 +1136,11 @@ que salir no salgan.
   5. **Dado** un pedido reabierto, **entonces** vuelve a contar como abierto (Mis tareas, vencidos,
      recordatorio, pedidos abiertos de la obra) y conserva el comentario y el comprobante del
      cierre anterior en el recorrido.
-  6. **Dado** un propietario que ya está inactivo, **entonces** se sigue **⛔ DU-P09**.
+  6. **Dado** un propietario que ya está inactivo, **entonces** se sigue **DU-P09 ✅**.
 - **Reglas:** spec pedidos.md.
 - **Permisos:** solicitante del pedido (F-65 "quien lo pidió").
 - **Dependencias:** HU-034.
-- **DoR:** ✅ listo, salvo el criterio 6 (⛔ DU-P09).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 #### HU-037 · Recorrido del pedido
 - **F-34 · F-14 (pedidos) · W-09**
@@ -1179,7 +1179,7 @@ que salir no salgan.
      obra (o "Servicios generales"), solicitante, entrega ("mañana", o "vencido" en rojo) y estado,
      y arriba "N abiertas · M vencidas".
   4. **Dado** un pedido con entrega anterior a hoy y abierto, **entonces** figura **vencido**; el que
-     vence hoy no (dice "hoy"); el día se corta en hora de Argentina (**⛔ DU-P14**).
+     vence hoy no (dice "hoy"); el día se corta en hora de Argentina (**DU-P14 ✅**).
   5. **Dado** los filtros Obra y Estado ("abiertas" por defecto) y "Buscar tarea…", **entonces**
      filtran sin salir de la pestaña.
   6. **Dado** un pedido que completa, reasigna o que le reasignan, **entonces** la lista se actualiza
@@ -1191,7 +1191,7 @@ que salir no salgan.
 - **Reglas:** spec pedidos.md (Mis tareas, vencidos).
 - **Permisos:** cualquier usuario activo (no es fila de la matriz; ve solo lo suyo).
 - **Dependencias:** HU-026, HU-060.
-- **DoR:** ✅ listo, salvo el criterio 4 (⛔ DU-P14).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 #### HU-039 · Pedidos que pedí
 - **F-05 · W-27**
@@ -1229,9 +1229,9 @@ que salir no salgan.
   3. **Dado** cada persona, **entonces** es un grupo "{persona} · {sector} · N abiertas · M
      vencidas" con sus tareas abiertas por entrega, vencidas arriba, y "ver las N restantes"; el
      propio jefe aparece como "(yo)", como en W-26.
-  4. **Dado** un subordinado inactivo con pedidos abiertos, **entonces** se sigue **⛔ DU-P09**
+  4. **Dado** un subordinado inactivo con pedidos abiertos, **entonces** se sigue **DU-P09 ✅**
      (propuesta: aparece como "{persona} (inactiva)" con sus abiertos); personas sin tareas abiertas
-     y orden de los grupos: **⛔ DU-P14**.
+     y orden de los grupos: **DU-P14 ✅**.
   5. **Dado** Dirección, **entonces** ve a todas las personas que dependen de ella directa o
      indirectamente (F-61: "Dirección ve todo").
   6. **Dado** un cambio de "depende de" en W-39, **cuando** el jefe vuelve a abrir la pestaña,
@@ -1239,7 +1239,7 @@ que salir no salgan.
 - **Reglas:** identidad.md RN-IDE-13, RN-IDE-22/23 (`Jerarquia::subordinados`) · spec pedidos.md.
 - **Permisos:** tener gente a cargo (jerarquía, no matriz).
 - **Dependencias:** HU-038.
-- **DoR:** ✅ listo, salvo el criterio 4 (⛔ DU-P09, DU-P14).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 #### HU-041 · Carga por persona
 - **F-12 · W-04**
@@ -1251,7 +1251,7 @@ que salir no salgan.
      **vencidas**, **vencen esta semana** y una barra que compara la carga entre personas.
   2. **Dado** el título "Carga de mi gente · semana del {lunes} al {domingo}", **entonces** "esta
      semana" va de lunes a domingo, como W-04; qué cuenta como "vencen esta semana" y como
-     "vencidas" sin contar dos veces el mismo pedido, si se incluye "yo" y el orden: **⛔ DU-P14**
+     "vencidas" sin contar dos veces el mismo pedido, si se incluye "yo" y el orden: **DU-P14 ✅**
      (propuesta: vencen esta semana = de hoy al domingo, sin las vencidas).
   3. **Dado** el filtro Sector, **entonces** filtra las filas.
   4. **Dado** una persona, **cuando** la toca, **entonces** ve sus tareas abiertas.
@@ -1262,7 +1262,7 @@ que salir no salgan.
 - **Reglas:** spec pedidos.md (conteos).
 - **Permisos:** tener gente a cargo (RN-IDE-13).
 - **Dependencias:** HU-040.
-- **DoR:** ✅ listo, salvo el criterio 2 (⛔ DU-P14).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 ### Épica L · Todos los pedidos y sin obra
 
@@ -1310,13 +1310,13 @@ que salir no salgan.
      nombrando las obras en la tarea ("Curso de trabajo en altura · obras Piso nave 3 y Losa tanque
      B"), **entonces** aparece en Servicios generales (cap. 4.2: "van sin obra, nombrando las obras
      en la tarea"). Si además va en el bloque aparte "Pedidos que sirven a varias obras" que dibuja
-     W-25, y cómo lo sabe el sistema: **⛔ DU-P13** (propuesta: una sola lista, sin bloque aparte).
+     W-25, y cómo lo sabe el sistema: **DU-P13 ✅** (propuesta: una sola lista, sin bloque aparte).
   4. **Dado** un pedido sin obra, **entonces** no aparece en la pestaña Pedidos de ninguna obra ni
      cuenta en sus "pedidos abiertos"; cuenta en la fila Servicios generales de Obras (HU-055).
 - **Reglas:** spec pedidos.md · obras.md RN-OBR-08.
 - **Permisos:** `pedidos:ver` / `pedidos:editar`.
 - **Dependencias:** HU-026, HU-042.
-- **DoR:** ✅ listo, salvo el criterio 3 (⛔ DU-P13).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 ### Épica M · Calendario
 
@@ -1381,7 +1381,7 @@ que salir no salgan.
   4. **Bloqueado:** al solicitante y a los seguidores, **con el motivo**.
   5. **Comentado:** a **la otra parte** (comenta el solicitante → al propietario; comenta el
      propietario → al solicitante) y a los seguidores (DU-22). Comenta un tercero → a los dos, y en
-     un pedido en el sector "el propietario" es todo el sector: **⛔ DU-P23**.
+     un pedido en el sector "el propietario" es todo el sector: **DU-P23 ✅**.
   6. **Completado:** al solicitante (con el comentario), al **superior del solicitante** (su
      `jefe_id`; si no tiene, a nadie más) y a los seguidores (DU-13).
   7. **Reabierto:** al **propietario**.
@@ -1395,11 +1395,11 @@ que salir no salgan.
   12. **Después de la transacción:** el aviso se crea solo si la acción se guardó (evento after
       commit); si la acción falla, no hay aviso.
   13. **Lo que no avisa:** retomar, seguir, sumar un seguidor y los equipos en reparación (no están
-      en la tabla del cap. 7); editar el pedido tampoco (**⛔ DU-P24**).
+      en la tabla del cap. 7); editar el pedido tampoco (**DU-P24 ✅**).
 - **Reglas:** spec avisos.md (destinatarios) · ADR-012.
 - **Permisos:** — (lo decide el sistema).
 - **Dependencias:** HU-026, HU-030 (seguidores), HU-005 (`jefe_id`).
-- **DoR:** ✅ listo, salvo los criterios 5 y 13 en lo de DU-P23 y DU-P24 (⛔).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 #### HU-047 · Mail de la asignación y "Mis avisos" en Mi perfil
 - **F-09 · F-10 (parte semana 2) · W-19**
@@ -1415,7 +1415,7 @@ que salir no salgan.
      **entonces** **no** salen por mail salvo que la persona los haya activado.
   3. **Dado** Mi perfil, **cuando** abre "Mis avisos", **entonces** ve la tabla de W-19: cada aviso
      con "En el sistema: siempre" y la columna "Además por mail". Qué se puede tildar y qué no:
-     **⛔ DU-P19** (propuesta: asignación y reasignación tildadas y fijas; se pueden activar tomado,
+     **DU-P19 ✅** (propuesta: asignación y reasignación tildadas y fijas; se pueden activar tomado,
      completado, bloqueado, comentario nuevo y reabierto; "vence mañana" y el aviso al superior,
      nunca por mail).
   4. **Dado** que activa un aviso por mail y guarda, **cuando** ocurre ese aviso, **entonces** le
@@ -1429,7 +1429,7 @@ que salir no salgan.
 - **Reglas:** spec avisos.md · ADR-012 · identidad.md RN-IDE-18.
 - **Permisos:** cualquier usuario activo (sus preferencias).
 - **Dependencias:** HU-046, HU-003 (Mi perfil), HU-060 (worker de mail arriba).
-- **DoR:** ✅ listo, salvo el criterio 3 (⛔ DU-P19).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 #### HU-048 · Recordatorio un día antes de la entrega
 - **F-37 · W-02 · W-41**
@@ -1445,9 +1445,9 @@ que salir no salgan.
      (`dedupe_key`, ADR-011/012).
   4. **Dado** que se cambia la fecha de entrega de un pedido que ya tuvo su recordatorio,
      **entonces** vuelve a tener recordatorio el día antes de la fecha nueva.
-  5. **Dado** el recordatorio, **entonces** no sale por mail (F-37 "sin llenar el mail"; **⛔ DU-P19**).
-  6. **Dado** la hora del aviso y una entrega del lunes, **entonces** se siguen **⛔ DU-P21** (propuesta:
-     desde las 8:00 de Argentina, como W-02) y **⛔ DU-Q01** (propuesta: el domingo, días corridos
+  5. **Dado** el recordatorio, **entonces** no sale por mail (F-37 "sin llenar el mail"; **DU-P19 ✅**).
+  6. **Dado** la hora del aviso y una entrega del lunes, **entonces** se siguen **DU-P21 ✅** (propuesta:
+     desde las 8:00 de Argentina, como W-02) y **DU-Q01 ✅** (propuesta: el domingo, días corridos
      como DU-04).
   7. **Dado** un pedido cargado con entrega hoy o ya vencida, **entonces** no hay recordatorio pero
      el aviso de asignación llega igual en el momento y el pedido figura vencido o "hoy" en Mis
@@ -1457,7 +1457,7 @@ que salir no salgan.
 - **Reglas:** spec avisos.md (recordatorio) · ADR-012.
 - **Permisos:** — (sistema).
 - **Dependencias:** HU-046, HU-060.
-- **DoR:** ✅ listo, salvo los criterios 5 y 6 (⛔ DU-P19, DU-P21, DU-Q01).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 #### HU-049 · Todos los avisos
 - **F-64 · W-45**
@@ -1500,14 +1500,14 @@ que salir no salgan.
      adjunto de un equipo pedido por alguien sin acceso, 404.
   7. **Dado** un sector con **solo** Equipos en reparación (sin Pedidos), **entonces** el ítem
      Pedidos lo lleva directo a Equipos en reparación (identidad.md §6.4).
-  8. **Dado** qué es "Fecha" (**⛔ DU-Q03**: cuándo se mandó al taller) y qué es obligatorio, el orden
-     de la lista y qué pasa con un equipo cargado por error (**⛔ DU-P18**: obligatorios equipo y
+  8. **Dado** qué es "Fecha" (**DU-Q03 ✅**: cuándo se mandó al taller) y qué es obligatorio, el orden
+     de la lista y qué pasa con un equipo cargado por error (**DU-P18 ✅**: obligatorios equipo y
      falla o trabajo; no se borran; no completados primero).
   9. **Dado** un equipo, **entonces** no genera avisos (no están en la tabla de avisos del cap. 7).
 - **Reglas:** spec pedidos.md (equipos) · ADR-014.
 - **Permisos:** `equipos_reparacion:ver` / `:editar` (inicial: todos editan, como Pedidos; DU-01).
 - **Dependencias:** HU-025, HU-060.
-- **DoR:** ✅ listo, salvo el criterio 8 (⛔ DU-Q03, DU-P18).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 ### Épica P · Celular
 
@@ -1612,13 +1612,13 @@ que salir no salgan.
      "Servicios generales · pedidos que no son de una obra" con la cantidad de pedidos sin obra
      abiertos y sin % gastado, que lleva a Servicios generales (W-25); sin acceso a Pedidos, o con
      texto en el buscador, no aparece (RN-OBR-08).
-  4. **Dado** alcance "propios" en Pedidos, **entonces** los números cuentan según **⛔ DU-P17**
+  4. **Dado** alcance "propios" en Pedidos, **entonces** los números cuentan según **DU-P17 ✅**
      (propuesta: todos los abiertos de la obra, porque es un conteo; la pestaña y las listas sí
      respetan el alcance).
 - **Reglas:** obras.md RN-OBR-02, 03, 08.
 - **Permisos:** `obras:ver`; la fila, además `pedidos:ver`.
 - **Dependencias:** HU-013, HU-026, HU-043.
-- **DoR:** ✅ listo, salvo el criterio 4 (⛔ DU-P17).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 #### HU-056 · Pedidos abiertos al pasar la obra a Terminada
 - **F-21 (parte semana 2) · W-22**
@@ -1636,13 +1636,13 @@ que salir no salgan.
      confirma, **entonces** 409 con la lista actualizada y la obra no cambia de estado
      (obras.md §6).
   4. **Dado** "completar · reasignar" para quien cierra la obra y no es propietario ni solicitante:
-     **⛔ DU-P12** (propuesta: los accesos abren W-29 y W-31 con sus reglas de siempre y aparecen solo
+     **DU-P12 ✅** (propuesta: los accesos abren W-29 y W-31 con sus reglas de siempre y aparecen solo
      donde quien mira puede usarlos; si no, ve el pedido sin acceso).
 - **Reglas:** obras.md RN-OBR-29, 30, §6 · spec pedidos.md.
 - **Permisos:** los de cambiar el estado (HU-017); las acciones sobre cada pedido, las de HU-034 y
   HU-035.
 - **Dependencias:** HU-017, HU-034, HU-035, HU-059.
-- **DoR:** ✅ listo, salvo el criterio 4 (⛔ DU-P12).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 ### Épica R · Buscador: pedidos por texto
 
@@ -1656,7 +1656,7 @@ que salir no salgan.
      estado, que abre el pedido.
   2. **Dado** la búsqueda, **entonces** no distingue mayúsculas ni tildes y encuentra pedidos de
      cualquier estado (los completados también) y de obras terminadas.
-  3. **Dado** qué texto del pedido se busca: **⛔ DU-P15** (propuesta: tarea, con quién / para quién y
+  3. **Dado** qué texto del pedido se busca: **DU-P15 ✅** (propuesta: tarea, con quién / para quién y
      aclaraciones; no los comentarios; abiertos primero). Nota de QC para esa decisión: el ejemplo
      de W-18 ("tanque") muestra pedidos de la obra "losa tanque B" cuya tarea no dice "tanque"; con la
      propuesta, esos se encuentran desde el grupo Obras → pestaña Pedidos.
@@ -1667,7 +1667,7 @@ que salir no salgan.
 - **Reglas:** `App\Shared\Busqueda\FuenteBusqueda` (Pedidos registra su fuente) · spec pedidos.md.
 - **Permisos:** `pedidos:ver` con su alcance.
 - **Dependencias:** HU-022, HU-026.
-- **DoR:** ✅ listo, salvo el criterio 3 (⛔ DU-P15).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 ### Épica S · Arrastre de semana 1
 
@@ -1685,21 +1685,21 @@ Juani (avisar al cliente ADR-014 y ADR-015; servidor de staging).
   qué pedidos abiertos quedan **para** que ninguno quede sin nadie que lo reciba.
 - **Criterios de aceptación**
   1. **Dado** un sector con pedidos abiertos **en el sector** (sin persona), **cuando** lo quiere
-     sacar, **entonces** se sigue **⛔ DU-Q02** (propuesta: "Antes de sacar {sector}, reasigná sus
+     sacar, **entonces** se sigue **DU-Q02 ✅** (propuesta: "Antes de sacar {sector}, reasigná sus
      N pedidos que están en el sector." y no se saca, 422).
   2. **Dado** un sector con pedidos (abiertos con persona o completados) y sin usuarios activos,
      **cuando** lo saca, **entonces** se **archiva** y los pedidos conservan su nombre (resuelta
      DU-A07).
   3. **Dado** una persona con pedidos abiertos como propietaria, **cuando** la desactivan,
-     **entonces** se sigue **⛔ DU-P09** (propuesta: quedan como están, con "{persona} (inactiva)", y
+     **entonces** se sigue **DU-P09 ✅** (propuesta: quedan como están, con "{persona} (inactiva)", y
      se ven en Tareas de mi gente de su jefe; no se reasigna nada solo, como DU-A08). Si era la
-     última persona activa de un sector con pedidos en el sector: **⛔ DU-Q02** (aviso en W-39).
+     última persona activa de un sector con pedidos en el sector: **DU-Q02 ✅** (aviso en W-39).
   4. **Dado** una persona inactiva, **entonces** no aparece en los desplegables de propietario,
      seguidor ni "una persona" de Reasignar.
 - **Reglas:** identidad.md RN-IDE-25…33 · spec pedidos.md.
 - **Permisos:** `usuarios_permisos:editar`.
 - **Dependencias:** HU-006, HU-007, HU-035.
-- **DoR:** ✅ listo, salvo los criterios 1 y 3 (⛔ DU-Q02, DU-P09).
+- **DoR:** ✅ listo (dudas resueltas el 19-nov-2026: va la propuesta).
 
 #### HU-059 · Deuda técnica que toca Pedidos (TL-03, TL-07, TL-08) y contratos de Obras
 - **— (transversal) · seguridad.md §4.4 · obras.md §10.4**
