@@ -11,8 +11,10 @@ use App\Modules\Pedidos\Application\Acceso\PedidoAdjuntos;
 use App\Modules\Pedidos\Contracts\PedidosParaRecordar;
 use App\Modules\Pedidos\Domain\Models\Pedido;
 use App\Modules\Pedidos\Infrastructure\PedidosDeObraEloquent;
+use App\Modules\Pedidos\Infrastructure\PedidosEnBuscador;
 use App\Modules\Pedidos\Infrastructure\PedidosParaRecordarEloquent;
 use App\Shared\Adjuntos\ContextosAdjuntos;
+use App\Shared\Busqueda\FuentesBusqueda;
 use App\Shared\Providers\ModuleServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
@@ -41,6 +43,8 @@ final class PedidosServiceProvider extends ModuleServiceProvider
         $contextos = $this->app->make(ContextosAdjuntos::class);
         $contextos->registrar(Pedido::CONTEXTO_ADJUNTOS, PedidoAdjuntos::class);
         $contextos->registrar(Pedido::CONTEXTO_COMPROBANTES, ComprobanteAdjuntos::class);
+
+        $this->app->make(FuentesBusqueda::class)->registrar(PedidosEnBuscador::TIPO, PedidosEnBuscador::class);
     }
 
     protected function moduleDirectory(): string
