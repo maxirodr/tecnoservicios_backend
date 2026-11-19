@@ -33,6 +33,7 @@ final class PedidosParaRecordarEloquent implements PedidosParaRecordar
                 $p->tarea,
                 $p->obra?->nombre_trabajo,
                 $dia,
+                $p->obra_id,
             ))
             ->all());
     }

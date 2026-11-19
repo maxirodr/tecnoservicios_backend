@@ -29,9 +29,9 @@ final readonly class EventoAvisado
         return new self($pedidoId, $actorId, $actividadId, $contexto, $obraId, $fechaEntrega, $prioridad);
     }
 
-    public static function recordatorio(int $pedidoId, string $fechaEntrega, ContextoDelAviso $contexto): self
+    public static function recordatorio(int $pedidoId, string $fechaEntrega, ContextoDelAviso $contexto, ?int $obraId = null): self
     {
-        return new self($pedidoId, null, null, $contexto, null, $fechaEntrega, null);
+        return new self($pedidoId, null, null, $contexto, $obraId, $fechaEntrega, null);
     }
 
     public function clave(Destinatario $destinatario): string

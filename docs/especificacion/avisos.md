@@ -154,6 +154,8 @@ destinatario, `{p}` = id del pedido. Textos con datos ficticios. "Sistema" = cam
 | Recordatorio (scheduler, F-37) | propietario o cada persona activa del sector | `vence_manana` | **solo sistema** | "Vence mañana: **Informe fotográfico semanal** · Piso industrial nave 3" | — | `recordatorio:{p}:{fecha_entrega}:{u}` |
 | Retomar · editar · seguir · equipos | — | — | — | (no avisan, RN-AVI-05) | — | — |
 
+**A los seguidores nunca les llega mail** (RN-AVI-14, F-07, HU-047 c6): donde una fila de seguidores dice "(+ mail si lo activó)", el mail es solo para quien lo pidió o el propietario. La asignación al sector **al crear** usa el texto y el asunto de "`PedidoReasignado` al sector" (decisión de desarrollo, 19-nov-2026).
+
 En todos los casos se saca al actor (RN-AVI-02), a los inactivos (RN-AVI-03) y se deja un solo aviso por persona
 (RN-AVI-04). El cuerpo del mail repite el texto del sistema y agrega tarea, obra, entrega, prioridad y "Ver el
 pedido" (RN-AVI-21).

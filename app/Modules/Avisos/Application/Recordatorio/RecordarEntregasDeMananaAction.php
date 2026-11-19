@@ -51,7 +51,7 @@ final class RecordarEntregasDeMananaAction
             );
 
             $creados += $this->registrar->handle(
-                EventoAvisado::recordatorio($pedido->pedidoId, $pedido->fechaEntrega, new ContextoDelAviso($pedido->tarea, $pedido->obraNombre)),
+                EventoAvisado::recordatorio($pedido->pedidoId, $pedido->fechaEntrega, new ContextoDelAviso($pedido->tarea, $pedido->obraNombre), $pedido->obraId),
                 $destinatarios,
             );
         }

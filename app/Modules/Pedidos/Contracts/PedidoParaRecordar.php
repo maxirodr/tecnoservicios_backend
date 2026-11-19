@@ -15,5 +15,7 @@ final readonly class PedidoParaRecordar
         public ?string $obraNombre,
         /** "2026-11-20" (fecha de calendario, hora de Argentina). */
         public string $fechaEntrega,
+        /** Para el link a la obra del aviso; null = pedido sin obra. */
+        public ?int $obraId = null,
     ) {}
 }
