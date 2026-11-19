@@ -16,11 +16,11 @@ final readonly class EloquentRegistroActividad implements RegistroActividad
 {
     public function __construct(private AuthFactory $auth) {}
 
-    public function registrar(Model $sujeto, string $accion, array $cambios = []): void
+    public function registrar(Model $sujeto, string $accion, array $cambios = []): Actividad
     {
         $userId = $this->auth->guard()->id();
 
-        Actividad::query()->create([
+        return Actividad::query()->create([
             'sujeto_type' => $sujeto->getMorphClass(),
             'sujeto_id' => $sujeto->getKey(),
             'user_id' => is_numeric($userId) ? (int) $userId : null,

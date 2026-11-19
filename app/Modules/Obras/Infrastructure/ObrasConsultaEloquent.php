@@ -7,8 +7,10 @@ namespace App\Modules\Obras\Infrastructure;
 use App\Modules\Obras\Contracts\ObraResumen;
 use App\Modules\Obras\Contracts\ObrasConsulta;
 use App\Modules\Obras\Contracts\PresupuestadoDeObra;
+use App\Modules\Obras\Domain\Enums\ObraEstado;
 use App\Modules\Obras\Domain\Models\Obra;
 use App\Modules\Obras\Domain\Models\PresupuestoMonto;
+use App\Modules\Obras\Infrastructure\Consultas\PorBusqueda;
 use App\Shared\Domain\Importe;
 
 /** Implementación de `ObrasConsulta` sobre las tablas del módulo. */
@@ -46,6 +48,31 @@ final class ObrasConsultaEloquent implements ObrasConsulta
     {
         return array_values(Obra::query()->where('responsable_id', $userId)->orderBy('id')->pluck('id')
             ->map(static fn (mixed $id): int => (int) $id)->all());
+    }
+
+    public function opciones(?string $texto, int $limite): array
+    {
+        $query = Obra::query()->with('principal');
+
+        if ($texto !== null && trim($texto) !== '') {
+            (new PorBusqueda($texto))->aplicar($query);
+        }
+
+        return array_values($query
+            ->orderByRaw('FIELD(estado, ?, ?, ?)', [ObraEstado::EnEjecucion->value, ObraEstado::Confirmada->value, ObraEstado::Terminada->value])
+            ->orderBy('nombre_trabajo')
+            ->orderBy('id')
+            ->limit($limite)
+            ->get()
+            ->map(static fn (Obra $obra): ObraResumen => new ObraResumen(
+                $obra->id,
+                $obra->principal->numero ?? '',
+                $obra->nombre_trabajo,
+                $obra->cliente,
+                $obra->estado->value,
+                $obra->responsable_id,
+            ))
+            ->all());
     }
 
     public function presupuestadoPorRubro(int $obraId): PresupuestadoDeObra

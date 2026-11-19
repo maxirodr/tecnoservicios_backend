@@ -23,4 +23,14 @@ interface ObrasConsulta
     public function obrasDondeEsResponsable(int $userId): array;
 
     public function presupuestadoPorRubro(int $obraId): PresupuestadoDeObra;
+
+    /**
+     * Selector de obras al cargar un pedido (resuelta DU-P20): **todas** las obras, en cualquier estado
+     * (las terminadas también, marcadas por su estado: DU-A15), sin mirar el presupuesto por rubro
+     * (HU-019 c2). Busca en el trabajo, el cliente y el N.º; primero En ejecución, después Confirmadas y
+     * al final Terminadas.
+     *
+     * @return list<ObraResumen>
+     */
+    public function opciones(?string $texto, int $limite): array;
 }

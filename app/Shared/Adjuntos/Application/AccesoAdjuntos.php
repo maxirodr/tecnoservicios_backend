@@ -7,6 +7,7 @@ namespace App\Shared\Adjuntos\Application;
 use App\Modules\Identidad\Domain\Models\User;
 use App\Shared\Adjuntos\Adjunto;
 use App\Shared\Adjuntos\AutorizaAdjuntos;
+use App\Shared\Adjuntos\AutorizaCadaAdjunto;
 use App\Shared\Adjuntos\ContextosAdjuntos;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,7 +26,9 @@ final readonly class AccesoAdjuntos
 
     public function puedeEditar(User $user, Adjunto $adjunto): bool
     {
-        return $this->decidir($user, $adjunto, static fn (AutorizaAdjuntos $a, Model $s): bool => $a->puedeEditar($user, $s));
+        return $this->decidir($user, $adjunto, static fn (AutorizaAdjuntos $a, Model $s): bool => $a instanceof AutorizaCadaAdjunto
+            ? $a->puedeEditarAdjunto($user, $s, $adjunto)
+            : $a->puedeEditar($user, $s));
     }
 
     /**

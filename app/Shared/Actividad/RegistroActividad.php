@@ -14,6 +14,7 @@ interface RegistroActividad
 {
     /**
      * @param  array<string, array{antes: mixed, despues: mixed}>  $cambios
+     * @return Actividad la línea registrada (su id es la base del `dedupe_key` de los avisos, avisos.md §6)
      */
-    public function registrar(Model $sujeto, string $accion, array $cambios = []): void;
+    public function registrar(Model $sujeto, string $accion, array $cambios = []): Actividad;
 }
