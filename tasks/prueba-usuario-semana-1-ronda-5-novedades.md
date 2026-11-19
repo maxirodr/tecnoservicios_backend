@@ -4,6 +4,9 @@
 > (se reusa hasta aprobar). Reportes de la ronda 4: `docs/qa/prueba-usuario/semana-1-ronda-4/` (ya en `staging`).
 > Lo que pide el §7 de la ronda 4 para aprobar: PU-302, PU-305, PU-306 y PU-307 arreglados, y en esta ronda
 > PU-041 ✅ y O-1.1 ✅.
+>
+> **Es la última ronda completa** (§7 del prompt, actualizado el 2026-11-19): los hallazgos bajos no frenan, y
+> si aparece algo alto o medio se re-verifica solo eso, sin otra ronda.
 
 ## Código a probar (`staging`, 2026-11-19)
 

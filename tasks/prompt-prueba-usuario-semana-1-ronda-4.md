@@ -16,25 +16,33 @@
 
 Sos el **equipo de QA profesional de NexoSmart** del proyecto NS-2026-025 (Tecnoservicios Bahía SA).
 
-La ronda 3 verificó 52 PU: ✅ 43 · ⚠️ 9 · ❌ 0. También encontró **11 hallazgos nuevos (PU-201…212; PU-211 no
-se usa)**, sin regresiones. Desarrollo arregló los 11 y la observación O-4. Además, Juani aprobó las tres
-mejoras de UX de `observaciones.md` (O-1 y O-3). Todo está en la rama **`staging`**, con la suite de
-integración real contra el backend en verde (42/42).
+**Ronda actual: 5.** La ronda 4 (`docs\qa\prueba-usuario\semana-1-ronda-4\`) quedó **NO APROBADA**: de los 20 PU,
+✅ 19 · ⚠️ 1 (PU-041) · ❌ 0; O-1.1 ⚠️; 10 hallazgos nuevos PU-301…310 (PU-301, 303 y 304 ya arreglados en la
+ronda). Desarrollo arregló los 7 abiertos (PU-302, 305…310) y la nota del §8 ("Destrabamos el ingreso de …").
+Qué cambió y cómo verificar cada arreglo: `tasks\prueba-usuario-semana-1-ronda-5-novedades.md`. Todo está en
+**`staging`**: backend `6516ba7` (arreglo de PU-302: `a8deacf`), front `d2a4806`. Sin migraciones nuevas;
+después del pull, `php artisan config:clear` (clave nueva `app.zona_empresa`).
 
 **Esta ronda decide si la Semana 1 queda aprobada.** Es corta y enfocada. Tiene cuatro objetivos, en este orden:
 
-1. **Verificar los 11 PU de la ronda 3** (PU-201…210 y PU-212) con sus pasos exactos.
-2. **Verificar los 9 PU que quedaron ⚠️ en la ronda 3**: PU-002, 006, 020, 041, 112, 129, 133, 136 y 138.
-   Cada uno quedó a medias por un PU nuevo que ahora está arreglado (la relación está en `reporte.md` §3 de la ronda 3).
-3. **Verificar las decisiones de UX aprobadas** (§1). Ahora son lo "esperado".
-4. **Cazar regresiones** de los arreglos de la ronda 3. Tocaron muchas cosas:
-   - **Fechas:** cambió el formato en toda la app.
-   - **Guardado y salida:** conflicto de montos, cambios sin guardar en el presupuesto por rubro y en Plazos,
-     navegación después de guardar, y diálogos que avisan mientras guardan.
-   - **Recuperación:** las pantallas se recuperan solas después de un corte, y el 503 con MySQL caído.
-   - **Celular y teclado:** tarjetas de Obras tocables enteras y foco del teclado en los adjuntos.
-   - **Textos y datos:** texto del 401, nombre de los links (con una migración de datos), comillas del
-     historial y REV01–REV99.
+1. **Verificar los 7 hallazgos abiertos de la ronda 4** con los pasos de la tabla de las novedades:
+   - **PU-302** (alta): "Cargado" con el día de Argentina;
+   - **PU-305** (media): sesión vencida mientras otro cambia lo mismo → "Mientras no estabas, alguien cambió esto…", **con ingreso real**, en Editar obra y en Editar proveedor;
+   - **PU-306** (media): Tabla de permisos, error a la vista y con foco si el guardado falla;
+   - **PU-307**, **PU-308**, **PU-309** y **PU-310** (bajas), y la nota del §8 ("Destrabamos el ingreso de …").
+2. **Verificar lo que quedó ⚠️ en la ronda 4:** **PU-041** (controles ≥ 44 px, ahora con PU-307) y la decisión
+   **O-1.1** (con PU-306). Los otros 19 PU de la ronda 4 están ✅: se miran solo si quedan en el camino.
+3. **Verificar las decisiones de UX aprobadas** (§1) en lo que tocaron los arreglos.
+4. **Cazar regresiones** de los arreglos de la ronda 4:
+   - **Caché al ingresar** (PU-305): ingreso normal, sesión vencida con vuelta a la pantalla de origen, borrador
+     recuperado **y** descartado (Nueva obra, Editar obra, alta y edición de proveedor), "Salir" y entrar con otra persona.
+   - **Fechas del back** (PU-302): las fechas sin hora (fechas previstas, fecha del documento) no deben cambiar; el
+     año que se completa en el N.º usa la zona de la empresa.
+   - **Tarjeta de Usuarios** (PU-307): en el celular toda la tarjeta abre "Editar usuario"; en PC sigue la tabla y
+     el nombre es lo único que abre el diálogo.
+   - **Tabla de permisos, Plazos, buscador e ingreso trabado** (PU-306, 308, 309, 310).
+
+Numeración de hallazgos de esta ronda: desde **PU-501**. Carpeta `semana-1-ronda-5`, rama `qa/prueba-usuario-semana-1-ronda-5`.
 
 No repitas la pasada completa de la Semana 1. Lo que ya estaba ✅ se mira solo si queda en el camino de una prueba.
 
@@ -106,20 +114,18 @@ este prompt, su lista y las sesiones guardadas (storageState) que le reparte el 
 | # | Rol | Qué verifica | Navegador |
 |---|---|---|---|
 | 0 | **QA Lead** (sesión principal) | Entorno, ingreso de cada persona y reparto de sesiones, **único que resetea la base**, orden de las tandas, consolidación, matriz PU → estado, veredicto (§7). | sí (solo para ingresar) |
-| 1 | **Verificador A · conflictos, guardado y salida** | **PU-201** (dos pestañas o personas en el presupuesto por rubro: 409 y "Actualizar"; nada se pisa; el historial atribuye bien), **PU-204** (presupuesto por rubro y Plazos preguntan por link, barra, atrás y F5; después de guardar no preguntan), **PU-002** y **PU-006** (los mismos casos en el resto de las pantallas), **O-1.1** y **O-1.2**. Con dos pestañas y dos personas, y con demora de red donde haga falta. | sí |
-| 2 | **Verificador B · textos, datos, links y fechas** | **PU-205** (tooltip legible), **PU-206** (401 = "Tu sesión venció…" en listas y fichas), **PU-207** (historial con el nombre del archivo, incluidos links cargados **antes** de la migración), **PU-208** (sin comillas en "Agregó…" ni en "Quitó…"), **PU-209** (dd/mm/aaaa en **todas** las pantallas: ficha, certificados, "Cargado", historial "Cuándo" y "Qué cambió", usuarios e ingreso trabado), **PU-112**, **PU-129** y **PU-133**, **O-3** (marca en la ficha) y **O-4** (REV100 en alta, edición y adicional). | sí |
-| 3 | **QA celular y accesibilidad** | **PU-210** (tarjeta de Obras tocable entera con un solo foco; "‹ Volver a la obra", "‹ Proveedores", mail y teléfono ≥ 44 px), **PU-212** (foco con teclado en "Pegar link", "Agregar link", "Cancelar", "Subir archivo" y "quitar", dentro del diálogo y en Nueva obra), **PU-041** y **PU-136**. Pixel 7 (412×915) e **iPhone SE (375×667)**, y PC con teclado. | sí (después de 1–2) |
-| 4 | **QA backend, cola y health** | **PU-202** (con MySQL **parado de verdad**: los pedidos con sesión dan 503 "El sistema no está disponible…" en ~1–3 s, nunca 500 ni 30 s, y queda la entrada en el canal `errors`), **PU-203** (después de un corte de Redis o MySQL, la pantalla **ya abierta** se recupera sola, sin tocar nada, y dice "Apenas vuelva, esta pantalla se recupera sola."), **PU-020** y **PU-138**. Health, `failed_jobs`, workers y scheduler. Las migraciones nuevas corren sin error y dos veces seguidas. | no (curl/logs) + 1 navegador para PU-203 |
-| 5 | **Cazador de regresiones** | Lo que rodea a los arreglos: alta y edición completas de obra y de proveedor con adjuntos (archivo y link con ñ y espacios), adicional, documentos, cambio de estado, presupuesto por rubro (carga, guardado, "Actualizar", salida), Plazos, Mi perfil, permisos por sector (Dirección, Gerencia Adm., Jefatura, Ingeniería, Compras), sesión vencida y vuelta con borrador, doble clic, buscador general. | sí (al final) |
+| 1 | **Verificador A · guardado, salida y conflicto de sesión** | **PU-305** (pasos de REG-03 de la ronda 4 con **ingreso real**: sesión vencida mientras otra persona cambia la misma obra o proveedor → al volver, "Mientras no estabas, alguien cambió esto…" con lo que guardó el otro; en **Editar obra** y en **Editar proveedor**; ≥ 4 códigos reservados), **PU-306** (Tabla de permisos: forzar 500 y 422 sin irse, con Atrás, con la barra y con "Sectores": la pantalla sube al error y le pone el foco), **O-1.1** (completa, con la Tabla de permisos) y **O-1.2** si queda en el camino. | sí |
+| 2 | **Verificador B · fechas, textos y buscador** | **PU-302** ("Cargado" con el día de Argentina: `created_at` = `2026-11-20 01:30:00` UTC → "19/11/2026" y `2026-11-19 02:59:00` → "18/11/2026", restaurando al final; fechas sin hora y año del N.º sin cambios), **PU-308** (Plazos: "No había cambios…" / "Guardamos…" se van al editar), **PU-309** (pista del buscador según lo que la persona puede encontrar: Laura o Sofía vs. Diego), **PU-310** ("Ingreso trabado hasta las HH:MM" en hora de Argentina con el navegador en UTC y en Madrid), nota del §8 ("Destrabamos el ingreso de …" aunque la ficha se recargue), y el formato de fecha. | sí |
+| 3 | **QA celular y accesibilidad** | **PU-307** (Usuarios en Pixel 7 e iPhone SE 375×667: tocar mail, sector y "Activo" de las tarjetas de "Dora" y "Carla" abre "Editar usuario"; un solo foco por tarjeta con teclado; en PC sigue la tabla) y **PU-041** (controles ≥ 44 px en todas las pantallas, con las mismas reglas de la ronda 4). | sí |
+| 4 | **QA backend, cola y health** | Sin cortes en esta ronda (PU-020, 202, 203 y 138 quedaron ✅ en la ronda 4 y el backend solo cambió `PresupuestoResource` y la clave `app.zona_empresa`). Health, `failed_jobs`, canal `errors` sin 4xx, workers y scheduler; `config:clear` aplicado. | no |
+| 5 | **Cazador de regresiones** | Caché al ingresar (ingreso normal; sesión vencida con vuelta a la pantalla de origen; borrador recuperado **y** descartado en Nueva obra, Editar obra, alta y edición de proveedor; "Salir" y entrar con otra persona), fechas del back (previstas, documento, N.º), tarjeta y tabla de Usuarios, Tabla de permisos, Plazos, buscador e ingreso trabado/destrabar. Con ingreso real solo con su usuario `qa-lead-…` y el tope que le da el Lead. | sí |
 | 6 | **QC final** | Que cada estado tenga evidencia (captura o log), deduplicar, que lo "esperado" de §1 no aparezca como hallazgo, severidades coherentes con las rondas anteriores, **veredicto de aprobación (§7)** y firma. | no |
 
 **Orden de las tandas:**
-- **Tanda 1:** roles 1 y 2 en paralelo, más el rol 4 en la parte sin cortes.
+- **Tanda 1:** roles 1 y 2 en paralelo, más el rol 4 (lo hace el Lead, sin navegador).
 - **Tanda 2:** roles 3 y 5.
-- **Cortes de servicios** del rol 4 (Redis, MySQL, worker de mail): en un momento en que **nadie más esté
-  probando**. El Lead los coordina y le pide al usuario que pare y levante MySQL si no puede hacerlo sin
-  riesgo (§3).
 - **Al final:** QC (rol 6) y la consolidación del Lead.
+- **Ingresos (20 por IP por hora):** 7 del Lead para las sesiones; ≥ 4 para PU-305 (rol 1); el resto para el rol 5.
 
 ## 3. Entorno
 
@@ -165,14 +171,14 @@ A eso se suma lo siguiente:
 
 ## 4. Reportes
 
-Carpeta nueva: `tecnoservicios_backend\docs\qa\prueba-usuario\semana-1-ronda-4\`
+Carpeta nueva: `tecnoservicios_backend\docs\qa\prueba-usuario\semana-1-ronda-5\`
 
-1. **`verificacion.md`:** tabla con **los 20 PU** de esta ronda (los 11 de la ronda 3 y los 9 ⚠️), más una sección
+1. **`verificacion.md`:** tabla con **los PU de esta ronda** (ronda 5: los 7 hallazgos abiertos de la ronda 4 — PU-302, 305…310 — y PU-041, que quedó ⚠️), más una sección
    **"Decisiones aprobadas"** con O-1.1, O-1.2, O-3, O-4 y el formato de fecha.
    - Columnas: `PU-XXX | título corto | estado (✅ / ⚠️ / ❌) | pantallas revisadas | rol | evidencia | nota`.
    - Un ⚠️ o ❌ lleva el texto exacto de lo que se vio y el PU nuevo que lo detalla.
 2. **`hallazgos.md`:** **solo lo nuevo**, con el mismo formato exacto de las rondas anteriores.
-   - Numeración desde **PU-301** (en la ronda N, desde PU-N01).
+   - Numeración desde **PU-501** (en la ronda N, desde PU-N01).
    - Agregá `- **Regresión de:** PU-2XX / commit` o `- **Regresión de:** no; arreglo incompleto de …`.
 3. **`reporte.md`:**
    - resumen ejecutivo;
@@ -192,7 +198,7 @@ Severidades y reglas, iguales a las rondas anteriores:
 
 ## 5. Git
 
-- Rama `qa/prueba-usuario-semana-1-ronda-4` en el **backend**, creada desde `staging` actualizado (los
+- Rama `qa/prueba-usuario-semana-1-ronda-5` en el **backend**, creada desde `staging` actualizado (los
   reportes son de la Semana 1).
 - Commits convencionales en inglés (`docs(qa): …`), terminados en `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
 - **No toques git config**: la identidad y la autenticación ya están configuradas.
@@ -212,15 +218,24 @@ Pará tus procesos, hacé el push final y respondé con:
 
 ## 7. Veredicto: cuándo la Semana 1 queda aprobada
 
+> **Desde la ronda 5 (decisión de Juani, 2026-11-19): la ronda 5 es la última ronda completa.** La Semana 2 se
+> desarrolla en paralelo en `main`; QA prueba `staging`.
+
 **APROBADA** si se cumplen las tres condiciones:
-1. Los 20 PU verificados están en ✅ (ninguno ⚠️ ni ❌).
-2. Las decisiones aprobadas del §1 funcionan como están descritas.
+1. Ningún PU verificado queda ❌, ni ⚠️ por un hallazgo bloqueante, alto o medio. Un PU ⚠️ **solo por hallazgos
+   bajos** cuenta como aprobado: el reporte lo anota con su hallazgo.
+2. Las decisiones aprobadas del §1 funcionan como están descritas (salvo detalles bajos, que se anotan igual).
 3. No hay hallazgos nuevos de severidad **bloqueante, alta ni media**.
 
 Los hallazgos nuevos **bajos** no impiden la aprobación. Se listan en el reporte como "pendientes menores" y
-desarrollo los arregla después, sin otra ronda.
+pasan al backlog de la Semana 2: desarrollo los arregla después, sin otra ronda.
 
-**NO APROBADA** en cualquier otro caso. Entonces:
+**Si en la ronda 5 aparece algo bloqueante, alto o medio:** no se hace otra ronda completa. Desarrollo lo
+arregla en `staging` y se corre una **re-verificación acotada**: solo esos hallazgos, con sus pasos exactos, más
+una pasada corta de regresión alrededor de lo que tocó el arreglo. Va en la misma carpeta de la ronda 5, en
+`re-verificacion.md`. Si sale bien, la Semana 1 queda **APROBADA**.
+
+**Hasta la ronda 4 regía esto** (se conserva por la trazabilidad). **NO APROBADA** en cualquier otro caso. Entonces:
 1. El reporte dice qué falta exactamente para aprobar.
 2. Desarrollo arregla.
    Los arreglos de la Semana 1 se hacen sobre `staging` y después se pasan a `main`.
