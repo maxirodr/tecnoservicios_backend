@@ -55,7 +55,7 @@ final readonly class ActualizarObraAction
             VersionDeFila::bloquearYVerificar($obra, $version);
 
             if ($principal !== []) {
-                $this->presupuestos->handle($this->principal($obra), $principal, self::PREFIJO_PRINCIPAL);
+                $this->presupuestos->handle($actor, $this->principal($obra), $principal, self::PREFIJO_PRINCIPAL);
             }
 
             $obra->load(['responsable', 'contactos']);

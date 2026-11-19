@@ -40,7 +40,7 @@ final readonly class AgregarDocumentoAction
                 'created_by' => $actor->id,
             ]);
 
-            $this->adjuntos->asociar($datos->adjuntos, $documento, ObraDocumento::CONTEXTO, 'adjuntos');
+            $this->adjuntos->asociar($actor->id, $datos->adjuntos, $documento, ObraDocumento::CONTEXTO, 'adjuntos');
             $this->actividad->registrar($obra, self::ACCION, [$datos->tipo->value => ['antes' => null, 'despues' => $datos->nombre]]);
 
             return $documento->refresh()->load('adjuntos');

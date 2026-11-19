@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Obras\Application\Presupuestos;
 
+use App\Modules\Identidad\Domain\Models\User;
 use App\Modules\Obras\Application\Obras\HistorialDeCampos;
 use App\Modules\Obras\Application\Obras\VersionDeObra;
 use App\Modules\Obras\Domain\Models\Presupuesto;
@@ -39,11 +40,11 @@ final readonly class ActualizarPresupuestoAction
      *
      * @throws ValidationException|HttpResponseException
      */
-    public function handle(Presupuesto $presupuesto, array $datos, string $prefijo = ''): Presupuesto
+    public function handle(User $actor, Presupuesto $presupuesto, array $datos, string $prefijo = ''): Presupuesto
     {
         $this->exigirObligatoriosDelPrincipal($presupuesto, $datos, $prefijo);
 
-        return $this->db->transaction(function () use ($presupuesto, $datos, $prefijo): Presupuesto {
+        return $this->db->transaction(function () use ($actor, $presupuesto, $datos, $prefijo): Presupuesto {
             // Primero la obra y después el presupuesto, en el mismo orden que Editar obra: sin deadlocks.
             VersionDeObra::bloquear($presupuesto->obra_id);
 
@@ -58,11 +59,11 @@ final readonly class ActualizarPresupuestoAction
             if (array_key_exists('aprobacion', $datos)) {
                 $presupuesto->aprobacion_tipo = $datos['aprobacion']?->tipo;
                 $presupuesto->aprobacion_numero = $datos['aprobacion']?->numero;
-                $adjuntosCambiados = $this->reemplazar($presupuesto, $presupuesto->adjuntoAprobacion(), $datos['aprobacion']?->adjunto, Presupuesto::CONTEXTO_APROBACION, self::clave($prefijo, 'aprobacion.adjunto'));
+                $adjuntosCambiados = $this->reemplazar($actor->id, $presupuesto, $presupuesto->adjuntoAprobacion(), $datos['aprobacion']?->adjunto, Presupuesto::CONTEXTO_APROBACION, self::clave($prefijo, 'aprobacion.adjunto'));
             }
 
             if (array_key_exists('oferta', $datos)) {
-                $adjuntosCambiados = $this->reemplazar($presupuesto, $presupuesto->oferta(), $datos['oferta'], Presupuesto::CONTEXTO_OFERTA, self::clave($prefijo, 'oferta')) || $adjuntosCambiados;
+                $adjuntosCambiados = $this->reemplazar($actor->id, $presupuesto, $presupuesto->oferta(), $datos['oferta'], Presupuesto::CONTEXTO_OFERTA, self::clave($prefijo, 'oferta')) || $adjuntosCambiados;
             }
 
             $presupuesto->save();
@@ -107,14 +108,14 @@ final readonly class ActualizarPresupuestoAction
      *
      * @throws ValidationException
      */
-    private function reemplazar(Presupuesto $presupuesto, ?Adjunto $actual, ?int $nuevo, string $contexto, string $campo): bool
+    private function reemplazar(int $actorId, Presupuesto $presupuesto, ?Adjunto $actual, ?int $nuevo, string $contexto, string $campo): bool
     {
         if ($actual?->id === $nuevo) {
             return false;
         }
 
         if ($nuevo !== null) {
-            $this->adjuntos->asociar([$nuevo], $presupuesto, $contexto, $campo);
+            $this->adjuntos->asociar($actorId, [$nuevo], $presupuesto, $contexto, $campo);
         }
 
         if ($actual !== null) {

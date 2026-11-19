@@ -24,13 +24,8 @@ final class ObraHistorialController
     {
         $user = $this->usuario($request);
         $pagina = $historial->handle($user, $buscar->visible($user, $obra));
-        $respuesta = ApiResponse::success($pagina);
 
-        /** @var array{data: list<mixed>} $cuerpo */
-        $cuerpo = $respuesta->getData(true);
-        $cuerpo['data'] = self::lineas($pagina->items());
-
-        return $respuesta->setData($cuerpo);
+        return ApiResponse::paginated($pagina, self::lineas($pagina->items()));
     }
 
     /**

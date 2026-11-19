@@ -36,11 +36,11 @@ final readonly class RegistrarPresupuesto
         ]);
 
         if ($datos->oferta !== null) {
-            $this->adjuntos->asociar([$datos->oferta], $presupuesto, Presupuesto::CONTEXTO_OFERTA, self::campo($campo, 'oferta'));
+            $this->adjuntos->asociar($actorId, [$datos->oferta], $presupuesto, Presupuesto::CONTEXTO_OFERTA, self::campo($campo, 'oferta'));
         }
 
         if ($datos->aprobacion?->adjunto !== null) {
-            $this->adjuntos->asociar([$datos->aprobacion->adjunto], $presupuesto, Presupuesto::CONTEXTO_APROBACION, self::campo($campo, 'aprobacion.adjunto'));
+            $this->adjuntos->asociar($actorId, [$datos->aprobacion->adjunto], $presupuesto, Presupuesto::CONTEXTO_APROBACION, self::campo($campo, 'aprobacion.adjunto'));
         }
 
         return $presupuesto;

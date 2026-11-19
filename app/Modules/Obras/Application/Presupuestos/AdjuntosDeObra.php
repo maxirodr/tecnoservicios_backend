@@ -22,10 +22,10 @@ final readonly class AdjuntosDeObra
      *
      * @throws ValidationException
      */
-    public function asociar(array $ids, Model $sujeto, string $contexto, string $campo): void
+    public function asociar(int $actorId, array $ids, Model $sujeto, string $contexto, string $campo): void
     {
         try {
-            $this->adjuntos->asociar($ids, $sujeto, $contexto);
+            $this->adjuntos->asociar($actorId, $ids, $sujeto, $contexto);
         } catch (ValidationException $e) {
             throw ValidationException::withMessages([$campo => [AdjuntosService::MENSAJE_NO_UTILIZABLE]]);
         }

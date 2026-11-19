@@ -31,14 +31,11 @@ final class ObraController
     public function index(ListarObrasRequest $request, ListarObrasQuery $listar): JsonResponse
     {
         $listado = $listar->handle($this->usuario($request), $request->estado(), $request->buscar(), $request->responsableId(), $request->pagina());
-        $respuesta = ApiResponse::success(ObraFilaResource::collection($listado->pagina));
 
-        /** @var array{meta: array<string, mixed>} $cuerpo */
-        $cuerpo = $respuesta->getData(true);
-        $cuerpo['meta']['contadores'] = $listado->contadores;
-        $cuerpo['meta']['pedidos_sin_obra_abiertos'] = $listado->pedidosSinObraAbiertos;
-
-        return $respuesta->setData($cuerpo);
+        return ApiResponse::paginated(ObraFilaResource::collection($listado->pagina), null, [
+            'contadores' => $listado->contadores,
+            'pedidos_sin_obra_abiertos' => $listado->pedidosSinObraAbiertos,
+        ]);
     }
 
     public function clientes(ClientesSugeridosRequest $request, ClientesSugeridosQuery $clientes): JsonResponse

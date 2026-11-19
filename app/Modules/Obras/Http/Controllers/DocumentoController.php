@@ -33,7 +33,7 @@ final class DocumentoController
 
     public function update(ActualizarDocumentoRequest $request, int $documento, BuscarObra $buscar, ActualizarDocumentoAction $actualizar): JsonResponse
     {
-        $actualizado = $actualizar->handle($buscar->documentoEditable($this->usuario($request), $documento), $request->datos());
+        $actualizado = $actualizar->handle($this->usuario($request), $buscar->documentoEditable($this->usuario($request), $documento), $request->datos());
 
         return $this->ok(self::recurso($actualizado), 'Guardamos los cambios.');
     }

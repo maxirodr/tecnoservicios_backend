@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Shared\Adjuntos;
 
 use App\Shared\Actividad\RegistroActividad;
-use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Collection;
@@ -29,21 +28,21 @@ final readonly class AdjuntosService
 
     public function __construct(
         private Connection $db,
-        private AuthFactory $auth,
         private ContextosAdjuntos $contextos,
         private RegistroActividad $actividad,
         private FilesystemFactory $filesystem,
     ) {}
 
     /**
-     * Solo se asocian adjuntos temporales, subidos por quien llama y del contexto del campo (RN-IDE-46);
-     * si alguno no cumple, no se asocia ninguno: 422 en `adjuntos`.
+     * Solo se asocian adjuntos temporales, subidos por quien hace la acción (`$actorId`, que pasa el caso de
+     * uso: no se lee del guard, TL-07) y del contexto del campo (RN-IDE-46); si alguno no cumple, no se
+     * asocia ninguno: 422 en `adjuntos`.
      *
      * @param  array<array-key, int|string>  $ids
      *
      * @throws ValidationException
      */
-    public function asociar(array $ids, Model $sujeto, string $contexto): void
+    public function asociar(int $actorId, array $ids, Model $sujeto, string $contexto): void
     {
         $ids = self::normalizarIds($ids);
 
@@ -51,16 +50,14 @@ final readonly class AdjuntosService
             return;
         }
 
-        $userId = $this->auth->guard()->id();
-
-        if (! is_numeric($userId) || ! $this->contextos->existe($contexto)) {
+        if (! $this->contextos->existe($contexto)) {
             throw self::noUtilizable();
         }
 
-        $this->db->transaction(function () use ($ids, $sujeto, $contexto, $userId): void {
+        $this->db->transaction(function () use ($ids, $sujeto, $contexto, $actorId): void {
             $adjuntos = $this->bloquear($ids);
             $validos = $adjuntos->filter(fn (Adjunto $a): bool => $a->esTemporal()
-                && $a->subido_por === (int) $userId
+                && $a->subido_por === $actorId
                 && $a->contexto === $contexto);
 
             if ($validos->count() !== count($ids)) {

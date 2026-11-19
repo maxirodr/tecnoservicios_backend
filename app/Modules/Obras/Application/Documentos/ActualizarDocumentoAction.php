@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Obras\Application\Documentos;
 
+use App\Modules\Identidad\Domain\Models\User;
 use App\Modules\Obras\Application\Obras\HistorialDeCampos;
 use App\Modules\Obras\Application\Presupuestos\AdjuntosDeObra;
 use App\Modules\Obras\Domain\Models\ObraDocumento;
@@ -32,19 +33,19 @@ final readonly class ActualizarDocumentoAction
      *
      * @throws ValidationException
      */
-    public function handle(ObraDocumento $documento, array $datos): ObraDocumento
+    public function handle(User $actor, ObraDocumento $documento, array $datos): ObraDocumento
     {
         if (array_key_exists('fecha', $datos) && $datos['fecha'] === null && $documento->tipo->exigeFecha()) {
             throw ValidationException::withMessages(['fecha' => ['El certificado lleva fecha.']]);
         }
 
-        return $this->db->transaction(function () use ($documento, $datos): ObraDocumento {
+        return $this->db->transaction(function () use ($actor, $documento, $datos): ObraDocumento {
             $antes = HistorialDeCampos::valores($documento, self::CAMPOS);
             $documento->fill(array_intersect_key($datos, array_flip(self::CAMPOS)))->save();
 
             if (isset($datos['adjuntos'])) {
                 $actuales = $documento->adjuntos->modelKeys();
-                $this->adjuntos->asociar(array_values(array_diff($datos['adjuntos'], $actuales)), $documento, ObraDocumento::CONTEXTO, 'adjuntos');
+                $this->adjuntos->asociar($actor->id, array_values(array_diff($datos['adjuntos'], $actuales)), $documento, ObraDocumento::CONTEXTO, 'adjuntos');
                 $this->adjuntos->quitar(array_values(array_diff($actuales, $datos['adjuntos'])), $documento);
             }
 

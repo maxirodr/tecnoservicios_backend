@@ -24,7 +24,7 @@ final class AsociarAdjuntosTest extends AdjuntosTestCase
         $documento = $this->documento();
 
         $this->actingAs($autora);
-        $this->service()->asociar([$adjunto->id], $documento, self::CONTEXTO);
+        $this->service()->asociar($autora->id, [$adjunto->id], $documento, self::CONTEXTO);
 
         $adjunto->refresh();
         $this->assertFalse($adjunto->esTemporal());
@@ -36,12 +36,25 @@ final class AsociarAdjuntosTest extends AdjuntosTestCase
         $this->assertSame([self::CONTEXTO => ['antes' => null, 'despues' => 'oferta-ejemplo.pdf']], $actividad->cambios);
     }
 
+    /** TL-07: quien asocia lo dice el caso de uso; sin sesión (un comando, un job) funciona igual. */
+    public function test_asociar_recibe_al_usuario_y_no_depende_de_la_sesion(): void
+    {
+        $autora = $this->usuario();
+        $adjunto = $this->adjuntoSubido($autora);
+        $documento = $this->documento();
+
+        $this->service()->asociar($autora->id, [$adjunto->id], $documento, self::CONTEXTO);
+
+        $this->assertTrue($adjunto->refresh()->perteneceA($documento));
+    }
+
     public function test_no_se_asocia_adjunto_subido_por_otro(): void
     {
         $ajeno = $this->adjuntoSubido($this->usuario());
 
-        $this->actingAs($this->usuario());
-        $this->assertNoUtilizable(fn () => $this->service()->asociar([$ajeno->id], $this->documento(), self::CONTEXTO));
+        $otra = $this->usuario();
+        $this->actingAs($otra);
+        $this->assertNoUtilizable(fn () => $this->service()->asociar($otra->id, [$ajeno->id], $this->documento(), self::CONTEXTO));
 
         $this->assertTrue($ajeno->refresh()->esTemporal());
     }
@@ -52,7 +65,7 @@ final class AsociarAdjuntosTest extends AdjuntosTestCase
         $deOtroContexto = $this->adjuntoSubido($autora, self::OTRO_CONTEXTO);
 
         $this->actingAs($autora);
-        $this->assertNoUtilizable(fn () => $this->service()->asociar([$deOtroContexto->id], $this->documento(), self::CONTEXTO));
+        $this->assertNoUtilizable(fn () => $this->service()->asociar($autora->id, [$deOtroContexto->id], $this->documento(), self::CONTEXTO));
     }
 
     public function test_no_se_asocia_adjunto_ya_usado(): void
@@ -61,7 +74,7 @@ final class AsociarAdjuntosTest extends AdjuntosTestCase
         $adjunto = $this->adjuntoDe($this->documento(), $autora);
 
         $this->actingAs($autora);
-        $this->assertNoUtilizable(fn () => $this->service()->asociar([$adjunto->id], $this->documento(), self::CONTEXTO));
+        $this->assertNoUtilizable(fn () => $this->service()->asociar($autora->id, [$adjunto->id], $this->documento(), self::CONTEXTO));
     }
 
     public function test_si_un_adjunto_no_sirve_no_se_asocia_ninguno(): void
@@ -71,7 +84,7 @@ final class AsociarAdjuntosTest extends AdjuntosTestCase
         $ajeno = $this->adjuntoSubido($this->usuario());
 
         $this->actingAs($autora);
-        $this->assertNoUtilizable(fn () => $this->service()->asociar([$propio->id, $ajeno->id, 999999], $this->documento(), self::CONTEXTO));
+        $this->assertNoUtilizable(fn () => $this->service()->asociar($autora->id, [$propio->id, $ajeno->id, 999999], $this->documento(), self::CONTEXTO));
 
         $this->assertTrue($propio->refresh()->esTemporal());
         $this->assertSame(0, Actividad::query()->count());
@@ -84,8 +97,8 @@ final class AsociarAdjuntosTest extends AdjuntosTestCase
         $this->actingAs($autora);
 
         try {
-            DB::transaction(function () use ($adjunto): void {
-                $this->service()->asociar([$adjunto->id], $this->documento(), self::CONTEXTO);
+            DB::transaction(function () use ($adjunto, $autora): void {
+                $this->service()->asociar($autora->id, [$adjunto->id], $this->documento(), self::CONTEXTO);
 
                 throw new RuntimeException('falla el caso de uso después de asociar');
             });
@@ -99,8 +112,9 @@ final class AsociarAdjuntosTest extends AdjuntosTestCase
 
     public function test_lista_vacia_no_hace_nada(): void
     {
-        $this->actingAs($this->usuario());
-        $this->service()->asociar([], $this->documento(), self::CONTEXTO);
+        $autora = $this->usuario();
+        $this->actingAs($autora);
+        $this->service()->asociar($autora->id, [], $this->documento(), self::CONTEXTO);
 
         $this->assertSame(0, Actividad::query()->count());
     }

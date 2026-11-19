@@ -66,3 +66,17 @@ Http ──► Application ──► Domain
         ▼                  │
   Infrastructure (propia) ─┘        Otro módulo: solo Contracts/ o eventos
 ```
+
+## Enmienda 2026-11-19: `app/Shared` y el usuario del sistema (TL-08)
+
+- **Decide:** Tech Lead (decisión técnica, no cambia nada que vea el cliente) · **Origen:** TL-08 de `docs/seguridad.md`.
+- **Contexto:** `app/Shared` (actividad, adjuntos, buscador, `UsuarioAutenticado`) tipa con
+  `App\Modules\Identidad\Domain\Models\User`: Shared dependía de un módulo, al revés del diagrama, y el test de
+  arquitectura no lo miraba.
+- **Decisión:** es la **única excepción admitida**. El usuario es la identidad de todo el sistema (lo que la sesión
+  autentica, quien sube un adjunto o hace una acción) y tiparlo con `Authenticatable` o un id solo movería los
+  `instanceof User` a cada módulo sin ganar nada. Ninguna otra clase de un módulo (Contracts, Domain, enums,
+  Infrastructure) puede aparecer en `app/Shared`.
+- **Los servicios de Shared no leen la sesión** para decidir quién actúa: el caso de uso pasa el usuario (TL-07:
+  `AdjuntosService::asociar(int $actorId, …)`), así funcionan igual desde un comando o un job (Importación).
+- **Lo verifica** `tests/Architecture/SharedSoloDependeDeUserTest`.

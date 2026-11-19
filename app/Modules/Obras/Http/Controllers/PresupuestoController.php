@@ -44,7 +44,7 @@ final class PresupuestoController
     public function update(ActualizarPresupuestoRequest $request, int $presupuesto, BuscarObra $buscar, ActualizarPresupuestoAction $actualizar): JsonResponse
     {
         $user = $this->usuario($request);
-        $actualizado = $actualizar->handle($buscar->presupuestoEditable($user, $presupuesto), $request->datos());
+        $actualizado = $actualizar->handle($user, $buscar->presupuestoEditable($user, $presupuesto), $request->datos());
 
         return $this->ok($this->recurso($user, $actualizado), 'Guardamos los cambios.');
     }
