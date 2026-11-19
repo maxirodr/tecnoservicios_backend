@@ -107,6 +107,22 @@ final readonly class AccesoPedido
     }
 
     /**
+     * Los accesos "completar · reasignar" de W-22 (resuelta DU-P12), con las reglas de W-29 y W-31. Sin
+     * consultas por pedido: quien actúa como propietario o lo pidió ya lo ve (es lo propio).
+     *
+     * @return array{completar: bool, reasignar: bool}
+     */
+    public function alTerminarLaObra(User $user, Pedido $pedido): array
+    {
+        $actua = $this->actuaComoPropietario($user, $pedido);
+
+        return [
+            'completar' => $actua && in_array($pedido->estado, [PedidoEstado::NoIniciada, PedidoEstado::EnCurso], true),
+            'reasignar' => $pedido->estado->abierto() && ($actua || $pedido->esSolicitante($user)) && $this->puedeNivel($user, Nivel::Editar),
+        ];
+    }
+
+    /**
      * Botones del detalle (§7.3); la API vuelve a verificar cada acción.
      *
      * @return array<string, bool>
