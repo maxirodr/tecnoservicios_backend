@@ -10,6 +10,13 @@ use App\Modules\Identidad\Domain\Models\Sector;
 use App\Modules\Identidad\Domain\Models\User;
 use App\Modules\Obras\Domain\Enums\ObraEstado;
 use App\Modules\Obras\Domain\Models\Obra;
+use App\Modules\Pedidos\Domain\Events\PedidoAsignado;
+use App\Modules\Pedidos\Domain\Events\PedidoBloqueado;
+use App\Modules\Pedidos\Domain\Events\PedidoComentado;
+use App\Modules\Pedidos\Domain\Events\PedidoCompletado;
+use App\Modules\Pedidos\Domain\Events\PedidoReabierto;
+use App\Modules\Pedidos\Domain\Events\PedidoReasignado;
+use App\Modules\Pedidos\Domain\Events\PedidoTomado;
 use App\Modules\Pedidos\Domain\Models\Pedido;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\JsonResponse;
@@ -155,8 +162,9 @@ abstract class PedidosTestCase extends TestCase
         return $id;
     }
 
+    /** Solo los eventos de Pedidos (los de Eloquent y la cache siguen andando). */
     protected function fingirEventos(): void
     {
-        Event::fake();
+        Event::fake([PedidoAsignado::class, PedidoReasignado::class, PedidoTomado::class, PedidoBloqueado::class, PedidoComentado::class, PedidoCompletado::class, PedidoReabierto::class]);
     }
 }
