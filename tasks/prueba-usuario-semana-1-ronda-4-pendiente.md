@@ -6,6 +6,23 @@
 > `docs/qa/prueba-usuario/semana-1-ronda-4/` → `borradores/a.md`, `b.md`, `bk.md`, `estado-parcial.md`,
 > `borradores/scripts/` y `capturas/`.
 
+## Novedad (2026-11-19): desarrollo arregló B-01, A-01 y A-02 en `staging`
+
+Front `staging` @ **`380ddaf`** (antes `15b544f`). Backend sin cambios de código (solo este archivo).
+- **B-01 (alta):** el historial y toda fecha con hora se muestran en **hora de Argentina** sin importar el
+  huso del navegador (`src/shared/dominio/fechas.ts`). Un cambio de las 14:08 dice 14:08; de noche no salta al día siguiente.
+- **A-01 (media):** Tabla de permisos, irse mientras guarda → "Estamos guardando. Cuando termine te llevamos."
+  y, al terminar bien, va a donde eligió (O-1.1).
+- **A-02 (media):** Editar proveedor + Atrás mientras guarda → mismo aviso; al terminar se cierra el diálogo y
+  en la lista se ve "Guardamos los cambios de …".
+- **B-02 (baja):** sin cambio. El campo de fecha nativo usa el idioma del navegador, no el de la página; con el
+  navegador en español se ve dd/mm/aaaa. Queda como límite conocido salvo que Juani pida un selector propio:
+  anotarlo como observación, no como hallazgo abierto.
+
+**Entonces:** retomar lo de abajo **en el mismo pase** re-verificando B-01, A-01 y A-02 (pasos de
+`borradores/a.md` y `b.md`). Si salen ✅, B-01/A-01/A-02 ya no frenan el veredicto. Actualizá el commit del front
+en el reporte.
+
 ## Para retomar en otra PC
 
 1. `git fetch` y `git checkout qa/prueba-usuario-semana-1-ronda-4` en el backend (los reportes siguen ahí). Para
