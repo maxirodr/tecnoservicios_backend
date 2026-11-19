@@ -126,3 +126,11 @@ Reporte: `docs/qa/prueba-usuario/semana-1-ronda-3/` (de 52 PU: ✅43 ⚠️9 ❌
 - [x] Semana 1 APROBADA en la ronda 5 (8/8); PU-501 y PU-502 arreglados en staging (`19d971d`).
 - [ ] Tanda 2 (2026-11-19): Back Pedidos 2, Front Pedidos 2 e Integración real (worktrees reusados, ramas `feat/w2-pedidos-2` y `feat/w2-integracion`).
 - [ ] Después de la tanda 2: QC de la semana 2, notas de entrega, rama staging con la semana 2 y prompt de prueba de usuario de la semana 2.
+
+### Cierre del día (2026-11-19) — para retomar
+Las tres ramas de la tanda 2 están **pusheadas, sin mergear** (`feat/w2-pedidos-2` en back y front, `feat/w2-integracion` en back y front). Los worktrees siguen en `tecnoservicios_{backend,frontend}_{pedidos,avisos}`.
+1. **Back Pedidos 2** (`feat/w2-pedidos-2`, `07783a0`): terminado; 931 tests, pint y phpstan OK. Cambios de forma: `puede{completar,reasignar}` en los pedidos abiertos de W-22; `pedidos_abiertos` y `pedidos_en_el_sector` en `GET /api/usuarios/{id}`; el buscador devuelve obras · pedidos · proveedores (proveedores pasa al índice 2).
+2. **Front Pedidos 2** (`feat/w2-pedidos-2`, `82e7b22` WIP): hecho W-26, W-04, W-24, W-25, W-03, W-49, pestaña Pedidos, Servicios generales, W-22, buscador, HU-058, menú Más. Falta: e2e `obras-pedidos.spec.ts:173` (tocar tarjeta en el celular), re-correr todo, aplastar el WIP. **Alinear con el back**: el front asumió `pedidos_en_el_sector_sin_nadie` en usuarios y `pedidos_en_el_sector` en `GET /api/sectores`; W-22 pide un GET por pedido para saber `puede` (el back ya lo manda en la lista: sacar esos GET).
+3. **Integración real** (`feat/w2-integracion`; front `d53dbe6`, `7d174be`; back `39000cc`): `e2e:integracion` 53/53 (10,3 min) con la semana 2. Arregló `fecha_pedido: null` al editar. Decidir: `mis-tareas` pagina de a 50 y el front muestra solo la página 1.
+4. Orden de merge sugerido: back `feat/w2-pedidos-2` → main, `feat/w2-integracion` back → main; front `feat/w2-integracion` → main, después `feat/w2-pedidos-2` (resolver contratos del punto 2) → main; correr unit + e2e mock + `e2e:integracion` con todo junto.
+5. Después: QC semana 2, notas de entrega, `staging` con la semana 2 (`VITE_MODULOS_ENTREGADOS=pedidos,obras,calendario,proveedores,usuarios,avisos`; worker `mail` + scheduler), prompt de prueba de usuario semana 2.
