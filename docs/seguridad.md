@@ -223,12 +223,12 @@ Commits del backend salvo que diga "front".
 | SEG-12 | ✅ Cerrojo común (`lockForUpdate`) antes del cambio y control con lectura bloqueante | `8586070` | `GuardaAdministradoresConcurrenciaTest` (3, uno con dos conexiones reales) |
 | TL-01 | ✅ Denegado, IDOR y alcance de las 6 rutas | `be6f59e` | `AutorizacionPorRutaTest` (10) |
 | TL-02 | ✅ ADR corregido, no el código (decidió Juani): enmienda de ADR-003; Application y Http usan la Infrastructure propia; query objects en `Infrastructure/Consultas` (Proveedores alineado) | `d1a3c30` | `ModuleBoundariesTest` (4 casos nuevos) |
-| TL-03 | ⏸ Cambia cómo se arma el envelope paginado (`ApiResponse::paginated` con `meta` extra): diseño, no mecánico | — | — |
+| TL-03 | ✅ `ApiResponse::paginated($paginador, $filas?, $metaExtra)`: Obras (listado e historial) ya no desarma el sobre; lo usan Mis tareas y Pedidos que pedí (HU-059 c1) | `890ed55` | `ListadoPaginadoConMetaTest` (2) · `ListadoObrasTest` sin cambios |
 | TL-04 | ✅ `porcentajesGastados` una vez por listado | `1df903d` | `ListadoObrasTest::test_porcentaje_gastado_se_pide_una_sola_vez_por_listado` |
 | TL-05 | ✅ Celdas recordadas solo dentro del pedido (binding *scoped*; se olvidan al terminar el pedido y al guardar una celda o un sector) | `24c68f6` | `PermisosDelPedidoTest` (3) |
 | TL-06 | ✅ Un solo trait `App\Shared\Http\UsuarioAutenticado` | `ebec7b4` | `UsuarioAutenticadoUnicoTest` |
-| TL-07 | ⏸ `AdjuntosService::asociar()` recibiendo el usuario cambia un contrato compartido del brief: coordinar con los módulos | — | — |
-| TL-08 | ⏸ Shared → `Identidad\Domain\Models\User`: tipar con `Authenticatable` o escribir la excepción en ADR-003 es decisión de diseño | — | — |
+| TL-07 | ✅ `AdjuntosService::asociar(int $actorId, …)`: el caso de uso pasa quién asocia; Obras actualizado (HU-059 c2) | `890ed55` | `AsociarAdjuntosTest::test_asociar_recibe_al_usuario_y_no_depende_de_la_sesion` |
+| TL-08 | ✅ Decidido en ADR-003 (enmienda 2026-11-19): `IdentidadDomainModelsUser` es la única dependencia de módulo admitida en `app/Shared` (HU-059 c3) | `890ed55` | `SharedSoloDependeDeUserTest` (2) |
 | TL-09 | ✅ `buscar` con FormRequest (`ClientesSugeridosRequest`, `OpcionesUsuariosRequest`) y `LIKE` escapado en Usuarios | `ba527db` | `BusquedaDeUsuariosTest` (2) |
 | TL-10 | aceptado en la revisión de cierre: el `catch` del health check reporta un servicio caído; está bien | — | — |
 | TL-11 | ✅ Parser extraído a `ErrorLogEntryParser` (controller de 218 a 157 líneas) | `55cd65b` | `BugReportEndpointsTest`, `LogDeErroresSinDatosTest` |
