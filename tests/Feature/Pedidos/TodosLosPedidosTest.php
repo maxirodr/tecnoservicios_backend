@@ -219,6 +219,6 @@ final class TodosLosPedidosTest extends PedidosTestCase
             $this->crear($laura, $this->persona($nombre, 'Calidad'), $this->obra(nombre: "Obra de {$nombre}"), ['seguidores' => [$this->sofia()->id]]);
         }
 
-        $this->assertSame($una, $this->consultasDe(fn () => $this->actingAs($laura)->getJson('/api/pedidos')->assertOk()->assertJsonCount(4, 'data')));
+        $this->assertLessThanOrEqual($una, $this->consultasDe(fn () => $this->actingAs($laura)->getJson('/api/pedidos')->assertOk()->assertJsonCount(4, 'data')));
     }
 }

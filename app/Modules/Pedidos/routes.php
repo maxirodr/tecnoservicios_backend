@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Modules\Pedidos\Http\Controllers\ComentarioController;
 use App\Modules\Pedidos\Http\Controllers\InicioController;
+use App\Modules\Pedidos\Http\Controllers\MiGenteController;
 use App\Modules\Pedidos\Http\Controllers\PedidoController;
 use App\Modules\Pedidos\Http\Controllers\PedidoEstadoController;
 use App\Modules\Pedidos\Http\Controllers\PedidoOpcionesController;
@@ -26,6 +27,8 @@ Route::middleware('auth:sanctum')->group(function () use ($ver, $editar): void {
     Route::get('pedidos/mis-tareas', [InicioController::class, 'misTareas']);
     Route::get('pedidos/que-pedi', [InicioController::class, 'quePedi']);
     Route::get('pedidos/que-sigo', [InicioController::class, 'queSigo']);
+    Route::get('pedidos/de-mi-gente', [MiGenteController::class, 'tareas']);
+    Route::get('pedidos/carga-por-persona', [MiGenteController::class, 'carga']);
     Route::get('pedidos/prioridad-sugerida', [PedidoOpcionesController::class, 'prioridadSugerida']);
     Route::get('pedidos/obras-opciones', [PedidoOpcionesController::class, 'obras'])->middleware($editar);
 

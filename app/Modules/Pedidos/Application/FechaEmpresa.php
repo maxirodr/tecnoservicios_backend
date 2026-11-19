@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Pedidos\Application;
 
 use Carbon\CarbonImmutable;
+use Carbon\CarbonInterface;
 
 /**
  * El día se corta en la hora de la empresa (`app.zona_empresa`, Argentina), nunca en UTC: "hoy",
@@ -27,6 +28,21 @@ final class FechaEmpresa
     public static function hoyTexto(): string
     {
         return CarbonImmutable::now(self::zona())->toDateString();
+    }
+
+    /**
+     * La semana de hoy, de lunes a domingo (W-03, W-04; resuelta DU-P14).
+     *
+     * @return array{desde: string, hasta: string}
+     */
+    public static function semana(): array
+    {
+        $hoy = self::hoy();
+
+        return [
+            'desde' => $hoy->startOfWeek(CarbonInterface::MONDAY)->toDateString(),
+            'hasta' => $hoy->endOfWeek(CarbonInterface::SUNDAY)->toDateString(),
+        ];
     }
 
     public static function mananaTexto(): string

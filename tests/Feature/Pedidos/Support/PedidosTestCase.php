@@ -170,6 +170,8 @@ abstract class PedidosTestCase extends TestCase
      */
     protected function consultasDe(callable $pedido): int
     {
+        // Cada pedido al servidor arranca sin lo recordado por el anterior (bindings `scoped`, como MiGente).
+        $this->app->forgetScopedInstances();
         DB::flushQueryLog();
         DB::enableQueryLog();
         $pedido();
