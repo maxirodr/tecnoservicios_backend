@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Pedidos;
 
+use App\Modules\Identidad\Contracts\PedidosDePersonasYSectores;
 use App\Modules\Obras\Application\Ports\PedidosDeObra;
 use App\Modules\Pedidos\Application\Acceso\ComprobanteAdjuntos;
 use App\Modules\Pedidos\Application\Acceso\MiGente;
@@ -11,6 +12,7 @@ use App\Modules\Pedidos\Application\Acceso\PedidoAdjuntos;
 use App\Modules\Pedidos\Contracts\PedidosParaRecordar;
 use App\Modules\Pedidos\Domain\Models\Pedido;
 use App\Modules\Pedidos\Infrastructure\PedidosDeObraEloquent;
+use App\Modules\Pedidos\Infrastructure\PedidosDePersonasYSectoresEloquent;
 use App\Modules\Pedidos\Infrastructure\PedidosEnBuscador;
 use App\Modules\Pedidos\Infrastructure\PedidosParaRecordarEloquent;
 use App\Shared\Adjuntos\ContextosAdjuntos;
@@ -29,6 +31,7 @@ final class PedidosServiceProvider extends ModuleServiceProvider
         $this->app->bind(PedidosParaRecordar::class, PedidosParaRecordarEloquent::class);
         // `bind` (no `bindIf`): pisa la nula de Obras sin depender del orden de los providers.
         $this->app->bind(PedidosDeObra::class, PedidosDeObraEloquent::class);
+        $this->app->bind(PedidosDePersonasYSectores::class, PedidosDePersonasYSectoresEloquent::class);
         // "Mi gente" se recuerda solo mientras dura el pedido al servidor.
         $this->app->scoped(MiGente::class);
     }

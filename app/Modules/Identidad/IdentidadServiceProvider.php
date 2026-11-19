@@ -6,6 +6,7 @@ namespace App\Modules\Identidad;
 
 use App\Modules\Identidad\Contracts\Jerarquia;
 use App\Modules\Identidad\Contracts\ObrasDelResponsable;
+use App\Modules\Identidad\Contracts\PedidosDePersonasYSectores;
 use App\Modules\Identidad\Contracts\Permisos;
 use App\Modules\Identidad\Contracts\PlazosPrioridad;
 use App\Modules\Identidad\Domain\MailNormalizado;
@@ -18,6 +19,7 @@ use App\Modules\Identidad\Infrastructure\JerarquiaPorJefe;
 use App\Modules\Identidad\Infrastructure\MatrizPermisos;
 use App\Modules\Identidad\Infrastructure\PlazosVigentes;
 use App\Modules\Identidad\Infrastructure\SinObrasDelResponsable;
+use App\Modules\Identidad\Infrastructure\SinPedidosDePersonasYSectores;
 use App\Shared\Http\ApiResponse;
 use App\Shared\Providers\ModuleServiceProvider;
 use Closure;
@@ -63,6 +65,8 @@ final class IdentidadServiceProvider extends ModuleServiceProvider
         $this->app->scoped(Permisos::class, static fn (Application $app): Permisos => $app->make(MatrizPermisos::class));
         // Obras registra la suya al existir (su provider carga después).
         $this->app->bindIf(ObrasDelResponsable::class, SinObrasDelResponsable::class);
+        // Pedidos registra la suya (HU-058).
+        $this->app->bindIf(PedidosDePersonasYSectores::class, SinPedidosDePersonasYSectores::class);
     }
 
     protected function moduleDirectory(): string
