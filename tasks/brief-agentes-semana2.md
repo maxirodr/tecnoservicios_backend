@@ -69,3 +69,18 @@ Sos parte del equipo de desarrollo. Rutas relativas a `C:\NexoSmart\Projects\tec
 Tanda 2 (después): HU-040…HU-044 (mi gente, carga por persona, todos los pedidos, sin obra, calendario), HU-050
 equipos, HU-051…HU-053 celular, HU-054…HU-058 (integración con Obras, buscador, sectores con pedidos), integración
 real front ↔ back y QC.
+
+---
+
+## Tanda 2 (2026-11-19) — la tanda 1 ya está en `main`
+
+Tanda 1 en `main` (back `60c3723`, front `36bd778`): Pedidos HU-026…HU-039, Avisos HU-045…HU-049 y HU-060 c1, con
+pruebas de punta a punta de Pedidos + Avisos en el backend (`tests/Feature/Pedidos/AvisosDePuntaAPuntaTest.php`).
+Mismas reglas de arriba. Las carpetas se reusan (ya tienen `vendor`/`node_modules`; si el backend no encuentra una
+clase nueva, `composer dump-autoload`).
+
+| Agente | Worktree · rama | Base · puertos | Historias |
+|---|---|---|---|
+| **Back Pedidos 2** | `tecnoservicios_backend_pedidos` · `feat/w2-pedidos-2` | `tecnoservicios_testing_pedidos` · serve 8350 | HU-040 (mi gente), HU-041 (carga por persona), HU-042 (todos los pedidos + exportar a Excel, DU-P16), HU-043 (sin obra, DU-P13), HU-044 (calendario), HU-050 (equipos en reparación, DU-Q03/P18, contextos `equipo_presupuesto` y `equipo_inventario`), HU-054…HU-056 (lo que falte de la integración con Obras: columna, fila Servicios generales, W-22 con DU-P12), HU-057 (buscador: grupo pedidos, DU-P15), HU-058 (sectores y personas con pedidos abiertos, DU-Q02/P09). |
+| **Front Pedidos 2** | `tecnoservicios_frontend_pedidos` · `feat/w2-pedidos-2` | E2E_PORT=5320 · dev 5322 | UI de esas mismas historias: W-26 Tareas de mi gente (pestaña de Inicio), W-04, W-24 + exportar, W-25, W-03 calendario, W-49, pestaña Pedidos de la ficha (W-07) y columna/fila del listado (W-05, W-47), W-22 con los pedidos abiertos, grupo Pedidos del buscador (W-18), avisos de W-39/W-40 (HU-058), y HU-051…HU-053 (celular: lo que falte de W-41…W-43 y W-47). |
+| **Integración real** | back `tecnoservicios_backend_avisos` y front `tecnoservicios_frontend_avisos` · `feat/w2-integracion` en los dos | `tecnoservicios_integracion` · 8320 / 5312 (las de `playwright.integracion.config.ts`), con `BACKEND_DIR` apuntando al worktree del back | `npm run e2e:integracion` al día con la semana 2 (la barra cambió: Inicio = Mis tareas) y specs nuevos de punta a punta contra el backend real: crear un pedido → aviso en la campana del propietario **y** mail en el log; tomar, comentar, completar con comprobante (también @celular); reasignar al sector; el recordatorio "vence mañana" con `avisos:recordatorios`; Mis avisos por mail. Es la "señal de que la prueba peligra" del backlog §6.1. Cada diferencia de contrato front ↔ back que encuentres: arreglala con el diff mínimo (schemas/api del front o resource del back), con test, y listala en el reporte. **No** toques pantallas que esté haciendo Front Pedidos 2 (las de HU-040…HU-058): si el problema es ahí, reportalo. |
