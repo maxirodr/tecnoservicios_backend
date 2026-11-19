@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Modules\Pedidos\Http\Controllers;
 
-use App\Modules\Pedidos\Application\Consultas\DetallePedidoQuery;
 use App\Modules\Pedidos\Application\Estados\BloquearPedidoAction;
 use App\Modules\Pedidos\Application\Estados\CompletarPedidoAction;
 use App\Modules\Pedidos\Application\Estados\ReabrirPedidoAction;
 use App\Modules\Pedidos\Application\Estados\ReasignarPedidoAction;
 use App\Modules\Pedidos\Application\Estados\RetomarPedidoAction;
 use App\Modules\Pedidos\Application\Estados\TomarPedidoAction;
+use App\Modules\Pedidos\Application\Lecturas\DetallePedidoQuery;
 use App\Modules\Pedidos\Http\Requests\BloquearRequest;
 use App\Modules\Pedidos\Http\Requests\CompletarRequest;
 use App\Modules\Pedidos\Http\Requests\ReabrirRequest;

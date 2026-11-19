@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Pedidos\Http\Controllers;
 
-use App\Modules\Pedidos\Application\Consultas\DetallePedidoQuery;
+use App\Modules\Pedidos\Application\Lecturas\DetallePedidoQuery;
 use App\Modules\Pedidos\Application\Pedidos\ActualizarPedidoAction;
 use App\Modules\Pedidos\Application\Pedidos\CrearPedidoAction;
 use App\Modules\Pedidos\Http\Requests\ActualizarPedidoRequest;

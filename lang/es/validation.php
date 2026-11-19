@@ -303,6 +303,27 @@ return [
         'contexto' => 'lugar del adjunto',
         'archivo' => 'archivo',
         'url' => 'link',
+
+        // Pedidos (pedidos.md §4)
+        'tarea' => 'tarea',
+        'obra_id' => 'obra',
+        'propietario_id' => 'propietario',
+        'solicitante_id' => 'solicitante',
+        'seguidores' => 'seguidores',
+        'seguidores.*' => 'seguidor',
+        'con_quien' => 'con quién / para quién',
+        'fecha_pedido' => 'fecha de pedido',
+        'fecha_entrega' => 'fecha de entrega',
+        'periodo_inicio' => 'inicio del período',
+        'periodo_fin' => 'fin del período',
+        'aclaraciones' => 'aclaraciones',
+        'prioridad' => 'prioridad',
+        'usar_prioridad_calculada' => 'usar la calculada',
+        'motivo' => 'motivo',
+        'comentario' => 'comentario',
+        'texto' => 'comentario',
+        'comprobantes' => 'comprobantes',
+        'comprobantes.*' => 'comprobante',
     ],
 
     /*

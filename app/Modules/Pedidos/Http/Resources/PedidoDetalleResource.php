@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Modules\Pedidos\Http\Resources;
 
 use App\Modules\Identidad\Domain\Models\User;
-use App\Modules\Pedidos\Application\Consultas\DetallePedido;
 use App\Modules\Pedidos\Application\FechaEmpresa;
+use App\Modules\Pedidos\Application\Lecturas\DetallePedido;
 use App\Modules\Pedidos\Domain\Models\PedidoComentario;
 use App\Shared\Adjuntos\Adjunto;
 use App\Shared\Adjuntos\Http\AdjuntoResource;

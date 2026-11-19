@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Modules\Pedidos\Http\Controllers;
 
-use App\Modules\Pedidos\Application\Consultas\InicioQuery;
-use App\Modules\Pedidos\Application\Consultas\ListasDeInicio;
-use App\Modules\Pedidos\Application\Consultas\UltimosMovimientos;
+use App\Modules\Pedidos\Application\Lecturas\InicioQuery;
+use App\Modules\Pedidos\Application\Lecturas\ListasDeInicio;
+use App\Modules\Pedidos\Application\Lecturas\UltimosMovimientos;
 use App\Modules\Pedidos\Domain\Models\Pedido;
 use App\Modules\Pedidos\Http\Requests\ListaDeInicioRequest;
 use App\Modules\Pedidos\Http\Resources\PedidoFilaResource;

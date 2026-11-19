@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Pedidos\Application\Consultas;
+namespace App\Modules\Pedidos\Application\Lecturas;
 
 use App\Modules\Identidad\Domain\Models\User;
 use App\Modules\Pedidos\Application\FechaEmpresa;
