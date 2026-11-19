@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Modules\Pedidos\Http\Controllers\CalendarioController;
 use App\Modules\Pedidos\Http\Controllers\ComentarioController;
+use App\Modules\Pedidos\Http\Controllers\EquipoController;
 use App\Modules\Pedidos\Http\Controllers\InicioController;
 use App\Modules\Pedidos\Http\Controllers\MiGenteController;
 use App\Modules\Pedidos\Http\Controllers\PedidoController;
@@ -49,4 +50,12 @@ Route::middleware('auth:sanctum')->group(function () use ($ver, $editar): void {
     Route::post('pedidos/{pedido}/comentarios', [ComentarioController::class, 'store'])->whereNumber('pedido')->middleware('idempotent');
     Route::post('pedidos/{pedido}/seguir', [SeguirController::class, 'store'])->whereNumber('pedido')->middleware('idempotent');
     Route::delete('pedidos/{pedido}/seguir', [SeguirController::class, 'destroy'])->whereNumber('pedido');
+
+    // Equipos en reparación (W-49): su propia fila de la matriz (RN-PED-55).
+    $verEquipos = 'permiso:equipos_reparacion,ver';
+    $editarEquipos = 'permiso:equipos_reparacion,editar';
+    Route::get('equipos-reparacion', [EquipoController::class, 'index'])->middleware($verEquipos);
+    Route::post('equipos-reparacion', [EquipoController::class, 'store'])->middleware([$editarEquipos, 'idempotent']);
+    Route::patch('equipos-reparacion/{equipo}', [EquipoController::class, 'update'])->whereNumber('equipo')->middleware($editarEquipos);
+    Route::delete('equipos-reparacion/{equipo}', [EquipoController::class, 'destroy'])->whereNumber('equipo')->middleware($editarEquipos);
 });
