@@ -116,3 +116,11 @@ Reporte: `docs/qa/prueba-usuario/semana-1-ronda-3/` (de 52 PU: ✅43 ⚠️9 ❌
 - Suites en main: backend 598 / 3375, pint y larastan 0; front unit 412, e2e mock 53 (+7 salteados de celular en PC), **e2e real 42/42**; typecheck/lint/format/build ok.
 - [ ] Juani decide 3 detalles de `observaciones.md`: O-1 (destino tras "Estamos guardando"; Escape mientras guarda sin aviso) y O-3 (marca de fecha lejana en la ficha).
 - [ ] Deploy de staging con lo nuevo (`docs/deploy.md`, incluye `migrate --force`).
+
+## Semana 2 (arranque 2026-11-19)
+- [x] Juani aprobó las 27 dudas (va la propuesta); `dudas.md`, backlog y specs sin ⛔ (`8246e31`).
+- [x] Ronda 5 de QA = última ronda completa; bajos no frenan (§7 del prompt, `f36c23a`).
+- [x] Contratos compartidos en main: eventos de Pedidos con `FotoDelPedido`, `PedidosParaRecordar`, `AvisosDelPedido`, `DestinatariosDeAviso` con nulos (`dc57bae`, `105ccbd`).
+- [ ] Tanda 1 (brief `tasks/brief-agentes-semana2.md`), 4 agentes en worktrees: Back Pedidos (HU-059, 026…039), Back Avisos (HU-045…049, HU-060 back), Front Pedidos, Front Avisos. Bases `tecnoservicios_testing_pedidos` / `_avisos` (phpunit.xml skip-worktree).
+- [ ] Revisión y merge de la tanda 1; integración real front ↔ back.
+- [ ] Tanda 2: HU-040…044, 050, 051…058; QC; notas de entrega semana 2.
