@@ -11,3 +11,7 @@ Schedule::command('adjuntos:purgar-huerfanos')->hourly()->withoutOverlapping();
 
 // Idempotency-Key vencidas (24 h, ADR-011).
 Schedule::command('idempotencia:purgar')->hourly()->withoutOverlapping();
+
+// Recordatorio "vence mañana" (F-37, ADR-012): cada hora; sale desde las 8:00 de Argentina (DU-P21) y no se
+// repite por el dedupe_key, aunque corra dos veces.
+Schedule::command('avisos:recordatorios')->hourly()->withoutOverlapping();
