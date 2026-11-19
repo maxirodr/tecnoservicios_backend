@@ -205,6 +205,11 @@ return [
         'buscar' => 'búsqueda',
         'q' => 'búsqueda',
         'page' => 'página',
+        // Avisos
+        'leidos' => 'leídos',
+        'por_pagina' => 'cantidad por página',
+        'preferencias' => 'avisos por mail',
+        'preferencias.*' => 'aviso por mail',
         'tipo' => 'tipo',
         'fecha' => 'fecha',
         'descripcion' => 'descripción',
