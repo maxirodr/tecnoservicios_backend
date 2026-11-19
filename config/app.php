@@ -69,6 +69,10 @@ return [
 
     'timezone' => 'UTC',
 
+    // La empresa trabaja en hora de Argentina: las fechas "del día" (cargado, año del N.º) se cortan acá,
+    // no en UTC (PU-302). Los instantes viajan en ISO-8601 con huso y el front los muestra en esta zona.
+    'zona_empresa' => 'America/Argentina/Buenos_Aires',
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration

@@ -46,7 +46,8 @@ final class PresupuestoResource extends JsonResource
                 'adjunto' => self::adjunto($aprobacion, $request),
             ] : null,
             'modo_carga' => $presupuesto->modo_carga->value,
-            'created_at' => $presupuesto->created_at->toDateString(),
+            // El día de Argentina, no el de UTC: a las 22:30 sigue siendo hoy (PU-302).
+            'created_at' => $presupuesto->created_at->copy()->setTimezone(config()->string('app.zona_empresa'))->toDateString(),
             'created_by' => ObraFilaResource::usuario($presupuesto->creadoPor),
             ...($this->conMontoObra ? ['monto_obra' => $presupuesto->monto_obra] : []),
         ];

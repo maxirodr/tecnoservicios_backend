@@ -64,7 +64,7 @@ trait ArmaPresupuestos
         }
 
         try {
-            $numero = NumeroPresupuesto::desde($this->string($campoNumero)->toString(), Carbon::now()->year);
+            $numero = NumeroPresupuesto::desde($this->string($campoNumero)->toString(), Carbon::now(config()->string('app.zona_empresa'))->year);
         } catch (ValorInvalido $e) {
             $validator->errors()->add($campoNumero, $e->getMessage());
 
