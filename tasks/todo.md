@@ -121,6 +121,8 @@ Reporte: `docs/qa/prueba-usuario/semana-1-ronda-3/` (de 52 PU: ✅43 ⚠️9 ❌
 - [x] Juani aprobó las 27 dudas (va la propuesta); `dudas.md`, backlog y specs sin ⛔ (`8246e31`).
 - [x] Ronda 5 de QA = última ronda completa; bajos no frenan (§7 del prompt, `f36c23a`).
 - [x] Contratos compartidos en main: eventos de Pedidos con `FotoDelPedido`, `PedidosParaRecordar`, `AvisosDelPedido`, `DestinatariosDeAviso` con nulos (`dc57bae`, `105ccbd`).
-- [ ] Tanda 1 (brief `tasks/brief-agentes-semana2.md`), 4 agentes en worktrees: Back Pedidos (HU-059, 026…039), Back Avisos (HU-045…049, HU-060 back), Front Pedidos, Front Avisos. Bases `tecnoservicios_testing_pedidos` / `_avisos` (phpunit.xml skip-worktree).
-- [ ] Revisión y merge de la tanda 1; integración real front ↔ back.
-- [ ] Tanda 2: HU-040…044, 050, 051…058; QC; notas de entrega semana 2.
+- [x] Tanda 1 (brief `tasks/brief-agentes-semana2.md`), 4 agentes en worktrees: Back Pedidos (HU-059, 026…039), Back Avisos (HU-045…049, HU-060 back), Front Pedidos, Front Avisos. Bases `tecnoservicios_testing_pedidos` / `_avisos` (phpunit.xml skip-worktree).
+- [x] Tanda 1 en main (back `60c3723`: 854 tests; front `36bd778`: vitest 500, e2e 62). Pruebas de punta a punta Pedidos + Avisos en el back.
+- [x] Semana 1 APROBADA en la ronda 5 (8/8); PU-501 y PU-502 arreglados en staging (`19d971d`).
+- [ ] Tanda 2 (2026-11-19): Back Pedidos 2, Front Pedidos 2 e Integración real (worktrees reusados, ramas `feat/w2-pedidos-2` y `feat/w2-integracion`).
+- [ ] Después de la tanda 2: QC de la semana 2, notas de entrega, rama staging con la semana 2 y prompt de prueba de usuario de la semana 2.
