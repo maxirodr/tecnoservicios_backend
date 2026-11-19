@@ -17,20 +17,21 @@ final class FechaEmpresa
         return config()->string('app.zona_empresa');
     }
 
+    /** El día de hoy en Argentina, como fecha de calendario (medianoche, igual que las fechas guardadas). */
     public static function hoy(): CarbonImmutable
     {
-        return CarbonImmutable::now(self::zona())->startOfDay();
+        return CarbonImmutable::parse(self::hoyTexto());
     }
 
     /** "2026-10-19" */
     public static function hoyTexto(): string
     {
-        return self::hoy()->toDateString();
+        return CarbonImmutable::now(self::zona())->toDateString();
     }
 
     public static function mananaTexto(): string
     {
-        return self::hoy()->addDay()->toDateString();
+        return CarbonImmutable::now(self::zona())->addDay()->toDateString();
     }
 
     /** Un instante ISO-8601 con el huso de la empresa ("2026-10-14T09:12:00-03:00"). */

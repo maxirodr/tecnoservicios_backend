@@ -17,12 +17,13 @@ final class OpcionesUsuariosQuery
     /**
      * @return Collection<int, User>
      */
-    public function handle(?string $buscar): Collection
+    public function handle(?string $buscar, ?int $sectorId = null): Collection
     {
         return User::query()
             ->with('sector')
             ->where('activo', true)
             ->when($buscar !== null && $buscar !== '', fn (Builder $query): Builder => $query->where('nombre', 'like', TextoLike::contiene((string) $buscar)))
+            ->when($sectorId !== null, fn (Builder $query): Builder => $query->where('sector_id', $sectorId))
             ->orderBy('nombre')
             ->get();
     }

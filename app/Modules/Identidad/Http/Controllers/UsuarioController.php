@@ -37,7 +37,7 @@ final class UsuarioController
 
     public function opciones(OpcionesUsuariosRequest $request, OpcionesUsuariosQuery $opciones): JsonResponse
     {
-        return $this->ok(UsuarioOpcionResource::collection($opciones->handle($request->buscar())));
+        return $this->ok(UsuarioOpcionResource::collection($opciones->handle($request->buscar(), $request->sectorId())));
     }
 
     public function store(CrearUsuarioRequest $request, CrearUsuarioAction $crear): JsonResponse

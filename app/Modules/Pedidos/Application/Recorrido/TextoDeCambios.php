@@ -44,13 +44,19 @@ final class TextoDeCambios
         $nota = $dias === null ? '' : self::notaDePrioridad($cambios, $dias);
 
         foreach ($cambios as $campo => $cambio) {
-            if (! isset(self::ETIQUETAS[$campo]) || ($campo === 'prioridad' && $nota !== '')) {
+            // Con una fecha cambiada, la prioridad va como nota de esa línea y no como línea aparte.
+            if (! isset(self::ETIQUETAS[$campo]) || ($campo === 'prioridad' && $dias !== null)) {
                 continue;
             }
 
             $linea = self::ETIQUETAS[$campo].': '.self::valor($campo, $cambio['antes']).' → '.self::valor($campo, $cambio['despues']);
-            $lineas[] = in_array($campo, ['fecha_pedido', 'fecha_entrega'], true) ? $linea.$nota : $linea;
-            $nota = in_array($campo, ['fecha_pedido', 'fecha_entrega'], true) ? '' : $nota;
+
+            if (in_array($campo, ['fecha_pedido', 'fecha_entrega'], true)) {
+                $linea .= $nota;
+                $nota = '';
+            }
+
+            $lineas[] = $linea;
         }
 
         return $lineas;

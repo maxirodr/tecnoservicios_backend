@@ -90,6 +90,7 @@ final class ComentariosYSeguirTest extends PedidosTestCase
         $laura = $this->laura();
         $pedido = $this->crear($laura, $this->carla());
         $id = $this->actingAs($laura)->postJson("/api/pedidos/{$pedido->id}/comentarios", ['texto' => 'Hola.'])->json('data.id');
+        $this->assertIsInt($id);
         $comentario = PedidoComentario::query()->findOrFail($id);
 
         $this->actingAs($laura)->deleteJson("/api/pedidos/{$pedido->id}/comentarios/{$id}")->assertStatus(404);

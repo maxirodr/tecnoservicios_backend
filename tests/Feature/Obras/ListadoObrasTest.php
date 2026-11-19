@@ -48,15 +48,16 @@ final class ListadoObrasTest extends ObrasTestCase
             ->assertJsonPath('data.0.responsable', ['id' => $laura->id, 'nombre' => 'Laura', 'activo' => true]);
     }
 
-    public function test_pedidos_abiertos_y_porcentaje_gastado_son_nulos_en_semana_1(): void
+    /** Semana 2 (HU-059 c4): Pedidos ya implementa el puerto; sin pedidos cuenta 0. El % gastado sigue nulo hasta la semana 3. */
+    public function test_obra_sin_pedidos_cuenta_cero_y_el_porcentaje_sigue_nulo(): void
     {
         $this->obraDe($this->laura(), ObraEstado::EnEjecucion);
 
         $this->actingAs($this->diego())->getJson('/api/obras')
-            ->assertJsonPath('data.0.pedidos_abiertos', null)
+            ->assertJsonPath('data.0.pedidos_abiertos', 0)
             ->assertJsonPath('data.0.porcentaje_gastado', null)
             ->assertJsonPath('data.0.pasado_de_presupuesto', null)
-            ->assertJsonPath('meta.pedidos_sin_obra_abiertos', null);
+            ->assertJsonPath('meta.pedidos_sin_obra_abiertos', 0);
     }
 
     public function test_pedidos_abiertos_salen_del_puerto_en_una_consulta(): void

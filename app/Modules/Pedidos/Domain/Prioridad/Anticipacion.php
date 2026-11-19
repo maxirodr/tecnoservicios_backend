@@ -16,8 +16,9 @@ final class Anticipacion
             return null;
         }
 
-        $desde = DateTimeImmutable::createFromInterface($fechaPedido)->setTime(0, 0);
-        $hasta = DateTimeImmutable::createFromInterface($fechaEntrega)->setTime(0, 0);
+        // Por la fecha de calendario de cada una, sin importar el huso con que vengan.
+        $desde = new DateTimeImmutable($fechaPedido->format('Y-m-d'));
+        $hasta = new DateTimeImmutable($fechaEntrega->format('Y-m-d'));
 
         return (int) $desde->diff($hasta)->format('%r%a');
     }

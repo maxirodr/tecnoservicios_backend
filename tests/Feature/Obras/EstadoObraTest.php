@@ -110,7 +110,7 @@ final class EstadoObraTest extends ObrasTestCase
         $this->cambiar($obra, 'en_ejecucion', $this->sinAcceso())->assertForbidden();
     }
 
-    public function test_pedidos_abiertos_vacio_en_semana_1(): void
+    public function test_obra_sin_pedidos_abiertos_devuelve_lista_vacia(): void
     {
         $laura = $this->laura();
         $obra = $this->obraDe($laura, ObraEstado::EnEjecucion);
