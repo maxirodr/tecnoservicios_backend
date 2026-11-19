@@ -1,0 +1,8 @@
+# se · Nuevo proveedor
+  recién abierto: vh=667 · fondo 0→667 scroll 0/86 oy=auto · diálogo 40→713 scroll 0/0 oy=visible · cuerpo 96→643 scroll 0/0 oy=visible · pie 643→712 · botones "Cancelar" 656→700 | "Guardar proveedor" 656→700 · window.scrollY=0 docScroll=0
+  con nombre: vh=667 · fondo 0→667 scroll 0/86 oy=auto · diálogo 40→713 scroll 0/0 oy=visible · cuerpo 96→643 scroll 0/0 oy=visible · pie 643→712 · botones "Cancelar" 656→700 | "Guardar proveedor" 656→700 · window.scrollY=0 docScroll=0
+  guardando: vh=667 · fondo 0→667 scroll 33/189 oy=auto · diálogo 7→783 scroll 0/0 oy=visible · cuerpo 63→713 scroll 0/0 oy=visible · pie 713→782 · botones "Cancelar" 726→770 | "Guardar proveedor" 726→770 · window.scrollY=0 docScroll=0
+  con aviso: vh=667 · fondo 0→667 scroll 189/221 oy=auto · diálogo -149→659 scroll 0/0 oy=visible · cuerpo -93→557 scroll 0/0 oy=visible · pie 557→658 · botones "Cancelar" 602→646 | "Guardar proveedor" 602→646 · window.scrollY=0 docScroll=0
+  tras deslizar: vh=667 · fondo 0→667 scroll 221/221 oy=auto · diálogo -181→627 scroll 0/0 oy=visible · cuerpo -125→525 scroll 0/0 oy=visible · pie 525→626 · botones "Cancelar" 570→614 | "Guardar proveedor" 570→614 · window.scrollY=0 docScroll=0
+  final: diálogos=0
+  consola/red: limpia

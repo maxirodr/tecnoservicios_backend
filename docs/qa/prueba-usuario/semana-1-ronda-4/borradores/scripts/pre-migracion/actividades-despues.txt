@@ -1,0 +1,2 @@
+﻿id	sujeto_type	sujeto_id	user_id	accion	cambios	created_at
+28	obra	5	1	editado	[{"campo":"carpeta_drive_url","antes":null,"despues":"https:\\/\\/drive.example\\/Obras%202026\\/carpeta-%C3%B1and%C3%BA-a%C3%B1o"}]	2026-11-18 13:44:03

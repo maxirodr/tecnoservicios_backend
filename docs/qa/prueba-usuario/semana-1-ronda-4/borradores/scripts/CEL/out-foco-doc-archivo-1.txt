@@ -1,0 +1,9 @@
+# Hernán /obras/10 · diálogo documento · archivo · red lenta 4 s en POST · corrida 1
+  subiendo: foco=BUTTON "Subir archivo" (dentro del diálogo) · ocupado=— · vivos=["QA4-CEL plano ñandú.pdf\n· subiendo…\ncancelar"]
+  Shift+Tab hasta "cancelar" del archivo: true (BUTTON "Cancelar QA4-CEL plano ñandú.pdf")
+  Enter en "cancelar": foco=BUTTON "Subir archivo" (dentro del diálogo) · ocupado=— · vivos=[]
+  archivo subido: foco=BUTTON "Subir archivo" (dentro del diálogo) · ocupado=— · vivos=["QA4-CEL plano ñandú.pdf\n· 1 KB\nquitar"]
+  Shift+Tab hasta "quitar" del archivo: true (BUTTON "Quitar QA4-CEL plano ñandú.pdf")
+  Enter en "quitar" del archivo: foco=BUTTON "Subir archivo" (dentro del diálogo) · ocupado=— · vivos=[]
+  Escape: diálogos abiertos=0 · []
+  consola/red: limpia
