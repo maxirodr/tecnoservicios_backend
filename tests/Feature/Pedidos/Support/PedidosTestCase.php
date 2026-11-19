@@ -21,6 +21,7 @@ use App\Modules\Pedidos\Domain\Models\Pedido;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
@@ -160,6 +161,22 @@ abstract class PedidosTestCase extends TestCase
         $this->assertIsInt($id);
 
         return $id;
+    }
+
+    /**
+     * Cuántas consultas hace un pedido al servidor: sirve para probar que una lista no hace una por fila.
+     *
+     * @param  callable(): mixed  $pedido
+     */
+    protected function consultasDe(callable $pedido): int
+    {
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+        $pedido();
+        $cantidad = count(DB::getQueryLog());
+        DB::disableQueryLog();
+
+        return $cantidad;
     }
 
     /** Solo los eventos de Pedidos (los de Eloquent y la cache siguen andando). */
