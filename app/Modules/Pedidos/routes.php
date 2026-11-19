@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Modules\Pedidos\Http\Controllers\CalendarioController;
 use App\Modules\Pedidos\Http\Controllers\ComentarioController;
 use App\Modules\Pedidos\Http\Controllers\InicioController;
 use App\Modules\Pedidos\Http\Controllers\MiGenteController;
@@ -34,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () use ($ver, $editar): void {
 
     Route::get('pedidos', [TodosLosPedidosController::class, 'index'])->middleware($ver);
     Route::get('pedidos/exportar', [TodosLosPedidosController::class, 'exportar'])->middleware($ver);
+    Route::get('pedidos/calendario', CalendarioController::class)->middleware($ver);
 
     Route::post('pedidos', [PedidoController::class, 'store'])->middleware([$editar, 'idempotent']);
     Route::get('pedidos/{pedido}', [PedidoController::class, 'show'])->whereNumber('pedido');
