@@ -12,10 +12,11 @@ final readonly class PedidoReasignado extends EventoDePedido
         int $actorId,
         int $actividadId,
         Participantes $participantes,
+        FotoDelPedido $foto,
         public ?int $propietarioAnteriorId,
         public bool $aSector,
         public ?string $comentario = null,
     ) {
-        parent::__construct($pedidoId, $actorId, $actividadId, $participantes);
+        parent::__construct($pedidoId, $actorId, $actividadId, $participantes, $foto);
     }
 }

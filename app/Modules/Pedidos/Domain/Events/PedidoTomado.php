@@ -12,8 +12,9 @@ final readonly class PedidoTomado extends EventoDePedido
         int $actorId,
         int $actividadId,
         Participantes $participantes,
+        FotoDelPedido $foto,
         public bool $desdeSector = false,
     ) {
-        parent::__construct($pedidoId, $actorId, $actividadId, $participantes);
+        parent::__construct($pedidoId, $actorId, $actividadId, $participantes, $foto);
     }
 }

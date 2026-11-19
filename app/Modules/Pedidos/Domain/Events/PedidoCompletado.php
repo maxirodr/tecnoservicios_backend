@@ -12,9 +12,10 @@ final readonly class PedidoCompletado extends EventoDePedido
         int $actorId,
         int $actividadId,
         Participantes $participantes,
+        FotoDelPedido $foto,
         public string $comentario,
         public int $cantidadComprobantes = 0,
     ) {
-        parent::__construct($pedidoId, $actorId, $actividadId, $participantes);
+        parent::__construct($pedidoId, $actorId, $actividadId, $participantes, $foto);
     }
 }
