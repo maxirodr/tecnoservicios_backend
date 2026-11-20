@@ -21,7 +21,8 @@ final class UsuarioActualQuery
 
         return new UsuarioActual(
             $user,
-            $user->dependientes()->where('activo', true)->exists(),
+            // Gente a cargo activa (RN-IDE-13) o Dirección, que ve a todos (RN-PED-35).
+            $user->sector->es_direccion || $user->dependientes()->where('activo', true)->exists(),
             $this->celdas->handle($user->sector_id),
         );
     }

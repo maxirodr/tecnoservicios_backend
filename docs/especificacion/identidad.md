@@ -141,7 +141,7 @@ Un ingreso exitoso borra la fila.
 
 - **RN-IDE-11** La barra es **una sola para todos**, en este orden: Inicio · Pedidos · Obras · Calendario · Gastos · Rendiciones · Proveedores · Usuarios. Cada ítem aparece solo si la celda del sector de la persona lo habilita (tabla §6.4). *(W-17, decisiones Sprint 0 n.º 14)*
 - **RN-IDE-12** Si la persona solo tiene **ver** en una función que tiene carga (Gastos, Rendiciones), el ítem se muestra con la marca **"(ver)"** y la pantalla no muestra botones de carga ni edición. *(W-17: "Gastos (ver)", "Rendiciones (ver)")*
-- **RN-IDE-13** "Tareas de mi gente" y "Carga por persona" (dentro de Pedidos) **no son filas de la matriz**: aparecen a quien **tiene gente a cargo** (al menos un usuario activo que dependa de él). *(W-17 "Gerencias y jefaturas ven además…", F-06, F-12, F-61)*
+- **RN-IDE-13** "Tareas de mi gente" y "Carga por persona" (dentro de Pedidos) **no son filas de la matriz**: aparecen a quien **tiene gente a cargo** (al menos un usuario activo que dependa de él) **y a Dirección**, que ve a todos (`pedidos.md` RN-PED-35); `tiene_gente` de `GET /api/me` es `true` en los dos casos. *(W-17 "Gerencias y jefaturas ven además…", F-06, F-12, F-61)*
 - **RN-IDE-14** El menú es comodidad, no seguridad: **cada endpoint** vuelve a verificar la celda (403 si no corresponde). Un cambio en la matriz vale desde el **próximo pedido** al servidor; el front vuelve a pedir `GET /api/me` al enfocar la pestaña y al recibir un 403. *(ADR-006)*
 - **RN-IDE-15** En el celular la barra de abajo es **Tareas · Obras · Avisos · Más**; "Más" abre el resto de los ítems de RN-IDE-11 que la persona puede ver. *(W-41)*
 
