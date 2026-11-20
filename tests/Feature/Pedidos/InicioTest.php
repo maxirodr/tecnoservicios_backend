@@ -193,4 +193,25 @@ final class InicioTest extends PedidosTestCase
         $this->getJson('/api/pedidos/inicio')->assertUnauthorized();
         $this->getJson('/api/pedidos/mis-tareas')->assertUnauthorized();
     }
+
+    public function test_mis_tareas_y_tareas_que_sigo_vienen_enteras_sin_cortar_en_50(): void
+    {
+        $laura = $this->laura();
+        $carla = $this->carla();
+        $primero = $this->crear($laura, $carla);
+        $sofia = $this->sofia();
+        $this->actingAs($sofia)->postJson("/api/pedidos/{$primero->id}/seguir")->assertSuccessful();
+        foreach (range(1, 50) as $n) {
+            $copia = $primero->replicate();
+            $copia->tarea = "Pedido ficticio {$n}";
+            $copia->save();
+            $copia->seguidores()->attach($sofia->id);
+        }
+
+        $this->actingAs($carla)->getJson('/api/pedidos/mis-tareas')
+            ->assertOk()
+            ->assertJsonCount(51, 'data')
+            ->assertJsonPath('meta.abiertas', 51);
+        $this->actingAs($sofia)->getJson('/api/pedidos/que-sigo')->assertOk()->assertJsonCount(51, 'data');
+    }
 }
