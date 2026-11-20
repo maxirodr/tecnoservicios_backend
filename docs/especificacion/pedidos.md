@@ -475,7 +475,7 @@ campo). Rutas en `app/Modules/Pedidos/routes.php`.
 | `GET /api/pedidos/obras-opciones?buscar=` | — | `[{id, numero, nombre_trabajo, cliente, estado}]` (máx. 20; en ejecución, confirmadas, terminadas) — usa `ObrasConsulta` (resuelta DU-P20) | 403 |
 | `POST /api/pedidos` | `PedidoAlta` | `PedidoDetalle` (201) + `avisados: [{id, nombre}]` | 403 · 422 |
 | `GET /api/pedidos/{id}` | — | `PedidoDetalle` | 404 |
-| `PATCH /api/pedidos/{id}` | campos de RN-PED-28 (incluida `obra_id`, DU-P05; `adjuntos: [ids]` = la lista completa: los que no vienen se quitan) + `prioridad?` / `usar_prioridad_calculada?: true` | `PedidoDetalle` | 403 · 404 · 422 |
+| `PATCH /api/pedidos/{id}` | campos de RN-PED-28 (incluida `obra_id`, DU-P05; `adjuntos: [ids]` = la lista completa: los que no vienen se quitan; `tarea`, `fecha_pedido` y `fecha_entrega` son opcionales pero, si vienen, no pueden ser `null`: un pedido de carga inicial sin fecha de pedido se edita sin mandarla) + `prioridad?` / `usar_prioridad_calculada?: true` + `updated_at?` (versión, 409) | `PedidoDetalle` | 403 · 404 · 409 · 422 |
 | `GET /api/pedidos/{id}/recorrido?solo=cambios` | — | `[{cuando, quien: {id, nombre}\|null, que: "Carla lo tomó → En curso"}]` (`solo=cambios`: lo de W-32) | 404 |
 | `POST /api/pedidos/{id}/tomar` | — | `PedidoDetalle` | 403 · 404 · 409 |
 | `POST /api/pedidos/{id}/bloquear` | `{motivo}` | `PedidoDetalle` | 403 · 404 · 409 · 422 |
