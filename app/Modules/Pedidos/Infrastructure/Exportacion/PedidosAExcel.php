@@ -56,6 +56,16 @@ final class PedidosAExcel
         return 'pedidos-'.FechaEmpresa::hoyTexto().'.xlsx';
     }
 
+    /** Como en la tabla: el pedido en el sector, o la persona con "(inactivo)" si ya no está (RN-PED-60, PU-612). */
+    private static function propietario(Pedido $p): string
+    {
+        if ($p->propietario === null) {
+            return "{$p->sector->nombre} (sector)";
+        }
+
+        return $p->propietario->activo ? $p->propietario->nombre : "{$p->propietario->nombre} (inactivo)";
+    }
+
     /**
      * @return list<DateTimeInterface|string>
      */
@@ -65,7 +75,7 @@ final class PedidosAExcel
             $p->obra->nombre_trabajo ?? PedidosQuery::SERVICIOS_GENERALES,
             $p->tarea,
             $p->sector->nombre,
-            $p->propietario->nombre ?? "{$p->sector->nombre} (sector)",
+            self::propietario($p),
             $p->solicitante->nombre ?? self::SIN_DATO,
             self::fecha($p->fecha_pedido),
             self::fecha($p->fecha_entrega),

@@ -95,6 +95,17 @@ final class ExportarPedidosTest extends PedidosTestCase
         $this->assertSame(['Servicios generales', 'Compras (sector)', '', ''], [$filas[1][0], $filas[1][3], $filas[1][9], $filas[1][13]]);
     }
 
+    public function test_exportar_marca_al_propietario_inactivo_como_la_tabla(): void
+    {
+        $laura = $this->laura();
+        $carla = $this->carla();
+        $this->crear($laura, $carla);
+        $carla->forceFill(['activo' => false])->save();
+
+        // Quien reparte el trabajo desde el Excel tiene que ver que esa persona ya no está (PU-612).
+        $this->assertSame('Carla (inactivo)', $this->filas($laura)[0][3] ?? null);
+    }
+
     public function test_exportar_respeta_el_alcance(): void
     {
         $this->celda('Calidad', 'pedidos', 'ver', 'propias');

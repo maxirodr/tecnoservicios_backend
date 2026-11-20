@@ -9,6 +9,7 @@ use App\Modules\Avisos\Domain\Models\PreferenciaAviso;
 /** F-09 · F-10 · HU-047 (W-19 "Mis avisos", RN-AVI-19 y RN-AVI-27, resuelta DU-P19). */
 final class MisAvisosPorMailTest extends AvisosTestCase
 {
+    /** "Vence mañana" sigue en la lista, pero marcado solo en el sistema: sin casilla (PU-606). */
     public function test_preferencias_sin_fila_usan_el_valor_por_defecto_en_el_orden_de_w19(): void
     {
         $laura = $this->persona('Laura');
@@ -16,14 +17,14 @@ final class MisAvisosPorMailTest extends AvisosTestCase
         $this->actingAs($laura)->getJson('/api/me/avisos-por-mail')
             ->assertOk()
             ->assertJsonPath('data', [
-                ['tipo' => 'asignado', 'nombre' => 'Me asignan un pedido', 'por_mail' => true, 'se_puede_cambiar' => false],
-                ['tipo' => 'reasignado', 'nombre' => 'Me reasignan un pedido', 'por_mail' => true, 'se_puede_cambiar' => false],
-                ['tipo' => 'tomado', 'nombre' => 'Toman (En curso) un pedido que pedí', 'por_mail' => false, 'se_puede_cambiar' => true],
-                ['tipo' => 'completado', 'nombre' => 'Completan un pedido que pedí', 'por_mail' => false, 'se_puede_cambiar' => true],
-                ['tipo' => 'vence_manana', 'nombre' => 'Vence mañana una tarea mía', 'por_mail' => false, 'se_puede_cambiar' => false],
-                ['tipo' => 'bloqueado', 'nombre' => 'Bloquean un pedido que pedí, con el motivo', 'por_mail' => false, 'se_puede_cambiar' => true],
-                ['tipo' => 'comentado', 'nombre' => 'Comentan en un pedido mío', 'por_mail' => false, 'se_puede_cambiar' => true],
-                ['tipo' => 'reabierto', 'nombre' => 'Reabren un pedido que completé', 'por_mail' => false, 'se_puede_cambiar' => true],
+                ['tipo' => 'asignado', 'nombre' => 'Me asignan un pedido', 'por_mail' => true, 'se_puede_cambiar' => false, 'solo_en_el_sistema' => false],
+                ['tipo' => 'reasignado', 'nombre' => 'Me reasignan un pedido', 'por_mail' => true, 'se_puede_cambiar' => false, 'solo_en_el_sistema' => false],
+                ['tipo' => 'tomado', 'nombre' => 'Toman (En curso) un pedido que pedí', 'por_mail' => false, 'se_puede_cambiar' => true, 'solo_en_el_sistema' => false],
+                ['tipo' => 'completado', 'nombre' => 'Completan un pedido que pedí', 'por_mail' => false, 'se_puede_cambiar' => true, 'solo_en_el_sistema' => false],
+                ['tipo' => 'vence_manana', 'nombre' => 'Vence mañana una tarea mía', 'por_mail' => false, 'se_puede_cambiar' => false, 'solo_en_el_sistema' => true],
+                ['tipo' => 'bloqueado', 'nombre' => 'Bloquean un pedido que pedí, con el motivo', 'por_mail' => false, 'se_puede_cambiar' => true, 'solo_en_el_sistema' => false],
+                ['tipo' => 'comentado', 'nombre' => 'Comentan en un pedido mío', 'por_mail' => false, 'se_puede_cambiar' => true, 'solo_en_el_sistema' => false],
+                ['tipo' => 'reabierto', 'nombre' => 'Reabren un pedido que completé', 'por_mail' => false, 'se_puede_cambiar' => true, 'solo_en_el_sistema' => false],
             ]);
     }
 

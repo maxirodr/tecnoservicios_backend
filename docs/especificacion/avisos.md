@@ -214,7 +214,7 @@ Envelope `{ data, message, errors }`; rutas en `app/Modules/Avisos/routes.php`. 
 | `GET /api/avisos?leidos=todos\|no\|si&tipo=&por_pagina=5\|25&page=` | — | `[Aviso]` paginado, la más nueva arriba; `meta: {no_leidos}` | 401 · 422 |
 | `POST /api/avisos/{id}/leido` | — | `Aviso` | 401 · 404 |
 | `POST /api/avisos/leer-todos` | — | `{marcados: 3}` | 401 |
-| `GET /api/me/avisos-por-mail` | — | `[{tipo, nombre, por_mail, se_puede_cambiar}]` (orden de W-19) | 401 |
+| `GET /api/me/avisos-por-mail` | — | `[{tipo, nombre, por_mail, se_puede_cambiar, solo_en_el_sistema}]` (orden de W-19; `solo_en_el_sistema` solo en "vence mañana": sin casilla) | 401 |
 | `PUT /api/me/avisos-por-mail` | `{preferencias: {"tomado": true, "comentado": false}}` | igual que el GET | 401 · 422 (tipo inexistente o que no se puede cambiar) |
 
 Los POST de marcar leído son idempotentes por sí mismos (no necesitan `Idempotency-Key`).

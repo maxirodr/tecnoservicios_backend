@@ -52,11 +52,14 @@ final class RecorridoTest extends PedidosTestCase
         $this->avisos->enviados[$pedido->id] = [
             new AvisoEnviado('asignado', [['id' => $carla->id, 'nombre' => 'Carla']], new DateTimeImmutable('2026-10-19 13:00:05+00:00')),
             new AvisoEnviado('vence_manana', [['id' => $carla->id, 'nombre' => 'Carla']], new DateTimeImmutable('2026-10-22 11:00:00+00:00')),
+            new AvisoEnviado('completado_gente', [['id' => 3, 'nombre' => 'Hernán']], new DateTimeImmutable('2026-10-23 11:00:00+00:00')),
         ];
 
         $this->actingAs($laura)->getJson("/api/pedidos/{$pedido->id}/recorrido")
             ->assertJsonPath('data.1', ['cuando' => '2026-10-19T10:00:05-03:00', 'quien' => null, 'que' => 'Sistema avisó a Carla (asignado)'])
-            ->assertJsonPath('data.2.que', 'Sistema: recordatorio, vence mañana');
+            ->assertJsonPath('data.2.que', 'Sistema: recordatorio, vence mañana')
+            // Con palabras, no la clave del tipo (PU-607).
+            ->assertJsonPath('data.3.que', 'Sistema avisó a Hernán (completado, a su jefe)');
     }
 
     public function test_recorrido_solo_cambios_es_lo_de_w32(): void
