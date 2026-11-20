@@ -463,9 +463,9 @@ campo). Rutas en `app/Modules/Pedidos/routes.php`.
 | Método y ruta | Payload | Respuesta `data` | Errores |
 |---|---|---|---|
 | `GET /api/pedidos/inicio` | — | `{mis_tareas: 6, vencidas: 2, pedidos_que_pedi: 4, tareas_que_sigo: 3, tiene_gente: false}` | 401 |
-| `GET /api/pedidos/mis-tareas?obra_id=&estado=abiertos\|no_iniciada\|en_curso\|bloqueada\|completada\|todos&buscar=` | — | `[PedidoFila]`, `meta: {abiertas, vencidas}` | 401 |
+| `GET /api/pedidos/mis-tareas?obra_id=&estado=abiertos\|no_iniciada\|en_curso\|bloqueada\|completada\|todos&buscar=` | — | `[PedidoFila]` **entera, sin páginas**, `meta: {abiertas, vencidas}` | 401 |
 | `GET /api/pedidos/que-pedi?estado=abiertos\|todos&page=` | — | `[PedidoFila + {ultimo_movimiento: {cuando, texto}}]` | 401 |
-| `GET /api/pedidos/que-sigo` | — | `[PedidoFila]` | 401 |
+| `GET /api/pedidos/que-sigo` | — | `[PedidoFila]` **entera, sin páginas** | 401 |
 | `GET /api/pedidos/de-mi-gente?estado=` | — | `[{persona: {id, nombre, sector, activo, soy_yo}, abiertas, vencidas, pedidos: [PedidoFila]}]` (todos los pedidos; el front muestra 3) | 403 |
 | `GET /api/pedidos/carga-por-persona?sector_id=` | — | `{semana: {desde, hasta}, personas: [{persona: {id, nombre, activo}, sector: {id, nombre}, abiertas, vencidas, vencen_esta_semana}]}` | 403 |
 | `GET /api/pedidos?obra_id=\|sin_obra&sector_id=&propietario_id=\|en_sector&solicitante_id=&estado=&prioridad=&vencidos=1&entrega_desde=&entrega_hasta=&orden=obra\|fecha_pedido\|fecha_entrega&dir=asc\|desc&page=` | — | `[PedidoFila]` paginado de a 50; `meta: {total_visibles, …}` | 403 · 422 |

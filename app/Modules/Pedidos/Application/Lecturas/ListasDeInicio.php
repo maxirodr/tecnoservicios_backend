@@ -9,6 +9,7 @@ use App\Modules\Pedidos\Application\FechaEmpresa;
 use App\Modules\Pedidos\Domain\Models\Pedido;
 use App\Modules\Pedidos\Infrastructure\Consultas\PedidosQuery;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Las pestañas de Inicio (W-01, RN-PED-37…40): Mis tareas, Pedidos que pedí y Tareas que sigo. No son
@@ -22,14 +23,17 @@ final readonly class ListasDeInicio
     public const CON = ['obra.principal', 'sector', 'propietario', 'solicitante'];
 
     /**
-     * @return LengthAwarePaginator<int, Pedido>
+     * Entera, sin páginas (pedidos.md §11): son las tareas de una persona; cortarlas en 50 dejaba
+     * afuera justo las que no se veían, con el contador diciendo que había más.
+     *
+     * @return Collection<int, Pedido>
      */
-    public function misTareas(User $user, int|string|null $obra, string $estado, ?string $buscar, int $pagina): LengthAwarePaginator
+    public function misTareas(User $user, int|string|null $obra, string $estado, ?string $buscar): Collection
     {
         $query = PedidosQuery::misTareas(PedidosQuery::nueva(self::CON), $user);
         PedidosQuery::porTarea(PedidosQuery::porObra(PedidosQuery::porEstado($query, $estado), $obra), $buscar);
 
-        return PedidosQuery::porEntrega($query)->paginate(self::POR_PAGINA, ['pedidos.*'], 'page', $pagina);
+        return PedidosQuery::porEntrega($query)->get(['pedidos.*']);
     }
 
     /**
@@ -61,12 +65,14 @@ final readonly class ListasDeInicio
     }
 
     /**
-     * @return LengthAwarePaginator<int, Pedido>
+     * Abiertos que sigo, enteros como Mis tareas (pedidos.md §11).
+     *
+     * @return Collection<int, Pedido>
      */
-    public function queSigo(User $user, int $pagina): LengthAwarePaginator
+    public function queSigo(User $user): Collection
     {
         $query = PedidosQuery::porEstado(PedidosQuery::queSigo(PedidosQuery::nueva(self::CON), $user), PedidosQuery::ABIERTOS);
 
-        return PedidosQuery::porEntrega($query)->paginate(self::POR_PAGINA, ['pedidos.*'], 'page', $pagina);
+        return PedidosQuery::porEntrega($query)->get(['pedidos.*']);
     }
 }

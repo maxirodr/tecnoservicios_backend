@@ -32,9 +32,12 @@ final class InicioController
     public function misTareas(ListaDeInicioRequest $request): JsonResponse
     {
         $user = $this->usuario($request);
-        $pagina = $this->listas->misTareas($user, $request->obra(), $request->estado(), $request->buscar(), $request->pagina());
+        $filas = $this->listas->misTareas($user, $request->obra(), $request->estado(), $request->buscar());
 
-        return ApiResponse::paginated(PedidoFilaResource::collection($pagina), null, $this->listas->contadoresDeMisTareas($user));
+        return new JsonResponse([
+            ...ApiResponse::body(PedidoFilaResource::collection($filas)->resolve(), null, null),
+            'meta' => $this->listas->contadoresDeMisTareas($user),
+        ]);
     }
 
     public function quePedi(ListaDeInicioRequest $request, UltimosMovimientos $movimientos): JsonResponse
@@ -51,6 +54,6 @@ final class InicioController
 
     public function queSigo(ListaDeInicioRequest $request): JsonResponse
     {
-        return $this->ok(PedidoFilaResource::collection($this->listas->queSigo($this->usuario($request), $request->pagina())));
+        return $this->ok(PedidoFilaResource::collection($this->listas->queSigo($this->usuario($request))));
     }
 }
