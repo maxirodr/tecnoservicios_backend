@@ -41,6 +41,14 @@ final class PerfilTest extends IdentidadTestCase
         $this->actingAs($sofia)->getJson('/api/me')->assertJsonPath('data.tiene_gente', false);
     }
 
+    public function test_direccion_tiene_gente_aunque_nadie_dependa_de_ella(): void
+    {
+        // RN-PED-35: para Dirección, "mi gente" es todo el mundo; el menú tiene que mostrarle las entradas.
+        $dora = $this->usuarioDe('Dirección');
+
+        $this->actingAs($dora)->getJson('/api/me')->assertJsonPath('data.tiene_gente', true);
+    }
+
     public function test_dato_depende_de_se_ve_en_mi_perfil(): void
     {
         $hernan = $this->usuarioDe('Jefatura de Proyectos', ['nombre' => 'Hernán']);
