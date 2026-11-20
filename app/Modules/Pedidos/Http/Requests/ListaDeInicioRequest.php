@@ -15,6 +15,7 @@ use Illuminate\Validation\Rule;
  */
 final class ListaDeInicioRequest extends PedidosRequest
 {
+    use FiltraPorObra;
     use RecortaBusqueda;
 
     /**
@@ -23,26 +24,19 @@ final class ListaDeInicioRequest extends PedidosRequest
     public function rules(): array
     {
         return [
-            'obra_id' => ['nullable', function (string $atributo, mixed $valor, \Closure $falla): void {
-                if ($valor !== PedidosQuery::SIN_OBRA && ! (is_numeric($valor) && (int) $valor > 0)) {
-                    $falla('El valor no es válido.');
-                }
-            }],
-            'estado' => ['nullable', Rule::in([PedidosQuery::ABIERTOS, PedidosQuery::TODOS, ...array_column(PedidoEstado::cases(), 'value')])],
+            'obra_id' => self::reglaDeObra(),
+            'estado' => ['nullable', Rule::in(self::estados())],
             'buscar' => ['nullable', 'string', 'max:'.BuscarRequest::LARGO_BUSCAR],
             'page' => ['nullable', 'integer', 'min:1'],
         ];
     }
 
-    public function obra(): int|string|null
+    /**
+     * @return list<string>
+     */
+    public static function estados(): array
     {
-        $obra = $this->input('obra_id');
-
-        return match (true) {
-            $obra === PedidosQuery::SIN_OBRA => PedidosQuery::SIN_OBRA,
-            is_numeric($obra) => (int) $obra,
-            default => null,
-        };
+        return [PedidosQuery::ABIERTOS, PedidosQuery::TODOS, ...array_column(PedidoEstado::cases(), 'value')];
     }
 
     public function estado(): string

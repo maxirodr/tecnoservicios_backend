@@ -334,7 +334,7 @@ con pedidos nuevos), 422.
 | `GET /api/obras/{id}` | — | `ObraFicha` | 403 · 404 |
 | `PATCH /api/obras/{id}` | campos de `ObraAlta` sin `presupuesto` ni `adicionales` (+ `contactos`) | `ObraFicha` | 403 · 404 · 422 (`carpeta_drive_url` no es `http(s)`) |
 | `GET /api/obras/{id}/historial?page=` | — | `[{cuando, quien: {id, nombre}, que: "N.º de OC: (vacío) → 4500-000123"}]` paginado | 403 · 404 |
-| `GET /api/obras/{id}/pedidos-abiertos` | — | `[{id, tarea, propietario: {id, nombre}\|null, sector: {id, nombre}, estado}]` | 403 · 404 |
+| `GET /api/obras/{id}/pedidos-abiertos` | — | `[{id, tarea, propietario: {id, nombre}\|null, sector: {id, nombre}, estado, puede: {completar, reasignar}}]` (`puede` de quien mira, resuelta DU-P12; también en la lista del 409) | 403 · 404 |
 | `POST /api/obras/{id}/estado` | `{estado, confirmo_pedidos_abiertos: [ids]}` | `ObraFicha` | 403 · 404 · 409 `{errors: {pedidos_abiertos: [...]}}` · 422 transición no permitida |
 
 ```json

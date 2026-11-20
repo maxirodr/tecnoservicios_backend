@@ -27,8 +27,11 @@ final readonly class PedidosDeObraEloquent implements PedidosDeObra
         private AccesoPedido $acceso,
     ) {}
 
+    /** Con los accesos "completar · reasignar" de quien mira (resuelta DU-P12). */
     public function abiertosDe(int $obraId): array
     {
+        $user = $this->usuario();
+
         return array_values(Pedido::query()
             ->with(['propietario', 'sector'])
             ->where('obra_id', $obraId)
@@ -36,15 +39,21 @@ final readonly class PedidosDeObraEloquent implements PedidosDeObra
             ->orderBy('fecha_entrega')
             ->orderBy('id')
             ->get()
-            ->map(static fn (Pedido $p): PedidoAbiertoResumen => new PedidoAbiertoResumen(
-                $p->id,
-                $p->tarea,
-                $p->propietario_id,
-                $p->propietario?->nombre,
-                $p->sector_id,
-                $p->sector->nombre,
-                $p->estado->value,
-            ))
+            ->map(function (Pedido $p) use ($user): PedidoAbiertoResumen {
+                $puede = $user === null ? ['completar' => false, 'reasignar' => false] : $this->acceso->alTerminarLaObra($user, $p);
+
+                return new PedidoAbiertoResumen(
+                    $p->id,
+                    $p->tarea,
+                    $p->propietario_id,
+                    $p->propietario?->nombre,
+                    $p->sector_id,
+                    $p->sector->nombre,
+                    $p->estado->value,
+                    $puede['completar'],
+                    $puede['reasignar'],
+                );
+            })
             ->all());
     }
 
@@ -81,9 +90,16 @@ final readonly class PedidosDeObraEloquent implements PedidosDeObra
      */
     private function abiertos(): Builder
     {
-        $user = $this->auth->guard()->user();
-        $visibilidad = $user instanceof User ? $this->acceso->visibilidad($user) : Visibilidad::todos();
+        $user = $this->usuario();
+        $visibilidad = $user === null ? Visibilidad::todos() : $this->acceso->visibilidad($user);
 
         return VisiblesPara::aplicar(Pedido::query()->whereIn('pedidos.estado', PedidoEstado::abiertos()), $visibilidad);
+    }
+
+    private function usuario(): ?User
+    {
+        $user = $this->auth->guard()->user();
+
+        return $user instanceof User ? $user : null;
     }
 }

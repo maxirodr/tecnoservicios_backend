@@ -329,6 +329,22 @@ return [
         'texto' => 'comentario',
         'comprobantes' => 'comprobantes',
         'comprobantes.*' => 'comprobante',
+        // Todos los pedidos, exportar y calendario (pedidos.md §11.1)
+        'vencidos' => 'solo vencidos',
+        'entrega_desde' => 'entrega desde',
+        'entrega_hasta' => 'entrega hasta',
+        'orden' => 'orden',
+        'dir' => 'sentido del orden',
+        'desde' => 'desde',
+        'hasta' => 'hasta',
+        'de' => 'qué pedidos',
+
+        // Equipos en reparación (pedidos.md §4.4)
+        'equipo' => 'equipo',
+        'trabajo' => 'falla o trabajo',
+        'taller' => 'proveedor o taller',
+        'notas' => 'notas',
+        'inventario' => 'link al inventario',
     ],
 
     /*

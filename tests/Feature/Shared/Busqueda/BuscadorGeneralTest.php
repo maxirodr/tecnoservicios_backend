@@ -36,9 +36,9 @@ final class BuscadorGeneralTest extends TestCase
         $response->assertJsonPath('data.grupos.0.tipo', 'obras')
             ->assertJsonPath('data.grupos.0.cantidad', 1)
             ->assertJsonPath('data.grupos.0.resultados.0.numero', '1-087-2026')
-            ->assertJsonPath('data.grupos.1.tipo', 'proveedores')
-            ->assertJsonPath('data.grupos.1.cantidad', 1)
-            ->assertJsonPath('data.grupos.1.resultados.0', [
+            ->assertJsonPath('data.grupos.2.tipo', 'proveedores')
+            ->assertJsonPath('data.grupos.2.cantidad', 1)
+            ->assertJsonPath('data.grupos.2.resultados.0', [
                 'id' => Proveedor::query()->where('nombre', 'Tanques Ejemplo SRL')->valueOrFail('id'),
                 'nombre' => 'Tanques Ejemplo SRL',
                 'cuit' => null,
@@ -53,8 +53,8 @@ final class BuscadorGeneralTest extends TestCase
         foreach (['%%', '--', '__', '..', "''", '😀😀'] as $buscar) {
             $this->actingAs($this->usuarioDe('Compras'))->getJson('/api/buscar?q='.urlencode($buscar))
                 ->assertOk()
-                ->assertJsonPath('data.grupos.1.tipo', 'proveedores')
-                ->assertJsonPath('data.grupos.1.cantidad', 0);
+                ->assertJsonPath('data.grupos.2.tipo', 'proveedores')
+                ->assertJsonPath('data.grupos.2.cantidad', 0);
         }
     }
 
@@ -63,24 +63,24 @@ final class BuscadorGeneralTest extends TestCase
         $this->actingAs($this->usuarioDe('Dirección'))->getJson('/api/buscar?q=087')
             ->assertOk()
             ->assertJsonPath('data.grupos.0.resultados.0.numero', '1-087-2026')
-            ->assertJsonPath('data.grupos.1.cantidad', 0)
-            ->assertJsonPath('data.grupos.1.resultados', []);
+            ->assertJsonPath('data.grupos.2.cantidad', 0)
+            ->assertJsonPath('data.grupos.2.resultados', []);
     }
 
     public function test_buscar_sin_tildes_encuentra_proveedor_con_tildes(): void
     {
         $this->actingAs($this->usuarioDe('Compras'))->getJson('/api/buscar?q=CORRALON')
             ->assertOk()
-            ->assertJsonPath('data.grupos.1.resultados.0.nombre', 'Corralón Centro')
-            ->assertJsonPath('data.grupos.1.resultados.0.rubro_habitual.clave', 'materiales');
+            ->assertJsonPath('data.grupos.2.resultados.0.nombre', 'Corralón Centro')
+            ->assertJsonPath('data.grupos.2.resultados.0.rubro_habitual.clave', 'materiales');
     }
 
     public function test_buscador_no_devuelve_grupo_de_modulo_sin_acceso(): void
     {
-        // Ingeniería: Obras = editar, Proveedores sin acceso.
+        // Ingeniería: Obras y Pedidos = editar, Proveedores sin acceso.
         $response = $this->actingAs($this->usuarioDe('Ingeniería de proyectos'))->getJson('/api/buscar?q=tanque')->assertOk();
 
-        $this->assertSame(['obras'], array_column((array) $response->json('data.grupos'), 'tipo'));
+        $this->assertSame(['obras', 'pedidos'], array_column((array) $response->json('data.grupos'), 'tipo'));
         $this->assertStringNotContainsString('Tanques Ejemplo', (string) $response->getContent());
     }
 
@@ -107,8 +107,8 @@ final class BuscadorGeneralTest extends TestCase
 
         $this->actingAs($this->usuarioDe('Compras'))->getJson('/api/buscar?q=tanque')
             ->assertOk()
-            ->assertJsonPath('data.grupos.1.cantidad', 13)
-            ->assertJsonCount(10, 'data.grupos.1.resultados');
+            ->assertJsonPath('data.grupos.2.cantidad', 13)
+            ->assertJsonCount(10, 'data.grupos.2.resultados');
     }
 
     /** PU-118: el buscador no falla por largo; busca con los primeros 100 caracteres. */

@@ -23,6 +23,22 @@ final class PedidosQuery
 
     public const SIN_OBRA = 'sin_obra';
 
+    /** Propietario "En el sector, sin persona" en los filtros (RN-PED-43). */
+    public const EN_SECTOR = 'en_sector';
+
+    public const ORDEN_OBRA = 'obra';
+
+    public const ORDEN_PEDIDO = 'fecha_pedido';
+
+    public const ORDEN_ENTREGA = 'fecha_entrega';
+
+    public const ASC = 'asc';
+
+    public const DESC = 'desc';
+
+    /** Sin obra se ordena como se ve: "Servicios generales" (RN-PED-42). */
+    public const SERVICIOS_GENERALES = 'Servicios generales';
+
     /**
      * @param  list<string>  $con
      * @return Builder<Pedido>
@@ -125,5 +141,29 @@ final class PedidosQuery
             ->orderBy('pedidos.fecha_entrega')
             ->orderByRaw('FIELD(pedidos.prioridad, ?, ?, ?)', [Prioridad::Urgente->value, Prioridad::Prioritario->value, Prioridad::Normal->value])
             ->orderByDesc('pedidos.id');
+    }
+
+    /**
+     * Orden de Todos los pedidos (RN-PED-44): por obra (nombre del trabajo), fecha de pedido o entrega
+     * (por defecto), en la dirección elegida; sin fecha, al final; a igual valor, el más nuevo primero.
+     *
+     * @param  Builder<Pedido>  $query
+     * @return Builder<Pedido>
+     */
+    public static function ordenDeTabla(Builder $query, string $campo, string $direccion): Builder
+    {
+        $direccion = $direccion === self::DESC ? self::DESC : self::ASC;
+
+        if ($campo === self::ORDEN_OBRA) {
+            $query->orderByRaw(
+                'COALESCE((SELECT obras.nombre_trabajo FROM obras WHERE obras.id = pedidos.obra_id), ?) '.$direccion,
+                [self::SERVICIOS_GENERALES],
+            );
+        } else {
+            $columna = $campo === self::ORDEN_PEDIDO ? 'pedidos.fecha_pedido' : 'pedidos.fecha_entrega';
+            $query->orderByRaw("{$columna} IS NULL")->orderBy($columna, $direccion);
+        }
+
+        return $query->orderByDesc('pedidos.id');
     }
 }

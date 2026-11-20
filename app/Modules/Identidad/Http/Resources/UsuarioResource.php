@@ -17,13 +17,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
  */
 final class UsuarioResource extends JsonResource
 {
-    /** @var array{personas_a_cargo: int, obras_como_responsable: int}|null */
+    /** @var array{personas_a_cargo: int, obras_como_responsable: int, pedidos_abiertos: int, pedidos_en_el_sector: int}|null */
     private ?array $aCargo = null;
 
     /**
      * Detalle de W-39: suma personas a cargo y obras como responsable.
      *
-     * @param  array{personas_a_cargo: int, obras_como_responsable: int}  $aCargo
+     * @param  array{personas_a_cargo: int, obras_como_responsable: int, pedidos_abiertos: int, pedidos_en_el_sector: int}  $aCargo
      */
     public static function detalle(User $user, array $aCargo): self
     {

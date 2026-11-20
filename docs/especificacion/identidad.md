@@ -398,7 +398,7 @@ Envelope en todo: `{ "data": …, "message": string|null, "errors": object|null 
 | `GET /api/usuarios?buscar=&sector_id=&activo=true\|false\|todos&page=` | — | `[Usuario]` paginado | 403 |
 | `GET /api/usuarios/opciones?buscar=` | — | `[{id, nombre, sector: {id, nombre}}]` solo activos | 401 |
 | `POST /api/usuarios` | `{nombre, email, sector_id, jefe_id?, telefono?}` · acepta `Idempotency-Key` | `Usuario` (201), `message` "Listo: {nombre} ya puede entrar con su mail." (sin mail, RN-IDE-09) | 403 · 422 |
-| `GET /api/usuarios/{id}` | — | `Usuario` + `{personas_a_cargo: int, obras_como_responsable: int}` | 403 · 404 |
+| `GET /api/usuarios/{id}` | — | `Usuario` + `{personas_a_cargo: int, obras_como_responsable: int, pedidos_abiertos: int, pedidos_en_el_sector: int}` (semana 2, HU-058: `pedidos_en_el_sector` > 0 solo si es la última persona activa de su sector, DU-Q02) | 403 · 404 |
 | `PATCH /api/usuarios/{id}` | `{nombre?, email?, sector_id?, jefe_id?, telefono?, activo?}` | `Usuario` | 403 · 404 · 422 (RN-IDE-22, RN-IDE-25) |
 | `GET /api/sectores?incluir_archivados=false` | — | `[{id, nombre, usuarios_activos: int, activo}]` | 401 |
 | `POST /api/sectores` | `{nombre}` · acepta `Idempotency-Key` | `Sector` (201), con sus celdas iniciales RN-IDE-30 | 403 · 422 |
