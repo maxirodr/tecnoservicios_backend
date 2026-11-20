@@ -24,6 +24,18 @@ final readonly class RecorridoQuery
 {
     private const VENCE_MANANA = 'vence_manana';
 
+    /** Qué se le avisó, con palabras de la empresa y no la clave del tipo (avisos.md §6, PU-607). */
+    private const QUE_AVISO = [
+        'asignado' => 'asignado',
+        'reasignado' => 'reasignado',
+        'tomado' => 'tomado',
+        'bloqueado' => 'bloqueado',
+        'comentado' => 'comentario nuevo',
+        'completado' => 'completado',
+        'completado_gente' => 'completado, a su jefe',
+        'reabierto' => 'reabierto',
+    ];
+
     public function __construct(
         private BuscarPedido $buscar,
         private AvisosDelPedido $avisos,
@@ -114,6 +126,6 @@ final readonly class RecorridoQuery
 
         $nombres = implode(', ', array_map(static fn (array $d): string => $d['nombre'], $aviso->destinatarios));
 
-        return "Sistema avisó a {$nombres} (".str_replace('_', ' ', $aviso->tipo).')';
+        return "Sistema avisó a {$nombres} (".(self::QUE_AVISO[$aviso->tipo] ?? 'aviso').')';
     }
 }

@@ -38,7 +38,9 @@ final class PreferenciasDeMail
     /**
      * Filas de "Mis avisos" (W-19) con lo que eligió la persona.
      *
-     * @return list<array{tipo: string, nombre: string, por_mail: bool, se_puede_cambiar: bool}>
+     * `solo_en_el_sistema`: "vence mañana" nunca va por mail y en W-19 no lleva casilla (resuelta DU-P19, PU-606).
+     *
+     * @return list<array{tipo: string, nombre: string, por_mail: bool, se_puede_cambiar: bool, solo_en_el_sistema: bool}>
      */
     public function deMisAvisos(int $userId): array
     {
@@ -50,6 +52,7 @@ final class PreferenciasDeMail
             'nombre' => $tipo->nombreEnMisAvisos(),
             'por_mail' => $tipo->sePuedeCambiarElMail() ? (bool) ($elegidos[$tipo->value] ?? $tipo->mailPorDefecto()) : $tipo->mailFijo(),
             'se_puede_cambiar' => $tipo->sePuedeCambiarElMail(),
+            'solo_en_el_sistema' => $tipo === TipoAviso::VenceManana,
         ], TipoAviso::deMisAvisos());
     }
 }
