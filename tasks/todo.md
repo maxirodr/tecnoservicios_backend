@@ -134,3 +134,14 @@ Las tres ramas de la tanda 2 están **pusheadas, sin mergear** (`feat/w2-pedidos
 3. **Integración real** (`feat/w2-integracion`; front `d53dbe6`, `7d174be`; back `39000cc`): `e2e:integracion` 53/53 (10,3 min) con la semana 2. Arregló `fecha_pedido: null` al editar. Decidir: `mis-tareas` pagina de a 50 y el front muestra solo la página 1.
 4. Orden de merge sugerido: back `feat/w2-pedidos-2` → main, `feat/w2-integracion` back → main; front `feat/w2-integracion` → main, después `feat/w2-pedidos-2` (resolver contratos del punto 2) → main; correr unit + e2e mock + `e2e:integracion` con todo junto.
 5. Después: QC semana 2, notas de entrega, `staging` con la semana 2 (`VITE_MODULOS_ENTREGADOS=pedidos,obras,calendario,proveedores,usuarios,avisos`; worker `mail` + scheduler), prompt de prueba de usuario semana 2.
+
+### 2026-11-20 · Semana 2 en staging
+- [x] Tanda 2 mergeada (back + integración + front); contratos alineados (HU-058, W-22 con `puede` de la lista).
+- [x] Mis tareas y Tareas que sigo enteras, sin cortar en 50 (spec §11).
+- [x] W-07: presupuestos arriba de las pestañas (estaban escondidos en Documentos al entrar por Pedidos).
+- [x] Dirección con `tiene_gente` en `/api/me` (RN-PED-35): ve Tareas de mi gente y Carga por persona.
+- [x] Suites: back 933/933, pint y phpstan; front vitest 572, e2e mock 88; `e2e:integracion` verde (53, en dos corridas: la segunda chocó con el límite de pedidos por minuto al correrla dos veces seguidas).
+- [x] `staging` = `main` en los dos repos (back `7e007dd`, front `d8f2433`). Prompt de QA: `tasks/prompt-prueba-usuario-semana-2.md`.
+- [ ] Deploy de staging (Juani): `composer install` (openspout nuevo), `migrate --force` (pedidos, avisos, equipos), `config:cache`, `supervisor:sync`, `queue:restart`; front con `VITE_MODULOS_ENTREGADOS` vacío (la semana 2 viene encendida por defecto).
+- [ ] Prueba de usuario de la semana 2 (otra sesión) → leer reportes y arreglar.
+- [ ] Notas de entrega de la semana 2 para el cliente.
