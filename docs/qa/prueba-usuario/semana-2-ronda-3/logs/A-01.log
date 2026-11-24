@@ -1,0 +1,27 @@
+# A-01 · clases y nombre accesible de los pedidos del calendario (06-verificar.mjs, rep 1 y 2)
+cal-carla | cal-pedido cal-pedido--prioritario | svg=0 | 32 pedidos | ej: QAS2R2-A D5 Diego a Carla seguido por Laura · ⇒ QAS2R2-A D5 Diego a Carla seguido por Laura · Prioritario
+cal-carla | cal-pedido cal-pedido--urgente | svg=0 | 3 pedidos | ej: QAS2R3-A Comprar bridas de acero inoxidable 3 ⇒ QAS2R3-A Comprar bridas de acero inoxidable 316 de seis pulgadas, juntas espirometálicas y
+cal-carla | cal-pedido cal-pedido--urgente cal-pedido--completado | svg=1 | 5 pedidos | ej: QAS2R2-C R p7-1 cemento para losa · Urgente · ⇒ QAS2R2-C R p7-1 cemento para losa · Urgente · completado
+cal-carla?vista=semana | cal-pedido cal-pedido--prioritario | svg=0 | 32 pedidos | ej: QAS2R2-A D5 Diego a Carla seguido por Laura · ⇒ QAS2R2-A D5 Diego a Carla seguido por Laura · Prioritario
+cal-carla?vista=semana | cal-pedido cal-pedido--urgente | svg=0 | 3 pedidos | ej: QAS2R3-A Comprar bridas de acero inoxidable 3 ⇒ QAS2R3-A Comprar bridas de acero inoxidable 316 de seis pulgadas, juntas espirometálicas y
+cal-carla?vista=semana | cal-pedido cal-pedido--urgente cal-pedido--completado | svg=1 | 5 pedidos | ej: QAS2R2-C R p7-1 cemento para losa · Urgente · ⇒ QAS2R2-C R p7-1 cemento para losa · Urgente · completado
+cal-laura | cal-pedido cal-pedido--urgente | svg=0 | 1 pedidos | ej: QAS2R2-B entrega antes 3 (pedido 2026-11-15,  ⇒ QAS2R2-B entrega antes 3 (pedido 2026-11-15, entrega 2026-11-12) · Urgente
+cal-laura | cal-pedido cal-pedido--urgente cal-pedido--completado | svg=1 | 2 pedidos | ej: QAS2R2-B entrega antes 1a (pedido 2026-11-18, ⇒ QAS2R2-B entrega antes 1a (pedido 2026-11-18, entrega 2026-11-17) · Urgente · completado
+cal-laura | cal-pedido cal-pedido--prioritario | svg=0 | 2 pedidos | ej: QAS2R2-C C3 Diego a Laura planos · Prioritari ⇒ QAS2R2-C C3 Diego a Laura planos · Prioritario
+cal-laura | cal-pedido cal-pedido--normal | svg=0 | 5 pedidos | ej: QAS2R2-A D4 Diego a Ingeniería (en el sector) ⇒ QAS2R2-A D4 Diego a Ingeniería (en el sector) · Normal
+cal-laura | cal-pedido cal-pedido--normal cal-pedido--completado | svg=1 | 4 pedidos | ej: QAS2R2-B largos 1 propio · Normal · completad ⇒ QAS2R2-B largos 1 propio · Normal · completado
+cal-laura?vista=semana | cal-pedido cal-pedido--prioritario | svg=0 | 2 pedidos | ej: QAS2R2-C C3 Diego a Laura planos · Prioritari ⇒ QAS2R2-C C3 Diego a Laura planos · Prioritario
+cal-laura?vista=semana | cal-pedido cal-pedido--normal | svg=0 | 2 pedidos | ej: QAS2R2-A D4 Diego a Ingeniería (en el sector) ⇒ QAS2R2-A D4 Diego a Ingeniería (en el sector) · Normal
+cal-laura | cal-pedido cal-pedido--urgente | svg=0 | 1 pedidos | ej: QAS2R2-B entrega antes 3 (pedido 2026-11-15,  ⇒ QAS2R2-B entrega antes 3 (pedido 2026-11-15, entrega 2026-11-12) · Urgente
+cal-laura | cal-pedido cal-pedido--urgente cal-pedido--completado | svg=1 | 2 pedidos | ej: QAS2R2-B entrega antes 1a (pedido 2026-11-18, ⇒ QAS2R2-B entrega antes 1a (pedido 2026-11-18, entrega 2026-11-17) · Urgente · completado
+cal-laura | cal-pedido cal-pedido--prioritario | svg=0 | 2 pedidos | ej: QAS2R2-C C3 Diego a Laura planos · Prioritari ⇒ QAS2R2-C C3 Diego a Laura planos · Prioritario
+cal-laura | cal-pedido cal-pedido--normal | svg=0 | 5 pedidos | ej: QAS2R2-A D4 Diego a Ingeniería (en el sector) ⇒ QAS2R2-A D4 Diego a Ingeniería (en el sector) · Normal
+cal-laura | cal-pedido cal-pedido--normal cal-pedido--completado | svg=1 | 4 pedidos | ej: QAS2R2-B largos 1 propio · Normal · completad ⇒ QAS2R2-B largos 1 propio · Normal · completado
+cal-laura?vista=semana | cal-pedido cal-pedido--prioritario | svg=0 | 2 pedidos | ej: QAS2R2-C C3 Diego a Laura planos · Prioritari ⇒ QAS2R2-C C3 Diego a Laura planos · Prioritario
+cal-laura?vista=semana | cal-pedido cal-pedido--normal | svg=0 | 2 pedidos | ej: QAS2R2-A D4 Diego a Ingeniería (en el sector) ⇒ QAS2R2-A D4 Diego a Ingeniería (en el sector) · Normal
+cal-carla | cal-pedido cal-pedido--prioritario | svg=0 | 32 pedidos | ej: QAS2R2-A D5 Diego a Carla seguido por Laura · ⇒ QAS2R2-A D5 Diego a Carla seguido por Laura · Prioritario
+cal-carla | cal-pedido cal-pedido--urgente | svg=0 | 3 pedidos | ej: QAS2R3-A Comprar bridas de acero inoxidable 3 ⇒ QAS2R3-A Comprar bridas de acero inoxidable 316 de seis pulgadas, juntas espirometálicas y
+cal-carla | cal-pedido cal-pedido--urgente cal-pedido--completado | svg=1 | 5 pedidos | ej: QAS2R2-C R p7-1 cemento para losa · Urgente · ⇒ QAS2R2-C R p7-1 cemento para losa · Urgente · completado
+cal-carla?vista=semana | cal-pedido cal-pedido--prioritario | svg=0 | 32 pedidos | ej: QAS2R2-A D5 Diego a Carla seguido por Laura · ⇒ QAS2R2-A D5 Diego a Carla seguido por Laura · Prioritario
+cal-carla?vista=semana | cal-pedido cal-pedido--urgente | svg=0 | 3 pedidos | ej: QAS2R3-A Comprar bridas de acero inoxidable 3 ⇒ QAS2R3-A Comprar bridas de acero inoxidable 316 de seis pulgadas, juntas espirometálicas y
+cal-carla?vista=semana | cal-pedido cal-pedido--urgente cal-pedido--completado | svg=1 | 5 pedidos | ej: QAS2R2-C R p7-1 cemento para losa · Urgente · ⇒ QAS2R2-C R p7-1 cemento para losa · Urgente · completado

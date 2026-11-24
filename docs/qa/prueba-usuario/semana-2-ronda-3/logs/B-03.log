@@ -1,0 +1,22 @@
+se  pestaña /pedidos: "Todos los pedidos" [16..178] contenedor [16..359] VISIBLE
+se  pestaña /pedidos/servicios-generales: "Servicios generales" [178..353] contenedor [16..359] VISIBLE
+se  pestaña /pedidos/carga-por-persona: "Carga por persona" [671..836] contenedor [16..359] FUERA DE VISTA
+se  pestaña /pedidos/equipos: "Equipos en reparación" [836..1030] contenedor [16..359] FUERA DE VISTA
+se  pestaña /calendario: sin pestaña activa
+se  pestaña /usuarios: "Usuarios" [16..109] contenedor [16..359] VISIBLE
+se  pestaña /usuarios/sectores: "Sectores" [111..203] contenedor [16..359] VISIBLE
+se  pestaña /usuarios/permisos: "Tabla de permisos" [205..367] contenedor [16..359] FUERA DE VISTA
+se  pestaña /usuarios/plazos: "Plazos de la prioridad" [366..553] contenedor [16..359] FUERA DE VISTA
+se  pestaña /?pestana=mi-gente: "Tareas de mi gente" [499..665] contenedor [16..359] FUERA DE VISTA
+se  pestaña /obras?estado=terminada: "Terminadas (0)" [310..448] contenedor [16..359] FUERA DE VISTA
+celular  ﻿pestaña /pedidos: "Todos los pedidos" [16..178] contenedor [16..396] VISIBLE
+celular  pestaña /pedidos/servicios-generales: "Servicios generales" [178..353] contenedor [16..396] VISIBLE
+celular  pestaña /pedidos/carga-por-persona: "Carga por persona" [671..836] contenedor [16..396] FUERA DE VISTA
+celular  pestaña /pedidos/equipos: "Equipos en reparación" [836..1030] contenedor [16..396] FUERA DE VISTA
+celular  pestaña /calendario: sin pestaña activa
+celular  pestaña /usuarios: "Usuarios" [16..109] contenedor [16..396] VISIBLE
+celular  pestaña /usuarios/sectores: "Sectores" [111..203] contenedor [16..396] VISIBLE
+celular  pestaña /usuarios/permisos: "Tabla de permisos" [205..367] contenedor [16..396] VISIBLE
+celular  pestaña /usuarios/plazos: "Plazos de la prioridad" [366..553] contenedor [16..396] FUERA DE VISTA
+celular  pestaña /?pestana=mi-gente: "Tareas de mi gente" [499..665] contenedor [16..396] FUERA DE VISTA
+celular  pestaña /obras?estado=terminada: "Terminadas (0)" [310..448] contenedor [16..396] FUERA DE VISTA

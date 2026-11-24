@@ -1,0 +1,13 @@
+# B-01 · tarjetas.mjs (tap en la tarjeta, lejos del nombre)
+se  ## carga (2 filas)
+se    fila0 abajo-der (180px alto) hit=TR. -> NO NAVEGA
+se    fila0 izq-medio (180px alto) hit=TR. -> NO NAVEGA
+se    fila1 abajo-der (202px alto) hit=TR. -> NO NAVEGA
+se    fila1 izq-medio (202px alto) hit=TR. -> NO NAVEGA
+celular  ## carga (2 filas)
+celular    fila0 abajo-der (180px alto) hit=TR. -> NO NAVEGA
+celular    fila0 izq-medio (180px alto) hit=TR. -> NO NAVEGA
+celular    fila1 abajo-der (202px alto) hit=TR. -> NO NAVEGA
+celular    fila1 izq-medio (202px alto) hit=TR. -> NO NAVEGA
+# barrido: controles chicos
+celular/se: a "Carla" 42x19 · a "Diego" 46x19
