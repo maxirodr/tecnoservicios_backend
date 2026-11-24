@@ -143,5 +143,6 @@ Las tres ramas de la tanda 2 están **pusheadas, sin mergear** (`feat/w2-pedidos
 - [x] Suites: back 933/933, pint y phpstan; front vitest 572, e2e mock 88; `e2e:integracion` verde (53, en dos corridas: la segunda chocó con el límite de pedidos por minuto al correrla dos veces seguidas).
 - [x] `staging` = `main` en los dos repos (back `7e007dd`, front `d8f2433`). Prompt de QA: `tasks/prompt-prueba-usuario-semana-2.md`.
 - [ ] Deploy de staging (Juani): `composer install` (openspout nuevo), `migrate --force` (pedidos, avisos, equipos), `config:cache`, `supervisor:sync`, `queue:restart`; front con `VITE_MODULOS_ENTREGADOS` vacío (la semana 2 viene encendida por defecto).
-- [ ] Prueba de usuario de la semana 2 (otra sesión) → leer reportes y arreglar.
+- [x] Prueba de usuario de la semana 2: ronda 1 NO APROBADA (PU-601…616, arreglados); **ronda 2 APROBADA** (2026-11-24, 16/16). Bajos nuevos PU-701…703 arreglados en front `staging` `0e011f5` (vitest 595, e2e 91), mergeados a `main`.
 - [ ] Notas de entrega de la semana 2 para el cliente.
+- [ ] Rediseño visual (otra sesión, `feat/ui-calidez`, prompt `tecnoservicios_frontend/tasks/prompt-rediseno-visual.md`): revisar y mergear a `main` y `staging` cuando cierre.
