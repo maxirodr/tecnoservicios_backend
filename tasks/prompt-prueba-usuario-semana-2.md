@@ -18,6 +18,23 @@ SA, constructora de ~50 personas). La **Semana 1 quedó aprobada** (ronda 5). La
 los dos sentidos, avisos, mis tareas, jefaturas, calendario, equipos en reparación y celular— está terminada y en
 `staging`.
 
+> **Ronda actual: 2 (ronda corta, §7).** La ronda 1 (`docs\qa\prueba-usuario\semana-2\`) quedó **NO APROBADA** por
+> **PU-601** (campo Obra en "Elegí…" desde "+ Nuevo pedido en esta obra") y **PU-602** (Carga por persona culpa al
+> permiso del sector a quien no tiene gente), ambos medios, más 14 bajos (PU-603…616). Desarrollo arregló los 16:
+> qué cambió y cómo verificar cada uno en `tasks\prueba-usuario-semana-2-ronda-2-novedades.md`. Código: `staging`,
+> backend `9ca659a` (arreglos `fb55537`: PU-606, 607, 612), front `c816c89`; sin migraciones nuevas
+> (`composer install` y `config:clear`).
+>
+> **Objetivos de esta ronda, en orden:**
+> 1. **Verificar los 16 hallazgos** (PU-601…616) con los pasos exactos de la ronda 1 y de la tabla de las novedades,
+>    en PC y celular donde corresponda.
+> 2. **Pasada de regresión** alrededor de lo que tocaron los arreglos: listas con la fila entera tocable (botones de
+>    la fila, filtros, una parada de Tab por fila), campo Obra en alta normal / desde la obra / Editar, diálogos de
+>    acción con textos largos y vacíos y red lenta, calendario con la dirección cambiada a mano (valores inválidos),
+>    campana cada 10 s, recorrido y Excel.
+> 3. No se repite la pasada completa: lo ✅ de la ronda 1 se mira solo si queda en el camino.
+> Carpeta `docs\qa\prueba-usuario\semana-2-ronda-2\`, rama `qa/prueba-usuario-semana-2-ronda-2`, hallazgos desde **PU-701**.
+
 Tu trabajo: **usar el sistema como lo usaría el cliente**, persona por persona, con todo andando de verdad (API,
 front, cola de mails, scheduler, Redis) y dejar **reportes escritos** que la sesión de desarrollo va a leer para
 arreglar. **No arreglás código**: no editás `app/`, `src/`, `tests/`, migraciones ni config.
@@ -80,6 +97,19 @@ El criterio que importa:
 Gastos y Rendiciones son de la Semana 3: que **no** aparezcan no es hallazgo; sí lo es si aparecen a medio hacer.
 
 ## 2. El equipo y la asignación de roles
+
+> **Ronda 2 (ronda corta): roles y reparto.** La tabla completa de abajo es la de la ronda 1 (se conserva para la
+> próxima ronda completa, si la hubiera).
+>
+> | # | Rol | Qué verifica | Navegador |
+> |---|---|---|---|
+> | 0 | **QA Lead** | Entorno, ingresos y sesiones, reset, tandas, rol 7 (health, `failed_jobs`, `errors`, workers, `avisos:recordatorios` en el scheduler), consolidación y veredicto. | solo para ingresar |
+> | A | **Listas, obra y calendario (PC)** | **PU-601** (campo Obra a 0,3 / 1,5 / 5 s desde "+ Nuevo pedido en esta obra"; elegir otra y volver; Obra en alta normal y en Editar), **PU-602** (Laura y Pablo por `/pedidos/carga-por-persona`; Hernán y Dora siguen viendo la carga), **PU-603** en PC (fila entera abre el pedido en Mis tareas, Pedidos que pedí, Tareas de mi gente, Tareas que sigo, Todos los pedidos y Servicios generales; "Tomar" y "dejar de seguir" no abren; una parada de Tab por fila), **PU-611**, **PU-612** (Excel y calendario Mi gente con un inactivo con pendientes), **PU-613** (calendario conserva vista/semana/Mi gente/obra; dirección cambiada a mano con valores inválidos), **PU-614**. | sí |
+> | B | **Avisos, recorrido y diálogos (PC)** | **PU-604** (9 corridas de la campana, ninguna > 15 s), **PU-605** (panel W-02), **PU-606** (Mis avisos: "Solo en el sistema"), **PU-607** y **PU-608** (recorrido legible, sin nombre repetido ni claves crudas), **PU-609**, **PU-610**, **PU-615** (2001 caracteres en comentario, motivo, "¿Qué falta?" y Reasignar; vacíos; red lenta), **PU-616** (Laura a Laura). Regresión: que los avisos sigan llegando a quien corresponde y el mail de asignación salga una vez. | sí |
+> | C | **Celular y teclado** | Pixel 7 e iPhone SE 375×667: **PU-601** en el celular, **PU-603** (5 puntos por tarjeta en las listas; obra y "cuándo" en los avisos; "Tomar" no abre), **PU-605** (`/avisos`), y regresión de la barra, W-43 y completar con foto. Teclado en PC: una parada de Tab por fila/tarjeta y foco visible. | sí |
+> | QC | **QC final** | Evidencia, duplicados, severidades coherentes con la ronda 1 y la Semana 1, veredicto (§7). | no |
+>
+> **Tandas:** A y B en paralelo · C · QC y consolidación. **Ingresos:** 7 del Lead; los roles no necesitan ingreso real.
 
 La **sesión principal es el QA Lead**. Lanza los roles como subagentes, uno por rol, con este prompt y su lista, y
 les reparte las sesiones guardadas (storageState). **Como máximo 3 subagentes con navegador a la vez.**
