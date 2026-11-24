@@ -6,7 +6,7 @@ namespace App\Modules\Rendicion\Contracts;
 
 /**
  * Lista de materiales de una obra (F-66, W-48), para que Gastos cargue retiros y renglones con material
- * (rendicion.md §12.4.3). Rendicion lo implementa; hasta entonces `MaterialesDeObraNulo`.
+ * (rendicion.md §12.4.3). Rendicion lo implementa (`MaterialesDeObraEloquent`).
  */
 interface MaterialesDeObra
 {

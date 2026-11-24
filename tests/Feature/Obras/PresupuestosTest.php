@@ -7,6 +7,7 @@ namespace Tests\Feature\Obras;
 use App\Modules\Obras\Domain\Enums\ObraEstado;
 use App\Modules\Obras\Domain\Models\Presupuesto;
 use App\Modules\Obras\Domain\Models\PresupuestoMonto;
+use App\Modules\Rendicion\Domain\Models\Material;
 use App\Shared\Adjuntos\Adjunto;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -220,6 +221,22 @@ final class PresupuestosTest extends ObrasTestCase
         $this->actingAs($laura)->deleteJson("/api/presupuestos/{$principal->id}")->assertUnprocessable();
         $this->actingAs($laura)->deleteJson("/api/presupuestos/{$adicional->id}")->assertUnprocessable();
         $this->assertSame(2, Presupuesto::query()->count());
+    }
+
+    public function test_adicional_con_materiales_no_se_quita(): void
+    {
+        $laura = $this->laura();
+        $obra = $this->crearObra($laura, null, ['adicionales' => [['numero' => '2-131-2026 A1']]]);
+        $adicional = Presupuesto::query()->where('es_principal', false)->sole();
+        Material::query()->create([
+            'obra_id' => $obra->id, 'presupuesto_id' => $adicional->id, 'nombre' => 'Cemento x 50 kg', 'nombre_clave' => 'cemento x 50 kg',
+            'unidad' => 'bolsa', 'cantidad_presupuestada' => '10', 'fuera_de_presupuesto' => false, 'created_by' => $laura->id, 'updated_by' => $laura->id,
+        ]);
+
+        $this->actingAs($laura)->deleteJson("/api/presupuestos/{$adicional->id}")
+            ->assertUnprocessable()
+            ->assertJsonPath('errors.presupuesto.0', 'Este presupuesto ya tiene materiales del control por cantidad: no se puede quitar.');
+        $this->assertNotNull(Presupuesto::query()->find($adicional->id));
     }
 
     public function test_editar_o_quitar_presupuesto_exige_obras_editar_y_alcance(): void
