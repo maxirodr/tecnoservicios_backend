@@ -146,3 +146,11 @@ Las tres ramas de la tanda 2 están **pusheadas, sin mergear** (`feat/w2-pedidos
 - [x] Prueba de usuario de la semana 2: ronda 1 NO APROBADA (PU-601…616, arreglados); **ronda 2 APROBADA** (2026-11-24, 16/16). Bajos nuevos PU-701…703 arreglados en front `staging` `0e011f5` (vitest 595, e2e 91), mergeados a `main`.
 - [ ] Notas de entrega de la semana 2 para el cliente.
 - [ ] Rediseño visual (otra sesión, `feat/ui-calidez`, prompt `tecnoservicios_frontend/tasks/prompt-rediseno-visual.md`): revisar y mergear a `main` y `staging` cuando cierre.
+
+## Semana 3 · Gastos y rendición (arranque 2026-11-24)
+- [x] Specs `gastos.md` y `rendicion.md`, cruzadas; DU-G01…G11 y DU-R01…R09 resueltas (va la propuesta; DU-G05 en notas de crédito) — `1f23e5f`, `70f260a`.
+- [x] Backlog §7 en historias HU-061…HU-087; modelo de datos y matriz al día.
+- [x] Contratos compartidos (`GastadoDeObras`, eventos de gasto, `MaterialesDeObra`, `CatalogoDeRubros`, tabla `materiales`) — `b72e919`, back 938/938.
+- [ ] Tanda 1 corriendo: Back Gastos, Back Rendición, Front Gastos, Front Rendición (brief `tasks/brief-agentes-semana3.md`).
+- [ ] Tanda 2: HU-087, integración real con el caso de referencia, prueba del cliente, QC.
+- [ ] Ronda visual de QA (s2r3) → leer reportes.
