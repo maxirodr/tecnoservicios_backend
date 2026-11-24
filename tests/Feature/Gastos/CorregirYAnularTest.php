@@ -47,10 +47,10 @@ final class CorregirYAnularTest extends GastosTestCase
         $detalle = $this->actingAs($this->diego)->getJson("/api/gastos/{$this->factura->id}")->json('data.renglones');
         $this->assertIsArray($detalle);
 
-        return array_map(static fn (array $r): array => [
+        return array_values(array_map(static fn (array $r): array => [
             'id' => $r['id'], 'concepto' => $r['concepto'], 'cantidad' => $r['cantidad'], 'precio_unitario' => $r['precio_unitario'],
             'obra_id' => $r['obra']['id'] ?? null, 'rubro' => $r['rubro']['clave'] ?? null, 'material_id' => $r['material']['id'] ?? null, 'detalle' => $r['detalle'],
-        ], $detalle);
+        ], $detalle));
     }
 
     /**
