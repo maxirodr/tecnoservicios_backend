@@ -156,8 +156,8 @@ Las tres ramas de la tanda 2 están **pusheadas, sin mergear** (`feat/w2-pedidos
 - [x] Ronda visual (s2r3) NO APROBADA por PU-801/802 (medios); PU-801…807 arreglados en front `staging` `a3fb83e` y en `main`.
 
 ### Para retomar (cierre 2026-11-24)
-- [ ] Front  : typecheck, lint, formato y build OK; vitest 728/729 (UsuariosPantalla PU-017, flaky por tiempo, ya visto) y e2e 114 + **1 falla sin mirar** (la re-corrida se cortó). Primero:  y arreglar.
-- [ ] Prompt de QA ronda corta s2r4: verificar PU-801…807 en .
-- [ ] Tanda 2: HU-087 (encender gastos y rendiciones), integración real con el caso de referencia cargado por la API y comparado con la rendición (W-11), confirmar contratos de Front Gastos (422 con , , ,  vs el default del mes del back), revisar textos que inventaron los agentes, matriz F-13/F-15/F-17/F-48/F-54.
-- [ ] Worktrees de la tanda 1 (, , ): ya mergeadas; reusar en la tanda 2 o borrar.
+- [ ] Front `main` `87a0ffd`: typecheck, lint, formato y build OK; vitest 728/729 (UsuariosPantalla PU-017, flaky por tiempo, ya visto) y e2e 114 + **1 falla sin mirar** (la re-corrida se cortó). Primero: `E2E_PORT=5318 npx playwright test` y arreglar.
+- [ ] Prompt de QA ronda corta s2r4: verificar PU-801…807 en `staging`.
+- [ ] Tanda 2: HU-087 (encender gastos y rendiciones), integración real con el caso de referencia cargado por la API y comparado con la rendición (W-11), confirmar contratos de Front Gastos (422 con `errors.confirmar_*`, `errors.existente`, `meta.grupos`, `fecha=todas` vs el default del mes del back), revisar textos que inventaron los agentes, matriz F-13/F-15/F-17/F-48/F-54.
+- [ ] Worktrees de la tanda 1 (`*_gastos`, `*_rendicion`, `tecnoservicios_frontend_fix`): ya mergeadas; reusar en la tanda 2 o borrar.
 
