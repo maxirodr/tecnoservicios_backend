@@ -151,6 +151,13 @@ Las tres ramas de la tanda 2 están **pusheadas, sin mergear** (`feat/w2-pedidos
 - [x] Specs `gastos.md` y `rendicion.md`, cruzadas; DU-G01…G11 y DU-R01…R09 resueltas (va la propuesta; DU-G05 en notas de crédito) — `1f23e5f`, `70f260a`.
 - [x] Backlog §7 en historias HU-061…HU-087; modelo de datos y matriz al día.
 - [x] Contratos compartidos (`GastadoDeObras`, eventos de gasto, `MaterialesDeObra`, `CatalogoDeRubros`, tabla `materiales`) — `b72e919`, back 938/938.
-- [ ] Tanda 1 corriendo: Back Gastos, Back Rendición, Front Gastos, Front Rendición (brief `tasks/brief-agentes-semana3.md`).
+- [x] Tanda 1 en `main` (2026-11-24): back `d5d7126` (1143/1143, pint y phpstan OK; caso de referencia exacto en Rendición con fake y en Gastos por la API), front `87a0ffd` (rutas de W-46/W-33 alineadas a las de Gastos).
 - [ ] Tanda 2: HU-087, integración real con el caso de referencia, prueba del cliente, QC.
-- [ ] Ronda visual de QA (s2r3) → leer reportes.
+- [x] Ronda visual (s2r3) NO APROBADA por PU-801/802 (medios); PU-801…807 arreglados en front `staging` `a3fb83e` y en `main`.
+
+### Para retomar (cierre 2026-11-24)
+- [ ] Front  : typecheck, lint, formato y build OK; vitest 728/729 (UsuariosPantalla PU-017, flaky por tiempo, ya visto) y e2e 114 + **1 falla sin mirar** (la re-corrida se cortó). Primero:  y arreglar.
+- [ ] Prompt de QA ronda corta s2r4: verificar PU-801…807 en .
+- [ ] Tanda 2: HU-087 (encender gastos y rendiciones), integración real con el caso de referencia cargado por la API y comparado con la rendición (W-11), confirmar contratos de Front Gastos (422 con , , ,  vs el default del mes del back), revisar textos que inventaron los agentes, matriz F-13/F-15/F-17/F-48/F-54.
+- [ ] Worktrees de la tanda 1 (, , ): ya mergeadas; reusar en la tanda 2 o borrar.
+
