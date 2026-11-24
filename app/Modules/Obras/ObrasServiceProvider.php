@@ -7,12 +7,14 @@ namespace App\Modules\Obras;
 use App\Modules\Identidad\Contracts\ObrasDelResponsable;
 use App\Modules\Obras\Application\Acceso\ObraAdjuntos;
 use App\Modules\Obras\Application\Ports\AvanceGastoDeObra;
+use App\Modules\Obras\Application\Ports\MaterialesDePresupuesto;
 use App\Modules\Obras\Application\Ports\PedidosDeObra;
 use App\Modules\Obras\Contracts\ObrasConsulta;
 use App\Modules\Obras\Domain\Models\Obra;
 use App\Modules\Obras\Domain\Models\ObraDocumento;
 use App\Modules\Obras\Domain\Models\Presupuesto;
 use App\Modules\Obras\Infrastructure\AvanceGastoDeObraNulo;
+use App\Modules\Obras\Infrastructure\MaterialesDePresupuestoNulo;
 use App\Modules\Obras\Infrastructure\ObrasConsultaEloquent;
 use App\Modules\Obras\Infrastructure\ObrasDelResponsableEloquent;
 use App\Modules\Obras\Infrastructure\ObrasEnBuscador;
@@ -40,6 +42,7 @@ final class ObrasServiceProvider extends ModuleServiceProvider
         // Pedidos y Rendicion registran sus implementaciones; mientras tanto, las nulas (DU-A12).
         $this->app->bindIf(PedidosDeObra::class, PedidosDeObraNulo::class);
         $this->app->bindIf(AvanceGastoDeObra::class, AvanceGastoDeObraNulo::class);
+        $this->app->bindIf(MaterialesDePresupuesto::class, MaterialesDePresupuestoNulo::class);
     }
 
     public function boot(): void

@@ -30,10 +30,10 @@ líneas del historial de montos y de monto de la obra se filtran igual (RN-OBR-2
 
 | Pieza | Para qué |
 |---|---|
-| `Contracts\ObrasConsulta` (impl. `ObrasConsultaEloquent`) | `existe`, `resumen`, `esResponsable`, `obrasDondeEsResponsable` (alcance "solo sus obras" de otros módulos), `presupuestadoPorRubro` (rendición s3). |
+| `Contracts\ObrasConsulta` (impl. `ObrasConsultaEloquent`) | `existe`, `resumen`, `esResponsable`, `obrasDondeEsResponsable` (alcance "solo sus obras" de otros módulos), `presupuestadoPorRubro` (con cada presupuesto y su modo de carga), `presupuestadoDeObras` (una consulta para varias obras), `montoDeObra` y `obrasEnEjecucion` (rendición s3, rendicion.md §12.4.2). |
 | `Identidad\Contracts\ObrasDelResponsable` (impl. `ObrasDelResponsableEloquent`) | Obras activas (no terminadas) de una persona, para el aviso al desactivarla (RN-IDE-24). |
 | Eventos `ObraCreada`, `ObraEstadoCambiado`, `PresupuestoMontosCambiados` | Después del commit. |
-| Puertos `Application\Ports\PedidosDeObra` (Pedidos, s2) y `AvanceGastoDeObra` (Rendicion, s3) | Con implementación nula (`null` = "—") registrada con `bindIf`: el módulo que llega registra la suya. |
+| Puertos `Application\Ports\PedidosDeObra` (Pedidos, s2), `AvanceGastoDeObra` y `MaterialesDePresupuesto` (Rendicion, s3; este último frena quitar un adicional con materiales, RN-OBR-24) | Con implementación nula (`null` = "—") registrada con `bindIf`: el módulo que llega registra la suya. |
 | Contextos de adjuntos `presupuesto`, `aprobacion`, `documento_obra` → `Application\Acceso\ObraAdjuntos` | Bajar = `obras` ver con alcance; quitar = `obras` editar (RN-IDE-47/48). |
 | Fuente `obras` del buscador general (`Infrastructure\ObrasEnBuscador`) | N.º de cualquier presupuesto, cliente, planta o trabajo, todos los estados, alcance propias. |
 | `Relation::morphMap`: `obra`, `presupuesto`, `obra_documento` | `sujeto_type` estable en `actividades` y `adjuntos`. |

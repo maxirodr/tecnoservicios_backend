@@ -270,6 +270,12 @@ return [
         'presupuesto.aprobacion.numero' => 'N.º de aprobación',
         'presupuesto.aprobacion.adjunto' => 'documento de aprobación',
         // Editar obra: el principal va junto con los datos de la obra (PU-101)
+        // Rendición: lista de materiales (W-48) y filtros de W-37
+        'unidad' => 'unidad',
+        'cantidad_presupuestada' => 'cantidad presupuestada',
+        'precio_presupuestado' => 'precio unitario',
+        'presupuesto_id' => 'presupuesto',
+        'rubro' => 'rubro',
         'presupuesto_principal' => 'presupuesto principal',
         'presupuesto_principal.numero' => 'N.º de presupuesto',
         'presupuesto_principal.revision' => 'revisión',

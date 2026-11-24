@@ -10,6 +10,7 @@ use App\Modules\Obras\Domain\Enums\ObraEstado;
 use App\Modules\Obras\Domain\Models\Presupuesto;
 use App\Modules\Obras\Domain\Models\PresupuestoMonto;
 use App\Modules\Rendicion\Domain\Models\Rubro;
+use Illuminate\Support\Facades\DB;
 use Tests\Feature\Obras\Support\ObrasTestCase;
 
 /** Contratos públicos de Obras (obras.md §10.4), puerto de Identidad (RN-IDE-24) y buscador general (F-03). */
@@ -61,6 +62,66 @@ final class ContratosYBuscadorTest extends ObrasTestCase
         $this->assertSame(['materiales' => '1000.50'], $presupuestado->porRubro);
         $this->assertSame('200.00', $presupuestado->sinDesglose);
         $this->assertSame('1200.50', $presupuestado->total);
+    }
+
+    public function test_presupuestado_de_varias_obras_trae_cada_presupuesto_con_su_modo_en_una_consulta(): void
+    {
+        $diego = $this->diego();
+        $mixta = $this->obraDe($diego);
+        $vacia = $this->obraDe($diego);
+        $principal = Presupuesto::query()->where('obra_id', $mixta->id)->sole();
+        $principal->update(['modo_carga' => 'por_rubro']);
+        $adicional = Presupuesto::query()->create(['obra_id' => $mixta->id, 'numero' => '2-900-2026 A1', 'modo_carga' => 'solo_total', 'created_by' => $diego->id]);
+        $sinCargar = Presupuesto::query()->create(['obra_id' => $mixta->id, 'numero' => '2-900-2026 A2', 'created_by' => $diego->id]);
+        foreach (['materiales' => '1000.50', 'insumos' => '99.50'] as $clave => $monto) {
+            PresupuestoMonto::query()->create(['presupuesto_id' => $principal->id, 'rubro_id' => Rubro::query()->where('clave', $clave)->valueOrFail('id'), 'monto' => $monto]);
+        }
+        PresupuestoMonto::query()->create(['presupuesto_id' => $adicional->id, 'rubro_id' => null, 'monto' => '200.00']);
+
+        DB::enableQueryLog();
+        $todas = $this->app->make(ObrasConsulta::class)->presupuestadoDeObras([$mixta->id, $vacia->id]);
+        $this->assertCount(1, DB::getQueryLog());
+
+        $this->assertSame(['materiales' => '1000.50', 'insumos' => '99.50'], $todas[$mixta->id]->porRubro);
+        $this->assertSame(['200.00', '1300.00'], [$todas[$mixta->id]->sinDesglose, $todas[$mixta->id]->total]);
+        $this->assertSame(
+            [[$principal->id, 'por_rubro', '1100.00', true], [$adicional->id, 'solo_total', '200.00', false], [$sinCargar->id, 'sin_cargar', '0.00', false]],
+            array_map(static fn ($p): array => [$p->id, $p->modoCarga, $p->total, $p->esPrincipal], $todas[$mixta->id]->presupuestos),
+        );
+        $this->assertSame([[], '0.00', '0.00'], [$todas[$vacia->id]->porRubro, $todas[$vacia->id]->sinDesglose, $todas[$vacia->id]->total]);
+        $this->assertSame('sin_cargar', $todas[$vacia->id]->presupuestos[0]->modoCarga);
+    }
+
+    public function test_monto_de_obra_suma_los_cargados_y_es_null_sin_ninguno(): void
+    {
+        $diego = $this->diego();
+        $obra = $this->obraDe($diego);
+        $consulta = $this->app->make(ObrasConsulta::class);
+        $sinMonto = $consulta->montoDeObra($obra->id);
+        $this->assertNull($sinMonto);
+
+        $principal = Presupuesto::query()->where('obra_id', $obra->id)->sole();
+        $principal->update(['monto_obra' => '15000000.00']);
+        Presupuesto::query()->create(['obra_id' => $obra->id, 'numero' => '2-900-2026 A1', 'created_by' => $diego->id]);
+
+        $monto = $consulta->montoDeObra($obra->id);
+        $this->assertNotNull($monto);
+        $this->assertSame('15000000.00', $monto->total);
+        $this->assertSame([[$principal->numero, '15000000.00'], ['2-900-2026 A1', null]], array_map(static fn ($p): array => [$p->numero, $p->monto], $monto->porPresupuesto));
+    }
+
+    public function test_obras_en_ejecucion_trae_solo_las_en_ejecucion_y_respeta_la_lista(): void
+    {
+        $hernan = $this->hernan();
+        $enEjecucion = $this->obraDe($hernan, ObraEstado::EnEjecucion);
+        $otra = $this->obraDe($this->laura(), ObraEstado::EnEjecucion);
+        $this->obraDe($hernan);
+        $this->obraDe($hernan, ObraEstado::Terminada);
+        $consulta = $this->app->make(ObrasConsulta::class);
+
+        $this->assertSame([$enEjecucion->id, $otra->id], array_map(static fn ($o): int => $o->id, $consulta->obrasEnEjecucion(null)));
+        $this->assertSame([$enEjecucion->id], array_map(static fn ($o): int => $o->id, $consulta->obrasEnEjecucion([$enEjecucion->id])));
+        $this->assertSame([], $consulta->obrasEnEjecucion([]));
     }
 
     public function test_buscador_general_encuentra_obras_por_numero_parcial_en_cualquier_estado(): void

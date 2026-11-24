@@ -14,7 +14,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
-/** Contratos compartidos de la semana 3 (rendicion.md §12.4): catálogo real, nulas hasta que cada módulo cargue la suya. */
+/** Contratos compartidos de la semana 3 (rendicion.md §12.4): catálogo y materiales reales; Gastos, nula hasta que cargue la suya. */
 final class ContratosDeLaSemana3Test extends TestCase
 {
     use RefreshDatabase;
@@ -46,7 +46,7 @@ final class ContratosDeLaSemana3Test extends TestCase
         $this->assertNull($catalogo->resumeEn('no_existe'));
     }
 
-    public function test_hasta_que_cada_modulo_cargue_la_suya_no_hay_gastos_ni_materiales(): void
+    public function test_hasta_que_gastos_cargue_la_suya_no_hay_gastos_y_una_obra_sin_lista_no_tiene_materiales(): void
     {
         $gastado = $this->app->make(GastadoDeObras::class);
         $this->assertSame([], $gastado->totalesPorRubro([1, 2]));
