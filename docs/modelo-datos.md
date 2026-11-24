@@ -3,6 +3,9 @@
 > Rol: DBA. Estado: **aprobado por Juani** (2026-11-12); **alineado al esquema real de `main`** al cierre
 > de la semana 1 (2026-11-13, revisión Tech Lead / Seguridad). Fuente de verdad del esquema:
 > `database/migrations/`. Lo que todavía no tiene migración figura como **Planificado** (semanas 2–3).
+> **24-nov-2026:** Gastos y Rendición (semana 3) con los ajustes que piden `especificacion/gastos.md` §4.6 y
+> `especificacion/rendicion.md` §16 (dudas DU-G y DU-R resueltas por Juani): fecha por renglón, quién y cuándo en
+> `gastos`, número de factura normalizado para el anti-duplicado, `materiales` con nombre único por obra. Resumen en §5.
 > Fuentes: documento firmado (cap. 6–11, tablas "Datos de…"), maquetas W-XX, ADR-004/006/007/008/010/011/012/014/015.
 > Convenciones: tablas en español snake_case plural con `$table` explícito; PK `id` BIGINT;
 > FK con `constrained()` y `restrictOnDelete` salvo donde se indica (MySQL crea el índice de cada FK);
@@ -54,12 +57,15 @@ erDiagram
   pedidos ||--o{ pedido_comentarios : ""
   pedidos ||--o{ pedido_seguidores : ""
 
-  proveedores |o--o{ gastos : ""
-  gastos ||--|{ gasto_renglones : ""
+  proveedores ||--o{ gastos : "el genérico si no hay otro"
+  users ||--o{ gastos : "cargado_por / updated_by / anulado_por"
+  gastos ||--|{ gasto_renglones : "cascade"
   obras |o--o{ gasto_renglones : "obra o sin obra"
   rubros |o--o{ gasto_renglones : ""
   materiales |o--o{ gasto_renglones : "control por cantidad"
-  obras ||--o{ materiales : ""
+  obras ||--o{ materiales : "nombre único por obra"
+  presupuestos |o--o{ materiales : "de qué presupuesto sale"
+  users ||--o{ materiales : "created_by / updated_by"
 
   users ||--o{ avisos : "destinatario"
   pedidos |o--o{ avisos : ""
@@ -241,52 +247,73 @@ lo leen Obras y Proveedores por FK). Sin timestamps. — migrado
 La migración crea la tabla solo si no existe (la compartían Obras y Proveedores en ramas paralelas) y carga
 las 13 filas con `insertOrIgnore`.
 
-**`materiales`** — control por cantidad (F-66, W-48). **Planificado** (semana 3).
+**`materiales`** — control por cantidad (F-66, W-48; `rendicion.md` §4.2 y §16). **Planificado** (semana 3).
 | Campo | Tipo | Nota |
 |---|---|---|
-| obra_id | FK obras | |
-| presupuesto_id | FK presupuestos, null | de qué presupuesto sale |
-| nombre | varchar(150) | |
-| unidad | varchar(20) | |
+| obra_id | FK obras | cualquier estado |
+| presupuesto_id | FK presupuestos, null | de qué presupuesto sale (de **esa** obra; si la obra tiene uno solo, se completa solo) |
+| nombre | varchar(150) | como lo escriben ("Cemento x 50 kg") |
+| nombre_clave | varchar(150) | nombre normalizado (minúsculas, sin tildes, espacios colapsados), lo arma el caso de uso |
+| unidad | varchar(20) | obligatoria, también en "fuera de presupuesto" (W-48 la muestra); la cantidad de los renglones va en esta unidad |
 | cantidad_presupuestada | decimal(14,3), null | null en "fuera de presupuesto" |
-| precio_presupuestado | decimal(15,2), null | |
-| fuera_de_presupuesto | bool | sección aparte en W-48 |
+| precio_presupuestado | decimal(15,2), null | opcional; Gastos lo sugiere como precio en el retiro |
+| fuera_de_presupuesto | bool | sección aparte en W-48; lo crea Gastos al cargar algo que no está en la lista (`MaterialesDeObra::crearFueraDePresupuesto`) |
+| created_by, updated_by | FK users | quién y cuándo (F-14) |
+| timestamps | | `updated_at` es la versión (409) |
+
+Único `(obra_id, nombre_clave)`: el nombre no se repite en la obra ("Ya está en la lista: Cemento x 50 kg.";
+`crearFueraDePresupuesto` reusa el que ya existe). CHECK `fuera_de_presupuesto = (cantidad_presupuestada IS NULL)`:
+completar la cantidad en uno fuera de presupuesto lo pasa a la lista. Índice `obra_id` (lo da la FK) y `presupuesto_id`
+(RN-OBR-24: no se quita un adicional con materiales). Alias `material` en `Relation::morphMap` (`RendicionServiceProvider`)
+para `actividades`. **No se borra** un material que algún renglón usa, aunque esté anulado (RN-REN-53).
 
 **Lo retirado no se guarda acá**: es la suma de `gasto_renglones.cantidad` con ese `material_id` (ADR-007). "Resta llevar" = presupuestada − retirada.
 
-### Gastos (cap. 8, F-39…F-47) — Planificado (semana 2–3)
+### Gastos (cap. 8, F-39…F-47) — Planificado (semana 3)
+
+Ajustado el 24-nov-2026 con `especificacion/gastos.md` §4.6 y `rendicion.md` §16.
 
 **`gastos`** — cabecera (una factura o un gasto, cargado una vez).
 | Campo | Tipo | Oblig. | Nota |
 |---|---|---|---|
-| tipo_documento | varchar(15) | sí | `factura` · `sin_documento` (W-10) |
-| origen | varchar(20) | sí | desde qué carga vino: `factura`, `sin_comprobante` (W-35), `combustible`, `consumo_stock`, `amortizacion`, `retiro_remito`, `devolucion` (W-46), `monto_periodo` (horas/fijos), `saldo_inicial` (F-62). Sirve para filtros y reglas; no se edita |
-| numero | varchar(40) | factura sí | N.º de factura o de remito |
-| fecha | date | sí | |
-| proveedor_id | FK proveedores | factura sí | sin documento: proveedor genérico (F-44) |
-| rendido_por | varchar(120) | no | gastos sin comprobante (C12). Texto: quien rinde puede no ser usuario (supervisión no usa el sistema) |
-| periodo_desde, periodo_hasta | date | `monto_periodo` sí | horas y fijos (C18) |
-| observaciones | text | no | factura escaneada o tickets: archivo o link en `adjuntos` (`comprobante_gasto`; remito: `remito`) |
-| cargado_por | FK users | sí | quién y cuándo (F-46) |
-| anulado_at, anulado_por, motivo_anulacion | | no | anular en lugar de borrar (W-34) |
+| tipo_documento | varchar(15) | sí | `factura` · `sin_documento` (W-10). **No hay** `nota_credito` (resuelta DU-G05). No se edita |
+| origen | varchar(20) | sí | desde qué carga vino: `factura`, `sin_comprobante` (W-35), `combustible`, `consumo_stock`, `amortizacion`, `retiro_remito`, `devolucion` (W-46), `monto_periodo` (horas/fijos, W-46), `saldo_inicial` (F-62, "Carga inicial"). Sirve para filtros y reglas; no se edita |
+| numero | varchar(40) | factura y retiro sí | N.º de factura o de remito, guardado **normalizado**: sin espacios al borde, en mayúsculas y, si tiene la forma punto de venta–número, con 4+ dígitos de punto de venta y 8 de número (`3-12345` → `0003-00012345`; RN-GAS-07, resuelta DU-G10). Lo normaliza el caso de uso (`NumeroComprobante`) |
+| numero_vigente | varchar(40) GENERATED (`IF(tipo_documento = 'factura' AND anulado_at IS NULL, numero, NULL)`) | — | **único** con `proveedor_id`: una factura no se carga dos veces (criterio de aceptación n.º 2); una anulada libera el número |
+| fecha | date | sí | la del comprobante (≤ hoy); en `monto_periodo`, `periodo_hasta` (puede ser futura: fijos del mes en curso) |
+| proveedor_id | FK proveedores | sí | siempre: en sin documento, amortización, devolución sin proveedor y períodos, el proveedor genérico (F-44); en factura y retiro, uno de la base (no el genérico) |
+| rendido_por | varchar(120) | no | gastos sin comprobante (C12; obligatorio en "gastos de obra rendidos", RN-GAS-18). Texto: quien rinde puede no ser usuario (supervisión no usa el sistema) |
+| periodo_desde, periodo_hasta | date | `monto_periodo` sí | horas y fijos (C18); hasta ≥ desde |
+| observaciones | text | no | **sin uso en la Etapa 1** (ninguna pantalla lo muestra, `gastos.md` §4.6); factura escaneada o tickets: archivo o link en `adjuntos` (`comprobante_gasto`; remito: `remito`) |
+| cargado_por | FK users | sí | quién cargó (W-34 "Cargó: Diego · 17-oct 10:42") |
+| updated_by | FK users, null | — | última corrección (W-34 "Última edición") |
+| timestamps | | — | `created_at` = cuándo se cargó; `updated_at` es la versión (409, RN-GAS-39) |
+| anulado_at, anulado_por, motivo_anulacion | | no | anular en lugar de borrar (W-34); motivo obligatorio; sin vuelta atrás (resuelta DU-G11) |
 
-Índices: `(proveedor_id, fecha)`, `numero`, `fecha`, `anulado_at`. Único parcial anti-duplicado: `(proveedor_id, tipo_documento, numero)` para facturas no anuladas, vía columna generada `numero_vigente` (null si anulada o sin documento) — una factura no se carga dos veces (criterio de aceptación 2).
+Índices: `(proveedor_id, fecha)`, `numero` (buscador y aviso de remito repetido), `fecha` (W-33), `anulado_at`, `origen`.
+Único anti-duplicado: `(proveedor_id, numero_vigente)` sobre el número **normalizado**, solo facturas no anuladas — el
+mismo número de otro proveedor se acepta; un remito repetido solo avisa (no hay único). Antes decía
+`(proveedor_id, tipo_documento, numero)` para facturas no anuladas: es lo mismo, con la columna generada explícita.
 
 **`gasto_renglones`** — **la única fuente del gastado** (ADR-007).
 | Campo | Tipo | Oblig. | Nota |
 |---|---|---|---|
 | gasto_id | FK gastos, cascade | sí | |
 | orden | smallint | sí | |
+| fecha | date | sí | **fecha efectiva** (resuelta DU-G01 y DU-R04): en facturas = `gastos.fecha`; en W-35, la del ticket (≤ hoy); en `monto_periodo`, `periodo_hasta`; en el resto, la de la cabecera. Ordena W-36 y filtra W-37 y W-48 |
 | concepto | varchar(250) | sí | el detalle |
-| cantidad | decimal(14,3) | sí | negativa solo si `origen = devolucion` |
-| precio_unitario | decimal(15,2) | sí | neto, con bonificación aplicada (C9) |
-| total | decimal(15,2) | sí | `round(cantidad × precio_unitario, 2)`, lo calcula el backend |
+| cantidad | decimal(14,3) | sí | ≠ 0; negativa **solo** si `origen = devolucion` (y ahí obligatoria; no hay nota de crédito, DU-G05); en la unidad del material si tiene |
+| precio_unitario | decimal(15,2) | sí | ≥ 0; neto, con bonificación aplicada (C9) |
+| total | decimal(15,2) | sí | `round(cantidad × precio_unitario, 2)` mitad para arriba en valor absoluto, lo calcula el backend |
 | obra_id | FK obras, null | — | null = "sin obra" (stock, vehículos, oficina) |
 | rubro_id | FK rubros, null | si hay obra | CHECK: `obra_id IS NULL OR rubro_id IS NOT NULL` |
-| material_id | FK materiales, null | no | liga el renglón al control por cantidad |
+| material_id | FK materiales, null | en un retiro, sí | liga el renglón al control por cantidad; material de la **misma obra** del renglón (lo valida el caso de uso con `MaterialesDeObra::perteneceAObra`) |
 | detalle | varchar(250) | no | cotización de la moneda extranjera, aclaraciones |
+| timestamps | | — | |
 
-Índices: `(obra_id, rubro_id)` (rendición), `rubro_id`, `material_id`, `gasto_id`.
+Índices: `(obra_id, rubro_id)` (rendición), `(obra_id, fecha)` (W-36, W-37, últimos gastos de W-11), `rubro_id`,
+`material_id` (W-48 y "no quitar un material con renglones"), `gasto_id`. Sin unidad propia: la unidad es la del
+material (también en lo de fuera de presupuesto, que se crea con su unidad).
 
 ### Proveedores (cap. 10, F-55…F-57) — migrado
 
@@ -438,8 +465,22 @@ tiene totales (`rubro_id` null en presupuesto), se compara el total contra la su
 gastado. Usa el índice `(obra_id, rubro_id)`; EXPLAIN se adjunta al implementar (semana 3).
 El presupuestado ya está implementado en `ObrasConsultaEloquent::presupuestadoPorRubro` (contrato `ObrasConsulta`, devuelve `PresupuestadoDeObra`).
 
-**Todas las rendiciones (F-53, W-12)** — las mismas dos consultas agrupadas por `obra_id`
-para las obras `en_ejecucion` (una consulta por agregado, no por obra).
+**Todas las rendiciones (F-53, W-12) y % gastado (F-15, W-05)** — las mismas dos consultas agrupadas por `obra_id`
+para las obras `en_ejecucion` (o las de la página), una consulta por agregado, no por obra
+(`GastadoDeObras::totalesPorRubro(obraIds)` y `ObrasConsulta::presupuestadoDeObras(obraIds)`):
+
+```sql
+SELECT r.obra_id, r.rubro_id, SUM(r.total) gastado
+FROM gasto_renglones r JOIN gastos g ON g.id = r.gasto_id
+WHERE r.obra_id IN (?) AND g.anulado_at IS NULL GROUP BY r.obra_id, r.rubro_id;
+```
+
+**Detalle de un rubro y por proveedor (F-51, F-52, W-36, W-37)** — `renglonesDeObra`: renglones de la obra no anulados,
+con proveedor y cabecera en el mismo `JOIN` (sin N+1), filtrados por `rubro_id IN (…)` (INSUMOS + EPP) y por
+`r.fecha BETWEEN ? AND ?` (fecha efectiva), sobre `(obra_id, fecha)`. W-37 agrupa en PHP.
+
+**Control por cantidad (F-66, W-48)** — materiales de la obra + renglones no anulados con `material_id` de esa obra
+(`renglonesDeObra` con `soloConMaterial`), sumados por `material_id` y `fecha` en PHP. Sin cache.
 
 **Listado de obras (F-15)** — `pedidos abiertos` y `% gastado` salen de los puertos `PedidosDeObra` y
 `AvanceGastoDeObra` con una consulta por página (hoy implementaciones nulas hasta semanas 2–3); el test
@@ -481,3 +522,23 @@ para las obras `en_ejecucion` (una consulta por agregado, no por obra).
 | `rubros` | sin `clave` | `clave` estable; modelo en Rendicion | la API usa claves, no nombres con "/" y "Ñ" |
 | `proveedores` | `cuit varchar(13)` | `cuit char(11)` (solo dígitos); `nombre_busqueda`; `generico_unico`; `created_by`/`updated_by` | buscador sin tildes ni puntuación; un solo genérico; quién y cuándo |
 | `actividades`, `idempotency_keys`, `adjuntos` | descritas en una línea | columnas detalladas arriba | implementación de ADR-010/011/014 |
+
+### Ajustes de la semana 3 (24-nov-2026, todavía sin migración)
+
+Los piden `especificacion/gastos.md` §4.6 y `especificacion/rendicion.md` §16, con las dudas DU-G y DU-R resueltas por
+Juani. Ya están en el diccionario de arriba; esta tabla es el resumen para el DBA.
+
+| Tabla | Modelo del Sprint 0 | Ahora | Motivo |
+|---|---|---|---|
+| `gasto_renglones` | sin fecha (la del gasto) | + `fecha` (date, no nula) = fecha efectiva; índice `(obra_id, fecha)` | W-35 tiene fecha por renglón; la rendición filtra y ordena por ella (DU-G01, DU-R04) |
+| `gasto_renglones` | sin timestamps | + `timestamps` | convención (todo lo editable) |
+| `gastos` | `cargado_por` solamente | + `updated_by`, `timestamps` | W-34 "Cargó" y "Última edición"; `updated_at` como versión (409) |
+| `gastos` | único `(proveedor_id, tipo_documento, numero)` | `numero` normalizado + columna generada `numero_vigente`, único `(proveedor_id, numero_vigente)` | "3-12345" y "0003-00012345" son la misma factura (DU-G10) |
+| `gastos` | `proveedor_id` obligatorio en facturas | obligatorio siempre (el genérico si no hay otro) | `gastos.md` §4.3; W-37 y "Gastado por obra" sin "sin proveedor" |
+| `gastos` | `observaciones` | se mantiene, sin uso en la Etapa 1 | ninguna pantalla lo muestra |
+| `gastos` / `gasto_renglones` | — | **sin** `nota_credito`: negativos solo en devolución | DU-G05 (reemplaza a DU-R03) |
+| `materiales` | `obra_id, presupuesto_id, nombre, unidad, cantidad_presupuestada, precio_presupuestado, fuera_de_presupuesto` | + `nombre_clave` con único `(obra_id, nombre_clave)`; + `created_by`, `updated_by`, `timestamps`; CHECK de fuera de presupuesto; índice `presupuesto_id` | nombre no repetido en la obra (RN-REN-47), F-14, versión para 409, RN-OBR-24 (DU-R08) |
+| `materiales` | fuera de presupuesto sin regla de alta | se crea desde Gastos al cargar, con unidad obligatoria | DU-G03 + W-48 "Fuera de presupuesto: Material · Unidad" |
+
+Orden de las migraciones de la semana 3: `materiales` (después de `presupuestos` y `rubros`) → `gastos` → `gasto_renglones`
+(FK a `materiales`).

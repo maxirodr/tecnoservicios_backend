@@ -24,6 +24,11 @@
 > un criterio ⛔ que depende de dudas nuevas abiertas (**DU-Q01…DU-Q03** de PO + QA y **DU-P01…DU-P24** del
 > Analista; decide Juani). **19-nov-2026: Juani las resolvió todas (va la propuesta); no queda ningún ⛔.** Las semanas 3 y 4 siguen como épicas (§7).
 >
+> **24-nov-2026 (semana 3 bajada a historias):** semana 2 aprobada por el cliente. La §7 detalla la semana 3 en
+> **27 historias (HU-061…HU-087)** con las specs `especificacion/gastos.md` y `especificacion/rendicion.md`, alineadas
+> entre sí el mismo día. Las dudas nuevas (**DU-G01…DU-G11** y **DU-R01…DU-R09**) las resolvió Juani el 24-nov (va la
+> propuesta; DU-G08 reemplazada por DU-R05 y DU-R03 por DU-G05): **no queda ningún ⛔**. La semana 4 sigue como épicas.
+>
 > Trazabilidad completa F-XX ↔ W-XX ↔ tests: [`qa/matriz-trazabilidad.md`](qa/matriz-trazabilidad.md).
 > Estrategia de pruebas: [`qa/plan-de-pruebas.md`](qa/plan-de-pruebas.md).
 >
@@ -45,20 +50,20 @@
 
 Se cuentan en la semana en que **arrancan**. Lo que se completa después queda escrito acá y en la
 matriz, para que nadie dé por terminada una función a medias. **Semana 1: entregada** (QC apta,
-13-nov). **Semana 2: lo que entra ahora**, con la historia que lo construye.
+13-nov). **Semana 2: entregada** (prueba en paralelo aprobada). **Semana 3: lo que entra ahora**, con la historia que lo construye (§7).
 
-| F-XX | Semana 1 (entregada) | Semana 2 (entra ahora · HU) | Semana 3 |
+| F-XX | Semana 1 (entregada) | Semana 2 (entregada · HU) | Semana 3 (entra ahora · HU) |
 |---|---|---|---|
-| F-03 Buscador general | Obras (N.º de presupuesto, cliente, planta, nombre del trabajo) y proveedores (nombre) | Pedidos por texto · HU-057 | Gastos por número de factura |
+| F-03 Buscador general | Obras (N.º de presupuesto, cliente, planta, nombre del trabajo) y proveedores (nombre) | Pedidos por texto · HU-057 | Gastos por número de factura o de remito · HU-085 |
 | F-10 Mi perfil | Mis datos, mi sector, de quién dependo (~~cambiar la contraseña~~: no hay contraseña, ADR-015) | "Mis avisos" (qué avisos llegan además por mail) · HU-047 | — |
-| F-14 Registro de quién hizo qué | En obras (alta, edición, cambio de estado, presupuestos) | En pedidos (edición y recorrido) · HU-031, HU-037 | En gastos |
-| F-15 Listado de obras | Pestañas por estado, N.º de presupuesto, trabajo, cliente y planta, responsable | Columna "pedidos abiertos" y fila de Servicios generales · HU-055 (celular: HU-053) | Columna "% del presupuesto gastado" (en rojo si se pasó) |
-| F-17 Ficha de la obra | Datos de la obra y pestaña Documentos y contactos | Pestaña Pedidos · HU-054 (celular: HU-053) | Pestaña Rendición |
+| F-14 Registro de quién hizo qué | En obras (alta, edición, cambio de estado, presupuestos) | En pedidos (edición y recorrido) · HU-031, HU-037 | En gastos (quién cargó, cada corrección y la anulación) · HU-072, HU-073 |
+| F-15 Listado de obras | Pestañas por estado, N.º de presupuesto, trabajo, cliente y planta, responsable | Columna "pedidos abiertos" y fila de Servicios generales · HU-055 (celular: HU-053) | Columna "% del presupuesto gastado" (en rojo si se pasó) · HU-081 |
+| F-17 Ficha de la obra | Datos de la obra y pestaña Documentos y contactos | Pestaña Pedidos · HU-054 (celular: HU-053) | Pestaña Rendición · HU-079 |
 | F-21 Cambiar el estado de la obra | Confirmada → En ejecución → Terminada, por quien corresponde, con registro | Al pasar a Terminada se muestran los pedidos abiertos para completarlos o reasignarlos (no frena, DU-12) · HU-056 | — |
 | F-61 Visibilidad por jerarquía | El dato "depende de" (jefatura) en cada usuario | Mis tareas en el inicio y Tareas de mi gente · HU-038, HU-040 | — |
 | F-68 Plazos de la prioridad | Gerencia define y guarda los plazos (W-50) | La prioridad de cada pedido nuevo se calcula con esos plazos (F-26) · HU-027 | — |
-| F-48 Presupuesto por rubro | Se carga por presupuesto (W-13) | — | Alimenta la columna "Presupuestado" de la rendición |
-| F-57 Gastos del proveedor | — (la ficha del proveedor existe desde la semana 1) | — | Lo imputado al proveedor, por obra |
+| F-48 Presupuesto por rubro | Se carga por presupuesto (W-13) | — | Alimenta la columna "Presupuestado" de la rendición · HU-074 |
+| F-57 Gastos del proveedor | — (la ficha del proveedor existe desde la semana 1) | — | Lo imputado al proveedor, por obra · HU-084 |
 
 Además, la semana 2 completa dos casos que la semana 1 dejó escritos para cuando hubiera pedidos:
 sacar un sector y desactivar a una persona que tienen pedidos abiertos (F-58, F-59 · HU-058).
@@ -1767,26 +1772,651 @@ Las que tocan historias "sí o sí" de la prueba del cliente (§6.1) y conviene 
 
 ---
 
-## 7. Semanas 3 y 4 (épicas, sin detalle fino)
+## 7. Semana 3 · Gastos y rendición (detalle)
 
-Se detallan en historias al cierre de la semana anterior, con DoR.
+> Bajada a historias el 24-nov-2026, con la semana 2 aprobada por el cliente (prueba en paralelo con la minuta).
+> Contrato: cap. 3, 4.3, 4.4, 8, 9, 10 (F-57) y 13 (criterios n.º 1 y 2) del documento firmado; maquetas W-05, W-07,
+> W-10…W-14, W-18, W-33…W-38, W-44, W-46…W-48; ADR-005, ADR-006, **ADR-007** (los renglones son la única fuente del
+> gastado), **ADR-008** (importes), ADR-010, ADR-011 y ADR-014 (contextos `comprobante_gasto` y `remito`). Las reglas
+> finas están en [`especificacion/gastos.md`](especificacion/gastos.md) (RN-GAS-NN) y
+> [`especificacion/rendicion.md`](especificacion/rendicion.md) (RN-REN-NN), que el 24-nov se alinearon entre sí
+> (`gastos.md` §15, `rendicion.md` §17). Si una spec y un criterio no coinciden, se corrige el criterio antes de construir.
 
-### Semana 3 · Gastos y rendición
+**27 historias** (HU-061…HU-087) en 7 épicas. Resumen de estado DoR: **27 ✅ listas, sin criterios ⛔**: las dudas de
+la semana (DU-08, DU-17, DU-18, DU-19 del 12-nov; DU-G01…DU-G11 y DU-R01…DU-R09 del 24-nov) están **resueltas** (va la
+propuesta; DU-G08 reemplazada por DU-R05 y DU-R03 por DU-G05).
 
-| Épica | F-XX | W-XX |
-|---|---|---|
-| Carga única de facturas y gastos (F-43: factura como archivo o link) | F-39, F-40, F-41, F-42, F-43 | W-10, W-38 (alta rápida) |
-| Gastos sin factura (tickets y remito como archivo o link) | F-44, F-47 | W-35, W-46 |
-| Gastos cargados y detalle | F-45, F-46 | W-33, W-34 |
-| Rendición de la obra | F-49, F-50, F-51, F-52, F-54 | W-11, W-36, W-37, W-44 |
-| Todas las rendiciones en curso | F-53 | W-12 |
-| Control de materiales por cantidad (remito como archivo o link) | F-66 | W-48 |
-| Gastos del proveedor | F-57 | W-14 |
-| Lo que se completa de semanas 1 y 2 | F-03 (gastos), F-14 (gastos), F-15 (% gastado), F-17 (pestaña Rendición), F-48 (alimenta la rendición) | W-18, W-05, W-07 |
+| Épica | Historias | ✅ | Criterio que dependía de una duda (resuelta el 24-nov) |
+|---|---|---|---|
+| T · Cargar facturas | HU-061…HU-065 | 5 | HU-061 (G01), HU-062 (G04), HU-065 (G10) |
+| U · Gastos sin factura y cargas desde la rendición | HU-066…HU-070 | 5 | HU-066 (G01, G02), HU-068 (G03, R05, R06), HU-069 (G05), HU-070 (G09, R04, R05) |
+| V · Gastos cargados, corregir y anular | HU-071…HU-073 | 3 | HU-071 (G06, G11), HU-072 (G11), HU-073 (G11) |
+| W · Rendición de la obra | HU-074…HU-079 | 6 | HU-074 (R07), HU-075 (R02), HU-076 (R01), HU-077 (R07), HU-078 (R07) |
+| X · Todas las rendiciones y % gastado | HU-080…HU-081 | 2 | — |
+| Y · Control de materiales por cantidad | HU-082…HU-083 | 2 | HU-083 (R06) |
+| Z · Lo que se completa de semanas 1 y 2, contratos y encendido | HU-084…HU-087 | 4 | HU-084 (G06), HU-085 (G07), HU-086 (R08) |
 
-Dudas de esta semana: DU-08, DU-17, DU-18 y DU-19, **resueltas el 12-nov** (va la propuesta).
+> **Orden de construcción sugerido:** Z (HU-086 contratos y tablas) → T (HU-061, HU-062, HU-065) → W (HU-074) → U
+> (HU-066, HU-070) → V → W (HU-075…HU-079) → X → U (HU-067, HU-068, HU-069) → Y → T (HU-063, HU-064) → Z (HU-084,
+> HU-085, HU-087). Sin el contrato `GastadoDeObras` y la tabla `gasto_renglones` con su fecha no hay rendición que
+> mirar, y sin factura con reparto por renglón (HU-061) no se puede probar el criterio de aceptación global n.º 1.
 
-### Semana 4 · Puesta en marcha
+### 7.1 La prueba del cliente de la semana 3
+
+**Qué prueban (roadmap firmado):** "Cargan las facturas de una obra en curso y la comparan con su rendición en Excel."
+Eligen una obra En ejecución que ya cargaron en la semana 1 (con su presupuesto por rubro en W-13), cargan en el
+sistema las facturas y gastos de esa obra que tienen en su libro "Gasto de obra" y comparan la rendición (W-11) contra
+su hoja "General", rubro por rubro. La guía de comparación es `rendicion.md` §13 (qué número es cuál y dónde puede haber
+diferencias que no son errores: IVA, redondeo por renglón, "% rent" que no es el % consumido).
+
+**Tiene que estar sí o sí** (sin esto la comparación no se puede hacer o deja de ser justa):
+
+| Lo que hacen en su Excel hoy | Historias que lo sostienen |
+|---|---|
+| Cargar cada factura en su libro, una fila por ítem, con obra y rubro | HU-061, HU-062 |
+| Elegir (o dar de alta) el proveedor | HU-063 |
+| Repartir una factura entre obras y dejar fuera lo de stock u oficina | HU-061 |
+| Rendir gastos sin ticket, combustible y consumo de stock | HU-066 |
+| Amortización, retiros de Tecnobahía y devoluciones | HU-067, HU-068, HU-069 |
+| Horas liquidadas y fijos por quincena o mes | HU-070 |
+| Corregir una fila mal cargada o sacar una repetida | HU-065, HU-072, HU-073 |
+| La hoja "General": presupuestado, gastado y saldo por rubro, EPP dentro de INSUMOS | HU-074, HU-075 |
+| "Cobrado · Ganancia · %" | HU-076 |
+| Sus tablas dinámicas por rubro y por proveedor | HU-077, HU-078, HU-071 |
+| Mirar todas las obras en curso juntas (hoy, una planilla por obra) | HU-080 |
+| Que el entorno tenga la obra, sus usuarios y la guía de comparación | HU-086, HU-087 |
+
+Se entregan en la misma semana pero **la prueba no depende de ellas** (si alguna se atrasa, se entrega en la semana 4
+sin frenar la prueba; se le dice a Juani el miércoles): HU-064 (archivo de la factura), HU-079 (pestaña en el celular),
+HU-081 (% del listado de obras), HU-082 y HU-083 (control por cantidad), HU-084 (gastado por
+obra del proveedor), HU-085 (buscador).
+
+**Criterio de aceptación global de la semana 3 — el caso de referencia** (`rendicion.md` §9, datos ficticios):
+**Dado** la obra "Ampliación de nave de ensayo" con sus dos presupuestos (principal por rubro 11.150.000 y A1 solo total
+1.000.000), su lista de 4 materiales y los **21 renglones** de `rendicion.md` §9.2 cargados **por la API de Gastos y de
+Obras** (incluidos el renglón sin obra, el de la factura anulada y el de la "Obra de control"), **cuando** se piden W-11,
+W-36, W-37, W-48, W-12 y W-05, **entonces** cada número da **exacto, al centavo**, lo de `rendicion.md` §9.3 y §9.4:
+MATERIALES 2.701.827,63 (54 %), INSUMOS · incluye EPP 130.333,30, LOGISTICA, MANTENIMIENTO, FIJOS y HORAS LIQUIDADAS
+pasados, total de la obra 12.150.000 · 6.727.161,68 · 5.422.838,32 · 55 %, monto 16.300.000 con ganancia prevista
+4.150.000 (25 %) y al día 9.572.838,32 (59 %), W-37 con 6 grupos y 4 comprobantes, W-48 con total de la lista
+2.751.080,13 y la línea "Renglones de MATERIALES sin material asociado: −49.252,50", W-12 con 53 %. Y al **anular** la
+factura 0004-00000020, MATERIALES baja a 1.436.395,50, LOGISTICA deja de estar pasada y el total queda en 5.201.729,55
+(43 %). Es el test `RendicionCasoDeReferenciaTest` (feature) y el E2E de la prueba
+(`rendicion.spec.ts › el caso de referencia da cada rubro al centavo`). Si no está en verde el miércoles, la prueba peligra
+(§8).
+
+**Señales de que la prueba peligra** (se miran el miércoles de la semana 3): las de §8.
+
+**Qué mira QC durante la prueba** (detalle en `qa/plan-de-pruebas.md`): diferencia por rubro entre W-11 y su General =
+0, o explicada por una fila de la guía de `rendicion.md` §13 (IVA, redondeo, un renglón que en su Excel dice "INSUMO");
+que ninguna factura del libro quede sin cargar o cargada dos veces (HU-065); que cada gerencia lea su rendición sola en
+PC y celular (criterio global n.º 1).
+
+### Épica T · Cargar facturas
+
+#### HU-061 · Cargar una factura con sus renglones, cada uno a su obra y su rubro
+- **F-39 · F-40 · W-10**
+- **Como** administración o compras **quiero** cargar cada factura una sola vez, renglón por renglón como mi libro de
+  gastos, mandando cada renglón a su obra y su rubro **para** no cargarla en facturas, en la rendición y en la obra.
+- **Criterios de aceptación**
+  1. **Dado** `gastos:editar`, **cuando** carga Tipo "Factura", Número, Fecha, Proveedor y los 5 renglones de W-10
+     (Concepto · Cantidad · Precio unitario · Obra · Rubro) y toca "Guardar factura", **entonces** se guarda en una
+     transacción con la actividad `creado`, ve "✓ Factura cargada. Ya se restó en la rendición de Piso industrial nave 3
+     y Reparación de losa tanque B." y la rendición de cada obra ya lo resta (RN-GAS-03, RN-GAS-09, RN-GAS-16).
+  2. **Dado** que falta número, fecha, proveedor, un renglón, o en un renglón el concepto, la cantidad, el precio o la
+     obra (o "(sin obra)"), **cuando** guarda, **entonces** 422 con el error en su campo o renglón ("Renglón 3: elegí el
+     rubro.") y no se guarda nada (RN-GAS-03, RN-GAS-09).
+  3. **Dado** un renglón con obra, **entonces** el rubro es obligatorio y sale de los 11 que se imputan; FIJOS y HORAS
+     LIQUIDADAS dan 422 "FIJOS y HORAS LIQUIDADAS se cargan como monto por período, desde la rendición."; sin obra, el
+     rubro es opcional y el renglón no suma en ninguna rendición (RN-GAS-12, RN-GAS-13).
+  4. **Dado** 10 bolsas que van 6 a una obra y 4 a otra, **entonces** se cargan dos renglones: no hay reparto por
+     porcentaje (RN-GAS-13).
+  5. **Dado** una obra Terminada o sin presupuesto cargado, **cuando** la elige, **entonces** se acepta, con "Obra
+     terminada" al lado si lo está (RN-GAS-13, DU-A15).
+  6. **Dado** la fecha, **entonces** por defecto es hoy en Argentina y no puede ser posterior ("La fecha no puede ser
+     posterior a hoy."); cada renglón guarda la fecha de la factura como su fecha efectiva (RN-GAS-04, §4.2, **DU-G01 ✅**).
+  7. **Dado** un renglón de una obra con materiales, **cuando** elige un material de esa obra o "No está en la lista"
+     (nombre y unidad), **entonces** cuenta como "pedido" en W-48; un material de otra obra da 422 "El material Cemento x
+     50 kg es de otra obra: quitá el material o elegí uno de esta obra." (RN-GAS-14).
+  8. **Dado** un doble clic en "Guardar factura" con la misma `Idempotency-Key`, **entonces** queda un solo gasto
+     (RN-GAS-50); `GastoImputado {gastoId, obraIds}` sale después del commit (RN-GAS-16).
+  9. **Dado** un usuario sin `gastos:editar` (o con `gastos:editar (propias)` que imputa a una obra ajena o a "(sin
+     obra)"), **cuando** llama al alta, **entonces** 403 (RN-GAS-49).
+- **Reglas:** gastos.md RN-GAS-02…04, 09, 12…14, 16, 49, 50.
+- **Permisos:** `gastos:editar` (inicial: Gerencia y Jefatura de Administración, Compras, E·T).
+- **Dependencias:** HU-086 (tablas y contratos), HU-012 (obras), HU-020 (proveedores).
+- **DoR:** ✅ listo.
+
+#### HU-062 · Total calculado solo, sin IVA y con moneda convertida
+- **F-41 · W-10**
+- **Como** quien carga una factura **quiero** que el total de cada renglón y de la factura se calcule solo **para**
+  compararlo con el papel antes de guardar y no tipear dos veces.
+- **Criterios de aceptación**
+  1. **Dado** cantidad y precio, **entonces** el total del renglón es `cantidad × precio` redondeado a 2 decimales mitad
+     para arriba en valor absoluto (12,5 × 101.234,57 = 1.265.432,13); lo calcula el backend y un `total` enviado por el
+     front se ignora (RN-GAS-10, §4.5).
+  2. **Dado** los renglones, **entonces** el total de la factura es la suma sin volver a redondear y al lado se ve el
+     reparto por obra en vivo ("905.600 · Nave 3: 549.000 · Losa tanque B: 311.600 · sin obra: 45.000") (RN-GAS-11).
+  3. **Dado** un precio con más de 2 decimales o una cantidad con más de 3, **entonces** 422 (no se redondea en
+     silencio); una cantidad negativa en una factura da 422 "La cantidad va en negativo solo en una devolución."
+     (§4.5, RN-GAS-10).
+  4. **Dado** una compra en dólares o con bonificación, **entonces** se carga convertida y con la bonificación en el
+     precio, con la cotización en el detalle; adelanto y saldo van en dos renglones (RN-GAS-15).
+  5. **Dado** el pie del formulario, **entonces** dice "Importes sin IVA (netos)": neto si el comprobante discrimina IVA,
+     lo pagado si no (factura C, ticket) (§4.5, **DU-G04 ✅**, se confirma con María en la prueba).
+  6. **Dado** más de 200 renglones, **entonces** 422 "Hasta 200 renglones por comprobante: dividilo en dos cargas."
+- **Reglas:** gastos.md RN-GAS-10, 11, 15, §4.5 · ADR-008.
+- **Permisos:** los de HU-061.
+- **Dependencias:** HU-061.
+- **DoR:** ✅ listo.
+
+#### HU-063 · Elegir el proveedor de la base o darlo de alta sin salir de la factura
+- **F-42 · W-10 · W-38**
+- **Como** quien carga **quiero** buscar el proveedor por nombre o CUIT y, si no está, darlo de alta ahí mismo **para**
+  no perder lo cargado.
+- **Criterios de aceptación**
+  1. **Dado** el buscador de proveedor, **cuando** elige uno, **entonces** se ven su CUIT y su rubro habitual, que se pone
+     en los renglones sin rubro (RN-GAS-05).
+  2. **Dado** `proveedores:editar`, **cuando** toca "+ nuevo proveedor", **entonces** abre W-38 con el aviso de parecidos
+     y al guardar vuelve a la factura con el proveedor elegido y los renglones intactos (RN-GAS-05, RN-PRV-08…10).
+  3. **Dado** el proveedor genérico, **cuando** se elige en una factura, **entonces** 422 "El proveedor genérico es solo
+     para gastos sin documento." (RN-GAS-06).
+- **Reglas:** gastos.md RN-GAS-05, 06 · proveedores.md RN-PRV-03, 08…10, 14.
+- **Permisos:** `gastos:editar`; el alta rápida, `proveedores:editar`.
+- **Dependencias:** HU-061, HU-021.
+- **DoR:** ✅ listo.
+
+#### HU-064 · La factura como archivo o link
+- **F-43 · ADR-014 (contexto `comprobante_gasto`) · W-10 · W-34**
+- **Como** administración **quiero** subir la factura escaneada o pegar su link **para** tenerla a mano; el papel queda
+  en la oficina.
+- **Criterios de aceptación**
+  1. **Dado** el campo "Factura (opcional) · Subir archivo o pegar link", **cuando** sube uno o más (hasta 10) o no sube
+     ninguno, **entonces** se guarda igual (§4.4, HU-025).
+  2. **Dado** un adjunto ajeno, ya usado o de otro contexto, **entonces** 422 "Ese adjunto no se puede usar acá."
+     (RN-IDE-46).
+  3. **Dado** un gasto fuera del alcance de quien pide el archivo, **entonces** 404; un gasto anulado conserva sus
+     adjuntos (§4.4, RN-GAS-48).
+- **Reglas:** gastos.md §4.4 · identidad.md §6.6.
+- **Permisos:** asociar `gastos:editar`; bajar `gastos:ver` (con alcance).
+- **Dependencias:** HU-061, HU-025.
+- **DoR:** ✅ listo.
+
+#### HU-065 · Una factura no se carga dos veces
+- **F-39 · criterio de aceptación global n.º 2 · W-10 · W-34**
+- **Como** administración **quiero** que el sistema me frene si la factura ya está cargada **para** que la rendición no
+  sume dos veces lo mismo.
+- **Criterios de aceptación**
+  1. **Dado** "3-12345", **entonces** se guarda normalizado "0003-00012345" (RN-GAS-07, **DU-G10 ✅**).
+  2. **Dado** una factura no anulada del mismo proveedor con el mismo número normalizado, **cuando** sale del campo
+     Número, **entonces** avisa "Esa factura ya está cargada: 0003-00012345 de Corralón Centro (Diego, 17-oct)." con
+     link a W-34, y al guardar 422 con el mismo texto (RN-GAS-08).
+  3. **Dado** el mismo número de otro proveedor, o una factura anulada, **entonces** se acepta (RN-GAS-08).
+  4. **Dado** dos cargas a la vez de la misma factura, **entonces** el índice único deja una y la otra recibe el 422.
+- **Reglas:** gastos.md RN-GAS-07, 08 · modelo-datos `numero_vigente`.
+- **Permisos:** los de HU-061.
+- **Dependencias:** HU-061.
+- **DoR:** ✅ listo.
+
+### Épica U · Gastos sin factura y cargas desde la rendición
+
+#### HU-066 · Gastos sin comprobante, combustible y consumo de stock
+- **F-44 · F-47 · W-35**
+- **Como** administración **quiero** rendir los gastos de obra sin ticket, el combustible por carga y el consumo de
+  stock propio, cada renglón con su fecha, obra y rubro **para** que sumen en la rendición igual que una factura.
+- **Criterios de aceptación**
+  1. **Dado** el modo "Sin documento", **entonces** se elige "Qué se carga: Gastos de obra rendidos · Combustible por
+     carga · Consumo de stock propio" y cada renglón lleva **Fecha** (la del ticket, ≤ hoy, por defecto la de la
+     rendición) (RN-GAS-17, RN-GAS-21, **DU-G01 ✅**, **DU-G02 ✅**).
+  2. **Dado** "Gastos de obra rendidos", **entonces** "Rendido por" es obligatorio ("Elegí o escribí quién rindió."): una
+     persona de la lista o un texto ("supervisor de obra Juan") (RN-GAS-18).
+  3. **Dado** el proveedor, **entonces** por defecto es el genérico (se ve "—") y se puede elegir uno de la base, como la
+     estación de servicio (RN-GAS-20).
+  4. **Dado** "Consumo de stock propio" con un renglón "(sin obra)", **entonces** 422 "El consumo de stock va a una obra."
+     (RN-GAS-19).
+  5. **Dado** fotos de los tickets (también HEIC desde el celular), **entonces** se suben como archivo o link
+     (`comprobante_gasto`, 0 a 10) (RN-GAS-17).
+  6. **Dado** el caso de Laura (combustible 68.000, comida 42.000, peaje 3.500), **entonces** "Total rendido · 113.500" y
+     cada renglón entra en la rendición con su fecha (gastos.md §10 caso 19).
+- **Reglas:** gastos.md RN-GAS-17…21.
+- **Permisos:** `gastos:editar`.
+- **Dependencias:** HU-061.
+- **DoR:** ✅ listo.
+
+#### HU-067 · Amortización de herramientas, una por obra
+- **F-47 · W-46 · W-11**
+- **Como** administración **quiero** cargar la amortización de herramientas de la obra con su monto a mano **para** que
+  sume en AMORTIZACION como hoy.
+- **Criterios de aceptación**
+  1. **Dado** W-46 abierta desde la rendición ("+ cargar renglón sin documento"), **cuando** carga Fecha · Concepto ·
+     Importe, **entonces** queda un renglón de AMORTIZACION en esa obra (RN-GAS-22, RN-GAS-23).
+  2. **Dado** que la obra ya tiene su amortización no anulada, **entonces** la sección la muestra con "Corregir" y otra
+     carga da 422 "Esta obra ya tiene su amortización (310.000): corregila."; dos cargas a la vez dejan una (RN-GAS-23,
+     RN-GAS-50).
+  3. **Dado** alguien sin `rendicion:editar` en esa obra, **entonces** no ve el acceso y la API responde 403; corregirla
+     en W-34 pide `gastos:editar` (gastos.md §8.1, RN-REN-58, **DU-R05 ✅**).
+- **Reglas:** gastos.md RN-GAS-22, 23, 26 · rendicion.md RN-REN-58.
+- **Permisos:** cargar `rendicion:editar`; corregir y anular `gastos:editar`.
+- **Dependencias:** HU-061, HU-074.
+- **DoR:** ✅ listo.
+
+#### HU-068 · Retiros con remito: una sola carga para la rendición y el control por cantidad
+- **F-47 · F-66 · ADR-014 (contexto `remito`) · W-46 · W-48**
+- **Como** administración **quiero** cargar cada retiro de Tecnobahía una sola vez con su remito, eligiendo los
+  materiales de la lista **para** que sume en la rendición y en "retirado" de W-48 con el mismo renglón.
+- **Criterios de aceptación**
+  1. **Dado** la sección "Retiros", **cuando** carga Fecha, N.º de remito, Proveedor de la base (sugerido el último
+     usado), Remito (archivo, foto o link, opcional) y renglones Material · Cantidad · Precio · Total · Rubro, **entonces**
+     queda un gasto `retiro_remito` que resta en su rubro (MATERIALES por defecto) y suma en W-48 (RN-GAS-24, resuelta
+     DU-17, **DU-G03 ✅**).
+  2. **Dado** un material de la lista, **entonces** se sugiere su precio presupuestado (editable) y la cantidad va en su
+     unidad ("bolsas") (RN-GAS-24, **DU-R06 ✅**).
+  3. **Dado** algo que no está en la lista, **cuando** elige "No está en la lista" y escribe material y unidad,
+     **entonces** se crea como material fuera de presupuesto de la obra y aparece en "Fuera de presupuesto" de W-48; el
+     próximo retiro ya lo ofrece; sin material ni "No está en la lista": 422 (RN-GAS-14, RN-GAS-24, RN-REN-49).
+  4. **Dado** un N.º de remito del mismo proveedor ya cargado, **entonces** avisa "Ese remito ya está cargado (14-oct,
+     Piso industrial nave 3). ¿Cargarlo igual?" y se guarda si confirma (RN-GAS-24).
+  5. **Dado** `rendicion:editar` **o** `control_cantidad:editar` en esa obra, **entonces** puede cargar el retiro (desde
+     W-11 o desde W-48 "+ cargar retiro con remito"); sin ninguna de las dos, 403 (RN-REN-58, **DU-R05 ✅**).
+  6. **Dado** el remito, **entonces** lo ve quien tiene `gastos:ver` o `control_cantidad:ver` (con alcance) (identidad.md
+     §6.6).
+- **Reglas:** gastos.md RN-GAS-14, 24, 26 · rendicion.md RN-REN-48, 49, 53, 58.
+- **Permisos:** cargar `rendicion:editar` o `control_cantidad:editar`; corregir y anular `gastos:editar`.
+- **Dependencias:** HU-061, HU-082 (lista; sin ella todo entra como fuera de presupuesto, ver §8).
+- **DoR:** ✅ listo.
+
+#### HU-069 · Devoluciones de materiales que restan
+- **F-47 · W-46**
+- **Como** administración **quiero** cargar el material devuelto con cantidad negativa **para** que reste en la
+  rendición y en lo retirado.
+- **Criterios de aceptación**
+  1. **Dado** la sección "Devolución", **cuando** carga Fecha · Material · Cantidad · Total · Rubro, **entonces** la
+     cantidad va en negativo ("−4"), el total da negativo y resta en la rendición y, si tiene material, en lo retirado de
+     W-48 (RN-GAS-25).
+  2. **Dado** una cantidad positiva, **entonces** 422 "En una devolución la cantidad va en negativo." (RN-GAS-25).
+  3. **Dado** una nota de crédito del proveedor, **entonces** no hay tipo "nota de crédito": por material devuelto se
+     carga como devolución (con el proveedor de la base); si corrige el precio, se corrige la factura en W-34
+     (RN-GAS-25, **DU-G05 ✅**, que reemplaza a DU-R03).
+  4. **Dado** alguien sin `rendicion:editar` en esa obra, **entonces** 403 (RN-REN-58).
+- **Reglas:** gastos.md RN-GAS-25, 26 · rendicion.md RN-REN-04.
+- **Permisos:** cargar `rendicion:editar`; corregir y anular `gastos:editar`.
+- **Dependencias:** HU-061.
+- **DoR:** ✅ listo.
+
+#### HU-070 · Horas liquidadas y fijos por período
+- **F-54 · W-46 · W-11**
+- **Como** administración **quiero** cargar las horas de la quincena y los fijos del mes como un monto total por obra
+  **para** que resten en la rendición sin cargar el detalle por empleado.
+- **Criterios de aceptación**
+  1. **Dado** "+ cargar período" en la fila FIJOS u HORAS LIQUIDADAS de W-11, **entonces** abre la sección "Horas
+     liquidadas y fijos por período" de W-46 con la obra y el rubro elegidos: Rubro · Desde · Hasta · Importe · Concepto
+     (por defecto "Horas liquidadas 1 al 15-oct") (RN-GAS-27, RN-REN-18, **DU-R04 ✅**).
+  2. **Dado** hasta anterior a desde, desde posterior a hoy o importe vacío, **entonces** 422 "El 'hasta' no puede ser
+     anterior al 'desde'." · "El período no puede empezar después de hoy." · "Poné el importe del período." (RN-GAS-27).
+  3. **Dado** un período cargado, **entonces** su renglón tiene fecha = el "hasta", también si todavía no llegó (fijos del
+     1 al 30-nov cargados el 24-nov: 30-nov), y resta en la rendición desde ya (RN-GAS-27, RN-REN-16, RN-REN-17).
+  4. **Dado** un período del mismo rubro y obra que se superpone, **entonces** avisa "Ya hay HORAS LIQUIDADAS de Piso
+     industrial nave 3 del 1 al 15-oct (1.300.000). ¿Cargar igual?" y se guarda solo si confirma (RN-GAS-28,
+     **DU-G09 ✅**).
+  5. **Dado** W-36 de HORAS LIQUIDADAS, **entonces** cada renglón se ve como "Período 1 al 15-oct" (RN-REN-18, RN-REN-29).
+  6. **Dado** alguien sin `rendicion:editar` en esa obra, **entonces** no ve el acceso y la API responde 403 (RN-REN-58).
+- **Reglas:** gastos.md RN-GAS-27, 28 · rendicion.md RN-REN-16…18.
+- **Permisos:** cargar `rendicion:editar`; corregir y anular `gastos:editar`.
+- **Dependencias:** HU-061, HU-074.
+- **DoR:** ✅ listo.
+
+### Épica V · Gastos cargados, corregir y anular
+
+#### HU-071 · Gastos cargados: filtros, total de lo filtrado y agrupar
+- **F-45 · F-02 · W-33 · W-17**
+- **Como** administración y gerencias **quiero** ver los gastos cargados con filtros y el total de lo filtrado **para**
+  sacar lo que hoy saco con tablas dinámicas.
+- **Criterios de aceptación**
+  1. **Dado** `gastos:ver`, **entonces** el ítem "Gastos" de la barra abre W-33 con Fecha · Documento · Proveedor · Obras
+     · Rubros · Total · Cargó, la más nueva primero, de a 50, del 1 del mes a hoy por defecto (RN-GAS-01, 29, 30, 32).
+  2. **Dado** los filtros Obra (o "(sin obra)"), Proveedor, Rubro, Fecha desde–hasta y Tipo, **entonces** se combinan y
+     el pie dice "Total de lo filtrado · 6 comprobantes · 5.447.900" sobre todo lo filtrado (RN-GAS-30, 32).
+  3. **Dado** un filtro de obra o rubro, **entonces** la fila muestra lo de los renglones que cumplen ("549.000 · de
+     905.600") y el total suma eso (RN-GAS-31, **DU-G06 ✅**).
+  4. **Dado** "Agrupar por: proveedor · obra · rubro", **entonces** cada grupo tiene su subtotal y un comprobante
+     repartido aparece en cada grupo con su parte; EPP es su propio grupo (RN-GAS-33).
+  5. **Dado** un gasto anulado, **entonces** se ve tachado y no suma ("1 anulado (no suma)") (RN-GAS-34, **DU-G11 ✅**).
+  6. **Dado** la etiqueta Documento, **entonces** es la misma que en la rendición ("Retiro · remito …", "Período 1 al
+     15-oct", "Carga inicial") (RN-GAS-29).
+  7. **Dado** "ver todos" desde W-11, **entonces** abre W-33 con esa obra y sin límite de fecha (RN-GAS-35).
+- **Reglas:** gastos.md RN-GAS-01, 29…35, 48.
+- **Permisos:** `gastos:ver` (Ingeniería: `gastos:ver (propias)`, solo sus renglones, RN-GAS-48).
+- **Dependencias:** HU-061.
+- **DoR:** ✅ listo.
+
+#### HU-072 · Detalle de un gasto y corregir con registro
+- **F-46 · F-14 · W-34**
+- **Como** administración **quiero** ver un gasto con quién lo cargó y corregirlo dejando registro **para** arreglar un
+  error sin perder el rastro.
+- **Criterios de aceptación**
+  1. **Dado** W-34, **entonces** muestra cabecera, renglones, reparto por obra, "Cargó: Diego · 17-oct 10:42", "Última
+     edición" y el historial (RN-GAS-36, RN-GAS-42).
+  2. **Dado** `gastos:editar`, **cuando** corrige cabecera o renglones (cambiar, agregar, quitar), **entonces** valen las
+     validaciones de la carga (incluida la factura repetida sin contarse a sí misma) y el historial dice qué cambió, antes
+     → después ("Diego cambió el rubro de 'Guantes de trabajo': MATERIALES → INSUMOS"); adjuntos por nombre, sin URL
+     (RN-GAS-37, RN-GAS-42).
+  3. **Dado** un renglón que cambia de obra, **entonces** `GastoCorregido` lleva las obras de antes y de después y las dos
+     rendiciones se recalculan (RN-GAS-38).
+  4. **Dado** que se intenta cambiar el tipo de documento o qué se cargó, **entonces** no se permite: se anula y se carga
+     de nuevo (RN-GAS-37, **DU-G11 ✅**).
+  5. **Dado** dos personas corrigiendo a la vez, **entonces** la segunda recibe 409 "Alguien cambió esto mientras lo
+     tenías abierto. Actualizá y revisá." (RN-GAS-39).
+  6. **Dado** guardar sin cambios, **entonces** no se registra nada (RN-GAS-37).
+- **Reglas:** gastos.md RN-GAS-36…39, 42 · ADR-010.
+- **Permisos:** ver `gastos:ver`; corregir `gastos:editar` (también lo cargado desde W-46).
+- **Dependencias:** HU-061.
+- **DoR:** ✅ listo.
+
+#### HU-073 · Anular un gasto en lugar de borrarlo
+- **F-46 · W-34**
+- **Como** administración **quiero** anular un gasto mal cargado con su motivo **para** que deje de sumar sin borrar la
+  historia.
+- **Criterios de aceptación**
+  1. **Dado** `gastos:editar`, **cuando** anula con motivo, **entonces** queda tachado con "Anulada por Diego el 18-oct
+     9:30: 'Cargada dos veces'.", deja de sumar en la rendición, el % gastado, el control por cantidad y lo gastado por
+     proveedor, y conserva sus adjuntos e historial (RN-GAS-40).
+  2. **Dado** anular sin motivo, **entonces** 422 "Contá por qué se anula." (RN-GAS-40).
+  3. **Dado** un gasto anulado, **cuando** se intenta corregir o volver a anular, **entonces** 409 "Está anulada: no se
+     corrige. Si hace falta, cargala de nuevo."; no hay ruta para borrar (RN-GAS-41, **DU-G11 ✅**).
+  4. **Dado** una factura anulada, **entonces** su número queda libre para cargarla bien (RN-GAS-08).
+- **Reglas:** gastos.md RN-GAS-40, 41 · rendicion.md RN-REN-03.
+- **Permisos:** `gastos:editar`.
+- **Dependencias:** HU-072.
+- **DoR:** ✅ listo.
+
+### Épica W · Rendición de la obra
+
+#### HU-074 · Rendición de la obra por rubro, en vivo
+- **F-49 · F-48 (alimenta) · F-54 (EPP) · W-11**
+- **Como** gerencia **quiero** abrir una obra y ver por rubro lo presupuestado, lo gastado, el saldo y el % **para**
+  saber cuánto llevo sin esperar al final.
+- **Criterios de aceptación**
+  1. **Dado** una obra con presupuesto por rubro, **entonces** W-11 muestra los 12 rubros en el orden de su hoja General,
+     con Presupuestado (suma de todos sus presupuestos por rubro) · Gastado · Saldo · % consumido, y la fila Total
+     (RN-REN-09, RN-REN-19, RN-REN-20, RN-REN-27).
+  2. **Dado** los renglones, **entonces** suman los de la obra de gastos no anulados, con su signo, sin filtrar por
+     origen; los sin obra, de otra obra o anulados no (RN-REN-01…05).
+  3. **Dado** EPP, **entonces** suma en la fila INSUMOS ("INSUMOS · incluye EPP, como en su hoja General") (RN-REN-14).
+  4. **Dado** una obra solo total o mixta, **entonces** se ve la fila "Sin desglose por rubro" y, en solo total, se
+     compara el total contra lo gastado (RN-REN-10, RN-REN-11, resuelta DU-08); sin presupuesto cargado, lo gastado igual
+     y el aviso de RN-REN-07.
+  5. **Dado** "Últimos gastos imputados a esta obra", **entonces** son los 10 renglones más recientes por fecha efectiva
+     con Fecha · Documento · Proveedor · Concepto · Rubro · Importe, con las etiquetas de documento comunes (RN-REN-28,
+     RN-REN-29, **DU-R07 ✅**).
+  6. **Dado** que alguien carga, corrige o anula un gasto, **entonces** quien lo hizo ve el cambio al instante y los demás
+     en ≤ 15 s ("Actualizada 10:42") (RN-REN-59, RN-REN-60).
+  7. **Dado** la obra de referencia, **entonces** cada número da lo de `rendicion.md` §9.3 al centavo (criterio global de
+     la semana, §7.1).
+  8. **Dado** Ingeniería (`rendicion:ver (propias)`) y una obra de otro responsable, **entonces** 404 "No encontramos esta
+     obra." (RN-REN-55).
+- **Reglas:** rendicion.md RN-REN-01…14, 19, 20, 26…29, 55, 57, 59…61 · §4.3.
+- **Permisos:** `rendicion:ver` (inicial: E·T administración y Compras; V·T Dirección, Gerencia de Operaciones,
+  Jefatura de Proyectos; V·P Ingeniería).
+- **Dependencias:** HU-086, HU-061, HU-018 (W-13).
+- **DoR:** ✅ listo.
+
+#### HU-075 · Rubros y obra pasados en rojo
+- **F-50 · W-11 · W-36 · W-44 · W-12**
+- **Como** gerencia **quiero** ver en rojo el rubro que gastó más de lo presupuestado **para** actuar a tiempo.
+- **Criterios de aceptación**
+  1. **Dado** un rubro con gastado mayor que lo presupuestado (estricto, al centavo), **entonces** la fila, el saldo
+     ("−28.000"), el % y la barra se ven en rojo; 100 % justo no es pasado (RN-REN-21).
+  2. **Dado** un rubro con gasto y sin presupuesto en una obra con presupuesto por rubro, **entonces** es pasado, con %
+     "—" y "sin presupuesto" (RN-REN-21).
+  3. **Dado** una obra mixta, **entonces** cada rubro se marca contra lo desglosado, con la leyenda "1.000.000 de esta obra
+     no tienen desglose por rubro…"; en una obra solo total no se marca ningún rubro (RN-REN-11, **DU-R02 ✅**).
+  4. **Dado** que el gastado de la obra supera su presupuestado total, **entonces** el total de W-11, la fila de W-12 y
+     el % de W-05 se ven en rojo (RN-REN-22).
+- **Reglas:** rendicion.md RN-REN-11, 21, 22 · N10…N12.
+- **Permisos:** `rendicion:ver`.
+- **Dependencias:** HU-074.
+- **DoR:** ✅ listo.
+
+#### HU-076 · Monto de la obra y ganancia
+- **F-54 · W-11 · W-44**
+- **Como** gerencia y administración **quiero** ver el monto de la obra, la ganancia prevista y la ganancia al día
+  **para** compararlo con mi hoja General ("Cobrado · Ganancia · %").
+- **Criterios de aceptación**
+  1. **Dado** `monto_obra:ver` para esa obra, **entonces** debajo del total se ve "Monto de la obra: 16.300.000 · Costo
+     presupuestado: 12.150.000 · Ganancia prevista: 4.150.000 (25 %)" y "Gastado hasta hoy: 6.727.161,68 · Ganancia al
+     día: 9.572.838,32 (59 %)"; el % es sobre el monto (RN-REN-23, RN-REN-25, **DU-R01 ✅**).
+  2. **Dado** alguien sin `monto_obra:ver` (Ingeniería), **entonces** el JSON **no tiene** la clave `monto` (RN-REN-23,
+     RN-REN-56).
+  3. **Dado** un presupuesto sin monto o ninguno, **entonces** se suma lo que hay y se avisa, o "Todavía no se cargó el
+     monto de la obra."; el monto se carga en W-13, no acá (RN-REN-24).
+  4. **Dado** una ganancia negativa, **entonces** se ve en rojo con signo (RN-REN-25).
+- **Reglas:** rendicion.md RN-REN-23…25, 46, 56 · N13…N15.
+- **Permisos:** `monto_obra:ver` (inicial: V·T Dirección y Gerencia de Operaciones; E·T Gerencia y Jefatura de
+  Administración).
+- **Dependencias:** HU-074, HU-018 (monto en W-13).
+- **DoR:** ✅ listo.
+
+#### HU-077 · Detalle de un rubro
+- **F-51 · W-36**
+- **Como** gerencia **quiero** tocar un rubro y ver todos los renglones que lo componen **para** entender en qué se fue.
+- **Criterios de aceptación**
+  1. **Dado** un rubro, **entonces** W-36 muestra "MATERIALES · Presupuestado 5.000.000 · Gastado 2.701.827,63 (54 %) ·
+     Saldo 2.298.172,37" y todos sus renglones (sin páginas) con Fecha · Documento · Proveedor · Concepto · Cantidad ·
+     Precio unitario · Total; el pie es igual al gastado de W-11 (RN-REN-30, RN-REN-31).
+  2. **Dado** el orden, **entonces** se ordena por fecha (por defecto la más nueva primero), proveedor o total (RN-REN-31).
+  3. **Dado** INSUMOS, **entonces** lista también los de EPP con la marca "EPP" y "de los cuales EPP: 87.000"; el detalle de
+     EPP solo responde 404 (RN-REN-15, **DU-R07 ✅**).
+  4. **Dado** `gastos:ver`, **entonces** cada renglón abre su gasto (W-34); sin ese permiso, la fila no es un vínculo
+     (RN-REN-32, RN-REN-57).
+- **Reglas:** rendicion.md RN-REN-15, 30…32.
+- **Permisos:** `rendicion:ver`.
+- **Dependencias:** HU-074.
+- **DoR:** ✅ listo.
+
+#### HU-078 · Gastos por proveedor de la obra
+- **F-52 · W-37**
+- **Como** gerencia **quiero** ver lo gastado en la obra por proveedor y por concepto **para** compararlo con mis tablas
+  dinámicas.
+- **Criterios de aceptación**
+  1. **Dado** "Por proveedor", **entonces** cada proveedor con su total y la cantidad de facturas, y debajo sus conceptos
+     con cantidad y total (RN-REN-33, RN-REN-34).
+  2. **Dado** los renglones del proveedor genérico, **entonces** van en el grupo "Sin documento", siempre al final, con
+     "—" en Facturas; un retiro con remito no cuenta como factura (RN-REN-34, RN-REN-35).
+  3. **Dado** los filtros Rubro y Período (toda la obra · este mes · el mes anterior · desde–hasta, por fecha efectiva),
+     **entonces** el pie suma todo lo filtrado ("6 grupos · 6.727.161,68 · 4 comprobantes") (RN-REN-36, RN-REN-37,
+     **DU-R07 ✅**).
+- **Reglas:** rendicion.md RN-REN-33…37.
+- **Permisos:** `rendicion:ver`.
+- **Dependencias:** HU-074.
+- **DoR:** ✅ listo.
+
+#### HU-079 · Pestaña Rendición de la ficha y rendición en el celular
+- **F-17 (pestaña Rendición) · F-13 · W-07 · W-44 · W-47**
+- **Como** gerencia **quiero** ver la rendición desde la ficha de la obra y desde el celular **para** tenerla a mano en
+  la obra.
+- **Criterios de aceptación**
+  1. **Dado** `rendicion:ver` para esa obra, **entonces** la ficha muestra la pestaña **Rendición** (W-11) y la cabecera
+     "Rendición: 55 % gastado"; desaparece "Disponible en la próxima entrega"; sin permiso, la pestaña no aparece
+     (RN-REN-26, RN-REN-43).
+  2. **Dado** el celular (390 px), **entonces** W-44 muestra el total y una tarjeta por rubro, los más consumidos arriba,
+     con los mismos números que W-11 y "Se actualiza sola · solo lectura"; sin desplazamiento horizontal (RN-REN-44,
+     RN-REN-45).
+  3. **Dado** `monto_obra:ver`, **entonces** el bloque de monto y ganancia aparece al final en el celular (RN-REN-46).
+- **Reglas:** rendicion.md RN-REN-26, 43…46.
+- **Permisos:** `rendicion:ver`.
+- **Dependencias:** HU-074, HU-014 (ficha), HU-053 (obras en el celular).
+- **DoR:** ✅ listo.
+
+### Épica X · Todas las rendiciones y % gastado
+
+#### HU-080 · Todas las rendiciones en curso
+- **F-53 · W-12**
+- **Como** dirección y gerencias **quiero** ver todas las obras en ejecución con su % consumido **para** saber cuáles
+  mirar primero.
+- **Criterios de aceptación**
+  1. **Dado** "Rendiciones" en la barra, **entonces** W-12 lista las obras En ejecución que la persona puede ver con Obra ·
+     Cliente · Presupuestado · Gastado · % consumido · Rubros pasados, de mayor a menor %, las sin presupuesto al final
+     (RN-REN-38, RN-REN-39).
+  2. **Dado** la fila "Todas las obras en ejecución", **entonces** suma las filas que se ven (Σ presupuestado, Σ gastado,
+     % = Σ gastado ÷ Σ presupuestado) (RN-REN-40).
+  3. **Dado** Ingeniería con alcance propias, **entonces** ve solo sus obras, también en el total (RN-REN-55).
+  4. **Dado** 15 obras, **entonces** se arma con una consulta por agregado, no una por obra (RN-REN-41).
+- **Reglas:** rendicion.md RN-REN-38…41, 55.
+- **Permisos:** `rendicion:ver`.
+- **Dependencias:** HU-074.
+- **DoR:** ✅ listo.
+
+#### HU-081 · "% del presupuesto gastado" en el listado de obras
+- **F-15 (% gastado) · W-05 · W-47**
+- **Como** gerencia **quiero** ver en el listado de obras cuánto se gastó de cada una **para** detectar la que se pasó.
+- **Criterios de aceptación**
+  1. **Dado** Rendición implementando `AvanceGastoDeObra` (reemplaza a `AvanceGastoDeObraNulo`), **entonces** la columna
+     "% del presupuesto gastado" muestra el % de la rendición, en rojo si se pasó, y "—" sin presupuesto (RN-REN-42).
+  2. **Dado** alguien sin `rendicion:ver` para esa obra, **entonces** ve "—" (RN-OBR-04).
+  3. **Dado** una página del listado, **entonces** una consulta por agregado para toda la página; si el puerto falla, el
+     listado no se cae (RN-REN-42, rendicion.md §6).
+- **Reglas:** rendicion.md RN-REN-42 · obras.md RN-OBR-04, 07.
+- **Permisos:** `obras:ver` + `rendicion:ver` para ver el número.
+- **Dependencias:** HU-074, HU-013.
+- **DoR:** ✅ listo.
+
+### Épica Y · Control de materiales por cantidad
+
+#### HU-082 · Lista de materiales del presupuesto
+- **F-66 · W-48**
+- **Como** administración **quiero** cargar una vez la lista de materiales presupuestados de la obra **para** controlar
+  por cantidad lo que se lleva.
+- **Criterios de aceptación**
+  1. **Dado** `control_cantidad:editar`, **cuando** agrega Material · Unidad · Cantidad presupuestada · Precio unitario
+     (opcional) · Presupuesto (si hay más de uno), **entonces** queda en la lista (RN-REN-47).
+  2. **Dado** un nombre que ya está en la obra (sin distinguir mayúsculas, tildes ni espacios dobles), **entonces** 422 "Ya
+     está en la lista: Cemento x 50 kg." (§4.2).
+  3. **Dado** una corrección, **entonces** queda quién, cuándo y antes → después en `actividades`; dos a la vez: 409
+     (RN-REN-47, RN-REN-61).
+  4. **Dado** quitar un material que algún renglón usa (aunque esté anulado), **entonces** 422 "Cemento x 50 kg ya tiene 2
+     retiros o pedidos: no se puede quitar. Corregí la cantidad presupuestada." (RN-REN-53).
+  5. **Dado** un fuera de presupuesto al que se le completa la cantidad presupuestada, **entonces** pasa a la lista
+     (RN-REN-49).
+- **Reglas:** rendicion.md RN-REN-47, 49, 53, 61 · §4.2.
+- **Permisos:** `control_cantidad:editar` (inicial: E·T administración y Compras); ver `control_cantidad:ver`.
+- **Dependencias:** HU-086.
+- **DoR:** ✅ listo.
+
+#### HU-083 · Retirado por fecha, resta llevar y fuera de presupuesto
+- **F-66 · W-48**
+- **Como** administración y operaciones **quiero** ver por material lo presupuestado, lo retirado por fecha y lo que
+  resta llevar **para** no pedir de más ni quedarme corto.
+- **Criterios de aceptación**
+  1. **Dado** la lista, **entonces** las columnas son Material · Unidad · Presup. · las 6 fechas más recientes con
+     movimientos (las anteriores juntas en "Hasta {fecha}") · Total retirado · Resta llevar · Precio unit. · Total
+     (RN-REN-50, **DU-R06 ✅**).
+  2. **Dado** los retiros, renglones de factura asociados y devoluciones de un material, **entonces** el retirado es la
+     suma de sus cantidades (las devoluciones restan) y "Resta llevar" = presupuestado − retirado, en rojo si es negativo
+     (RN-REN-50, N16…N18).
+  3. **Dado** el total de la lista, **entonces** debajo "Gastado en MATERIALES en la rendición: X" y, si difiere,
+     "Renglones de MATERIALES sin material asociado: Y" con acceso a W-36 (RN-REN-51).
+  4. **Dado** "Fuera de presupuesto", **entonces** una fila por renglón con Material · Unidad · Fecha · Cantidad · Total ·
+     Rubro (RN-REN-52).
+  5. **Dado** el celular, **entonces** tarjetas por material ("Cemento x 50 kg · 96 de 150 bolsas · resta 54 · 945.648"),
+     solo lectura (RN-REN-54).
+  6. **Dado** la obra de referencia, **entonces** la tabla da lo de `rendicion.md` §9.4 (W-48).
+- **Reglas:** rendicion.md RN-REN-50…54 · N16…N19.
+- **Permisos:** `control_cantidad:ver` (V·P Ingeniería: sus obras).
+- **Dependencias:** HU-082, HU-068.
+- **DoR:** ✅ listo.
+
+### Épica Z · Lo que se completa de semanas 1 y 2, contratos y encendido
+
+#### HU-084 · Gastos del proveedor, por obra
+- **F-57 · W-14 "Gastado por obra"** (completa lo que la semana 1 dejó con el puerto nulo)
+- **Como** compras y dirección **quiero** ver en la ficha del proveedor cuánto se le imputó en cada obra **para** saber
+  con quién gastamos qué, sin armar una tabla.
+- **Criterios de aceptación**
+  1. **Dado** Gastos implementando `GastadoPorProveedor` (reemplaza a `GastadoPorProveedorNulo`), **entonces** "Gastado por
+     obra" muestra por obra la cantidad de renglones y el importe de gastos no anulados, con las devoluciones restando,
+     "(sin obra)" al final y el total (RN-GAS-43).
+  2. **Dado** alcance "solo sus obras", **entonces** solo sus obras y sin la fila "(sin obra)" (RN-GAS-43, RN-PRV-16,
+     **DU-G06 ✅**).
+  3. **Dado** una ficha con muchos gastos, **entonces** una consulta agrupada, no una por obra (RN-GAS-43).
+- **Reglas:** gastos.md RN-GAS-43 · proveedores.md RN-PRV-15…17.
+- **Permisos:** `proveedores:ver` y `gastos:ver`.
+- **Dependencias:** HU-061, HU-020.
+- **DoR:** ✅ listo.
+
+#### HU-085 · Buscador general: gastos por número de factura
+- **F-03 (gastos) · W-18**
+- **Como** administración **quiero** encontrar una factura o un remito por su número desde el buscador **para** no
+  recorrer listados.
+- **Criterios de aceptación**
+  1. **Dado** 3 o más dígitos, **entonces** el grupo **Gastos** encuentra facturas y remitos por número ignorando ceros a la
+     izquierda, guiones y espacios ("12345" encuentra 0003-00012345), con "Factura 0003-00012345 · Corralón Centro ·
+     17-oct · 905.600"; los anulados con "(anulada)" (RN-GAS-44, **DU-G07 ✅**).
+  2. **Dado** el concepto de un renglón o el nombre de una obra, **entonces** el grupo Gastos no lo busca (lo de una obra
+     se ve por Obras → Rendición) (RN-GAS-44).
+  3. **Dado** alguien sin `gastos:ver`, **entonces** el grupo no viaja; con alcance propias, solo sus gastos y el importe
+     de sus renglones (RN-GAS-44, RN-GAS-48).
+- **Reglas:** gastos.md RN-GAS-44 · §12.3.
+- **Permisos:** `gastos:ver`.
+- **Dependencias:** HU-061, HU-022, HU-057.
+- **DoR:** ✅ listo.
+
+#### HU-086 · Tablas y contratos entre Gastos, Rendición y Obras
+- **— (transversal) · ADR-003 · ADR-007 · gastos.md §12.4 y §12.5 · rendicion.md §12.4 y §16 · modelo-datos.md**
+- **Como** el equipo **queremos** las tablas y los contratos de la semana antes de construir las pantallas **para** que
+  Gastos y Rendición se hablen por un solo contrato, sin usar uno la `Infrastructure` del otro.
+- **Criterios de aceptación**
+  1. **Migraciones:** **dado** `modelo-datos.md` (ajustes del 24-nov), **entonces** existen `materiales` (con `nombre_clave`
+     único por obra, CHECK de fuera de presupuesto, `created_by`/`updated_by`, timestamps), `gastos` (con `numero_vigente`
+     único con el proveedor, `updated_by`, timestamps) y `gasto_renglones` (con `fecha`, índice `(obra_id, fecha)`),
+     reversibles.
+  2. **`Gastos\Contracts\GastadoDeObras`:** **dado** la firma de `rendicion.md` §12.4.1, **entonces** Gastos la implementa
+     (`totalesPorRubro` en una consulta para varias obras, `renglonesDeObra` sin N+1, `contarRenglonesPorMaterial` con
+     anulados) y cumple las garantías de `gastos.md` §12.5 (**DU-R08 ✅**).
+  3. **Rendición expone** `MaterialesDeObra` (`opciones` con `precioPresupuestado`, `perteneceAObra`,
+     `crearFueraDePresupuesto` dentro de la transacción de Gastos) y `CatalogoDeRubros` (con `cargaPorPeriodo`).
+  4. **Obras amplía** `PresupuestadoDeObra` con los presupuestos y su `modoCarga`, y suma `presupuestadoDeObras(ids)`,
+     `montoDeObra(id)`, `obrasEnEjecucion()` y el puerto `MaterialesDePresupuesto::tieneMateriales` (no se quita un
+     adicional con materiales, RN-OBR-24).
+  5. **Eventos** `GastoImputado`, `GastoCorregido` (antes ∪ después), `GastoAnulado` con `{gastoId, obraIds}` después del
+     commit invalidan `rendicion:obra:{id}`; también `PresupuestoMontosCambiados` (RN-REN-60).
+  6. **Test de arquitectura:** ningún módulo importa la `Infrastructure` de otro.
+- **Reglas:** ADR-003 · ADR-007 · gastos.md §12.4, §12.5 · rendicion.md §12.4, §16.
+- **Permisos:** —
+- **Dependencias:** —
+- **DoR:** ✅ listo.
+
+#### HU-087 · Encender la semana 3 en la barra y preparar la prueba del cliente
+- **F-02 · F-13 · W-17 · W-41** (DU-A12: cada entrega enciende lo suyo)
+- **Como** la empresa **queremos** que Gastos y Rendiciones aparezcan en la barra y que el entorno de prueba tenga lo
+  necesario **para** comparar con el Excel desde el primer día.
+- **Criterios de aceptación**
+  1. **Dado** la configuración de módulos entregados con `gastos` y `rendicion`, **entonces** la barra muestra "Gastos"
+     (W-33) y "Rendiciones" (W-12) según la tabla, con "(ver)" si solo tiene Ver, y en el celular "Más → Gastos" y "Más →
+     Rendiciones" (RN-GAS-01, rendicion.md §2).
+  2. **Dado** el entorno de prueba, **entonces** corre el cache de la rendición (Redis) y el polling de 15 s; el remito
+     sube desde el celular (condición de B-04).
+  3. **Dado** las notas de entrega de la semana 3 para el cliente, **entonces** dicen en sus palabras qué probar y traen la
+     guía de comparación con su Excel (`rendicion.md` §13), incluido que se carga el neto si el comprobante discrimina
+     IVA (DU-G04) y que una nota de crédito se carga como devolución o corrigiendo la factura (DU-G05).
+  4. **Dado** el caso de referencia, **entonces** `RendicionCasoDeReferenciaTest` y su E2E están en verde contra la base de
+     tests antes de abrir el entorno al cliente (§7.1).
+- **Reglas:** identidad.md §6.4 · ADR-005 · ADR-007.
+- **Permisos:** —
+- **Dependencias:** las historias "sí o sí" de §7.1.
+- **DoR:** ✅ listo.
+
+**Control de completitud de la semana 3:** las **17 F-XX que arrancan** (F-39…F-47, F-49…F-54, F-57, F-66) tienen al
+menos una historia, y las **repartidas** que se completan acá también: F-03 (HU-085), F-14 en gastos (HU-072), F-15 %
+gastado (HU-081), F-17 pestaña Rendición (HU-079), F-48 alimenta la rendición (HU-074) y F-57 (HU-084). Además: F-02 y
+F-13 (HU-079, HU-087). Pantallas de la semana: W-05 (columna), W-07 (pestaña), W-10, W-11, W-12, W-13 (lectura), W-14
+(sección), W-18 (grupo), W-33…W-38, W-44, W-46, W-47, W-48.
+
+Dudas de esta semana: DU-08, DU-17, DU-18 y DU-19, **resueltas el 12-nov**; **DU-G01…DU-G11 y DU-R01…DU-R09, resueltas el
+24-nov** (va la propuesta; DU-G08 reemplazada por DU-R05, DU-R03 por DU-G05; DU-R09 es de la semana 4 y no bloquea).
+
+### Semana 4 · Puesta en marcha (épicas, sin detalle fino)
+
+Se detalla en historias al cierre de la semana 3, con DoR.
 
 | Épica | F-XX | W-XX |
 |---|---|---|
@@ -1804,20 +2434,26 @@ tiene más reglas de dinero (renglones repartidos, negativos, EPP → INSUMOS, s
 fijos por período, monto y ganancia con permiso propio) y la que el cliente prueba contra su Excel,
 donde cualquier diferencia se ve.
 
+**24-nov-2026:** con las 27 historias escritas (§7) el riesgo sigue igual. Lo nuevo que pesa: el contrato entre
+Gastos y Rendición (HU-086) va primero y lo usan casi todas las historias; las cargas desde la rendición tienen su propio
+permiso (`rendicion:editar`, DU-R05) y la Policy de Gastos tiene que probarlo celda por celda.
+
 **Señales de que el plazo peligra** (se miran el miércoles de la semana 3):
-- La carga de factura (W-10) con reparto por renglón no está en verde de punta a punta.
-- La rendición (W-11) no da el mismo número que la rendición ficticia de referencia, rubro por rubro.
+- HU-086 (tablas, `GastadoDeObras`, `MaterialesDeObra`, `CatalogoDeRubros`) no está en `main` el lunes.
+- La carga de factura (W-10) con reparto por renglón no está en verde de punta a punta (HU-061).
+- La rendición (W-11) no da el mismo número que la rendición ficticia de referencia, rubro por rubro
+  (`RendicionCasoDeReferenciaTest`, §7.1).
 - La carga única de retiros (DU-17, resuelta: una sola carga suma en W-48 y en la rendición) no
-  está en verde.
+  está en verde (HU-068).
 
 **Recorte candidato para proponerle a Juani** (no está decidido; nada sale de la Etapa 1, solo se
 mueve de semana):
 
 | Se mueve | De → a | Por qué este y no otro |
 |---|---|---|
-| F-66 Control de materiales por cantidad (W-48) | Semana 3 → semana 4 | Es una vista aparte de la rendición; la rendición por rubro (criterio de aceptación global n.º 1) no depende de ella. Con DU-17 resuelta, la carga de retiros es una sola y se puede mover sin rehacerla. |
-| F-57 Gastos del proveedor (en la ficha del proveedor, W-14) | Semana 3 → semana 4 | Es una consulta sobre datos que ya se cargan; no frena la carga ni la rendición. |
+| F-66 Control de materiales por cantidad (W-48: HU-082, HU-083) | Semana 3 → semana 4 | Es una vista aparte de la rendición; la rendición por rubro (criterio de aceptación global n.º 1) no depende de ella. Con DU-17 resuelta, la carga de retiros es una sola y se puede mover sin rehacerla. **Lo que no se mueve:** la tabla `materiales` y `MaterialesDeObra` (HU-086), porque el retiro (HU-068) los usa; mientras no haya lista, lo retirado entra como "fuera de presupuesto" y, al cargar la lista en la semana 4, completarle la cantidad lo pasa a la lista (RN-REN-49): no se pierde ni se carga dos veces. |
+| F-57 Gastos del proveedor (en la ficha del proveedor, W-14: HU-084) | Semana 3 → semana 4 | Es una consulta sobre datos que ya se cargan; no frena la carga ni la rendición. La sección sigue mostrando lo de la semana 1 (puerto nulo, "Todavía no hay gastos cargados de este proveedor."). |
 
 Lo que **no** se propone mover, porque sin eso el cliente no puede hacer su prueba de la semana 3
 ("cargan las facturas de una obra en curso y la comparan con su rendición en Excel"): F-39 a F-47,
-F-49 a F-51, F-53 y F-54.
+F-49 a F-51, F-53 y F-54 (las historias "sí o sí" de §7.1), y HU-086.

@@ -21,6 +21,13 @@
 > DU-P01…DU-P24, la parte (b) de DU-P10 incluida). Las técnicas (DU-P10 (a), DU-P16, DU-P17, DU-P20 y DU-P22) van
 > con su propuesta por decisión del Tech Lead. No queda ningún criterio ⛔ en el [backlog](backlog.md).
 >
+> **24-nov-2026: dudas de la semana 3 (Gastos y rendición), las 20 resueltas.** Juani aprobó todas las propuestas
+> (DU-G01…DU-G11 y DU-R01…DU-R09) con dos reemplazos del cruce entre las dos especificaciones: **DU-G08 queda
+> reemplazada por DU-R05** (permisos de la tabla aprobada) y **DU-R03 queda reemplazada por DU-G05** (no hay nota de
+> crédito en la Etapa 1). Períodos superpuestos (DU-G09, DU-R04): avisan y guardan si se confirma. Contrato único
+> Gastos → Rendición: `Gastos\Contracts\GastadoDeObras`; Rendición ofrece `MaterialesDeObra` y `CatalogoDeRubros`.
+> Detalle en "Cruce Gastos ⇄ Rendición", más abajo. No queda ningún criterio ⛔ en el [backlog](backlog.md).
+>
 > Lo que el Documento del sistema firmado (v1.1, 4-nov-2026) no dice y hace falta para escribir
 > un criterio de aceptación verificable. Regla de oro: no se agrega, quita ni cambia funcionalidad;
 > cada propuesta es **la más cercana a cómo trabajan hoy**, con su fuente.
@@ -1018,19 +1025,24 @@ y desde Bloqueada primero "Retomar" (DU-15; spec `pedidos.md`). Hay que corregir
 Las dos especificaciones se escribieron en paralelo. Donde se pisan:
 
 - **Permiso de las cargas desde la rendición (DU-G08 vs DU-R05):** va **DU-R05**, porque es la tabla aprobada (`identidad.md` §6.4: `rendicion` editar = W-46, horas y fijos; `control_cantidad` editar = retiros con remito en W-48). DU-G08 queda reemplazada.
-- **Nota de crédito (DU-G05 vs DU-R03):** se contradicen; **decide Juani**. Recomendación: **DU-G05** (no hay tipo "nota de crédito" en la Etapa 1: material devuelto = devolución en negativo, precio mal = se corrige la factura). Es lo que hacen hoy, su libro no tiene notas de crédito y el contrato solo prevé negativos en devoluciones. Si se elige DU-R03, Gastos suma el tipo de documento con renglones negativos.
-- **Períodos superpuestos de horas y fijos (DU-G09 y DU-R04):** misma regla en los dos: avisa con los períodos que se pisan y guarda si se confirma.
-- **Fecha de cada renglón (DU-G01):** es la "fecha efectiva" que usa Rendición. Hay que sumar `gasto_renglones.fecha` al modelo.
-- **Contrato Gastos → Rendición:** un solo nombre, `Gastos\Contracts\GastadoDeObras` (DU-R08), con lo que pide `rendicion.md` §12.4.1. Rendición ofrece `MaterialesDeObra` y `CatalogoDeRubros`, que es lo que Gastos necesita.
+- **Nota de crédito (DU-G05 vs DU-R03):** se contradecían. **Decisión (Juani, 24-nov-2026): va DU-G05** (no hay tipo "nota de crédito" en la Etapa 1: material devuelto = devolución en negativo, precio mal = se corrige la factura). Es lo que hacen hoy, su libro no tiene notas de crédito y el contrato solo prevé negativos en devoluciones. DU-R03 queda reemplazada.
+- **Períodos superpuestos de horas y fijos (DU-G09 y DU-R04):** misma regla en los dos: avisa con los períodos que se pisan y guarda si se confirma. La fecha del renglón es `periodo_hasta` (DU-R04), también en los fijos del mes en curso. **Resuelta (Juani, 24-nov-2026).**
+- **Fecha de cada renglón (DU-G01):** es la "fecha efectiva" que usa Rendición. Se suma `gasto_renglones.fecha` al modelo (`modelo-datos.md`). **Resuelta (Juani, 24-nov-2026).**
+- **Contrato Gastos → Rendición:** un solo nombre, `Gastos\Contracts\GastadoDeObras` (DU-R08), con lo que pide `rendicion.md` §12.4.1. Rendición ofrece `MaterialesDeObra` y `CatalogoDeRubros`, que es lo que Gastos necesita. **Resuelta (Juani, 24-nov-2026).**
+- **Lo que no está en la lista de materiales (DU-G03 vs RN-REN-49):** va el contrato `MaterialesDeObra::crearFueraDePresupuesto` con la unidad, porque W-48 firmada muestra "Unidad" en "Fuera de presupuesto". Se carga en el mismo retiro (una sola carga, como pedía DU-G03).
+
+**Cómo quedó cada una (24-nov-2026):** todas las DU-G y DU-R **resueltas, va la propuesta**, salvo DU-G08 (reemplazada por DU-R05) y DU-R03 (reemplazada por DU-G05). `gastos.md` y `rendicion.md` dicen "resuelta DU-XNN".
+
 ## Analista funcional · especificación de la semana 3 · Gastos (24-nov-2026)
 
 Dudas que aparecieron al escribir `especificacion/gastos.md`. No re-preguntan nada firmado ni resuelto (DU-08,
-DU-17, DU-18, DU-19, DU-A04, DU-A15, DU-A18 y DU-23 / ADR-014 se aplican tal cual). Todas abiertas: cada regla se
-construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
+DU-17, DU-18, DU-19, DU-A04, DU-A15, DU-A18 y DU-23 / ADR-014 se aplican tal cual). **24-nov-2026: todas
+resueltas** (va la propuesta; DU-G08 reemplazada por DU-R05): las reglas citan "resuelta DU-GNN".
 
 ### Semana 3 · Gastos
 
-#### DU-G01 · Fecha de cada renglón (tickets de días distintos en una misma rendición)
+#### DU-G01 · Fecha de cada renglón (tickets de días distintos en una misma rendición) — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** W-35 (cabecera "Fecha de la rendición: 18-10-2026" y **columna "Fecha" por renglón**: 15-oct, 16-oct,
   16-oct) · su libro de gastos (la fecha va en cada fila) · `modelo-datos.md` (`gastos.fecha` en la cabecera;
   `gasto_renglones` **sin** fecha) · W-37 "Período: toda la obra ▾" y W-48 "retiros por fecha".
@@ -1044,7 +1056,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 - **¿Cambia lo que ve el cliente?** No respecto de W-35 (ya muestra la columna); es un ajuste al modelo → **decisión
   técnica** (DBA + Tech Lead).
 
-#### DU-G02 · W-35: qué se carga, proveedor y "rendido por"
+#### DU-G02 · W-35: qué se carga, proveedor y "rendido por" — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-44 ("sin documento, con proveedor genérico. Se suma el dato 'rendido por'") · F-47 (combustible por
   carga; consumo de stock como renglón sin documento) · W-10 ("Sin documento para tickets, combustible por carga y
   consumo de stock propio") · W-33 ("LOGISTICA · combustible") · `modelo-datos.md` (`origen`: `sin_comprobante`,
@@ -1062,7 +1075,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 - **Reglas que dependen:** RN-GAS-17, RN-GAS-18, RN-GAS-20, §4.3, caso borde 20.
 - **¿Cambia lo que ve el cliente?** Sí (un selector y un campo que W-35 no tiene) → **decide Juani**.
 
-#### DU-G03 · Retiros y devoluciones en W-46: remito, proveedor, material y "fuera de presupuesto"
+#### DU-G03 · Retiros y devoluciones en W-46: remito, proveedor, material y "fuera de presupuesto" — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta (una sola carga, proveedor y N.º de remito obligatorios). Al alinearla con el contrato `Rendicion\Contracts\MaterialesDeObra` (cruce) y con W-48 firmada, que muestra la columna **Unidad** en "Fuera de presupuesto": lo que no está en la lista se escribe **con su unidad** en la misma carga y queda como material fuera de presupuesto de la obra (`crearFueraDePresupuesto`); ya no hay "—" en la unidad.
 - **Fuente:** F-47 ("retiros de Tecnobahía por retiro, con el remito") · C14 · resuelta DU-17 ("cada retiro se carga
   una sola vez con su remito, eligiendo materiales de esa lista… Lo que no está en la lista va a 'fuera de
   presupuesto'") · W-46 (Fecha · Material · Cantidad · Precio · Total · Rubro; sin columna de remito ni de proveedor)
@@ -1083,7 +1097,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
   `rendicion.md` (W-48).
 - **¿Cambia lo que ve el cliente?** Sí (campos que W-46 no muestra; la unidad "—") → **decide Juani**.
 
-#### DU-G04 · "Sin IVA" cuando el comprobante no discrimina el IVA
+#### DU-G04 · "Sin IVA" cuando el comprobante no discrimina el IVA — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-41 y C9 ("Importes sin IVA (netos)", Propuesto, aprobado) · auditoría de gaps §5.4 ("ninguna fuente
   lo menciona") · W-35 (tickets de combustible, comidas, peajes).
 - **Por qué importa:** una factura A trae el neto; una factura C (monotributista) o un ticket no discriminan IVA: no
@@ -1097,7 +1112,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 - **Reglas que dependen:** §4.5, RN-GAS-11 (texto "Importes sin IVA (netos)"), manual de uso.
 - **¿Cambia lo que ve el cliente?** Sí (qué número cargan) → **decide Juani** (con María).
 
-#### DU-G05 · Notas de crédito del proveedor
+#### DU-G05 · Notas de crédito del proveedor — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-39 (tipo de documento: factura o sin documento) · F-47 y C15 (devoluciones restan) · auditoría de gaps
   ("notas de crédito / devoluciones: no aparecen en el libro de gastos") · ADR-008 (negativas solo en devoluciones).
 - **Por qué importa:** el documento solo admite negativos en devoluciones. Si llega una nota de crédito y no hay cómo
@@ -1110,7 +1126,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 - **Reglas que dependen:** RN-GAS-10, RN-GAS-25, RN-GAS-37, manual de uso.
 - **¿Cambia lo que ve el cliente?** Sí (cómo resuelven un caso) → **decide Juani**.
 
-#### DU-G06 · Factura repartida: total con filtro de obra y alcance "solo sus obras"
+#### DU-G06 · Factura repartida: total con filtro de obra y alcance "solo sus obras" — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-45 ("con el total de lo filtrado") · W-33 ("como hoy lo sacan con tablas dinámicas", columna "Total"
   por comprobante) · DU-A04 (Ingeniería ve solo sus obras para no ver "por otro lado" lo que la rendición le oculta) ·
   `identidad.md` §6.1 (`gastos`: "solo sus obras" = renglones de sus obras) · RN-IDE-47.
@@ -1126,7 +1143,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 - **Reglas que dependen:** RN-GAS-31, RN-GAS-33, RN-GAS-48, RN-GAS-43, §12.2 (`total_filtrado`, `renglones_ocultos`).
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 
-#### DU-G07 · Buscador: ¿qué encuentra en gastos? (complementa DU-P15)
+#### DU-G07 · Buscador: ¿qué encuentra en gastos? (complementa DU-P15) — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-03 ("gastos por número de factura") · W-18 (con "tanque" muestra "Factura 0003-00012345 · Corralón
   Centro · renglón 'Disco diamantado 350 mm' imputado a losa tanque B", que coincide por el **nombre de la obra**) ·
   resuelta DU-P15 (pedidos: solo texto propio; lo de una obra se ve desde la obra).
@@ -1140,7 +1158,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 - **Reglas que dependen:** RN-GAS-44, §12.3.
 - **¿Cambia lo que ve el cliente?** Sí (el ejemplo de W-18 no se da así) → **decide Juani**.
 
-#### DU-G08 · Permiso de las cargas que se hacen desde la rendición (W-46, horas y fijos)
+#### DU-G08 · Permiso de las cargas que se hacen desde la rendición (W-46, horas y fijos) — ✅ resuelta (24-nov-2026) · reemplazada por DU-R05
+- **Decisión (Juani, 24-nov-2026):** **reemplazada por DU-R05**. Va la tabla aprobada (`identidad.md` §6.1 filas 8 y 9, §6.6): las cargas desde la rendición (W-46: amortización, devoluciones, horas y fijos) piden `rendicion` = editar; los retiros con remito, `rendicion` = editar **o** `control_cantidad` = editar; corregir y anular en W-34 sigue con `gastos` = editar (fila 7, F-46). `gastos.md` §8 lo dice igual que `rendicion.md` RN-REN-58.
 - **Fuente:** `identidad.md` §6.1 (`rendicion` Editar: "cargas que se hacen desde la rendición (W-46, horas y fijos
   por período)") · `identidad.md` §6.6 (`remito`: `gastos` (W-46)) · F-46 (corregir y anular gastos: "Administración
   y compras") · ADR-007 (todo es un renglón de gasto).
@@ -1156,7 +1175,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 - **¿Cambia lo que ve el cliente?** No con la configuración inicial → **decisión técnica** (Tech Lead), avisando a
   Juani porque toca una celda de la tabla de permisos.
 
-#### DU-G09 · Montos por período que se superponen (complementa DU-18)
+#### DU-G09 · Montos por período que se superponen (complementa DU-18) — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta (avisa y guarda si se confirma). La fecha del renglón es la de DU-R04 (`periodo_hasta`, también para los fijos del mes en curso), que es la fecha efectiva de la rendición: una sola regla en `gastos.md` RN-GAS-27 y `rendicion.md` RN-REN-17.
 - **Fuente:** resuelta DU-18 ("período desde–hasta… un renglón por período y por obra en su rubro") · F-54 · su hoja
   "Horas liquidadas" (por quincena).
 - **Por qué importa:** DU-18 no dice qué pasa si se cargan dos veces las horas de la misma quincena (error típico al
@@ -1169,7 +1189,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 - **Reglas que dependen:** RN-GAS-27, RN-GAS-28.
 - **¿Cambia lo que ve el cliente?** Sí (un aviso) → **decide Juani**.
 
-#### DU-G10 · Número de factura: forma y "la misma factura"
+#### DU-G10 · Número de factura: forma y "la misma factura" — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** criterio de aceptación n.º 2 ("una factura se carga una sola vez") · `modelo-datos.md` (único
   `(proveedor_id, tipo_documento, numero)` de facturas no anuladas) · W-10 ("0003-00012345") · F-39.
 - **Por qué importa:** "3-12345" y "0003-00012345" son la misma factura; si se guardan como se escribieron, el
@@ -1183,7 +1204,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 - **Reglas que dependen:** RN-GAS-07, RN-GAS-08, RN-GAS-24, RN-GAS-44.
 - **¿Cambia lo que ve el cliente?** Poco (el número se ve con ceros) → **decide Juani**.
 
-#### DU-G11 · Corregir y anular: qué se puede y qué no
+#### DU-G11 · Corregir y anular: qué se puede y qué no — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-46 ("ver, corregir o anular un gasto") · W-34 ("Anular la deja tachada y deja de sumar en la
   rendición"; botones Editar y Anular) · `modelo-datos.md` (`origen` "no se edita"; `motivo_anulacion`) · criterio
   del documento: no se borra (W-34, W-39).
@@ -1201,12 +1223,14 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 
 > Dudas que aparecieron al escribir `especificacion/rendicion.md`. Prefijo **DU-R**. No re-abren las resueltas (DU-08, DU-09,
 > DU-17, DU-18, DU-19, DU-21, DU-A03…A05): las **complementan** donde se dice. Las reglas que dependen de estas dudas dicen
-> "propuesta DU-RXX" en la especificación. **Todas abiertas.** Las que tocan la prueba del cliente de la semana 3 ("cargan las
-> facturas de una obra en curso y la comparan con su rendición en Excel") y conviene decidir primero: **DU-R01, DU-R02, DU-R03 y DU-R04**.
+> "resuelta DU-RXX" en la especificación. **24-nov-2026: todas resueltas** (va la propuesta; DU-R03 reemplazada por DU-G05).
+> Las que tocaban la prueba del cliente de la semana 3 ("cargan las facturas de una obra en curso y la comparan con su rendición
+> en Excel"): DU-R01, DU-R02, DU-R03 y DU-R04.
 
 ### Semana 3 · Rendición
 
-#### DU-R01 · Ganancia: ¿solo la "prevista" de W-11 o también la "al día" de su hoja General?
+#### DU-R01 · Ganancia: ¿solo la "prevista" de W-11 o también la "al día" de su hoja General? — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-54 / cap. 4.4 ("la rendición muestra también el monto de la obra, la ganancia y el %, **como su hoja General**") ·
   W-11 ("Monto de la obra (OC): 36.500.000 · Costo presupuestado: 28.900.000 · Ganancia prevista: 7.600.000 (21 %)") · auditoría
   de gaps 19-oct §4.4 (en las 6 rendiciones: `Ganancia = Cobrado − Total gastado`, `% = Ganancia ÷ Cobrado`, con Cobrado = suma de
@@ -1219,7 +1243,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 - **Reglas que dependen:** RN-REN-23, RN-REN-25, N15 (§4.3), caso de referencia §9.3, §13.
 
-#### DU-R02 · Obra mixta (por rubro + solo total): ¿se marcan en rojo los rubros contra lo desglosado? (complementa DU-08)
+#### DU-R02 · Obra mixta (por rubro + solo total): ¿se marcan en rojo los rubros contra lo desglosado? (complementa DU-08) — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** DU-08 resuelta ("los rubros muestran lo desglosado y una fila 'Sin desglose por rubro'") · F-50 ("el rubro que gastó más
   de lo presupuestado se ve en rojo") · F-53 ("rubros pasados").
 - **Por qué importa:** en una obra con el principal por rubro y un adicional solo total, todo gasto tiene rubro pero parte de la plata
@@ -1234,7 +1259,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 - **Reglas que dependen:** RN-REN-11, RN-REN-21, N10 y N12 (§4.3), RN-REN-39.
 
-#### DU-R03 · Nota de crédito del proveedor: ¿cómo resta?
+#### DU-R03 · Nota de crédito del proveedor: ¿cómo resta? — ✅ resuelta (24-nov-2026) · reemplazada por DU-G05
+- **Decisión (Juani, 24-nov-2026):** **reemplazada por DU-G05**. No hay tipo "nota de crédito" en la Etapa 1: material devuelto = devolución en negativo (W-46); precio mal = se corrige la factura (W-34, queda en su historial). El renglón 8 del caso de referencia de `rendicion.md` §9 pasa a ser una devolución al proveedor por el mismo importe.
 - **Fuente:** F-39 ("tipo de documento (factura o sin documento)") · C15 (solo las **devoluciones** restan, renglón negativo) ·
   `modelo-datos.md` (`cantidad` negativa **solo** si `origen = devolucion`) · auditoría de gaps §3.5 ("notas de crédito: no aparecen
   en el libro de gastos").
@@ -1250,7 +1276,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 - **¿Cambia lo que ve el cliente?** Sí (un tipo de comprobante más) → **decide Juani** (lo especifica Gastos).
 - **Reglas que dependen:** RN-REN-04, RN-REN-29, RN-REN-34, caso de referencia §9.2 renglón 8, §16.
 
-#### DU-R04 · Horas liquidadas y fijos: dónde se cargan, qué fecha usan y qué pasa si se superponen (complementa DU-18)
+#### DU-R04 · Horas liquidadas y fijos: dónde se cargan, qué fecha usan y qué pasa si se superponen (complementa DU-18) — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta tal como está escrita (sección de W-46, fecha = `periodo_hasta`, superposición avisa y guarda si se confirma; misma regla que DU-G09).
 - **Fuente:** F-54 ("administración los carga como un monto total por período") · DU-18 resuelta (desde–hasta, un renglón por período
   y por obra) · `identidad.md` §6.1 fila 8 ("cargas que se hacen desde la rendición (W-46, horas y fijos por período)") · **ninguna
   maqueta tiene la carga** (W-11 solo muestra "monto por período").
@@ -1269,7 +1296,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 - **Reglas que dependen:** RN-REN-17, RN-REN-18, fecha efectiva (§4.3), §12.4.1 (`RenglonImputado::fecha`), caso de referencia
   renglones 18…21.
 
-#### DU-R05 · ¿Qué permiso habilita las cargas "desde la rendición" (W-46, horas y fijos, retiros)?
+#### DU-R05 · ¿Qué permiso habilita las cargas "desde la rendición" (W-46, horas y fijos, retiros)? — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta tal como está escrita; **reemplaza a DU-G08**. Corregir y anular en W-34 sigue con `gastos` = editar (fila 7); los adjuntos `remito`, según `identidad.md` §6.6.
 - **Fuente:** `identidad.md` §6.1 (aprobado): fila 7 `gastos` Editar "cargar, corregir, anular (F-39…F-47)"; fila 8 `rendicion` Editar
   "cargas que se hacen desde la rendición (W-46, horas y fijos por período)"; fila 9 `control_cantidad` Editar "cargar materiales
   presupuestados y retiros con remito"; §6.6 contexto `remito`: "`gastos` (W-46) / `control_cantidad` (W-48)" · F-47 está en Gastos.
@@ -1285,7 +1313,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 - **¿Cambia lo que ve el cliente?** Solo si cambian la tabla de permisos → **decide Juani** (junto con el analista de Gastos).
 - **Reglas que dependen:** RN-REN-58, §7.1, §12.4.1 invariante 7.
 
-#### DU-R06 · Control por cantidad (W-48): precio, total, columnas de fecha, cierre con MATERIALES y unidad (complementa DU-17)
+#### DU-R06 · Control por cantidad (W-48): precio, total, columnas de fecha, cierre con MATERIALES y unidad (complementa DU-17) — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** W-48 ("Precio unit. · Total", "Hasta 25-sep · 30-sep · 9-oct · 17-oct", "Total MATERIALES (igual al gastado de la
   rendición, W-11 y W-36)") · su planilla de retiros (hasta 13 columnas de fecha; TOTAL = Σ retiros × precio de la planilla) · "Real
   vs Presup" (precio presupuestado contra pedido) · DU-17 resuelta (lista con material, unidad, cantidad y precio; facturas de otro
@@ -1301,7 +1330,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 - **Reglas que dependen:** RN-REN-50, RN-REN-51, RN-REN-53, N16…N19 (§4.3), caso de referencia W-48 (§9.4).
 
-#### DU-R07 · Detalle por rubro, por proveedor y últimos gastos: lo que W-11, W-36 y W-37 no dicen
+#### DU-R07 · Detalle por rubro, por proveedor y últimos gastos: lo que W-11, W-36 y W-37 no dicen — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** W-11 ("Últimos gastos imputados… · ver todos"), W-36 (columna Documento, "Orden por fecha, proveedor o total"),
   W-37 ("Sin documento · — ", "Mostrando 4 de 9 proveedores", "Período: toda la obra ▾") · sus tablas dinámicas (EPP figura separado
   aunque en el General sume en INSUMOS).
@@ -1317,7 +1347,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 - **¿Cambia lo que ve el cliente?** Sí (detalle de pantalla) → **decide Juani**.
 - **Reglas que dependen:** RN-REN-15, RN-REN-28, RN-REN-29, RN-REN-35…37.
 
-#### DU-R08 · Contratos nuevos entre módulos para la rendición (técnica)
+#### DU-R08 · Contratos nuevos entre módulos para la rendición (técnica) — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** ADR-003 (los módulos se hablan por `Contracts/` y puertos) · ADR-007 · `obras.md` §10.4 (hoy `PresupuestadoDeObra
   {porRubro, sinDesglose, total}` por una sola obra; `AvanceGastoDeObra` por lista) · RN-OBR-24 (no quitar un adicional con materiales)
   · `modelo-datos.md` §3 (W-12 con una consulta por agregado para todas las obras).
@@ -1335,7 +1366,8 @@ construye con la propuesta y cita "propuesta DU-GNN" hasta la decisión.
 
 ### Semana 4 (no bloquea la semana 3)
 
-#### DU-R09 · Control por cantidad de una obra que arranca con carga inicial: ¿qué pasa con lo ya retirado? (complementa DU-21)
+#### DU-R09 · Control por cantidad de una obra que arranca con carga inicial: ¿qué pasa con lo ya retirado? (complementa DU-21) — ✅ resuelta (24-nov-2026)
+- **Decisión (Juani, 24-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-62 ("las obras en ejecución con su gastado acumulado (un total por rubro)") · DU-21 resuelta · F-66 / W-48 (resta
   llevar) · su planilla de retiros (las 6 rendiciones la tienen, con los retiros hechos hasta hoy).
 - **Por qué importa:** la carga inicial trae plata por rubro, no cantidades. Una obra en ejecución que arranca en el sistema con su
