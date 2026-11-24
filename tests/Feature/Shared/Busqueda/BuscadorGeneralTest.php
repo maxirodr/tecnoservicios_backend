@@ -77,10 +77,10 @@ final class BuscadorGeneralTest extends TestCase
 
     public function test_buscador_no_devuelve_grupo_de_modulo_sin_acceso(): void
     {
-        // Ingeniería: Obras y Pedidos = editar, Proveedores sin acceso.
+        // Ingeniería: Obras y Pedidos = editar, Gastos = ver (solo sus obras, semana 3), Proveedores sin acceso.
         $response = $this->actingAs($this->usuarioDe('Ingeniería de proyectos'))->getJson('/api/buscar?q=tanque')->assertOk();
 
-        $this->assertSame(['obras', 'pedidos'], array_column((array) $response->json('data.grupos'), 'tipo'));
+        $this->assertSame(['obras', 'pedidos', 'gastos'], array_column((array) $response->json('data.grupos'), 'tipo'));
         $this->assertStringNotContainsString('Tanques Ejemplo', (string) $response->getContent());
     }
 
