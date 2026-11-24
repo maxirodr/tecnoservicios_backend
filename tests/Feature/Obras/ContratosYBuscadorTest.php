@@ -97,7 +97,8 @@ final class ContratosYBuscadorTest extends ObrasTestCase
         $diego = $this->diego();
         $obra = $this->obraDe($diego);
         $consulta = $this->app->make(ObrasConsulta::class);
-        $this->assertNull($consulta->montoDeObra($obra->id));
+        $sinMonto = $consulta->montoDeObra($obra->id);
+        $this->assertNull($sinMonto);
 
         $principal = Presupuesto::query()->where('obra_id', $obra->id)->sole();
         $principal->update(['monto_obra' => '15000000.00']);
