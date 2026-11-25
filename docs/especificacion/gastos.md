@@ -421,7 +421,7 @@ con zona `America/Argentina/Buenos_Aires`. Importes y cantidades como **string d
 | `GET /api/gastos/opciones` | — | `{rubros: [{clave, nombre, se_imputa: true\|false, carga_por_periodo}], origenes_sin_documento: ["sin_comprobante","combustible","consumo_stock"]}` | 403 |
 | `GET /api/gastos/obras-opciones?buscar=` | — | `[{id, numero, nombre_trabajo, estado, tiene_materiales}]` (máx. 20, todas las obras o solo las suyas con alcance propias; usa `ObrasConsulta`) | 403 |
 | `GET /api/gastos/factura-existente?proveedor_id=&numero=&excluir_id=` | — | `{existe: true, gasto: {id, numero, fecha, cargado_por}}` o `{existe: false}` (RN-GAS-08) | 403 · 422 |
-| `POST /api/gastos` | `GastoAlta` (§12.2) | `GastoDetalle` (201) + `obras_afectadas: [{id, nombre_trabajo}]` | 403 · 404 (obra o proveedor) · 422 |
+| `POST /api/gastos` | `GastoAlta` (§12.2) | `GastoDetalle` (201) + `obras_afectadas: [{id, nombre_trabajo}]` | 403 · 422 (obra o proveedor inexistente, en su campo, como §13) |
 | `GET /api/gastos/{id}` | — | `GastoDetalle` | 404 |
 | `PATCH /api/gastos/{id}` | campos de cabecera opcionales + `renglones` = **la lista completa** (los que traen `id` se conservan o cambian; sin `id`, nuevos; los que no vienen, se quitan) + `adjuntos: [ids]` (lista completa) + `updated_at` | `GastoDetalle` | 403 · 404 · 409 · 422 |
 | `POST /api/gastos/{id}/anular` | `{motivo}` | `GastoDetalle` | 403 · 404 · 409 · 422 |

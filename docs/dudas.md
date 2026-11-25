@@ -1390,3 +1390,25 @@ Del QC de la semana 3 en `main` (informe en la sesión de desarrollo). Las cuatr
 - **DU-G13 · Formato de fecha.** ✅ dd/mm/aaaa en toda la app (PU-209), también en Gastos y Rendición. Donde `gastos.md` y `rendicion.md` escriben "17-oct" o "02-oct", se lee dd/mm/aaaa. Los rangos de período siguen el formato de `fechas.ts`.
 - **DU-G14 · Botón mientras guarda.** ✅ Queda como en el sistema de diseño en todo el sistema: el botón conserva su etiqueta, muestra el indicador de carga y le anuncia "Guardando…" al lector de pantalla (`aria-busy`). Donde la spec dice "el botón dice 'Guardando…'", se cumple así.
 - **DU-G15 · Textos que no estaban en la spec.** ✅ Va la propuesta del QC: los 25 casos donde la spec tiene un texto para esa situación vuelven al de la spec (incluidos los mensajes de éxito de materiales, que son los del back); el resto queda y se agrega a la spec como texto de la implementación.
+
+## Cliente · "Pedidos" pasa a "Tareas" (pedido de Bruno, TSB, 24-nov-2026; Juani 25-nov-2026)
+
+- **DU-C01 · Vocabulario.** ✅ En **todo lo que ve el usuario**, "pedido(s)" pasa a "tarea(s)":
+  - **Barra:** arriba y en el celular.
+  - **Títulos, pestañas y botones:**
+    - "Nueva tarea";
+    - "Todas las tareas";
+    - "Tareas que pedí";
+    - "Tareas de mi gente" ya estaba.
+  - **Mensajes de la API y del front:** "Tarea creada…", "Tarea no encontrada", etc.
+  - **Avisos de la campana y mails:** asunto, cuerpo y "Ver la tarea".
+  - **Recordatorio, recorrido, Excel y buscador.**
+- **Motivo:** no todo lo que se asigna es un pedido. Calidad, RRHH y otros sectores asignan tareas (planillas,
+  documentación, programa de seguridad).
+- **Qué no cambia:**
+  - el campo **"Tarea"** del formulario: es qué hay que hacer;
+  - las direcciones (`/pedidos/...`), la API (`/api/pedidos`), el código, las tablas y los permisos (la fila de la
+    matriz sigue siendo la función `pedidos`, con el nombre visible "Tareas");
+  - el funcionamiento.
+- **Concordancia:** la palabra es femenina: "la tarea", "completada", "asignada".
+- **Specs:** `pedidos.md` y `avisos.md` se actualizan con los textos nuevos.
