@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Gastos\Application\Lecturas;
 
 use App\Modules\Gastos\Application\Acceso\AccesoGasto;
+use App\Modules\Gastos\Domain\Enums\Origen;
 use App\Modules\Gastos\Domain\EtiquetaDocumento;
 use App\Modules\Gastos\Domain\Models\Gasto;
 use App\Modules\Gastos\Domain\Models\GastoRenglon;
@@ -48,7 +49,8 @@ final readonly class LecturaDeGasto
             self::suma($veo),
             $filtrados === null ? ($visibles === null ? null : self::suma($veo)) : self::suma($filtrados),
             EtiquetaDocumento::de($gasto->origen, $gasto->numero, $gasto->periodo_desde, $gasto->periodo_hasta),
-            ['editar' => $editar, 'anular' => $editar],
+            // RN-IMP-27: la carga inicial solo se anula.
+            ['editar' => $editar && $gasto->origen !== Origen::SaldoInicial, 'anular' => $editar],
         );
     }
 

@@ -49,7 +49,14 @@ final class TextoDeHistorial
             default => [],
         };
 
-        return array_map(static fn (string $frase): string => "{$quien} {$frase}", $frases);
+        $lineas = array_map(static fn (string $frase): string => "{$quien} {$frase}", $frases);
+
+        // RN-IMP-17: de dónde salió cada número de la carga inicial.
+        if ($actividad->accion === CargarGastoAction::ACCION && isset($c['equivalencias'])) {
+            $lineas[] = self::texto($c['equivalencias']['despues']);
+        }
+
+        return $lineas;
     }
 
     public static function queSeCargo(Origen $origen): string
@@ -71,8 +78,11 @@ final class TextoDeHistorial
     private static function renglones(array $c): string
     {
         $n = (int) self::texto($c['renglones']['despues'] ?? 0);
+        $cuantos = $n === 1 ? '1 renglón' : "{$n} renglones";
+        // RN-IMP-39: "cargó la carga inicial (5 renglones, gastado hasta el 30/11/2026)".
+        $corte = isset($c['carga_inicial']) ? ', '.self::texto($c['carga_inicial']['despues']) : '';
 
-        return $n === 1 ? ' (1 renglón)' : " ({$n} renglones)";
+        return " ({$cuantos}{$corte})";
     }
 
     /**

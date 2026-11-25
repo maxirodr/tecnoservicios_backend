@@ -9,6 +9,7 @@ use App\Modules\Identidad\Contracts\ObrasDelResponsable;
 use App\Modules\Identidad\Contracts\PedidosDePersonasYSectores;
 use App\Modules\Identidad\Contracts\Permisos;
 use App\Modules\Identidad\Contracts\PlazosPrioridad;
+use App\Modules\Identidad\Contracts\UsuariosConsulta;
 use App\Modules\Identidad\Domain\MailNormalizado;
 use App\Modules\Identidad\Domain\Models\Permiso;
 use App\Modules\Identidad\Domain\Models\Sector;
@@ -20,6 +21,7 @@ use App\Modules\Identidad\Infrastructure\MatrizPermisos;
 use App\Modules\Identidad\Infrastructure\PlazosVigentes;
 use App\Modules\Identidad\Infrastructure\SinObrasDelResponsable;
 use App\Modules\Identidad\Infrastructure\SinPedidosDePersonasYSectores;
+use App\Modules\Identidad\Infrastructure\UsuariosConsultaEloquent;
 use App\Shared\Http\ApiResponse;
 use App\Shared\Providers\ModuleServiceProvider;
 use Closure;
@@ -56,6 +58,7 @@ final class IdentidadServiceProvider extends ModuleServiceProvider
     public array $bindings = [
         Jerarquia::class => JerarquiaPorJefe::class,
         PlazosPrioridad::class => PlazosVigentes::class,
+        UsuariosConsulta::class => UsuariosConsultaEloquent::class,
     ];
 
     public function register(): void

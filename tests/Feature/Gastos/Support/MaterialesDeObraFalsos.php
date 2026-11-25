@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Gastos\Support;
 
+use App\Modules\Rendicion\Contracts\MaterialAgregado;
 use App\Modules\Rendicion\Contracts\MaterialesDeObra;
+use App\Modules\Rendicion\Contracts\MaterialInicial;
 use App\Modules\Rendicion\Contracts\MaterialOpcion;
 use App\Modules\Rendicion\Domain\Models\Material;
 use Illuminate\Contracts\Container\Container;
@@ -54,5 +56,17 @@ final class MaterialesDeObraFalsos implements MaterialesDeObra
             'obra_id' => $obraId, 'nombre' => $nombre, 'nombre_clave' => $clave, 'unidad' => $unidad,
             'fuera_de_presupuesto' => true, 'created_by' => $userId, 'updated_by' => $userId,
         ])->id;
+    }
+
+    public function agregarALaLista(int $actorId, int $obraId, MaterialInicial $material): MaterialAgregado
+    {
+        $clave = Str::of($material->nombre)->ascii()->lower()->squish()->toString();
+        $creado = Material::query()->firstOrCreate(
+            ["obra_id" => $obraId, "nombre_clave" => $clave],
+            ["nombre" => $material->nombre, "unidad" => $material->unidad, "cantidad_presupuestada" => $material->cantidadPresupuestada,
+                "fuera_de_presupuesto" => false, "created_by" => $actorId, "updated_by" => $actorId],
+        );
+
+        return new MaterialAgregado($creado->id, $creado->wasRecentlyCreated, $creado->wasRecentlyCreated ? null : $creado->cantidad_presupuestada);
     }
 }

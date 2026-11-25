@@ -37,8 +37,21 @@ final readonly class DescripcionActividad
             $actividad->created_at,
             $actividad->user?->id,
             $actividad->user?->nombre,
-            $this->lineas($actividad, self::prefijo($actividad, $presupuestos, $documentos)),
+            self::marcarCargaInicial($actividad, $this->lineas($actividad, self::prefijo($actividad, $presupuestos, $documentos))),
         );
+    }
+
+    /**
+     * RN-IMP-39: "Creó la obra (carga inicial)", "Cambió el estado: Confirmada → En ejecución (carga inicial)".
+     *
+     * @param  list<string>  $lineas
+     * @return list<string>
+     */
+    private static function marcarCargaInicial(Actividad $actividad, array $lineas): array
+    {
+        return $actividad->carga_inicial
+            ? array_map(static fn (string $linea): string => "{$linea} (carga inicial)", $lineas)
+            : $lineas;
     }
 
     /**

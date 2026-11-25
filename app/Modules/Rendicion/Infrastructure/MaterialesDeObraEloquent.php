@@ -6,6 +6,9 @@ namespace App\Modules\Rendicion\Infrastructure;
 
 use App\Modules\Gastos\Contracts\FiltroRenglones;
 use App\Modules\Gastos\Contracts\GastadoDeObras;
+use App\Modules\Rendicion\Application\Materiales\AgregarMaterialInicialAction;
+use App\Modules\Rendicion\Contracts\MaterialAgregado;
+use App\Modules\Rendicion\Contracts\MaterialInicial;
 use App\Modules\Rendicion\Contracts\MaterialesDeObra;
 use App\Modules\Rendicion\Contracts\MaterialOpcion;
 use App\Modules\Rendicion\Domain\Calculo\Decimal;
@@ -27,7 +30,10 @@ final readonly class MaterialesDeObraEloquent implements MaterialesDeObra
 
     public const UNIDAD_MAXIMA = 20;
 
-    public function __construct(private GastadoDeObras $gastado) {}
+    public function __construct(
+        private GastadoDeObras $gastado,
+        private AgregarMaterialInicialAction $inicial,
+    ) {}
 
     public function opciones(int $obraId, ?string $texto): array
     {
@@ -81,5 +87,10 @@ final readonly class MaterialesDeObraEloquent implements MaterialesDeObra
             ['obra_id' => $obraId, 'nombre_clave' => TextoComparable::claveDeMaterial($nombre)],
             ['nombre' => $nombre, 'unidad' => $unidad, 'fuera_de_presupuesto' => true, 'created_by' => $userId, 'updated_by' => $userId],
         )->id;
+    }
+
+    public function agregarALaLista(int $actorId, int $obraId, MaterialInicial $material): MaterialAgregado
+    {
+        return $this->inicial->handle($actorId, $obraId, $material);
     }
 }
