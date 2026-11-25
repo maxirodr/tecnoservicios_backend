@@ -1,0 +1,15 @@
+# Verificación · Prueba de usuario Semana 2 · Ronda 4 (corta) · 2026-11-25
+
+Front `staging` @ `21dfe1a`, backend `3c69efc` (`489df9c` más docs). Se siguieron los pasos exactos de la ronda 3, con 2 repeticiones en cada dispositivo. Detalle en [`borradores/a.md`](borradores/a.md) (PC) y [`borradores/b.md`](borradores/b.md) (celular).
+
+| PU | Sev. r3 | Título | Estado | Dispositivos | Evidencia | Nota |
+|---|---|---|---|---|---|---|
+| PU-801 | media | Calendario: la prioridad solo se distinguía por el color | ✅ | PC (mes y semana, Carla y Laura); Pixel 7 y SE (mes, semana y lista; normal, al sol, en grises y en grises al sol) | `capturas/PU-801-r4-*.png` | Urgente lleva ⚠, Prioritario la doble flecha y Normal nada. En la lista del celular además va la palabra ("Urgente ·", "Prioritario ·"); en los dos equipos no hubo ningún ítem mal. En grises (acromatopsia emulada por CDP) se distinguen por el ícono. El `sr-only` sigue diciendo "· Urgente" y los completados conservan el ✓. |
+| PU-802 | media | Carga por persona: en el celular solo se tocaba el nombre | ✅ | Pixel 7 y SE (2 tarjetas × 2 puntos); PC con teclado | `capturas/PU-802-r4-*.png` | Celular: los 16 toques abrieron las tareas de esa persona (`/pedidos?propietario=…`), con un área tocable de la tarjeta entera (343×178 a 380×201). PC: una parada de Tab por fila con el anillo en la fila, y el clic fuera del nombre abre las tareas (4 de 4, 3 corridas). |
+| PU-803 | baja | La pestaña activa quedaba fuera de la vista en la tira | ⚠️ | Pixel 7 y SE, normal y con `reducedMotion: 'reduce'` | `capturas/PU-803-r4-*.png` · `logs/B-01.log` | Anda en 4 de las 6 pantallas: Carga por persona, Equipos, Plazos y Tabla de permisos, al entrar y al cambiar, y sin animación con movimiento reducido. Falla en Tareas de mi gente y en Obras · Terminadas: cuando llegan los contadores "(N)", la activa vuelve a quedar cortada ("Tareas de r…", "Termina…") → **PU-902**. El arreglo además trajo **PU-901** en PC. |
+| PU-804 | baja | Sobraba una raya bajo el nombre de fila en la última fila | ✅ | PC, zoom ×3, en Carga por persona, Presupuestos de la obra y Sectores | `capturas/PU-804-r4-*.png` | En la última fila, `th` y `td` quedan sin borde (0 px). El encabezado y las filas del medio siguen con `1px solid`. |
+| PU-805 | baja | Editar pedido: los botones quedaban pegados al historial | ✅ | PC, pedidos 82, 18 y 91 | `capturas/PU-805-r4-*.png` | Quedan 16 px entre "Guardar" y "Historial de cambios"; en la ronda 3 eran 0 px. |
+| PU-806 | baja | Equipos (SE): "Pendiente de aprobación" se metía en la columna Fecha | ✅ | SE y Pixel 7 | `capturas/PU-806-r4-*.png` | La etiqueta se parte en 2 renglones dentro de su columna: termina en 180 en el SE y la columna Fecha empieza en 196. Nada encimado y sin scroll horizontal. |
+| PU-807 | baja | Plazos en el celular: el encabezado se cortaba | ✅ | Pixel 7 y SE | `capturas/PU-807-r4-*.png` | "Cuando entre la fecha de pedido y la de entrega hay…" se lee entero en 2 renglones. El marco no desborda y la página tampoco. |
+
+**Conteo:** ✅ 6 · ⚠️ 1 (PU-803) · ❌ 0. Los 2 medios de la ronda 3 quedaron resueltos.
