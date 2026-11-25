@@ -16,7 +16,7 @@ use OpenSpout\Writer\XLSX\Writer;
 
 /**
  * El `.xlsx` de "Exportar a Excel" (W-24, resuelta DU-P16): las columnas de la tabla más N.º de
- * presupuesto, Con quién / para quién, Período, Aclaraciones y Completado, en el orden recibido. Escribe
+ * presupuesto, Con quién / para quién, Período, Aclaraciones y Completada, en el orden recibido. Escribe
  * fila por fila (OpenSpout), así lo filtrado entero no se carga en memoria. Las fechas van como fechas.
  */
 final class PedidosAExcel
@@ -25,7 +25,7 @@ final class PedidosAExcel
 
     public const ENCABEZADOS = [
         'Obra', 'Tarea', 'Sector', 'Propietario', 'Solicitante', 'Pedida', 'Entrega', 'Prioridad', 'Estado',
-        'N.º de presupuesto', 'Con quién / para quién', 'Período', 'Aclaraciones', 'Completado',
+        'N.º de presupuesto', 'Con quién / para quién', 'Período', 'Aclaraciones', 'Completada',
     ];
 
     private const SIN_DATO = '—';
