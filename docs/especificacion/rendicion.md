@@ -256,7 +256,7 @@ y viaja en el contrato (§12.4.1).
 ### En vivo (cap. 13 "un gasto cargado se ve en la rendición en el momento"; ADR-005, ADR-007)
 
 - **RN-REN-59** **Quien carga** ve el cambio **al instante**: el front invalida la rendición, W-12 y el listado de las obras afectadas al guardar, corregir o anular un gasto (y al guardar W-13 o la lista de W-48). **Los demás** la ven en **≤ 15 s**: W-11, W-44, W-12 y W-48 se vuelven a pedir cada 15 s con la pestaña visible y al volver a enfocarla. *(ADR-005, arquitectura §4.3)*
-- **RN-REN-60** La rendición se **cachea por obra** (Redis, clave `rendicion:obra:{id}`, solo los agregados, sin nada que dependa de quién mira) y se **invalida** después del commit con `GastoImputado`, `GastoCorregido`, `GastoAnulado` (todas las obras afectadas, antes y después) y `PresupuestoMontosCambiados`. El monto de la obra y los permisos **no** se cachean (se leen en cada pedido). W-48 no se cachea. Respuesta con `actualizada_at` (hora de Argentina): "Actualizada 10:42". *(ADR-007; decisión técnica)*
+- **RN-REN-60** La rendición se **cachea por obra** (Redis, clave `rendicion:obra:{id}`, solo los agregados, sin nada que dependa de quién mira) y se **invalida** después del commit con `GastoImputado`, `GastoCorregido`, `GastoAnulado` (todas las obras afectadas, antes y después) y `PresupuestoMontosCambiados`. Invalidar es **pasar a la generación siguiente** de la obra (`rendicion:obra:{id}:g{n}`): una lectura que empezó antes del commit guarda en la clave vieja, que ya nadie lee (QC S3 M-15). El monto de la obra y los permisos **no** se cachean (se leen en cada pedido). W-48 no se cachea. Respuesta con `actualizada_at` (hora de Argentina): "Actualizada 10:42". *(ADR-007; decisión técnica)*
 - **RN-REN-61** **Idempotencia y concurrencia** (solo la lista de materiales, lo único que se escribe acá): `POST` con `Idempotency-Key` (mismo envío → un solo material); `PATCH` con `updated_at` → 409 "Alguien cambió esto mientras lo tenías abierto. Actualizá y revisá." (como PU-201). *(ADR-011)*
 
 ## 6. Estados de cada pantalla
@@ -270,6 +270,13 @@ y viaja en el contrato (§12.4.1).
 | W-44 | esqueleto de tarjetas | como W-11 | ídem | como W-11 |
 | W-48 | esqueleto | "Todavía no hay materiales cargados para esta obra." (+ "Agregar material" con editar) · sin fuera de presupuesto: la sección no aparece | ídem | sin `control_cantidad`: el acceso no aparece; por URL, 403 · fuera de alcance: 404 |
 | "% gastado" (W-05, W-07, W-47) | — | "—" (sin presupuesto, o sin permiso: RN-OBR-04) | "—" (el listado no se cae si falla el puerto: se registra el error) | "—" |
+
+**Cómo se leen dos cosas de esta especificación (QC S3, 25-nov-2026):**
+- **Fechas (resuelta DU-G13):** dd/mm/aaaa en toda la app (PU-209). Donde este documento escribe "02-oct", "Hasta
+  25-sep" o "del 1-nov al 30-nov", se lee "02/10/2026", "Hasta 25/09/2026" o "del 01/11/2026 al 30/11/2026". Los
+  rangos de período siguen el formato de `fechas.ts`.
+- **Botón mientras guarda (resuelta DU-G14):** el botón conserva su etiqueta, muestra el indicador de carga y le anuncia
+  "Guardando…" al lector de pantalla (`aria-busy`), como en el sistema de diseño.
 
 ## 7. Permisos
 
@@ -727,6 +734,10 @@ esta tabla de equivalencias (sale del análisis de sus seis rendiciones):
 | FIJOS con costo financiero por pago diferido (en una de sus planillas) | Solo lo que se cargue como período | El costo financiero no entra (usa fechas de cobro, D-034). |
 | Importes que ustedes tipean con IVA | Netos sin IVA (C9) | Si su planilla tiene algún importe con IVA, va a diferir. |
 | Totales de renglón sin redondear | Total de cada renglón redondeado a 2 decimales (ADR-008) | Puede haber diferencias de centavos por rubro si su planilla no redondea renglón por renglón. |
+| Total de un mes en Gastos cargados (W-33) | W-33 filtra por la **fecha del comprobante**; la rendición (W-11, W-36, W-37) suma por la **fecha del renglón** (DU-G01) | En los gastos sin comprobante con tickets de días distintos (W-35) y en los períodos, el total de un mes en W-33 y el de W-36/W-37 pueden diferir. El total de la obra da igual. |
+| Fijos o horas del mes en curso | Un período ("Fijos 1 al 30-nov") queda fechado en `periodo_hasta`, aunque sea futura (RN-GAS-27) | Cargado el 24-nov, queda fechado el 30-nov: la rendición ya lo resta, pero no aparece en el W-33 por defecto (del 1 del mes a hoy) hasta que se amplíe la fecha. |
+| Varias filas de amortización | Una sola amortización por obra (RN-GAS-23) | Si en su planilla hay varias filas de amortización, se cargan sumadas en una. |
+| Tabla dinámica por proveedor | W-37 agrupa por **proveedor**, no por tipo de documento | Un gasto sin comprobante o un combustible con un proveedor real va bajo ese proveedor, no en "Sin documento"; "Sin documento" junta solo lo cargado con el proveedor genérico (RN-REN-35). |
 
 ## 14. Trazabilidad F-XX → RN → test
 
@@ -795,3 +806,35 @@ aprobada y §12.4.1 de esta especificación). La misma tabla, vista desde Gastos
 | Permisos de W-46 | `rendicion` = editar; retiros también `control_cantidad` | igual, y ahora también en Gastos (DU-G08 reemplazada); corregir y anular, `gastos` = editar; remito según `identidad.md` §6.6 |
 | Proveedor "sin proveedor" | grupo "Sin documento" con genérico **o sin proveedor** | todo gasto tiene proveedor (el genérico si no se eligió otro) |
 | Etiquetas de documento | solo acá | las mismas en W-33/W-34 (`gastos.md` RN-GAS-29) |
+
+## 18. Textos de la implementación (resuelta DU-G15, 25-nov-2026)
+
+Textos que la implementación usa en situaciones donde esta especificación no tenía uno. Quedan como están y forman
+parte de la especificación (informe `docs/qc/semana-3-tanda-1.md` §4, filas "queda"). Donde la especificación sí tenía
+un texto, la implementación usa el de la especificación. Los de la carga de W-46 están en `gastos.md` §16.
+
+**Mensajes de la API:**
+
+| Situación | Texto |
+|---|---|
+| Material inexistente, de otra obra o fuera de alcance (404) | "No encontramos este material." |
+| Material sin nombre o sin unidad | "Escribí el material." / "Escribí la unidad." |
+| Material con nombre demasiado largo | "Es demasiado largo (máximo 150 caracteres)." |
+| Material asociado a un presupuesto de otra obra | "Ese presupuesto no es de esta obra." |
+| Cantidad o precio del material | "Escribí la cantidad como número, por ejemplo 12,5." / "Escribí el precio como número, por ejemplo 12,5." · "… lleva como máximo N decimales." · "… no puede ser negativa/o." · "… es demasiado grande." |
+| Material agregado, corregido o quitado (W-48; el front lo muestra tal cual) | "Material agregado a la lista." · "Material corregido." · "Material quitado de la lista." |
+| Quitar un presupuesto que tiene materiales (RN-OBR-24) | "Este presupuesto ya tiene materiales del control por cantidad: no se puede quitar." |
+| Etiqueta de un período que cruza meses (RN-REN-29) | "Período 25-oct al 10-nov" |
+
+**Pantallas:**
+
+| Dónde | Texto |
+|---|---|
+| W-11 sin `rendicion`, por URL | "No tenés acceso a la rendición." + "Si lo necesitás, pedíselo a gerencia." |
+| W-11, obra sin monto (con `monto_obra = editar`) | "Cargar el monto de la obra" (acceso a W-13) |
+| W-48, acciones | "corregir" · "quitar" · "pasar a la lista" · título "Corregir · X" · "Guardar" · "Guardando…" |
+| W-48, ayudas del material | "Por ejemplo Cemento x 50 kg." · "bolsa, m³, paño, barra, kg…" · "Escribí la unidad, por ejemplo bolsa o m³." |
+| W-48, quitar | título "Quitar · X" · "Quitar material" · "Quitando…" · "¿Quitar X de la lista? Es para un material cargado por error: …" |
+| W-48, validaciones del formulario | "La cantidad no puede ser negativa." · "Escribí la cantidad con números, por ejemplo 12,5." · "La cantidad puede tener hasta 3 decimales." · "La cantidad es demasiado grande." · "… puede tener hasta N caracteres." |
+| Ficha y listado de obras, rubro pasado | " · se pasó del presupuesto" (cabecera de la ficha y lector de pantalla del listado) |
+| W-37, queda un solo proveedor sin mostrar | "ver el restante" (con más: "ver los N restantes") |

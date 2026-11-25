@@ -34,7 +34,7 @@ final readonly class FichaObraQuery
 
         $puede = $this->acceso->resumen($user, $obra);
         $porcentaje = $puede['ver_rendicion'] ? ($this->avance->porcentajesGastados([$obra->id])[$obra->id] ?? null) : null;
-        $pasada = $porcentaje === null ? null : ($this->avance->pasadas([$obra->id])[$obra->id] ?? false);
+        $pasada = $puede['ver_rendicion'] ? FilaObra::pasada($porcentaje, $this->avance->pasadas([$obra->id])[$obra->id] ?? false) : null;
 
         return new FichaObra(
             new FilaObra($obra, $this->pedidos->contarAbiertosPorObra([$obra->id])[$obra->id] ?? null, $porcentaje, $pasada),

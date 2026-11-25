@@ -102,7 +102,7 @@ final readonly class ListarObrasQuery
                 $obra,
                 $pedidos[$obra->id] ?? null,
                 $porcentaje,
-                $porcentaje === null ? null : ($pasadas[$obra->id] ?? false),
+                $veRendicion ? FilaObra::pasada($porcentaje, $pasadas[$obra->id] ?? false) : null,
             );
         })->all());
     }

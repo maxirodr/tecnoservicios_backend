@@ -78,7 +78,7 @@ final readonly class MaterialesDeObraEloquent implements MaterialesDeObra
         }
 
         return Material::query()->createOrFirst(
-            ['obra_id' => $obraId, 'nombre_clave' => TextoComparable::de($nombre)],
+            ['obra_id' => $obraId, 'nombre_clave' => TextoComparable::claveDeMaterial($nombre)],
             ['nombre' => $nombre, 'unidad' => $unidad, 'fuera_de_presupuesto' => true, 'created_by' => $userId, 'updated_by' => $userId],
         )->id;
     }

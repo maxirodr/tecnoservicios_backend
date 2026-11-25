@@ -19,4 +19,13 @@ interface ProveedoresConsulta
     public function generico(): ProveedorId;
 
     public function esGenerico(ProveedorId $id): bool;
+
+    /**
+     * Filtro Proveedor de W-33 (gastos.md DU-G12): solo entre `$ids` (los de los gastos que ve quien filtra),
+     * por nombre o CUIT como el combobox (RN-PRV-03), en orden alfabético, como máximo `$limite`.
+     *
+     * @param  list<int>  $ids
+     * @return list<ResumenProveedor>
+     */
+    public function opcionesEntre(array $ids, ?string $buscar, int $limite): array;
 }

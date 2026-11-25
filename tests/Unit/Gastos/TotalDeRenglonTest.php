@@ -37,8 +37,14 @@ final class TotalDeRenglonTest extends TestCase
     {
         $this->assertSame('30', Legible::cantidad('30.000'));
         $this->assertSame('2,5', Legible::cantidad('2.500'));
-        $this->assertSame('-4', Legible::cantidad('-4.000'));
         $this->assertSame('1.300.000', Legible::importe('1300000.00'));
         $this->assertSame('9.800,50', Legible::importe('9800.50'));
+    }
+
+    public function test_legible_escribe_los_negativos_con_el_signo_menos(): void
+    {
+        $this->assertSame('−4', Legible::cantidad('-4.000'));
+        $this->assertSame('−39.200', Legible::importe('-39200.00'));
+        $this->assertSame('0', Legible::cantidad('-0.000'));
     }
 }

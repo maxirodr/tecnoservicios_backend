@@ -6,6 +6,7 @@ namespace Tests\Feature\Rendicion;
 
 use App\Modules\Rendicion\Domain\Models\Material;
 use App\Shared\Actividad\Actividad;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\Feature\Rendicion\Support\RendicionTestCase;
 use Tests\Feature\Rendicion\Support\Renglon;
@@ -22,7 +23,8 @@ final class ListaDeMaterialesTest extends RendicionTestCase
             'nombre' => '  Cemento x 50 kg ', 'unidad' => 'bolsa', 'cantidad_presupuestada' => '150', 'precio_presupuestado' => '9800',
         ])->assertCreated();
 
-        $respuesta->assertJsonPath('data.nombre', 'Cemento x 50 kg')
+        $respuesta->assertJsonPath('message', 'Material agregado a la lista.')
+            ->assertJsonPath('data.nombre', 'Cemento x 50 kg')
             ->assertJsonPath('data.cantidad_presupuestada', '150.000')
             ->assertJsonPath('data.precio_presupuestado', '9800.00')
             ->assertJsonPath('data.fuera_de_presupuesto', false)
@@ -53,10 +55,26 @@ final class ListaDeMaterialesTest extends RendicionTestCase
         $this->actingAs($diego)->postJson($url, ['nombre' => 'Arena', 'unidad' => 'm³'])->assertUnprocessable()->assertJsonPath('errors.cantidad_presupuestada.0', 'Poné la cantidad presupuestada.');
         $this->actingAs($diego)->postJson($url, ['nombre' => 'Arena', 'unidad' => 'm³', 'cantidad_presupuestada' => '1.2345'])->assertJsonPath('errors.cantidad_presupuestada.0', 'La cantidad lleva como máximo 3 decimales.');
         $this->actingAs($diego)->postJson($url, ['nombre' => 'Arena', 'unidad' => 'm³', 'cantidad_presupuestada' => '-1'])->assertJsonPath('errors.cantidad_presupuestada.0', 'La cantidad no puede ser negativa.');
+        $this->actingAs($diego)->postJson($url, ['nombre' => 'Arena', 'unidad' => 'm³', 'cantidad_presupuestada' => 'doce', 'precio_presupuestado' => 'mucho'])
+            ->assertJsonPath('errors.cantidad_presupuestada.0', 'Escribí la cantidad como número, por ejemplo 12,5.')
+            ->assertJsonPath('errors.precio_presupuestado.0', 'Escribí el precio como número, por ejemplo 12,5.');
         $this->actingAs($diego)->postJson($url, ['nombre' => 'Arena', 'unidad' => 'm³', 'cantidad_presupuestada' => '1', 'precio_presupuestado' => '1.005'])->assertJsonPath('errors.precio_presupuestado.0', 'El precio lleva como máximo 2 decimales.');
         $this->actingAs($diego)->postJson($url, ['nombre' => '', 'unidad' => '', 'cantidad_presupuestada' => '1'])->assertJsonPath('errors.nombre.0', 'Escribí el material.')->assertJsonPath('errors.unidad.0', 'Escribí la unidad.');
         $this->actingAs($diego)->postJson($url, ['nombre' => 'Arena', 'unidad' => 'm³', 'cantidad_presupuestada' => '1', 'presupuesto_id' => $ajeno->id])->assertJsonPath('errors.presupuesto_id.0', 'Ese presupuesto no es de esta obra.');
         $this->assertSame(0, Material::query()->count());
+    }
+
+    public function test_nombre_de_150_caracteres_que_se_alarga_al_compararlo_se_guarda(): void
+    {
+        $diego = $this->diego();
+        $obra = $this->obraDe($diego);
+        // "ß" se compara como "ss": la clave de comparación pasa los 150 caracteres del nombre.
+        $nombre = str_repeat('ß', 150);
+
+        $this->actingAs($diego)->postJson("/api/obras/{$obra->id}/materiales", ['nombre' => $nombre, 'unidad' => 'bolsa', 'cantidad_presupuestada' => '10'])
+            ->assertCreated()->assertJsonPath('data.nombre', $nombre);
+        $this->actingAs($diego)->postJson("/api/obras/{$obra->id}/materiales", ['nombre' => $nombre, 'unidad' => 'bolsa', 'cantidad_presupuestada' => '10'])
+            ->assertUnprocessable();
     }
 
     public function test_material_doble_envio_crea_uno_solo(): void
@@ -80,7 +98,8 @@ final class ListaDeMaterialesTest extends RendicionTestCase
         $version = $cemento->updated_at->toIso8601String();
 
         $this->travel(2)->seconds();
-        $this->actingAs($diego)->patchJson("/api/materiales/{$cemento->id}", ['cantidad_presupuestada' => '160', 'updated_at' => $version])->assertOk()->assertJsonPath('data.cantidad_presupuestada', '160.000');
+        $this->actingAs($diego)->patchJson("/api/materiales/{$cemento->id}", ['cantidad_presupuestada' => '160', 'updated_at' => $version])->assertOk()
+            ->assertJsonPath('message', 'Material corregido.')->assertJsonPath('data.cantidad_presupuestada', '160.000');
         $this->actingAs($diego)->patchJson("/api/materiales/{$cemento->id}", ['cantidad_presupuestada' => '170', 'updated_at' => $version])
             ->assertStatus(409)->assertJsonPath('message', 'Alguien cambió esto mientras lo tenías abierto. Actualizá y revisá.');
 
@@ -118,12 +137,25 @@ final class ListaDeMaterialesTest extends RendicionTestCase
         $this->assertNotNull(Material::query()->find($cemento->id));
     }
 
+    public function test_quitar_bloquea_el_material_antes_de_contar_sus_renglones(): void
+    {
+        $diego = $this->diego();
+        $malla = $this->material($this->obraDe($diego), 'Malla sima', 'paño', '30');
+        DB::enableQueryLog();
+
+        $this->actingAs($diego)->deleteJson("/api/materiales/{$malla->id}")->assertOk();
+
+        $bloqueos = array_filter(DB::getQueryLog(), static fn (array $q): bool => str_contains($q['query'], 'from `materiales`') && str_contains($q['query'], 'for update'));
+        $this->assertCount(1, $bloqueos, 'Un retiro simultáneo espera al bloqueo y se cuenta: 422 en lugar del 500 de la clave foránea.');
+    }
+
     public function test_quitar_un_material_sin_renglones_queda_en_actividades(): void
     {
         $diego = $this->diego();
         $malla = $this->material($this->obraDe($diego), 'Malla sima', 'paño', '30');
 
-        $this->actingAs($diego)->deleteJson("/api/materiales/{$malla->id}")->assertOk()->assertJsonPath('data', null);
+        $this->actingAs($diego)->deleteJson("/api/materiales/{$malla->id}")->assertOk()->assertJsonPath('data', null)
+            ->assertJsonPath('message', 'Material quitado de la lista.');
 
         $this->assertNull(Material::query()->find($malla->id));
         $this->assertSame('material_quitado', Actividad::query()->where('sujeto_type', 'material')->where('sujeto_id', $malla->id)->value('accion'));

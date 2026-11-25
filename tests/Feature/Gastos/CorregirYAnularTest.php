@@ -73,10 +73,11 @@ final class CorregirYAnularTest extends GastosTestCase
         return array_column($lineas, 'que');
     }
 
-    public function test_detalle_muestra_quien_cargo_y_el_reparto(): void
+    public function test_detalle_muestra_quien_cargo_el_reparto_y_la_version_en_hora_de_argentina(): void
     {
         $this->actingAs($this->marta())->getJson("/api/gastos/{$this->factura->id}")->assertOk()
             ->assertJsonPath('data.cargado_at', '2026-10-19T10:00:00-03:00')
+            ->assertJsonPath('data.updated_at', '2026-10-19T10:00:00-03:00')
             ->assertJsonPath('data.updated_by', null)
             ->assertJsonPath('data.proveedor.nombre', 'Corralón Centro')
             ->assertJsonPath('data.renglones_ocultos', 0)
@@ -209,7 +210,7 @@ final class CorregirYAnularTest extends GastosTestCase
             ->assertJsonPath('data.anulacion.anulado_por.nombre', 'Diego')
             ->assertJsonPath('data.puede', ['editar' => false, 'anular' => false]);
 
-        $this->assertSame([], $this->app->make(GastadoDeObras::class)->totalesPorRubro([$this->nave->id, $this->losa->id]));
+        $this->assertSame([$this->nave->id => [], $this->losa->id => []], $this->app->make(GastadoDeObras::class)->totalesPorRubro([$this->nave->id, $this->losa->id]));
         $this->assertContains("Diego anuló la factura: 'Cargada dos veces'", $this->historial());
         Event::assertDispatched(GastoAnulado::class, fn (GastoAnulado $e): bool => $e->obraIds === [$this->nave->id, $this->losa->id]);
     }

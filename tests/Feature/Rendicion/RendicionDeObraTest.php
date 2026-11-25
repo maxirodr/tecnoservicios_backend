@@ -148,7 +148,7 @@ final class RendicionDeObraTest extends RendicionTestCase
         [$a, $b] = [$this->obraDe($this->diego()), $this->obraDe($this->diego())];
         $diego = $this->diego();
         $this->actingAs($diego)->getJson("/api/obras/{$a->id}/rendicion")->assertJsonPath('data.total.gastado', '0.00');
-        $this->assertTrue(Cache::has(GastadoEnCache::clave($a->id)));
+        $this->assertTrue(Cache::has(app(GastadoEnCache::class)->clave($a->id)));
 
         $this->gastado->agregar($a->id, Renglon::de(1, 1, '2026-10-02', 'factura', 'Cemento', '500.00', 'materiales'));
         $this->getJson("/api/obras/{$a->id}/rendicion")->assertJsonPath('data.total.gastado', '0.00');
@@ -158,16 +158,33 @@ final class RendicionDeObraTest extends RendicionTestCase
         $this->assertSame(2, $this->gastado->consultasDeTotales, 'Entre eventos, la rendición sale del cache.');
     }
 
+    public function test_lectura_que_empezo_antes_del_gasto_no_deja_el_total_viejo_en_el_cache(): void
+    {
+        $diego = $this->diego();
+        $obra = $this->obraDe($diego);
+        // QC S3 M-15: la consulta lee los totales, en el medio se confirma un gasto (llega el evento) y recién
+        // después la lectura guarda lo que había leído.
+        $this->gastado->mientrasSeConsultan = function () use ($obra): void {
+            $this->gastado->mientrasSeConsultan = null;
+            $this->gastado->agregar($obra->id, Renglon::de(1, 1, '2026-10-02', 'factura', 'Cemento', '500.00', 'materiales'));
+            event(new GastoImputado(1, [$obra->id]));
+        };
+
+        $this->actingAs($diego)->getJson("/api/obras/{$obra->id}/rendicion")->assertJsonPath('data.total.gastado', '0.00');
+
+        $this->getJson("/api/obras/{$obra->id}/rendicion")->assertJsonPath('data.total.gastado', '500.00');
+    }
+
     public function test_gasto_corregido_invalida_obras_de_antes_y_despues(): void
     {
         [$a, $b] = [$this->obraDe($this->diego()), $this->obraDe($this->diego())];
-        Cache::put(GastadoEnCache::clave($a->id), ['materiales' => '1.00']);
-        Cache::put(GastadoEnCache::clave($b->id), ['materiales' => '2.00']);
+        Cache::put(app(GastadoEnCache::class)->clave($a->id), ['materiales' => '1.00']);
+        Cache::put(app(GastadoEnCache::class)->clave($b->id), ['materiales' => '2.00']);
 
         event(new GastoCorregido(7, [$a->id, $b->id]));
 
-        $this->assertFalse(Cache::has(GastadoEnCache::clave($a->id)));
-        $this->assertFalse(Cache::has(GastadoEnCache::clave($b->id)));
+        $this->assertFalse(Cache::has(app(GastadoEnCache::class)->clave($a->id)));
+        $this->assertFalse(Cache::has(app(GastadoEnCache::class)->clave($b->id)));
     }
 
     public function test_cambio_en_w13_invalida_el_cache_y_se_ve_en_la_proxima_lectura(): void
@@ -180,7 +197,7 @@ final class RendicionDeObraTest extends RendicionTestCase
 
         $this->actingAs($diego)->putJson("/api/presupuestos/{$principal->id}/montos", ['modo' => 'por_rubro', 'montos' => ['materiales' => '5500000.00'], 'updated_at' => $version])->assertOk();
 
-        $this->assertFalse(Cache::has(GastadoEnCache::clave($obra->id)));
+        $this->assertFalse(Cache::has(app(GastadoEnCache::class)->clave($obra->id)));
         $this->getJson("/api/obras/{$obra->id}/rendicion")->assertJsonPath('data.rubros.0.presupuestado', '5500000.00');
     }
 

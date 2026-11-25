@@ -8,11 +8,13 @@ use App\Modules\Gastos\Application\Lecturas\GastoLeido;
 use App\Modules\Gastos\Domain\Enums\Origen;
 
 /**
- * La confirmación de cada carga (RN-GAS-16, RN-GAS-26): "Factura cargada. Ya se restó en la rendición de
- * Piso industrial nave 3 y Reparación de losa tanque B." (el ✓ lo pone la pantalla).
+ * La confirmación de cada carga (RN-GAS-16, RN-GAS-26): "✓ Factura cargada. Ya se restó en la rendición de
+ * Piso industrial nave 3 y Reparación de losa tanque B." Con el ✓ de la spec: la pantalla la muestra tal cual.
  */
 final class MensajeDeCarga
 {
+    private const TILDE = '✓ ';
+
     /**
      * @return list<array{id: int, nombre_trabajo: string}>
      */
@@ -34,8 +36,11 @@ final class MensajeDeCarga
      */
     public static function de(Origen $origen, array $obras): string
     {
-        $nombres = self::enumerar(array_column($obras, 'nombre_trabajo'));
+        return self::TILDE.self::texto($origen, self::enumerar(array_column($obras, 'nombre_trabajo')));
+    }
 
+    private static function texto(Origen $origen, string $nombres): string
+    {
         return match (true) {
             $origen === Origen::RetiroRemito => 'Retiro cargado. Ya suma en la rendición y en el control por cantidad.',
             $origen === Origen::Amortizacion => 'Amortización cargada.',

@@ -15,9 +15,16 @@ use Illuminate\Database\QueryException;
  * toda la página. A quién se le muestra lo decide Obras (RN-OBR-04). Si la lectura falla, el listado no se
  * cae: se registra el error y se ve "—" (rendicion.md §6).
  */
-final readonly class AvanceGastoDeObraEloquent implements AvanceGastoDeObra
+final class AvanceGastoDeObraEloquent implements AvanceGastoDeObra
 {
-    public function __construct(private RendicionesDeVariasObras $rendiciones) {}
+    /**
+     * El listado pide % y pasadas de las mismas obras: se calcula una vez (RN-REN-42).
+     *
+     * @var array<string, array<int, ResumenDeRendicion|null>>
+     */
+    private array $calculadas = [];
+
+    public function __construct(private readonly RendicionesDeVariasObras $rendiciones) {}
 
     public function porcentajesGastados(array $obraIds): array
     {
@@ -34,6 +41,17 @@ final readonly class AvanceGastoDeObraEloquent implements AvanceGastoDeObra
      * @return array<int, ResumenDeRendicion|null>
      */
     private function resumenes(array $obraIds): array
+    {
+        $clave = implode(',', $obraIds);
+
+        return $this->calculadas[$clave] ??= $this->calcular($obraIds);
+    }
+
+    /**
+     * @param  list<int>  $obraIds
+     * @return array<int, ResumenDeRendicion|null>
+     */
+    private function calcular(array $obraIds): array
     {
         try {
             $resumenes = $this->rendiciones->de($obraIds);

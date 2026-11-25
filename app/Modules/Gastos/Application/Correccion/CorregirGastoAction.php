@@ -10,11 +10,13 @@ use App\Modules\Gastos\Application\Carga\AlcanceDeCarga;
 use App\Modules\Gastos\Application\Carga\CargaRepetida;
 use App\Modules\Gastos\Application\Carga\DatosGasto;
 use App\Modules\Gastos\Application\Carga\Errores;
+use App\Modules\Gastos\Application\Carga\FacturaRepetida;
 use App\Modules\Gastos\Application\Carga\ValidarGasto;
 use App\Modules\Gastos\Domain\Events\GastoCorregido;
 use App\Modules\Gastos\Domain\Models\Gasto;
+use App\Modules\Identidad\Domain\Enums\ClaveFuncion;
+use App\Modules\Identidad\Domain\Enums\Nivel;
 use App\Modules\Identidad\Domain\Models\User;
-use App\Shared\Adjuntos\AdjuntosService;
 use App\Shared\Concurrencia\VersionDeFila;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -27,7 +29,8 @@ use Illuminate\Validation\ValidationException;
  * F-46 / HU-072: corregir un gasto no anulado con `gastos = editar`, también lo cargado desde W-46 y de
  * una obra Terminada (RN-GAS-37, resuelta DU-R05). Mismas validaciones que la carga; tipo y origen no se
  * cambian. Con el gasto bloqueado y la versión verificada (409, RN-GAS-39). Guardar sin cambios no registra
- * nada; con cambios, `GastoCorregido` con las obras de antes ∪ las de después (RN-GAS-38).
+ * nada; con cambios, `GastoCorregido` con las obras de antes ∪ las de después (RN-GAS-38). Sin `gastos = editar`,
+ * solo el remito de un retiro con `control_cantidad = editar` (`CambiarRemitoAction`, §4.4).
  */
 final readonly class CorregirGastoAction
 {
@@ -40,9 +43,11 @@ final readonly class CorregirGastoAction
         private DatosDeLaCorreccion $armar,
         private ValidarGasto $validar,
         private CargaRepetida $repetida,
+        private FacturaRepetida $facturas,
         private EscribirCorreccion $escribir,
-        private AdjuntosService $adjuntos,
+        private AdjuntosDelGasto $adjuntos,
         private Dispatcher $eventos,
+        private CambiarRemitoAction $remito,
     ) {}
 
     /**
@@ -50,6 +55,10 @@ final readonly class CorregirGastoAction
      */
     public function handle(User $actor, int $id, CambiosGasto $cambios, ?CarbonInterface $version = null): Gasto
     {
+        if (! $this->acceso->puede($actor, ClaveFuncion::Gastos, Nivel::Editar)) {
+            return $this->remito->handle($actor, $id, $cambios, $version);
+        }
+
         return $this->db->transaction(function () use ($actor, $id, $cambios, $version): Gasto {
             $gasto = $this->buscar->paraCorregir($actor, $id);
             VersionDeFila::bloquearYVerificar($gasto, $version);
@@ -59,13 +68,13 @@ final readonly class CorregirGastoAction
             $this->exigirRenglonesPropios($gasto, $datos);
 
             $nuevo = $this->validar->handle($datos);
-            $this->repetida->verificar($nuevo, $datos, $gasto->id);
+            $this->repetida->verificar($actor, $nuevo, $datos, $gasto->id);
 
             $obrasAntes = $gasto->obraIds();
             $hubo = $this->escribir->aplicar($gasto, $nuevo, $actor->id);
 
             if ($cambios->adjuntos !== null) {
-                $hubo = $this->cambiarAdjuntos($actor, $gasto, $cambios->adjuntos) || $hubo;
+                $hubo = $this->adjuntos->reemplazar($actor->id, $gasto, $cambios->adjuntos) || $hubo;
             }
 
             if (! $hubo) {
@@ -73,7 +82,7 @@ final readonly class CorregirGastoAction
             }
 
             $gasto->updated_by = $actor->id;
-            $this->guardar($gasto);
+            $this->guardar($actor, $gasto);
             $this->eventos->dispatch(new GastoCorregido($gasto->id, array_values(array_unique([...$obrasAntes, ...$nuevo->obraIds()]))));
 
             return $gasto;
@@ -108,34 +117,15 @@ final readonly class CorregirGastoAction
         $errores->lanzarSiHay();
     }
 
-    /**
-     * @param  list<int>  $nuevos
-     */
-    private function cambiarAdjuntos(User $actor, Gasto $gasto, array $nuevos): bool
-    {
-        $actuales = array_map('intval', $gasto->adjuntos()->pluck('id')->all());
-        $agregar = array_values(array_diff($nuevos, $actuales));
-        $quitar = array_values(array_diff($actuales, $nuevos));
-        $contexto = $gasto->contextoAdjuntos();
-
-        if ($contexto !== null) {
-            $this->adjuntos->asociar($actor->id, $agregar, $gasto, $contexto);
-        }
-
-        $this->adjuntos->quitar($quitar, $gasto);
-
-        return $agregar !== [] || $quitar !== [];
-    }
-
-    private function guardar(Gasto $gasto): void
+    private function guardar(User $actor, Gasto $gasto): void
     {
         try {
             // touch() guarda también la cabecera: updated_at cambia aunque solo cambien renglones o adjuntos (versión, 409).
             $gasto->touch();
         } catch (UniqueConstraintViolationException $e) {
-            $existente = $gasto->numero === null ? null : $this->repetida->facturaExistente($gasto->proveedor_id, $gasto->numero, $gasto->id);
+            $this->facturas->exigirQueNoExista($actor, $gasto->numero, $gasto->proveedor_id, $gasto->id);
 
-            throw $existente === null ? $e : CargaRepetida::facturaCargada($existente);
+            throw $e;
         }
     }
 }

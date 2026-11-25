@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Rendicion;
 
+use App\Modules\Gastos\Domain\Enums\Origen;
+use App\Modules\Gastos\Domain\EtiquetaDocumento;
 use App\Modules\Rendicion\Domain\Materiales\ColumnasDeFechas;
 use App\Modules\Rendicion\Domain\Renglones\DocumentoDelRenglon;
 use App\Modules\Rendicion\Domain\TextoComparable;
+use Carbon\CarbonImmutable;
 use PHPUnit\Framework\TestCase;
 use Tests\Feature\Rendicion\Support\Renglon;
 
@@ -33,6 +36,18 @@ final class DocumentoYOrdenDeRenglonesTest extends TestCase
         }
 
         $this->assertNull(DocumentoDelRenglon::proveedor(Renglon::de(1, 1, '2026-10-15', 'sin_comprobante', 'X', '1.00', 'viaticos')));
+    }
+
+    public function test_etiqueta_de_la_rendicion_es_la_misma_de_gastos_tambien_sin_numero(): void
+    {
+        foreach (Origen::cases() as $origen) {
+            $extra = $origen === Origen::MontoPeriodo ? ['desde' => '2026-10-01', 'hasta' => '2026-10-15'] : [];
+            $renglon = Renglon::de(1, 1, '2026-10-15', $origen->value, 'X', '1.00', 'materiales', $extra);
+            $desde = $origen === Origen::MontoPeriodo ? CarbonImmutable::parse('2026-10-01') : null;
+            $hasta = $origen === Origen::MontoPeriodo ? CarbonImmutable::parse('2026-10-15') : null;
+
+            $this->assertSame(EtiquetaDocumento::de($origen, null, $desde, $hasta), DocumentoDelRenglon::etiqueta($renglon), $origen->value);
+        }
     }
 
     public function test_texto_comparable_ignora_mayusculas_tildes_y_espacios_dobles_y_conserva_la_enie(): void

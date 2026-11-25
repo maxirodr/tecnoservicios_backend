@@ -39,7 +39,8 @@ final class SinComprobanteTest extends GastosTestCase
             ->assertJsonPath('data.total', '113500.00')
             ->assertJsonPath('data.documento', 'Sin documento')
             ->assertJsonPath('data.proveedor.es_generico', true)
-            ->assertJsonPath('data.proveedor.nombre', 'Gastos sin comprobante');
+            ->assertJsonPath('data.proveedor.nombre', 'Gastos sin comprobante')
+            ->assertJsonPath('message', '✓ Gasto cargado. Ya se restó en la rendición de Piso industrial nave 3.');
     }
 
     public function test_cada_renglon_sin_documento_tiene_su_fecha(): void

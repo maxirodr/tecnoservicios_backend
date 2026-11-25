@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Gastos\Http\Controllers;
 
+use App\Modules\Gastos\Application\Acceso\AccesoGasto;
 use App\Modules\Gastos\Application\Acceso\BuscarGasto;
 use App\Modules\Gastos\Application\Carga\CargarGastoAction;
 use App\Modules\Gastos\Application\Carga\MensajeDeCarga;
@@ -26,6 +27,7 @@ final class GastoController
     use UsuarioAutenticado;
 
     public function __construct(
+        private readonly AccesoGasto $acceso,
         private readonly BuscarGasto $buscar,
         private readonly LecturaDeGasto $lectura,
         private readonly Rubros $rubros,
@@ -57,7 +59,14 @@ final class GastoController
     public function update(CorregirGastoRequest $request, int $gasto, CorregirGastoAction $corregir): JsonResponse
     {
         $user = $this->usuario($request);
-        $corregir->handle($user, $gasto, $request->cambios(), $request->versionEsperada());
+        $corregido = $corregir->handle($user, $gasto, $request->cambios(), $request->versionEsperada());
+
+        if (! $this->acceso->veGasto($user, $corregido)) {
+            // El remito asociado desde W-48 sin `gastos` ≥ ver: se devuelve como en W-46 (el retiro es de su obra).
+            $leido = $this->lectura->de($user, $this->buscar->cargado($gasto, LecturaDeGasto::DETALLE), completo: true);
+
+            return $this->ok(GastoDetalleResource::detalle($leido, $this->rubros), 'Guardamos los cambios.');
+        }
 
         return $this->ok($this->detalle($user, $gasto), 'Guardamos los cambios.');
     }

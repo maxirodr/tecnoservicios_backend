@@ -35,7 +35,8 @@ final readonly class GastadoDeObrasEloquent implements GastadoDeObras
             ->selectRaw('gasto_renglones.obra_id AS obra_id, gasto_renglones.rubro_id AS rubro_id, SUM(gasto_renglones.total) AS total')
             ->get();
 
-        $totales = [];
+        // Obra sin renglones: [] (rendicion.md §12.4.1).
+        $totales = array_fill_keys($obraIds, []);
 
         foreach ($filas as $fila) {
             $clave = $this->rubros->porId((int) $fila->rubro_id)?->clave;

@@ -46,7 +46,7 @@ final readonly class AgregarMaterialAction
                     'obra_id' => $obra->id,
                     'presupuesto_id' => $presupuestoId,
                     'nombre' => $nombre,
-                    'nombre_clave' => TextoComparable::de($nombre),
+                    'nombre_clave' => TextoComparable::claveDeMaterial($nombre),
                     'unidad' => (string) $datos->unidad,
                     'cantidad_presupuestada' => $datos->cantidadPresupuestada,
                     'precio_presupuestado' => $datos->precioPresupuestado,

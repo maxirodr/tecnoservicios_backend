@@ -32,15 +32,17 @@ final readonly class QuitarMaterialAction
      */
     public function handle(Material $material): void
     {
-        $usos = $this->gastado->contarRenglonesPorMaterial([$material->id])[$material->id] ?? 0;
-
-        if ($usos > 0) {
-            $cuantos = $usos === 1 ? '1 retiro o pedido' : "{$usos} retiros o pedidos";
-
-            throw ValidationException::withMessages(['material' => ["{$material->nombre} ya tiene {$cuantos}: no se puede quitar. Corregí la cantidad presupuestada."]]);
-        }
-
         $this->db->transaction(function () use ($material): void {
+            // Con la fila bloqueada, un retiro que la referencia espera (o ya está y se cuenta): 422, no el 500 de la FK.
+            Material::query()->whereKey($material->id)->lockForUpdate()->first();
+            $usos = $this->gastado->contarRenglonesPorMaterial([$material->id])[$material->id] ?? 0;
+
+            if ($usos > 0) {
+                $cuantos = $usos === 1 ? '1 retiro o pedido' : "{$usos} retiros o pedidos";
+
+                throw ValidationException::withMessages(['material' => ["{$material->nombre} ya tiene {$cuantos}: no se puede quitar. Corregí la cantidad presupuestada."]]);
+            }
+
             $this->actividad->registrar($material, self::ACCION, HistorialDeMaterial::baja($material));
             $material->delete();
             $this->eventos->dispatch(new MaterialCambiado($material->id, $material->obra_id, MaterialCambiado::QUITADO));

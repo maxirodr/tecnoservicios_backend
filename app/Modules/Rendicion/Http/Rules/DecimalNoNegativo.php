@@ -26,12 +26,12 @@ final readonly class DecimalNoNegativo implements ValidationRule
 
     public static function cantidad(): self
     {
-        return new self('la cantidad', '12.5', 3, 11, 'negativa');
+        return new self('la cantidad', '12,5', 3, 11, 'negativa');
     }
 
     public static function precio(): self
     {
-        return new self('el precio', '9800.50', 2, 13, 'negativo');
+        return new self('el precio', '12,5', 2, 13, 'negativo');
     }
 
     public function validate(string $attribute, mixed $value, Closure $fail): void

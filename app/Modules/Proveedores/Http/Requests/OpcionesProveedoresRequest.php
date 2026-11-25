@@ -11,9 +11,10 @@ use App\Modules\Identidad\Domain\Models\User;
 use App\Shared\Http\RecortaBusqueda;
 
 /**
- * `GET /api/proveedores/opciones?buscar=` (F-42): el combobox de la factura. Lo usa quien ve la base
- * (`proveedores` ≥ ver) o quien carga facturas (`gastos` = editar), proveedores.md §7. Son dos
- * celdas posibles, por eso no alcanza el middleware `permiso` de una sola.
+ * `GET /api/proveedores/opciones?buscar=` (F-42): el combobox de la factura y del retiro. Lo usa quien ve
+ * la base (`proveedores` ≥ ver), quien carga facturas (`gastos` = editar), proveedores.md §7, o quien carga
+ * retiros con remito desde la rendición (`rendicion` o `control_cantidad` = editar, resuelta DU-R05). Son
+ * varias celdas posibles, por eso no alcanza el middleware `permiso` de una sola.
  */
 final class OpcionesProveedoresRequest extends ProveedoresRequest
 {
@@ -29,6 +30,8 @@ final class OpcionesProveedoresRequest extends ProveedoresRequest
         return $user instanceof User && (
             $permisos->puede($user, ClaveFuncion::Proveedores->value, Nivel::Ver)
             || $permisos->puede($user, ClaveFuncion::Gastos->value, Nivel::Editar)
+            || $permisos->puede($user, ClaveFuncion::Rendicion->value, Nivel::Editar)
+            || $permisos->puede($user, ClaveFuncion::ControlCantidad->value, Nivel::Editar)
         );
     }
 

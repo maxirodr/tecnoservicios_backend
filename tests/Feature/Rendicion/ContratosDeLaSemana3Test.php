@@ -49,7 +49,7 @@ final class ContratosDeLaSemana3Test extends TestCase
     public function test_hasta_que_gastos_cargue_la_suya_no_hay_gastos_y_una_obra_sin_lista_no_tiene_materiales(): void
     {
         $gastado = $this->app->make(GastadoDeObras::class);
-        $this->assertSame([], $gastado->totalesPorRubro([1, 2]));
+        $this->assertSame([1 => [], 2 => []], $gastado->totalesPorRubro([1, 2]), 'Obra sin renglones: [] (§12.4.1).');
         $this->assertSame([], $gastado->renglonesDeObra(1, new FiltroRenglones));
         $this->assertSame([], $gastado->contarRenglonesPorMaterial([1]));
 

@@ -26,7 +26,7 @@
 | `Contracts\MaterialesDeObra` (`MaterialesDeObraEloquent`) | Opciones, pertenencia y alta de lo "fuera de presupuesto" para Gastos. |
 | Puertos de Obras `AvanceGastoDeObra` (`AvanceGastoDeObraEloquent`) y `MaterialesDePresupuesto` | "% gastado" de W-05 / W-07 y RN-OBR-24. Registrados con `bind`. |
 | Usa `Gastos\Contracts\GastadoDeObras` y `Obras\Contracts\ObrasConsulta` | Lo gastado (única fuente, ADR-007) y lo presupuestado. |
-| Cache `rendicion:obra:{id}` (`Application\Rendicion\GastadoEnCache`) | Solo lo gastado por rubro; lo invalidan `GastoImputado`, `GastoCorregido`, `GastoAnulado` y `PresupuestoMontosCambiados` (`InvalidarRendicion`). |
+| Cache `rendicion:obra:{id}:g{n}` (`Application\Rendicion\GastadoEnCache`) | Solo lo gastado por rubro, con la generación de la obra (invalidar la sube: una lectura vieja no pisa la invalidación); lo invalidan `GastoImputado`, `GastoCorregido`, `GastoAnulado` y `PresupuestoMontosCambiados` (`InvalidarRendicion`). |
 | Evento `MaterialCambiado` y `Relation::morphMap`: `material` | Cambios de la lista en `actividades` (F-14). |
 
 ## Capas

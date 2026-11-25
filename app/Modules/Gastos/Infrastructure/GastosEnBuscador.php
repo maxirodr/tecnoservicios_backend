@@ -59,7 +59,7 @@ final readonly class GastosEnBuscador implements FuenteBusqueda
             return [
                 'id' => $gasto->id,
                 'documento' => $leido->documento,
-                'proveedor' => ['id' => $gasto->proveedor->id, 'nombre' => $gasto->proveedor->nombre],
+                'proveedor' => ['id' => $gasto->proveedor->id, 'nombre' => $gasto->proveedor->nombre, 'es_generico' => $gasto->proveedor->es_generico],
                 'fecha' => $gasto->fecha->toDateString(),
                 'total' => $leido->total,
                 'anulado' => $gasto->anulado(),

@@ -30,6 +30,7 @@ final readonly class CargarGastoAction
         private AlcanceDeCarga $alcance,
         private ValidarGasto $validar,
         private CargaRepetida $repetida,
+        private FacturaRepetida $facturas,
         private GuardarRenglones $renglones,
         private AdjuntosService $adjuntos,
         private RegistroActividad $actividad,
@@ -45,7 +46,7 @@ final readonly class CargarGastoAction
         $aGuardar = $this->validar->handle($datos);
 
         return $this->db->transaction(function () use ($actor, $datos, $aGuardar): Gasto {
-            $this->repetida->verificar($aGuardar, $datos);
+            $this->repetida->verificar($actor, $aGuardar, $datos);
             $gasto = $this->crearCabecera($actor, $aGuardar);
             $this->renglones->crear($gasto, $aGuardar->renglones, $actor->id);
 
@@ -80,9 +81,9 @@ final readonly class CargarGastoAction
                 'cargado_por' => $actor->id,
             ]);
         } catch (UniqueConstraintViolationException $e) {
-            $existente = $gasto->numero === null ? null : $this->repetida->facturaExistente($gasto->proveedorId, $gasto->numero);
+            $this->facturas->exigirQueNoExista($actor, $gasto->numero, $gasto->proveedorId);
 
-            throw $existente === null ? $e : CargaRepetida::facturaCargada($existente);
+            throw $e;
         }
     }
 }

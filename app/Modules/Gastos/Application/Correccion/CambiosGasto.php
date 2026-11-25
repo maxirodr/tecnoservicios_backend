@@ -29,4 +29,10 @@ final readonly class CambiosGasto
     {
         return array_key_exists($campo, $this->cabecera);
     }
+
+    /** Solo la lista de adjuntos (asociar o quitar el remito desde W-48, gastos.md §4.4). */
+    public function soloAdjuntos(): bool
+    {
+        return $this->adjuntos !== null && $this->cabecera === [] && $this->renglones === null;
+    }
 }

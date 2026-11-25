@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules\Gastos\Application\Carga;
 
-use App\Modules\Gastos\Application\FechaEmpresa;
 use App\Modules\Gastos\Application\Rubros;
 use App\Modules\Gastos\Domain\Enums\Origen;
 use App\Modules\Gastos\Domain\EtiquetaDocumento;
 use App\Modules\Gastos\Domain\Models\Gasto;
 use App\Modules\Gastos\Domain\TotalDeRenglon;
+use App\Modules\Identidad\Domain\Models\User;
 use App\Modules\Obras\Contracts\ObrasConsulta;
 use App\Modules\Obras\Domain\Models\Obra;
 use App\Shared\Domain\Importe;
@@ -27,58 +27,21 @@ final readonly class CargaRepetida
     public function __construct(
         private ObrasConsulta $obras,
         private Rubros $rubros,
+        private FacturaRepetida $facturas,
     ) {}
 
     /**
      * @throws ValidationException|HttpResponseException 422
      */
-    public function verificar(GastoAGuardar $gasto, DatosGasto $datos, ?int $excluir = null): void
+    public function verificar(User $actor, GastoAGuardar $gasto, DatosGasto $datos, ?int $excluir = null): void
     {
         match ($gasto->origen) {
-            Origen::Factura => $this->factura($gasto, $excluir),
+            Origen::Factura => $this->facturas->exigirQueNoExista($actor, $gasto->numero, $gasto->proveedorId, $excluir),
             Origen::RetiroRemito => $datos->confirmarRemitoRepetido || $this->remito($gasto, $excluir),
             Origen::Amortizacion => $this->amortizacion($gasto, $excluir),
             Origen::MontoPeriodo => $datos->confirmarSuperposicion || $this->superposicion($gasto, $excluir),
             default => null,
         };
-    }
-
-    public function facturaExistente(int $proveedorId, string $numero, ?int $excluir = null): ?Gasto
-    {
-        return Gasto::query()->with(['cargadoPor', 'proveedor'])
-            ->where('proveedor_id', $proveedorId)
-            ->where('numero_vigente', $numero)
-            ->when($excluir !== null, static fn (Builder $q) => $q->whereKeyNot($excluir))
-            ->first();
-    }
-
-    /** "Esa factura ya está cargada: 0003-00012345 de Corralón Centro (Diego, 17-oct)." (quién y cuándo la cargó). */
-    public static function mensajeDeFacturaCargada(Gasto $existente): string
-    {
-        $cuando = EtiquetaDocumento::diaYMes(FechaEmpresa::diaDe($existente->created_at));
-
-        return "Esa factura ya está cargada: {$existente->numero} de {$existente->proveedor->nombre} ({$existente->cargadoPor->nombre}, {$cuando}).";
-    }
-
-    public static function facturaCargada(Gasto $existente): HttpResponseException
-    {
-        $quien = $existente->cargadoPor->nombre;
-
-        return Errores::yaCargado('numero', self::mensajeDeFacturaCargada($existente), [
-            'id' => $existente->id,
-            'numero' => $existente->numero,
-            'fecha' => $existente->fecha->toDateString(),
-            'cargado_por' => ['id' => $existente->cargado_por, 'nombre' => $quien],
-        ]);
-    }
-
-    private function factura(GastoAGuardar $gasto, ?int $excluir): void
-    {
-        $existente = $gasto->numero === null ? null : $this->facturaExistente($gasto->proveedorId, $gasto->numero, $excluir);
-
-        if ($existente !== null) {
-            throw self::facturaCargada($existente);
-        }
     }
 
     private function remito(GastoAGuardar $gasto, ?int $excluir): bool

@@ -18,6 +18,9 @@ final readonly class MaterialDelRenglon
 {
     public const ELEGI_EL_MATERIAL = "Elegí el material o 'No está en la lista'.";
 
+    /** Un renglón sin obra no lleva material: los materiales son de una obra (gastos.md §16, "Carga, material"). */
+    public const ELEGI_LA_OBRA = 'Elegí primero la obra.';
+
     public function __construct(private MaterialesDeObra $materiales) {}
 
     public static function deOtraObra(string $nombre): string
@@ -45,7 +48,7 @@ final readonly class MaterialDelRenglon
 
         if ($renglon->materialNuevo !== null) {
             if ($renglon->obraId === null) {
-                $errores->renglon($renglon->posicion, 'material_id', self::deOtraObra($renglon->materialNuevo->nombre));
+                $errores->renglon($renglon->posicion, 'material_id', self::ELEGI_LA_OBRA);
             }
 
             return [null, $renglon->materialNuevo];
@@ -61,7 +64,13 @@ final readonly class MaterialDelRenglon
     /** Al cargar y al corregir la obra de un renglón que tiene material (RN-GAS-14). */
     public function verificarDeLaObra(int $materialId, DatosRenglon $renglon, Errores $errores): void
     {
-        if ($renglon->obraId !== null && $this->materiales->perteneceAObra($materialId, $renglon->obraId)) {
+        if ($renglon->obraId === null) {
+            $errores->renglon($renglon->posicion, 'material_id', self::ELEGI_LA_OBRA);
+
+            return;
+        }
+
+        if ($this->materiales->perteneceAObra($materialId, $renglon->obraId)) {
             return;
         }
 

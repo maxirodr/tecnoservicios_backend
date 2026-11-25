@@ -13,11 +13,22 @@ use Illuminate\Support\Str;
  */
 final class TextoComparable
 {
+    public const LARGO_CLAVE_DE_MATERIAL = 150;
+
     public static function de(string $texto): string
     {
         $partes = (array) preg_split('/ñ/iu', $texto);
         $sinTildes = implode('ñ', array_map(static fn ($parte): string => Str::ascii((string) $parte), $partes));
 
         return Str::squish(mb_strtolower($sinTildes));
+    }
+
+    /**
+     * `materiales.nombre_clave` (150, como el nombre): la forma comparable puede alargarse ("ß" → "ss"), así que
+     * se corta al largo de la columna. Dos nombres que solo difieren después de eso cuentan como el mismo.
+     */
+    public static function claveDeMaterial(string $nombre): string
+    {
+        return mb_substr(self::de($nombre), 0, self::LARGO_CLAVE_DE_MATERIAL);
     }
 }

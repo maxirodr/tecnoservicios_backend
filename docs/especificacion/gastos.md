@@ -229,7 +229,7 @@ estas y `rendicion.md` las cita, no las repite.
 ### 5.6 Gastos cargados (F-45; W-33)
 
 - **RN-GAS-29** Columnas **Fecha · Documento · Proveedor · Obras · Rubros · Total · Cargó**. **Documento** según la carga, con **las mismas etiquetas que la rendición** (`rendicion.md` RN-REN-29, resuelta DU-R07): "Factura 0003-00012345" · "Sin documento" (gastos de obra rendidos y combustible) · "Consumo de stock" · "Amortización" · "Retiro · remito 0001-00000456" · "Devolución" · "Período 1 al 15-oct" (horas y fijos; el rubro dice cuál) · "Carga inicial". **Proveedor**: el nombre; "—" si es el genérico. **Obras**: las obras de sus renglones, cortas ("Piso nave 3 · Losa tanque B · sin obra"). **Rubros**: los de sus renglones, con "· combustible" si es combustible ("LOGISTICA · combustible"). **Cargó**: quien lo cargó. Tocando una fila se abre el detalle (W-34). *(F-45, W-33)*
-- **RN-GAS-30** **Filtros componibles** (se suman entre sí): **Obra** (todas · "(sin obra)" · cada obra), **Proveedor** (todos · cada uno, el genérico como "Gastos sin comprobante (genérico)"), **Rubro** (todos · cada uno de los 13), **Fecha: desde → hasta** (inclusive, sobre la **fecha del comprobante**; por defecto, del 1 del mes en curso a hoy, como W-33 "1-oct → 19-oct") y **Tipo** (Factura y Sin documento · Factura · Sin documento). Cada filtro es una clase chica en `Gastos/Infrastructure/Consultas/` (`PorObra`, `SinObra`, `PorProveedor`, `PorRubro`, `FechaEntre`, `PorTipoDocumento`, `VisiblesPara`) sobre `GastosQuery`; el alcance de quien mira se aplica siempre antes (RN-GAS-48). *(F-45 "filtros por obra, proveedor, rubro, fecha y tipo de documento", W-33, arquitectura §3)*
+- **RN-GAS-30** **Filtros componibles** (se suman entre sí): **Obra** (todas · "(sin obra)" · cada obra), **Proveedor** (todos · cada uno, el genérico como "Gastos sin comprobante (genérico)"), **Rubro** (todos · cada uno de los 13), **Fecha: desde → hasta** (inclusive, sobre la **fecha del comprobante**; por defecto, del 1 del mes en curso a hoy, como W-33 "1-oct → 19-oct") y **Tipo** (Factura y Sin documento · Factura · Sin documento). Cada filtro es una clase chica en `Gastos/Infrastructure/Consultas/` (`PorObra`, `SinObra`, `PorProveedor`, `PorRubro`, `FechaEntre`, `PorTipoDocumento`, `VisiblesPara`) sobre `GastosQuery`; el alcance de quien mira se aplica siempre antes (RN-GAS-48). Obra y Proveedor son selectores **con búsqueda** que leen `GET /api/gastos/filtros/obras` y `GET /api/gastos/filtros/proveedores` (§12.1): responden a quien tiene `gastos` ≥ ver, con su alcance, y no cortan en 20 (resuelta DU-G12; las opciones de carga siguen pidiendo poder cargar). *(F-45 "filtros por obra, proveedor, rubro, fecha y tipo de documento", W-33, arquitectura §3)*
 - **RN-GAS-31** Un gasto aparece si **al menos uno de sus renglones** cumple los filtros de obra y rubro. Con filtro de obra o de rubro, la columna **Total** muestra **lo de los renglones que cumplen**, y debajo, en chico, el total del comprobante ("549.000 · de 905.600"), así "Total de lo filtrado" da lo mismo que su tabla dinámica filtrada. *(W-33 "El total de lo filtrado, como hoy lo sacan con tablas dinámicas"; resuelta DU-G06)*
 - **RN-GAS-32** Pie: "**Total de lo filtrado · 6 comprobantes · 5.447.900**", sobre **todo** lo filtrado (no solo la página). Orden: fecha del comprobante, la más nueva primero; a igual fecha, el cargado más tarde primero. Paginado de a 50. *(W-33)*
 - **RN-GAS-33** **Agrupar por: nada ▾ · proveedor · obra · rubro**, como sus tablas dinámicas: con un grupo elegido, la tabla se arma por grupos con su subtotal y cantidad de comprobantes, y un comprobante repartido aparece en cada grupo con **la parte que le toca** (la factura de Corralón Centro, en "obra": Piso nave 3 549.000, Losa tanque B 311.600, (sin obra) 45.000). Por rubro, **EPP es su propio grupo** (sumarlo a INSUMOS es del resumen de la rendición). Los grupos van del mayor subtotal al menor. *(W-33 "Agrupar por: nada ▾ (proveedor, obra o rubro, como sus tablas dinámicas)")*
@@ -291,6 +291,13 @@ No hay "desanular" ni borrar (RN-GAS-41). Cada acción registra su actividad en 
 | W-14 "Gastado por obra" | "Todavía no hay gastos cargados de este proveedor." | filas grises | "No pudimos traer lo gastado. Probá de nuevo." | sin `gastos` ≥ ver: la sección no aparece (RN-PRV-16) |
 | Grupo Gastos del buscador | "Gastos (0) · Sin resultados." | — | el grupo no aparece y los demás sí | sin `gastos` ≥ ver: el grupo no viaja |
 
+**Cómo se leen dos cosas de esta especificación (QC S3, 25-nov-2026):**
+- **Fechas (resuelta DU-G13):** dd/mm/aaaa en toda la app (PU-209). Donde este documento escribe "17-oct" o
+  "02-oct", se lee "17/10/2026" o "02/10/2026". Los rangos de período siguen el formato de `fechas.ts`.
+- **Botón mientras guarda (resuelta DU-G14):** como en el sistema de diseño: el botón conserva su etiqueta, muestra el
+  indicador de carga, no se puede volver a tocar y le anuncia "Guardando…" al lector de pantalla (`aria-busy`). Donde
+  dice "el botón dice 'Guardando…'", se cumple así.
+
 ## 8. Permisos
 
 ### 8.1 Fila de la matriz y alcance
@@ -321,11 +328,14 @@ personas (Gerencia y Jefatura de Administración, Compras).
 | Acción | Función | Nivel | Alcance | Errores |
 |---|---|---|---|---|
 | Listar (W-33), filtros, agrupar | `gastos` | ver | sí | 403 · 422 |
+| Opciones de los filtros Obra y Proveedor de W-33, con búsqueda (resuelta DU-G12) | `gastos` | ver | sí: solo sus obras y los proveedores de sus renglones | 403 |
 | Ver detalle e historial (W-34), bajar adjuntos | `gastos` (remito: o `control_cantidad`) | ver | sí | 404 fuera de alcance |
 | Cargar factura o sin documento (W-10, W-35) | `gastos` | editar | sí (RN-GAS-49) | 403 · 404 (obra) · 422 |
 | Cargar amortización, devolución o período (W-46) | `rendicion` | editar | sí | 403 · 404 (obra) · 422 |
 | Cargar retiro con remito (W-46) | `rendicion` **o** `control_cantidad` | editar | sí | 403 · 404 (obra) · 422 |
 | Corregir | `gastos` | editar | sí | 403 · 404 · 409 · 422 |
+| Asociar o quitar el remito de un retiro (`PATCH` solo con `adjuntos` y `updated_at`, §4.4) | `gastos` **o** `control_cantidad` | editar | sí | 403 · 404 · 409 · 422 |
+| Opciones de proveedores para cargar (`GET /api/proveedores/opciones`) | `proveedores` ≥ ver, o quien puede cargar (`gastos`, `rendicion` o `control_cantidad` en editar, DU-R05) | — | — | 403 |
 | Anular | `gastos` | editar | sí | 403 · 404 · 409 · 422 |
 | Opciones de obras y rubros; aviso de factura repetida | quien puede cargar (cualquiera de las tres celdas de arriba) | editar | sí | 403 |
 | Opciones de materiales (`GET /api/obras/{obra}/materiales/opciones`, de Rendición) | `rendicion.md` §7.2 | — | sí | 403 · 404 |
@@ -418,9 +428,11 @@ con zona `America/Argentina/Buenos_Aires`. Importes y cantidades como **string d
 | Método y ruta | Payload | Respuesta `data` | Errores |
 |---|---|---|---|
 | `GET /api/gastos?obra_id=\|sin_obra&proveedor_id=&rubro=&desde=&hasta=&tipo=factura\|sin_documento&agrupar=proveedor\|obra\|rubro&page=` | — | `[GastoFila]` paginado de a 50; `meta: {total_filtrado, comprobantes, anulados, desde, hasta}`; con `agrupar`, `grupos: [{clave, nombre, subtotal, comprobantes, filas: [GastoFila]}]` | 403 · 422 |
+| `GET /api/gastos/filtros/obras?buscar=` | — | `[{id, numero, nombre_trabajo}]` (filtro Obra de W-33: máx. 20 coincidencias por búsqueda, por nombre del trabajo o N.º; todas las obras o solo las suyas con alcance propias; resuelta DU-G12) | 403 |
+| `GET /api/gastos/filtros/proveedores?buscar=` | — | `[{id, nombre, cuit, es_generico}]` (filtro Proveedor de W-33: los proveedores de los gastos que ve, con alcance propias solo los de sus renglones; máx. 20 coincidencias por búsqueda, por nombre o CUIT; resuelta DU-G12) | 403 |
 | `GET /api/gastos/opciones` | — | `{rubros: [{clave, nombre, se_imputa: true\|false, carga_por_periodo}], origenes_sin_documento: ["sin_comprobante","combustible","consumo_stock"]}` | 403 |
 | `GET /api/gastos/obras-opciones?buscar=` | — | `[{id, numero, nombre_trabajo, estado, tiene_materiales}]` (máx. 20, todas las obras o solo las suyas con alcance propias; usa `ObrasConsulta`) | 403 |
-| `GET /api/gastos/factura-existente?proveedor_id=&numero=&excluir_id=` | — | `{existe: true, gasto: {id, numero, fecha, cargado_por}}` o `{existe: false}` (RN-GAS-08) | 403 · 422 |
+| `GET /api/gastos/factura-existente?proveedor_id=&numero=&excluir_id=` | — | `{existe: true, gasto: {id, numero, fecha, cargado_por}, mensaje}` o `{existe: false}` (RN-GAS-08). Con alcance (§8.2): si la factura es de una obra que no ve, `{existe: true, mensaje}` sin `gasto` (sin id, fecha ni quién) | 403 · 422 |
 | `POST /api/gastos` | `GastoAlta` (§12.2) | `GastoDetalle` (201) + `obras_afectadas: [{id, nombre_trabajo}]` | 403 · 422 (obra o proveedor inexistente, en su campo, como §13) |
 | `GET /api/gastos/{id}` | — | `GastoDetalle` | 404 |
 | `PATCH /api/gastos/{id}` | campos de cabecera opcionales + `renglones` = **la lista completa** (los que traen `id` se conservan o cambian; sin `id`, nuevos; los que no vienen, se quitan) + `adjuntos: [ids]` (lista completa) + `updated_at` | `GastoDetalle` | 403 · 404 · 409 · 422 |
@@ -504,8 +516,8 @@ Proveedores (`GET /api/proveedores/opciones`, `POST /api/proveedores`) y persona
 ### 12.3 Buscador
 
 `GastosEnBuscador` (RN-GAS-44) devuelve en `GET /api/buscar?q=` el grupo
-`{tipo: "gastos", cantidad, resultados: [{id, documento: "Factura 0003-00012345", proveedor: {id, nombre}|null, fecha, total, anulado}]}`
-(con alcance propias, `total` = sus renglones).
+`{tipo: "gastos", cantidad, resultados: [{id, documento: "Factura 0003-00012345", proveedor: {id, nombre, es_generico}|null, fecha, total, anulado}]}`
+(con alcance propias, `total` = sus renglones). El genérico (`es_generico: true`) se muestra "—" (HU-085).
 
 ### 12.4 Contratos con otros módulos
 
@@ -620,3 +632,58 @@ aprobada y `rendicion.md` §12.4.1):
 | Redondeo | "mitad hacia arriba" | "mitad para arriba en valor absoluto" (las dos dicen lo mismo con las mismas palabras) |
 | Material de otra obra | "Ese material no es de la lista de …" | "El material Cemento x 50 kg es de otra obra: quitá el material o elegí uno de esta obra." |
 
+
+## 16. Textos de la implementación (resuelta DU-G15, 25-nov-2026)
+
+Textos que la implementación usa en situaciones donde esta especificación no tenía uno. Quedan como están y forman
+parte de la especificación (informe `docs/qc/semana-3-tanda-1.md` §4, filas "queda"). Donde la especificación sí tenía
+un texto, la implementación usa el de la especificación.
+
+**Mensajes de la API (`message` y errores por campo):**
+
+| Situación | Texto |
+|---|---|
+| Corrección guardada (PATCH) | "Guardamos los cambios." |
+| Gasto anulado | "Anulamos la factura." / "Anulamos …" (con la etiqueta del documento) |
+| Carga guardada (RN-GAS-16, RN-GAS-26), siempre con "✓ " adelante | "✓ Factura cargada. …" · "✓ Gasto cargado. Ya se restó en la rendición de …" / "✓ Gasto cargado. No va a ninguna obra (todo sin obra)." · "✓ Retiro cargado. …" · "✓ Amortización cargada." · "✓ Devolución cargada. …" · "✓ Período cargado. …" |
+| Factura repetida de una obra que quien carga no ve (RN-GAS-08, alcance; sin id, fecha ni quién) | "Esa factura ya está cargada: 0003-00012345 de Corralón Centro." |
+| Carga desde W-46 con un renglón de otra obra | "Todos los renglones van a la obra de la rendición." |
+| Carga de un solo renglón (amortización, período) con más de uno | "Esta carga lleva un solo renglón." |
+| Corrección con un renglón `id` que no es del gasto | "Ese renglón no es de este comprobante." |
+| Falta `origen` | "Elegí qué se carga." |
+| Valor fuera de la lista | "El valor no es válido." |
+| Más de un adjunto donde va uno | "Son demasiados (máximo 1)." |
+| Validaciones genéricas | "Completá este campo." · "Tiene que ser texto." · "Es demasiado largo…" · "Tiene que ser un número…" · "Está repetido." |
+| Fecha mal escrita | "Escribí la fecha como dd/mm/aaaa, por ejemplo 31/12/2099." |
+| Cantidad con más de 3 decimales | "Renglón N: hasta 3 decimales en la cantidad." |
+| Cantidad fuera de rango | "Renglón N: la cantidad es demasiado grande." |
+| "No está en la lista" sin nombre o sin unidad | "Renglón N: escribí el material." / "Renglón N: poné la unidad." |
+| Historial de cargas que no son factura | "… cargó el gasto sin documento / el retiro / el período …", "… cambió quién rindió", "… cambió el período", "El sistema …" |
+| Grupo de W-33 sin rubro | "(sin rubro)" |
+
+**Pantallas:**
+
+| Dónde | Texto |
+|---|---|
+| Carga, cantidad | "Hasta 3 decimales en la cantidad." · "Escribí la cantidad con números, por ejemplo 2,5." |
+| Carga, precio | "Escribí el precio con números, por ejemplo 9.800,50." |
+| Carga, "No está en la lista" | "Escribí el material." · "Escribí la unidad." · "Unidad" · "Por ejemplo: par, bolsa, m²." |
+| Carga, material | "Elegí primero la obra." · "No pudimos traer los materiales…" · "Sin material" · " · fuera de presupuesto" |
+| Factura repetida (RN-GAS-08) | "Ver la factura cargada" (link a W-34) |
+| Aviso de superposición o repetido, sin cargar | "No, revisar" |
+| Volver | "Volver a Gastos cargados" · "Volver al gasto" · "‹ Volver a la obra" |
+| W-34, corregir | título "Editar · {documento}" · "Tu sector puede ver los gastos pero no corregirlos…" |
+| W-34, historial vacío | "Todavía no hay cambios registrados." |
+| W-34, anular | "Anulando…" · título "Anular · {documento}" cuando no es factura · "No va a ninguna obra (todo sin obra). No se puede deshacer." |
+| Carga, obra del renglón | "Buscar obra" · "Por nombre del trabajo o N.º de presupuesto" · "No pudimos traer las obras. Probá de nuevo en un momento." |
+| Carga, proveedor | "Buscar proveedor" · "Por nombre o CUIT." · "No pudimos traer los proveedores. Probá de nuevo en un momento." |
+| Carga, rubro | "Sin rubro" · "Elegí…" |
+| Carga, detalle del renglón | "Detalle (opcional)" · "La cotización o una aclaración." |
+| W-35, rendido por | "Elegí de la lista o escribí el nombre (por ejemplo, supervisor de obra)." |
+| Adjuntos | "Subir archivo, sacar una foto o pegar link" · "Archivo, foto o link." · "Subir archivo o pegar link" · "Factura (opcional)" |
+| W-46, devoluciones | "Va en negativo: se descuenta." · "Si no elegís material: por ejemplo, “Cemento x 50 kg (sobrante)”." |
+| W-46, amortización | "Rubro: AMORTIZACION" |
+| W-46, períodos | "Un monto total por período, sin detalle por persona: quincenas…" · "Por defecto: “…”." |
+| Confirmación de una carga sin documento (RN-GAS-16, en singular como el `message`) | título "Gasto cargado" · "Ver el gasto" · "Cargar otro" (la factura sigue "Factura cargada" · "Ver la factura" · "Cargar otra") |
+| W-33, filtro Obra o Proveedor elegido que no viene en la búsqueda ni en las filas (DU-G12) | "Obra elegida" · "Proveedor elegido" |
+| W-33 mientras busca (solo para el lector de pantalla; se ven filas grises) | "Buscando gastos…" |

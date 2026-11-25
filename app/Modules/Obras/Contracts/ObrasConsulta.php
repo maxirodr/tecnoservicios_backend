@@ -48,9 +48,11 @@ interface ObrasConsulta
      * Selector de obras al cargar un pedido (resuelta DU-P20): **todas** las obras, en cualquier estado
      * (las terminadas también, marcadas por su estado: DU-A15), sin mirar el presupuesto por rubro
      * (HU-019 c2). Busca en el trabajo, el cliente y el N.º; primero En ejecución, después Confirmadas y
-     * al final Terminadas.
+     * al final Terminadas. Con `$soloEstas`, solo las de esa lista, antes de cortar en `$limite` (alcance
+     * "solo sus obras", gastos.md DU-G12).
      *
+     * @param  list<int>|null  $soloEstas
      * @return list<ObraResumen>
      */
-    public function opciones(?string $texto, int $limite): array;
+    public function opciones(?string $texto, int $limite, ?array $soloEstas = null): array;
 }

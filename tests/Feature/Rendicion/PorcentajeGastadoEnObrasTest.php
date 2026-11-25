@@ -85,4 +85,32 @@ final class PorcentajeGastadoEnObrasTest extends RendicionTestCase
 
         $this->actingAs($diego)->getJson('/api/obras?estado=en_ejecucion')->assertOk()->assertJsonPath('data.0.porcentaje_gastado', null);
     }
+
+    public function test_obra_con_presupuesto_en_cero_y_gasto_queda_pasada_sin_porcentaje(): void
+    {
+        $diego = $this->diego();
+        $cero = $this->obraDe($diego);
+        $sinPresupuesto = $this->obraDe($diego);
+        $this->porRubro($this->principal($cero), []);
+        $this->gastado->agregar($cero->id, Renglon::de(1, 1, '2026-10-02', 'factura', 'Cemento', '500.00', 'materiales'));
+        $this->gastado->agregar($sinPresupuesto->id, Renglon::de(2, 2, '2026-10-02', 'factura', 'Cemento', '500.00', 'materiales'));
+
+        // N11: hay presupuesto cargado y N5 > N3 (0); N9 no se calcula (N3 = 0).
+        $filas = array_column((array) $this->actingAs($diego)->getJson('/api/obras?estado=en_ejecucion')->assertOk()->json('data'), null, 'id');
+
+        $this->assertSame([null, true], [$filas[$cero->id]['porcentaje_gastado'], $filas[$cero->id]['pasado_de_presupuesto']]);
+        $this->assertSame([null, null], [$filas[$sinPresupuesto->id]['porcentaje_gastado'], $filas[$sinPresupuesto->id]['pasado_de_presupuesto']]);
+        $this->getJson("/api/obras/{$cero->id}")->assertOk()->assertJsonPath('data.pasado_de_presupuesto', true);
+    }
+
+    public function test_el_listado_calcula_porcentaje_y_pasadas_con_una_sola_lectura(): void
+    {
+        $diego = $this->diego();
+        $obra = $this->obraDe($diego);
+        $this->porRubro($this->principal($obra), ['materiales' => '1000.00']);
+
+        $this->actingAs($diego)->getJson('/api/obras?estado=en_ejecucion')->assertOk();
+
+        $this->assertSame(1, $this->gastado->consultasDeTotales, 'RN-REN-42: una consulta por agregado para toda la página.');
+    }
 }
