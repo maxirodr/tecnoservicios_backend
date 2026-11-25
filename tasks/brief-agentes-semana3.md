@@ -285,3 +285,74 @@ Respetalos exactamente. Si tenés que cambiarlos, reportalo.
   5. **Riesgos para la prueba del cliente** ("comparan con su rendición en Excel").
 - **Severidad:** bloqueante, alta, media o baja, como QA.
 - **Formato:** sin adornos y sin opinar de estilo.
+
+---
+
+## Tanda 3 (2026-11-25) — arreglos del QC y "Pedidos" → "Tareas"
+
+- **Qué hay en `main`:** tanda 2 completa (back `fa965ed`, front `05c707e`).
+  - El caso de referencia da exacto de punta a punta.
+  - Bloqueantes del QC arreglados.
+  - HU-087 encendida.
+- **Reglas:** las mismas de arriba.
+- **Ronda 4 de QA en paralelo** sobre `staging` (`…_qa_s2r4`, 8340/5316): no la toques.
+
+| Agente | Worktrees · rama | Base · puertos | Qué hace |
+|---|---|---|---|
+| **Arreglos QC S3** | `tecnoservicios_backend_gastos` y `tecnoservicios_frontend_gastos` · `fix/w3-qc` (desde `main`) | `tecnoservicios_testing_gastos` · e2e `E2E_PORT=5325` | Ver abajo. |
+| **Tareas** | `tecnoservicios_backend_rendicion` y `tecnoservicios_frontend_rendicion` · `feat/tareas` (desde `main`) | `tecnoservicios_testing_rendicion` · e2e `E2E_PORT=5327` | Ver abajo. |
+
+**Arreglos QC S3:** todo lo abierto de `docs/qc/semana-3-tanda-1.md`, más las decisiones DU-G12…G15 de `docs/dudas.md`.
+
+1. **DU-G12, opciones de los filtros de W-33 para quien ve:**
+   - endpoints de lectura con `gastos` ≥ ver y alcance, con búsqueda por texto;
+   - el front usa un selector con búsqueda;
+   - las opciones de carga no cambian.
+2. **DU-G15, textos:**
+   - los casos marcados "cambia" en el §4 del informe vuelven al texto de la spec;
+   - lo que "queda" se agrega a `gastos.md` y `rendicion.md` en un apartado "Textos de la implementación".
+   - **DU-G13 y DU-G14:** solo se ajusta la spec, el código ya cumple.
+3. **Las medias y bajas que siguen abiertas:**
+   - en especial M-1, M-2 (tests de denegado e IDOR, contexto `remito`), M-3, M-4, M-5, M-7, M-8, M-9, M-10, M-11,
+     M-13 y M-15;
+   - las que el informe marca "a verificar": confirmalas primero, y si no son reales, decilo.
+   - **Ya arregladas en la tanda 2, no las rehagas:** BLQ-1…3, ALT-3, M-6, M-14 y M-17.
+4. **Riesgos para la prueba del cliente (§5 del informe):** sumá a `rendicion.md` §13 las diferencias que salen de la
+   propia spec:
+   - W-33 filtra por la fecha del comprobante y la rendición por la del renglón;
+   - un período con fecha futura;
+   - una sola amortización;
+   - W-37 agrupa por proveedor.
+
+**No toques los textos de Pedidos ni de Avisos:** los cambia el otro agente.
+
+**Tareas (DU-C01 en `docs/dudas.md`):** en todo lo que ve el usuario, "pedido(s)" pasa a "tarea(s)", en femenino.
+
+- **Dónde:**
+  - **Front:** barra arriba, abajo y "Más"; títulos, pestañas, botones, vacíos, errores y ayudas de
+    `src/features/pedidos`, `src/features/avisos`, Inicio y el calendario; "(ver)"; el buscador (grupo "Tareas");
+    la ficha de la obra (pestaña "Tareas (N abiertas)", "+ Nueva tarea en esta obra"); Carga por persona; Equipos,
+    donde corresponda; Mi perfil · Mis avisos.
+  - **Back:** mensajes de `app/Modules/Pedidos` y `app/Modules/Avisos`; textos de la campana, asunto y cuerpo de
+    cada mail; el recordatorio; los textos del recorrido; los encabezados del Excel y el nombre del archivo; el grupo
+    del buscador; el nombre visible de la función `pedidos` en la tabla de permisos y en `/api/me`; los mensajes de
+    identidad que nombran pedidos (HU-058: "N pedidos abiertos").
+- **Qué no cambia:**
+  - el campo "Tarea" del formulario;
+  - las rutas `/pedidos/...` y `/api/pedidos`;
+  - las claves (`pedidos`, `pedido_*`), las tablas, los nombres de clases, los eventos y los permisos;
+  - el funcionamiento.
+- **Cómo:**
+  - Recorré **todos** los textos visibles. Con un `grep -ri "pedid"` en `src/`, `app/`, `resources/views` y `lang/`
+    hacés la lista; revisala a mano.
+  - Concordancia de género y número: "la tarea vencida", "Tarea completada.", "Se le avisó a …", "Te asignaron una
+    tarea".
+  - "Pedidos que pedí" pasa a "Tareas que pedí".
+  - Mirá que no queden frases raras ("la tarea de la tarea"): si una frase queda rara, reescribila con el mismo
+    sentido y listala.
+- **Tests:** se actualizan los que buscan por texto, tanto vitest como e2e mock e integración. Sumá un test que
+  falle si vuelve a aparecer la palabra "pedido" en un texto visible (como `sinCodigosInternos.test.ts`), con una
+  lista corta de excepciones justificadas.
+- **Specs:** actualizá `pedidos.md`, `avisos.md` y las partes de `identidad.md` y `obras.md` que citan textos con
+  "pedido". El backlog y las historias no se tocan.
+- **Mails:** mandá uno de cada tipo al log y pegá en el reporte el asunto y la primera línea de cada uno.
