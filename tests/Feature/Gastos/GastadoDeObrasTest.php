@@ -58,7 +58,7 @@ final class GastadoDeObrasTest extends GastosTestCase
         $totales = $this->gastado->totalesPorRubro([$this->nave->id, $this->losa->id, $vacia->id]);
 
         $this->assertCount(1, array_filter(DB::getQueryLog(), static fn (array $q): bool => str_contains($q['query'], 'gasto_renglones')));
-        $this->assertArrayNotHasKey($vacia->id, $totales);
+        $this->assertSame([], $totales[$vacia->id], 'Obra sin renglones: [] (rendicion.md §12.4.1).');
     }
 
     public function test_epp_se_devuelve_como_se_imputo(): void
