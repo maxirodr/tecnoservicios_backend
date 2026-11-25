@@ -169,3 +169,12 @@ Las tres ramas de la tanda 2 están **pusheadas, sin mergear** (`feat/w2-pedidos
 - [ ] Prueba de usuario de la semana 3: `tasks/prompt-prueba-usuario-semana-3.md`.
 - [ ] Pendientes chicos: remito a un retiro ya cargado (sin pantalla, se decide si la prueba lo pide); precio sugerido de devolución desde facturas.
 
+
+### Para retomar (cierre 2026-11-25)
+- [ ] **Semana 4, tanda 1 — cortada a mitad** (ramas pusheadas, último commit `wip:` sin revisar ni testear):
+  - `feat/w4-importacion` (back, worktree `tecnoservicios_backend_gastos`): había alineado specs (§16) y estaba en el contrato de Gastos (`CargaInicialDeGastos`). Retomar con un agente nuevo desde esa rama: leer el brief `tasks/brief-agentes-semana4.md`, revisar el `wip`, seguir con HU-088…HU-101.
+  - `feat/w4-front` (front, worktree `tecnoservicios_frontend_gastos`): 4 commits + `wip`; estaba en los tests de rendición (W-48 columna "Hasta {corte}"). Retomar igual.
+  - `docs/w4-guias` y `docs/w4-capturas`: **terminadas** (10 guías, 24 capturas, seguimiento, borrador `semana-4.md`). Mergear cuando se integre; faltan capturas de la carga inicial (después de Front S4).
+- [ ] Prueba de usuario de la semana 3 (otra sesión) → leer reportes y arreglar.
+- [ ] Mandar notas de la semana 2 (ya deployado staging con "Tareas").
+- [ ] Textos de pantalla que la guía marcó confusos (no cambiados): "Tomar → En curso", "Propietario", "Links" con archivos, placeholder "dd/mm/yyyy", "— —" en Sin desglose, "pasado" pegado al nombre. Ver si la prueba S3 los marca.
