@@ -139,7 +139,7 @@ Un ingreso exitoso borra la fila.
 
 ### Menú según permisos (F-02, W-17, W-41)
 
-- **RN-IDE-11** La barra es **una sola para todos**, en este orden: Inicio · Pedidos · Obras · Calendario · Gastos · Rendiciones · Proveedores · Usuarios. Cada ítem aparece solo si la celda del sector de la persona lo habilita (tabla §6.4). *(W-17, decisiones Sprint 0 n.º 14)*
+- **RN-IDE-11** La barra es **una sola para todos**, en este orden: Inicio · Tareas · Obras · Calendario · Gastos · Rendiciones · Proveedores · Usuarios. Cada ítem aparece solo si la celda del sector de la persona lo habilita (tabla §6.4). *(W-17, decisiones Sprint 0 n.º 14)*
 - **RN-IDE-12** Si la persona solo tiene **ver** en una función que tiene carga (Gastos, Rendiciones), el ítem se muestra con la marca **"(ver)"** y la pantalla no muestra botones de carga ni edición. *(W-17: "Gastos (ver)", "Rendiciones (ver)")*
 - **RN-IDE-13** "Tareas de mi gente" y "Carga por persona" (dentro de Pedidos) **no son filas de la matriz**: aparecen a quien **tiene gente a cargo** (al menos un usuario activo que dependa de él) **y a Dirección**, que ve a todos (`pedidos.md` RN-PED-35); `tiene_gente` de `GET /api/me` es `true` en los dos casos. *(W-17 "Gerencias y jefaturas ven además…", F-06, F-12, F-61)*
 - **RN-IDE-14** El menú es comodidad, no seguridad: **cada endpoint** vuelve a verificar la celda (403 si no corresponde). Un cambio en la matriz vale desde el **próximo pedido** al servidor; el front vuelve a pedir `GET /api/me` al enfocar la pestaña y al recibir un 403. *(ADR-006)*
@@ -211,7 +211,7 @@ propias las cosas que el documento asigna a **otra gente** que la del módulo qu
 
 | Orden | Clave | Nombre en W-15 | Qué habilita (Ver / Editar) | Admite editar | Admite "solo sus obras" | Por qué es una fila | Entrega |
 |---|---|---|---|---|---|---|---|
-| 1 | `pedidos` | Pedidos | Ver: Todos los pedidos (W-24), Sin obra (W-25), calendario (W-03), pestaña Pedidos de la obra. Editar: crear, comentar, seguir, editar pedidos, con sus archivos o links y el comprobante de cierre (F-24…F-38, F-65; ADR-014). | Sí | Sí (los que pidió, tiene, sigue o de su gente) | Columna de W-15; F-35 "se puede restringir en la tabla de permisos"; F-33 "según la tabla de permisos" | 2 |
+| 1 | `pedidos` | Tareas | Ver: Todas las tareas (W-24), Sin obra (W-25), calendario (W-03), pestaña Tareas de la obra. Editar: crear, comentar, seguir, editar pedidos, con sus archivos o links y el comprobante de cierre (F-24…F-38, F-65; ADR-014). | Sí | Sí (los que pidió, tiene, sigue o de su gente) | Columna de W-15; F-35 "se puede restringir en la tabla de permisos"; F-33 "según la tabla de permisos" | 2 |
 | 2 | `equipos_reparacion` | Equipos en reparación | Ver y editar la lista de equipos (W-49), con su presupuesto e inventario (archivo o link, ADR-014). | Sí | No | F-67 "Quién: según permisos" | 2 |
 | 3 | `obras` | Obras | Ver: listado, ficha, documentos y contactos, historial (F-15, F-17, F-19, F-22). Editar: alta, edición, presupuestos adicionales, documentos (archivo o link), contactos, fechas previstas (F-16, F-18, F-19, F-20, F-23). | Sí | Sí (obras donde es responsable) | Columna de W-15; F-20 "según permisos" | **1** |
 | 4 | `estado_obra` | Estado de obra | Editar: cambiar el estado de cualquier obra (W-22). El responsable de **su** obra puede siempre (RN-IDE-39). | Sí | No | F-21: lo cambian "responsable de obra y administración", distinto de quien edita la obra | **1** |
@@ -224,7 +224,7 @@ propias las cosas que el documento asigna a **otra gente** que la del módulo qu
 | 11 | `usuarios_permisos` | Usuarios y permisos | Ver: usuarios, sectores y tabla. Editar: alta/edición/baja de usuarios, sectores y la tabla (F-58, F-59, F-60). | Sí | No | Columna "Usuarios" de W-15 | **1** |
 | 12 | `plazos_prioridad` | Plazos de la prioridad | Ver: W-50. Editar: cambiar los plazos (F-68). | Sí | No | F-68: "gerencia", distinto de quien administra usuarios | **1** |
 
-No son filas: **Inicio / Mis tareas / Pedidos que pedí / Tareas que sigo / Mi perfil / Avisos**
+No son filas: **Inicio / Mis tareas / Tareas que pedí / Tareas que sigo / Mi perfil / Avisos**
 (todos, F-04, F-05, F-07, F-10, F-64), **Tareas de mi gente / Carga por persona** (jerarquía,
 RN-IDE-13) y **Buscador** (respeta los permisos de cada resultado, W-18).
 
@@ -255,7 +255,7 @@ Leyenda: **E** = Editar · **V** = Ver · **—** = Sin acceso · **·T** = toda
 según la DU indicada (todas resueltas el 12-nov: va la propuesta). Esta tabla es **definitiva**
 para la migración.
 
-| Sector | Pedidos | Equipos en reparación | Obras | Estado de obra | Presupuesto por rubro | Monto de obra y ganancia | Gastos y facturas | Rendición | Control por cantidad | Proveedores | Usuarios y permisos | Plazos de la prioridad |
+| Sector | Tareas | Equipos en reparación | Obras | Estado de obra | Presupuesto por rubro | Monto de obra y ganancia | Gastos y facturas | Rendición | Control por cantidad | Proveedores | Usuarios y permisos | Plazos de la prioridad |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | Dirección | **E·T** | *E·T* (DU-01) | **V·T** | **V** | **V·T** | **V·T** | **V·T** | **V·T** | **V·T** | **V** | **E** | **V** |
 | Calidad | **E·T** | *E·T* (DU-01) | **V·T** | — | *—* (A02) | — | *—* (A02) | *—* (A02) | — | *—* (A02) | **—** | — |
@@ -290,7 +290,7 @@ De dónde sale cada columna:
 | Ítem | Aparece si | "(ver)" si |
 |---|---|---|
 | Inicio | siempre | — |
-| Pedidos | `pedidos` ≥ V (o `equipos_reparacion` ≥ V: entra directo a Equipos en reparación) | — |
+| Tareas | `pedidos` ≥ V (o `equipos_reparacion` ≥ V: entra directo a Equipos en reparación) | — |
 | Obras | `obras` ≥ V | — |
 | Calendario | `pedidos` ≥ V | — |
 | Gastos | `gastos` ≥ V | `gastos` = V |
