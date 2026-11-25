@@ -395,6 +395,35 @@ Archivos y links del pedido (F-27) y comprobante de cierre: en `adjuntos` (conte
 
 **`preferencias_aviso`** — `user_id`, `tipo`, `por_mail` bool. Único `(user_id, tipo)`. Sin fila = valor por defecto (mail solo en `asignado` y `reasignado`).
 
+### Importacion (F-62, semana 4) — migrado
+
+La carga inicial (`especificacion/importacion.md` §11.3). Solo registra las corridas: lo importado vive en las tablas
+de cada módulo, escrito por sus contratos de carga inicial (§11.4). **Sin valores de celdas** (RN-IMP-13).
+
+**`importacion_corridas`** — un ensayo o una carga confirmada.
+| Campo | Tipo | Nota |
+|---|---|---|
+| lote | varchar(10) | `obras` · `tareas` |
+| modo | varchar(12) | `ensayo` · `confirmada` |
+| huella | char(64) | SHA-256 del archivo (RN-IMP-05); índice `(lote, huella, modo)` |
+| aprobo_id | FK users, null | quien aprobó (`--aprobo`); null en el ensayo |
+| estado | varchar(15) | `en_curso` · `terminada` · `con_errores` · `interrumpida` |
+| resumen | json, null | solo conteos |
+| informe | varchar(120), null | nombre del archivo del informe, sin ruta |
+| created_at, terminada_at | timestamp | |
+
+**`importacion_filas`** — qué pasó con cada obra, gastado, retirado, tarea o documento.
+| Campo | Tipo | Nota |
+|---|---|---|
+| corrida_id | FK importacion_corridas, cascade | |
+| hoja | varchar(20) | `Obras` · `Gastado` · `Materiales` · `Tareas` |
+| clave | varchar(150) | N.º de la obra, `gastado:{N.º}`, `retirado:{N.º}` o la Clave de la tarea |
+| resultado | varchar(15) | `importada` · `ya_estaba` · `faltante` · `no_se_importa` |
+| sujeto_type, sujeto_id | varchar(120) / bigint, null | lo creado (alias del morph map) |
+
+Índice `(hoja, clave, resultado)`: la idempotencia de las tareas y documentos (RN-IMP-08) busca la Clave entre las
+filas `importada` de las corridas confirmadas.
+
 ### Transversales (`app/Shared`) — migrado
 
 **`actividades`** — ADR-010. Migración `2026_11_13_100000`. Solo inserción.
@@ -405,6 +434,7 @@ Archivos y links del pedido (F-27) y comprobante de cierre: en `adjuntos` (conte
 | user_id | FK users, null | quién (null = sistema) |
 | accion | varchar(40) | `creado`, `editado`, `estado_cambiado`, `adjunto_agregado`, `adjunto_quitado`… |
 | cambios | json, null | `{campo: {antes, despues}}`; los adjuntos se registran por nombre, sin URL ni ruta |
+| carga_inicial | bool, default false | lo registró la carga inicial (`importacion.md` RN-IMP-39); migración `2026_11_26_100000` |
 | created_at | timestamp, default actual | |
 
 Índice `(sujeto_type, sujeto_id, created_at)`.

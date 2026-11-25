@@ -173,7 +173,12 @@ Los pedidos abiertos que vienen de la minuta (semana 4) entran con `carga_inicia
 **solicitante** vacío si no figura (en la minuta solo el 22 % lo tiene), **fecha de pedido** vacía si no figura,
 **prioridad** la de la minuta (o calculada si están las dos fechas; si no, Normal), y el estado que tenían
 (Bloqueada con el texto de "Notas" como motivo). Fecha de entrega y propietario los completa el sector antes del
-arranque (DU-20). Este módulo solo tiene que **admitirlos** desde la semana 2 (modelo y pantallas).
+arranque (DU-20); **lo que no se completó no entra** y el sector lo carga a mano en W-08 (resuelta DU-I03). "(en el
+sector)" vale en lugar del propietario, salvo en una En curso (`importacion.md` RN-IMP-34). La prioridad queda
+**corregida a mano** solo si están las dos fechas y la de la minuta difiere de la calculada (RN-IMP-35). El detalle
+muestra la marca "Carga inicial" (RN-IMP-40). Los crea `Pedidos\Contracts\CargaInicialDeTareas` (`importacion.md`
+§11.4), que **no** dispara `PedidoAsignado` ni ningún aviso o mail (RN-IMP-37, resuelta DU-I05). Este módulo solo
+tiene que **admitirlos** desde la semana 2 (modelo y pantallas).
 
 ## 5. Reglas de negocio
 
