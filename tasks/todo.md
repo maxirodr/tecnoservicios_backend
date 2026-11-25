@@ -162,10 +162,10 @@ Las tres ramas de la tanda 2 están **pusheadas, sin mergear** (`feat/w2-pedidos
 - [ ] Worktrees de la tanda 1 (`*_gastos`, `*_rendicion`, `tecnoservicios_frontend_fix`): ya mergeadas; reusar en la tanda 2 o borrar.
 
 ### 2026-11-25
-- [x] Semana 2 APROBADA (ronda 4); PU-901…903 arreglados. Notas de entrega listas: .
-- [x] Semana 3 en  y  (back , front ): tanda 2 (caso de referencia de punta a punta, HU-087), tanda 3 (QC, DU-G12…G15) y "Pedidos" → "Tareas" (DU-C01). Back 1179, vitest 769, e2e 119, integración 59/59.
+- [x] Semana 2 APROBADA (ronda 4); PU-901…903 arreglados. Notas de entrega listas: `docs/entregas/semana-2.md`.
+- [x] Semana 3 en `main` y `staging` (back `a313773`, front `a78552c`): tanda 2 (caso de referencia de punta a punta, HU-087), tanda 3 (QC, DU-G12…G15) y "Pedidos" → "Tareas" (DU-C01). Back 1179, vitest 769, e2e 119, integración 59/59.
 - [ ] Deploy de staging (Juani): pull, composer install, migrate --force (4 migraciones), config:cache, queue:restart; front build.
 - [ ] Mandar notas de la semana 2 después del deploy.
-- [ ] Prueba de usuario de la semana 3: .
+- [ ] Prueba de usuario de la semana 3: `tasks/prompt-prueba-usuario-semana-3.md`.
 - [ ] Pendientes chicos: remito a un retiro ya cargado (sin pantalla, se decide si la prueba lo pide); precio sugerido de devolución desde facturas.
 
