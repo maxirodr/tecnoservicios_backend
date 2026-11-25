@@ -84,7 +84,7 @@ final class ReasignarTest extends PedidosTestCase
         Event::assertDispatched(PedidoReasignado::class, fn (PedidoReasignado $e): bool => $e->aSector && $e->participantes->propietarioId === null);
 
         $this->actingAs($carla)->getJson("/api/pedidos/{$pedido->id}/recorrido")
-            ->assertJsonFragment(['que' => 'Carla lo reasignó de Carla a Compras (sector) → No iniciada']);
+            ->assertJsonFragment(['que' => 'Carla la reasignó de Carla a Compras (sector) → No iniciada']);
     }
 
     public function test_no_se_deja_en_un_sector_sin_usuarios_activos(): void
@@ -115,7 +115,7 @@ final class ReasignarTest extends PedidosTestCase
 
         $this->accion($carla, $pedido, 'reasignar', ['propietario_id' => $this->diego()->id])
             ->assertConflict()
-            ->assertJsonPath('message', 'Está completado: si falta algo, reabrilo.');
+            ->assertJsonPath('message', 'Está completada: si falta algo, reabrila.');
     }
 
     public function test_reasignar_pide_pedidos_editar(): void

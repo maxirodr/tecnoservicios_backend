@@ -112,7 +112,7 @@ final class AvisosDeEventosTest extends AvisosTestCase
         $this->assertSame([], $this->avisosDe($carla));
         $this->assertSame([], $this->avisosDe($inactiva));
         $this->assertCount(1, $this->avisosDe($diego));
-        $this->assertSame('Carla dejó en Compras (tu sector) Solicitud de materiales N.º 3: lo toma el primero que pueda', $this->avisosDe($sofia)[0]->dato('texto'));
+        $this->assertSame('Carla dejó en Compras (tu sector) Solicitud de materiales N.º 3: la toma el primero que pueda', $this->avisosDe($sofia)[0]->dato('texto'));
     }
 
     public function test_tomado_va_al_solicitante_y_a_los_seguidores(): void
@@ -125,7 +125,7 @@ final class AvisosDeEventosTest extends AvisosTestCase
 
         event(new PedidoTomado(88, $diego->id, $this->actividad(), $this->participantes($laura, $diego, [$sofia->id, $hernan->id]), $this->foto()));
 
-        $this->assertSame('Diego tomó tu pedido Solicitud de materiales N.º 3 → pasó a En curso', $this->avisosDe($laura)[0]->dato('texto'));
+        $this->assertSame('Diego tomó tu tarea Solicitud de materiales N.º 3 → pasó a En curso', $this->avisosDe($laura)[0]->dato('texto'));
         $this->assertSame('Diego tomó Solicitud de materiales N.º 3 (que seguís) → En curso', $this->avisosDe($sofia)[0]->dato('texto'));
         $this->assertSame('tomado', $this->avisosDe($hernan)[0]->tipo->value, 'El superior solo recibe el completado: acá es seguidor.');
     }
@@ -137,7 +137,7 @@ final class AvisosDeEventosTest extends AvisosTestCase
 
         event(new PedidoBloqueado(88, $carla->id, $this->actividad(), $this->participantes($laura, $carla), $this->foto('Envío de EPP a obra'), 'Falta el talle de botines de 3 personas de la cuadrilla.'));
 
-        $this->assertSame("Carla bloqueó tu pedido Envío de EPP a obra: 'Falta el talle de botines de 3 personas de la cuadrilla.'", $this->avisosDe($laura)[0]->dato('texto'));
+        $this->assertSame("Carla bloqueó tu tarea Envío de EPP a obra: 'Falta el talle de botines de 3 personas de la cuadrilla.'", $this->avisosDe($laura)[0]->dato('texto'));
     }
 
     public function test_comentario_de_un_tercero_avisa_a_las_dos_partes_y_no_al_autor(): void
@@ -161,7 +161,7 @@ final class AvisosDeEventosTest extends AvisosTestCase
 
         event(new PedidoCompletado(88, $carla->id, $this->actividad(), $this->participantes($laura, $carla, [$hernan->id]), $this->foto('Alquiler de obrador'), 'Entregado en obra, adjunto remito', 1));
 
-        $this->assertSame("Carla completó tu pedido Alquiler de obrador: 'Entregado en obra, adjunto remito' · comprobante", $this->avisosDe($laura)[0]->dato('texto'));
+        $this->assertSame("Carla completó tu tarea Alquiler de obrador: 'Entregado en obra, adjunto remito' · comprobante", $this->avisosDe($laura)[0]->dato('texto'));
         $delSuperior = $this->avisosDe($hernan);
         $this->assertCount(1, $delSuperior);
         $this->assertSame('completado_gente', $delSuperior[0]->tipo->value);

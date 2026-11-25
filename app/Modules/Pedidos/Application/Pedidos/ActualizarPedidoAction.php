@@ -53,7 +53,7 @@ final readonly class ActualizarPedidoAction
         return $this->db->transaction(function () use ($actor, $id, $cambios, $version): Pedido {
             $pedido = $this->buscar->bloqueado($actor, $id);
             BuscarPedido::exigir($this->acceso->editar($actor, $pedido));
-            BuscarPedido::exigir(! $cambios->tocaPrioridad() || $this->acceso->corregirPrioridad($actor, $pedido), 'Solo quien lo pidió puede corregir la prioridad.');
+            BuscarPedido::exigir(! $cambios->tocaPrioridad() || $this->acceso->corregirPrioridad($actor, $pedido), 'Solo quien la pidió puede corregir la prioridad.');
             VersionDeFila::bloquearYVerificar($pedido, $version);
 
             if ($cambios->cambiaObra && $cambios->obraId !== null && ! $this->obras->existe($cambios->obraId)) {

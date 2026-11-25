@@ -28,7 +28,7 @@ final readonly class TomarPedidoAction
     public function handle(User $actor, int $id): Pedido
     {
         return $this->transiciones->ejecutar($actor, $id, AccionPedido::Tomar, function (Pedido $pedido, PedidoEstado $destino) use ($actor): Pedido {
-            BuscarPedido::exigir($this->acceso->actuaComoPropietario($actor, $pedido), 'Solo el propietario puede tomarlo.');
+            BuscarPedido::exigir($this->acceso->actuaComoPropietario($actor, $pedido), 'Solo el propietario puede tomarla.');
 
             $desdeSector = $pedido->enElSector();
             $cambios = ['estado' => Transiciones::estado($pedido->estado, $destino)];

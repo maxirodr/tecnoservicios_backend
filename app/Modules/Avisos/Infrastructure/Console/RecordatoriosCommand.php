@@ -13,7 +13,7 @@ final class RecordatoriosCommand extends Command
 {
     protected $signature = 'avisos:recordatorios';
 
-    protected $description = 'Avisa "vence mañana" a los propietarios de pedidos abiertos con entrega mañana (desde las 8:00).';
+    protected $description = 'Avisa "vence mañana" a los propietarios de tareas abiertas con entrega mañana (desde las 8:00).';
 
     public function handle(RecordarEntregasDeMananaAction $recordar): int
     {

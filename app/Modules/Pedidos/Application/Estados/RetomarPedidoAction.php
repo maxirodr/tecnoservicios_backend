@@ -24,7 +24,7 @@ final readonly class RetomarPedidoAction
     public function handle(User $actor, int $id): Pedido
     {
         return $this->transiciones->ejecutar($actor, $id, AccionPedido::Retomar, function (Pedido $pedido, PedidoEstado $destino) use ($actor): Pedido {
-            BuscarPedido::exigir($this->acceso->actuaComoPropietario($actor, $pedido), 'Solo el propietario puede retomarlo.');
+            BuscarPedido::exigir($this->acceso->actuaComoPropietario($actor, $pedido), 'Solo el propietario puede retomarla.');
 
             $cambios = [
                 'estado' => Transiciones::estado($pedido->estado, $destino),

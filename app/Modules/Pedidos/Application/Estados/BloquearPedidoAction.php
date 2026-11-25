@@ -27,7 +27,7 @@ final readonly class BloquearPedidoAction
     public function handle(User $actor, int $id, string $motivo): Pedido
     {
         return $this->transiciones->ejecutar($actor, $id, AccionPedido::Bloquear, function (Pedido $pedido, PedidoEstado $destino) use ($actor, $motivo): Pedido {
-            BuscarPedido::exigir($this->acceso->actuaComoPropietario($actor, $pedido), 'Solo el propietario puede bloquearlo.');
+            BuscarPedido::exigir($this->acceso->actuaComoPropietario($actor, $pedido), 'Solo el propietario puede bloquearla.');
 
             $cambios = ['estado' => Transiciones::estado($pedido->estado, $destino), 'motivo_bloqueo' => ['antes' => null, 'despues' => $motivo]];
 

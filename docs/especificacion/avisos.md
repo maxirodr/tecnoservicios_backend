@@ -19,6 +19,11 @@ uno **se entere al momento** de lo que pasa con sus pedidos sin preguntar ni rev
 correo… algo que lo vamos a tener abierto y que ahí te aparezca", D-031), y que **ningún pedido se atrase sin que el
 propietario se entere antes** (criterio de aceptación n.º 3). El sistema avisa; no decide (D-006).
 
+> **Vocabulario (DU-C01, 2026-11-25):** para el usuario se dice "tarea(s)", no "pedido(s)". Los textos citados en
+> esta spec ya están con la palabra nueva. El módulo, las rutas, la API, las claves y los permisos siguen
+> llamándose `pedidos`. Los nombres de tipo de aviso (Asignado, Tomado, Completado…) siguen en masculino: nombran
+> el aviso, no la tarea.
+
 ## 2. Funcionalidades y pantallas cubiertas
 
 | F-XX | Qué | Pantalla | Semana 2 |
@@ -70,14 +75,14 @@ propietario se entere antes** (criterio de aceptación n.º 3). El sistema avisa
 
 | Tipo (`tipo`) | En W-19 / W-45 | Lo recibe | En el sistema | Por mail por defecto | ¿Se puede cambiar el mail? |
 |---|---|---|---|---|---|
-| `asignado` | "Me asignan un pedido" · Asignado | el propietario nuevo (o las personas del sector) | siempre | **sí** | no: siempre por mail (resuelta DU-P19) |
-| `reasignado` | "Me reasignan un pedido" · Reasignado | el propietario nuevo (o las personas del sector) | siempre | **sí** | no: siempre por mail (resuelta DU-P19) |
-| `tomado` | "Toman (En curso) un pedido que pedí" · Tomado | solicitante, seguidores | siempre | no | sí |
-| `completado` | "Completan un pedido que pedí" · Completado | solicitante, seguidores | siempre | no | sí |
+| `asignado` | "Me asignan una tarea" · Asignado | el propietario nuevo (o las personas del sector) | siempre | **sí** | no: siempre por mail (resuelta DU-P19) |
+| `reasignado` | "Me reasignan una tarea" · Reasignado | el propietario nuevo (o las personas del sector) | siempre | **sí** | no: siempre por mail (resuelta DU-P19) |
+| `tomado` | "Toman (En curso) una tarea que pedí" · Tomado | solicitante, seguidores | siempre | no | sí |
+| `completado` | "Completan una tarea que pedí" · Completado | solicitante, seguidores | siempre | no | sí |
 | `completado_gente` | (no tiene fila en W-19) · Completado (de mi gente) | el superior del solicitante | siempre | no | **no**: solo en el sistema (F-31 "dentro del sistema, a su superior") |
-| `bloqueado` | "Bloquean un pedido que pedí, con el motivo" · Bloqueado | solicitante, seguidores | siempre | no | sí |
-| `comentado` | "Comentan en un pedido mío" · Comentario nuevo | la otra parte, seguidores | siempre | no | sí |
-| `reabierto` | "Reabren un pedido que completé" (fila nueva en W-19, resuelta DU-P19) · Reabierto | el propietario | siempre | no | sí |
+| `bloqueado` | "Bloquean una tarea que pedí, con el motivo" · Bloqueado | solicitante, seguidores | siempre | no | sí |
+| `comentado` | "Comentan en una tarea mía" · Comentario nuevo | la otra parte, seguidores | siempre | no | sí |
+| `reabierto` | "Reabren una tarea que completé" (fila nueva en W-19, resuelta DU-P19) · Reabierto | el propietario | siempre | no | sí |
 | `vence_manana` | "Vence mañana una tarea mía" · Vence mañana | el propietario (o las personas del sector) | siempre | no | **no**: solo en el sistema (F-37 "sin llenar el mail") — la casilla "vence mañana" de W-19 no va (resuelta DU-P19) |
 
 ## 5. Reglas de negocio
@@ -113,7 +118,7 @@ propietario se entere antes** (criterio de aceptación n.º 3). El sistema avisa
 
 - **RN-AVI-19** **Por defecto, por mail llega solo la asignación y la reasignación**; cada persona puede activar más en Mi perfil (§4.3). **Nunca** por mail: "vence mañana" (F-37) y "completado de mi gente" (F-31). *(F-09, W-19 "Por mail llega solo la asignación", D-031; qué se puede activar: resuelta DU-P19)*
 - **RN-AVI-20** El mail sale **siempre por la cola `mail`** (`AvisoPedidoMail extends App\Shared\Mail\QueuedMailable`; worker a **1 mail por segundo**, Resend en producción), **desde noreply** con reply-to configurable (`MAIL_REPLY_TO_*`), **uno por persona**. Al enviarse se vuelve a mirar que la persona siga activa y con el mail activado para ese tipo; si no, no se manda. Nunca `Mail::send()` crudo. *(ADR-012, CLAUDE.md regla 8)*
-- **RN-AVI-21** El mail es corto, en las palabras del cliente: asunto (§6), quién y qué, tarea, obra (o "Servicios generales"), entrega, prioridad, el comentario o motivo si lo hay, el botón **"Ver el pedido"** (`FRONTEND_URL/pedidos/{id}`; pide ingresar si no hay sesión) y al pie "Este aviso es automático. Respondé desde el sistema, en el pedido. Podés elegir qué avisos te llegan por mail en Mi perfil." Sin importes ni adjuntos. *(F-09, D-031)*
+- **RN-AVI-21** El mail es corto, en las palabras del cliente: asunto (§6), quién y qué, tarea, obra (o "Servicios generales"), entrega, prioridad, el comentario o motivo si lo hay, el botón **"Ver la tarea"** (`FRONTEND_URL/pedidos/{id}`; pide ingresar si no hay sesión) y al pie "Este aviso es automático. Respondé desde el sistema, en la tarea. Podés elegir qué avisos te llegan por mail en Mi perfil." Sin importes ni adjuntos. *(F-09, D-031)*
 
 ### Campana y lista (F-08, F-64; W-02, W-45, W-41)
 
@@ -121,11 +126,11 @@ propietario se entere antes** (criterio de aceptación n.º 3). El sistema avisa
 - **RN-AVI-23** Tocando la campana se abre el panel **"Avisos"** con los **5 más recientes** (los no leídos con ●), cada uno con su texto y "hace 10 min" / "hoy 8:00" / "viernes 11:05"; abajo **"Marcar todo como leído"** y **"Ver todos los avisos"** (W-45), y la nota "Por mail llega solo la asignación; el resto, acá adentro. Cada uno puede sumar más avisos por mail en su perfil (W-19)." **Tocando un aviso** se marca leído y se abre el pedido (W-09). *(W-02)*
 - **RN-AVI-24** **Todos los avisos** (W-45): lista completa, **la más nueva arriba**, paginada de a 25, con **Todos · No leídos (n) · Leídos** y **Tipo: todos ▾**; columnas **● · Aviso · Obra · Cuándo** ("Piso nave 3" o "Servicios generales"; "19-oct 9:20"); "Marcar todo como leído". Tocando uno se marca leído y se abre el pedido. *(F-64, W-45)*
 - **RN-AVI-25** **Celular** (W-41): "Avisos" en la barra de abajo con el contador; la pantalla es la misma lista (no leídos con ●, "hace 10 min"), en tarjetas. *(F-13, W-41, RN-IDE-15)*
-- **RN-AVI-26** Cada uno ve y marca **solo sus avisos**: un id ajeno responde **404**. Marcar leído es idempotente (marcar uno ya leído deja la fecha original). Los avisos **no se borran** en la Etapa 1. Si el pedido de un aviso ya no se puede ver (cambió la tabla de permisos), el aviso sigue en la lista y al abrirlo se ve "No tenés acceso a este pedido." (404 del pedido). *(ADR-006; sin purga y pedido no visible: resuelta DU-P22)*
+- **RN-AVI-26** Cada uno ve y marca **solo sus avisos**: un id ajeno responde **404**. Marcar leído es idempotente (marcar uno ya leído deja la fecha original). Los avisos **no se borran** en la Etapa 1. Si el pedido de un aviso ya no se puede ver (cambió la tabla de permisos), el aviso sigue en la lista y al abrirlo se ve "No tenés acceso a esta tarea." (404 del pedido). *(ADR-006; sin purga y pedido no visible: resuelta DU-P22)*
 
 ### Mi perfil · Mis avisos (F-10; W-19)
 
-- **RN-AVI-27** En **Mi perfil** se enciende la sección **"Mis avisos"** (RN-IDE-18): tabla **Aviso · En el sistema · Además por mail**, una fila por tipo de §4.3 que tiene fila en W-19 (más "Reabren un pedido que completé", resuelta DU-P19), "siempre" en la columna del sistema y una casilla en la de mail. Asignación y reasignación se ven **tildadas y sin poder destildarse**; el resto se tilda o destilda y se guarda al tocar la casilla. El cambio vale **desde el próximo aviso**. *(F-10, W-19, RN-IDE-18)*
+- **RN-AVI-27** En **Mi perfil** se enciende la sección **"Mis avisos"** (RN-IDE-18): tabla **Aviso · En el sistema · Además por mail**, una fila por tipo de §4.3 que tiene fila en W-19 (más "Reabren una tarea que completé", resuelta DU-P19), "siempre" en la columna del sistema y una casilla en la de mail. Asignación y reasignación se ven **tildadas y sin poder destildarse**; el resto se tilda o destilda y se guarda al tocar la casilla. El cambio vale **desde el próximo aviso**. *(F-10, W-19, RN-IDE-18)*
 
 ### Contratos que expone Avisos
 
@@ -138,27 +143,27 @@ destinatario, `{p}` = id del pedido. Textos con datos ficticios. "Sistema" = cam
 
 | Evento | Destinatario | Tipo | Canal | Texto en el sistema (ejemplo) | Asunto del mail | `dedupe_key` |
 |---|---|---|---|---|---|---|
-| `PedidoAsignado` (crear) | propietario | `asignado` | sistema + **mail** | "**Laura** te asignó **Alquiler de andamio para el sector de bombas** · Reparación de losa tanque B" | "Te asignaron un pedido: Alquiler de andamio para el sector de bombas" | `asignado:{a}:{u}` |
-| `PedidoReasignado` a persona | nuevo propietario | `reasignado` | sistema + **mail** | "**Carla** te reasignó **Compra de discos de corte diamantados** · Reparación de losa tanque B: 'Diego tiene la cuenta con el proveedor de discos.'" | "Te reasignaron un pedido: Compra de discos de corte diamantados" | `reasignado:{a}:{u}` |
-| `PedidoReasignado` al sector | cada persona activa del sector | `reasignado` | sistema + **mail** | "**Carla** dejó en **Compras** (tu sector) **Compra de discos de corte diamantados**: lo toma el primero que pueda" | "Hay un pedido para Compras: Compra de discos de corte diamantados" | `reasignado:{a}:{u}` |
-| `PedidoTomado` | quien lo pidió | `tomado` | sistema (+ mail si lo activó) | "**Carla** tomó tu pedido **Solicitud de materiales N.º 3** → pasó a En curso" | "Carla tomó tu pedido: Solicitud de materiales N.º 3" | `tomado:{a}:{u}` |
+| `PedidoAsignado` (crear) | propietario | `asignado` | sistema + **mail** | "**Laura** te asignó **Alquiler de andamio para el sector de bombas** · Reparación de losa tanque B" | "Te asignaron una tarea: Alquiler de andamio para el sector de bombas" | `asignado:{a}:{u}` |
+| `PedidoReasignado` a persona | nuevo propietario | `reasignado` | sistema + **mail** | "**Carla** te reasignó **Compra de discos de corte diamantados** · Reparación de losa tanque B: 'Diego tiene la cuenta con el proveedor de discos.'" | "Te reasignaron una tarea: Compra de discos de corte diamantados" | `reasignado:{a}:{u}` |
+| `PedidoReasignado` al sector | cada persona activa del sector | `reasignado` | sistema + **mail** | "**Carla** dejó en **Compras** (tu sector) **Compra de discos de corte diamantados**: la toma el primero que pueda" | "Hay una tarea para Compras: Compra de discos de corte diamantados" | `reasignado:{a}:{u}` |
+| `PedidoTomado` | quien lo pidió | `tomado` | sistema (+ mail si lo activó) | "**Carla** tomó tu tarea **Solicitud de materiales N.º 3** → pasó a En curso" | "Carla tomó tu tarea: Solicitud de materiales N.º 3" | `tomado:{a}:{u}` |
 | `PedidoTomado` | seguidores | `tomado` | sistema (+ mail si lo activó) | "**Carla** tomó **Solicitud de materiales N.º 3** (que seguís) → En curso" | ídem | `tomado:{a}:{u}` |
-| `PedidoBloqueado` | quien lo pidió · seguidores | `bloqueado` | sistema (+ mail si lo activó) | "**Carla** bloqueó tu pedido **Envío de EPP a obra**: 'Falta el talle de botines de 3 personas de la cuadrilla.'" (seguidor: "…bloqueó **Envío de EPP a obra** (que seguís)…") | "Carla bloqueó tu pedido: Envío de EPP a obra" | `bloqueado:{a}:{u}` |
+| `PedidoBloqueado` | quien lo pidió · seguidores | `bloqueado` | sistema (+ mail si lo activó) | "**Carla** bloqueó tu tarea **Envío de EPP a obra**: 'Falta el talle de botines de 3 personas de la cuadrilla.'" (seguidor: "…bloqueó **Envío de EPP a obra** (que seguís)…") | "Carla bloqueó tu tarea: Envío de EPP a obra" | `bloqueado:{a}:{u}` |
 | `PedidoComentado` (comenta quien lo pidió) | propietario (o el sector) · seguidores | `comentado` | sistema (+ mail si lo activó) | "**Laura** comentó en **Solicitud de materiales N.º 3**: '30 bolsas. Dejé el cómputo actualizado en el Drive.'" | "Laura comentó en Solicitud de materiales N.º 3" | `comentado:{a}:{u}` |
-| `PedidoComentado` (comenta el propietario) | quien lo pidió · seguidores | `comentado` | ídem | "**Diego** comentó en tu pedido **Certificado N.º 3**: 'Mandame la medición de la semana 42.'" | "Diego comentó en tu pedido: Certificado N.º 3" | `comentado:{a}:{u}` |
+| `PedidoComentado` (comenta el propietario) | quien lo pidió · seguidores | `comentado` | ídem | "**Diego** comentó en tu tarea **Certificado N.º 3**: 'Mandame la medición de la semana 42.'" | "Diego comentó en tu tarea: Certificado N.º 3" | `comentado:{a}:{u}` |
 | `PedidoComentado` (comenta un tercero, DU-P23) | quien lo pidió · propietario · seguidores | `comentado` | ídem | "**Hernán** comentó en **Envío de EPP a obra**: 'Talles: 41, 42 y 44'" | "Hernán comentó en Envío de EPP a obra" | `comentado:{a}:{u}` |
-| `PedidoCompletado` | quien lo pidió | `completado` | sistema (+ mail si lo activó) | "**Carla** completó tu pedido **Alquiler de obrador**: 'Entregado en obra, adjunto remito' · comprobante" | "Carla completó tu pedido: Alquiler de obrador" | `completado:{a}:{u}` |
+| `PedidoCompletado` | quien lo pidió | `completado` | sistema (+ mail si lo activó) | "**Carla** completó tu tarea **Alquiler de obrador**: 'Entregado en obra, adjunto remito' · comprobante" | "Carla completó tu tarea: Alquiler de obrador" | `completado:{a}:{u}` |
 | `PedidoCompletado` | superior **de quien lo pidió** | `completado_gente` | **solo sistema** | "**Carla** completó **Solicitud de materiales N.º 3**, que pidió **Laura**: 'Entregado en obra, recibió el encargado.'" | — | `completado_gente:{a}:{u}` |
 | `PedidoCompletado` | seguidores | `completado` | sistema (+ mail si lo activó) | "**Carla** completó **Alquiler de obrador** (que seguís): 'Entregado en obra, adjunto remito'" | "Carla completó Alquiler de obrador" | `completado:{a}:{u}` |
-| `PedidoReabierto` | propietario (si estaba inactivo: el que se elige al reabrir, DU-P09) | `reabierto` | sistema (+ mail si lo activó) | "**Laura** reabrió **Solicitud de materiales N.º 3** (falta algo): 'Faltaron 2 bolsas.'" | "Laura reabrió un pedido que completaste: Solicitud de materiales N.º 3" | `reabierto:{a}:{u}` |
+| `PedidoReabierto` | propietario (si estaba inactivo: el que se elige al reabrir, DU-P09) | `reabierto` | sistema (+ mail si lo activó) | "**Laura** reabrió **Solicitud de materiales N.º 3** (falta algo): 'Faltaron 2 bolsas.'" | "Laura reabrió una tarea que completaste: Solicitud de materiales N.º 3" | `reabierto:{a}:{u}` |
 | Recordatorio (scheduler, F-37) | propietario o cada persona activa del sector | `vence_manana` | **solo sistema** | "Vence mañana: **Informe fotográfico semanal** · Piso industrial nave 3" | — | `recordatorio:{p}:{fecha_entrega}:{u}` |
 | Retomar · editar · seguir · equipos | — | — | — | (no avisan, RN-AVI-05) | — | — |
 
 **A los seguidores nunca les llega mail** (RN-AVI-14, F-07, HU-047 c6): donde una fila de seguidores dice "(+ mail si lo activó)", el mail es solo para quien lo pidió o el propietario. La asignación al sector **al crear** usa el texto y el asunto de "`PedidoReasignado` al sector" (decisión de desarrollo, 19-nov-2026).
 
 En todos los casos se saca al actor (RN-AVI-02), a los inactivos (RN-AVI-03) y se deja un solo aviso por persona
-(RN-AVI-04). El cuerpo del mail repite el texto del sistema y agrega tarea, obra, entrega, prioridad y "Ver el
-pedido" (RN-AVI-21).
+(RN-AVI-04). El cuerpo del mail repite el texto del sistema y agrega tarea, obra, entrega, prioridad y "Ver la
+tarea" (RN-AVI-21).
 
 ## 7. Permisos
 
@@ -174,9 +179,9 @@ Los avisos **no son una fila de la matriz** (`identidad.md` §6.1: "Avisos" es d
 
 | # | Caso | Resultado esperado |
 |---|---|---|
-| 1 | Laura le pide un pedido a Carla | Aviso `asignado` a Carla en el sistema y mail "Te asignaron un pedido: …" por la cola `mail`. Laura no recibe nada. |
+| 1 | Laura le pide un pedido a Carla | Aviso `asignado` a Carla en el sistema y mail "Te asignaron una tarea: …" por la cola `mail`. Laura no recibe nada. |
 | 2 | Carla se carga un pedido a sí misma | No hay aviso ni mail (RN-AVI-02). |
-| 3 | Doble clic en "Crear pedido" con la misma `Idempotency-Key` | Un pedido, **un** aviso, **un** mail. |
+| 3 | Doble clic en "Crear tarea" con la misma `Idempotency-Key` | Un pedido, **un** aviso, **un** mail. |
 | 4 | El listener de asignación falla y la cola lo reintenta | El reintento choca con el `dedupe_key`: no se duplica el aviso ni el mail. |
 | 5 | Carla deja un pedido en Compras (3 personas activas, ella incluida; una cuarta inactiva) | Avisos y mails a las otras 2 activas; ni a Carla ni a la inactiva. |
 | 6 | Diego toma un pedido que pidió Laura y que siguen Sofía y Hernán (superior de Laura) | `tomado` a Laura, Sofía y Hernán (este último como seguidor: el superior solo recibe el completado). |
@@ -193,8 +198,8 @@ Los avisos **no son una fila de la matriz** (`identidad.md` §6.1: "Avisos" es d
 | 16 | Pedido con entrega hoy, o completado, o con entrega mañana pero ya Completada | No hay recordatorio. |
 | 17 | Pedido en el sector con entrega mañana | Recordatorio a cada persona activa del sector. |
 | 18 | Pedido Bloqueado con entrega mañana | Recordatorio al propietario (sigue abierto). |
-| 19 | Laura activó "Completan un pedido que pedí" por mail | Al completarse le llega también el mail; a Hernán (su superior) nunca por mail. |
-| 20 | Laura intenta destildar "Me asignan un pedido" | 422 "La asignación siempre llega por mail." (resuelta DU-P19). |
+| 19 | Laura activó "Completan una tarea que pedí" por mail | Al completarse le llega también el mail; a Hernán (su superior) nunca por mail. |
+| 20 | Laura intenta destildar "Me asignan una tarea" | 422 "La asignación siempre llega por mail." (resuelta DU-P19). |
 | 21 | Laura intenta activar "Vence mañana" por mail | 422 "Este aviso llega solo dentro del sistema." |
 | 22 | A Carla le asignan un pedido y antes de que salga el mail la desactivan | El aviso queda; el mail no se manda (RN-AVI-20). |
 | 23 | Carla pide `POST /api/avisos/{id}/leido` de un aviso de Laura | 404. |
@@ -223,7 +228,7 @@ Los POST de marcar leído son idempotentes por sí mismos (no necesitan `Idempot
 // Aviso
 {
   "id": 501, "tipo": "completado",
-  "texto": "Carla completó tu pedido Alquiler de obrador: 'Entregado en obra, adjunto remito' · comprobante",
+  "texto": "Carla completó tu tarea Alquiler de obrador: 'Entregado en obra, adjunto remito' · comprobante",
   "pedido": { "id": 88, "tarea": "Alquiler de obrador" },
   "obra": { "id": 12, "nombre_trabajo": "Piso industrial nave 3" },     // null = "Servicios generales"
   "actor": { "id": 11, "nombre": "Carla" },                              // null = el sistema

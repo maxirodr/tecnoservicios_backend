@@ -17,7 +17,7 @@
 ganado = un presupuesto aprobado (más sus adicionales) con su OC/OT/contrato/mail de aprobación,
 para un cliente. Se entra a la obra y adentro está todo lo suyo. En semana 1 se entrega el legajo
 (alta, ficha, documentos y contactos, edición con historial, estados) y el **presupuesto por
-rubro** de cada presupuesto; las pestañas Pedidos y Rendición se llenan en semanas 2 y 3 con los
+rubro** de cada presupuesto; las pestañas Tareas y Rendición se llenan en semanas 2 y 3 con los
 contratos de §10.4.
 
 ## 2. Funcionalidades y pantallas cubiertas
@@ -37,7 +37,7 @@ contratos de §10.4.
 | F-48 | Presupuesto por rubro de cada presupuesto, o solo el total | W-13 · W-21 | completo |
 | F-14 (obras) | Registro de quién hizo qué y cuándo en la obra | W-23 | completo |
 
-Fila **"Pedidos sin obra"** de W-05: se especifica acá (RN-OBR-08); su contenido es de semana 2.
+Fila **"Tareas sin obra"** de W-05: se especifica acá (RN-OBR-08); su contenido es de semana 2.
 
 ## 3. Glosario
 
@@ -172,13 +172,13 @@ documentos de la obra en este módulo; pedidos, gastos, retiros y equipos en sem
 ### Listado y búsqueda (F-15, F-22, F-03, W-05, W-47)
 
 - **RN-OBR-01** Tres pestañas, en este orden: **En ejecución (n) · Confirmadas (n) · Terminadas (n)**; abre en En ejecución ("primero las activas"). Cada pestaña muestra su cantidad. *(F-15, W-05, D-028)*
-- **RN-OBR-02** Columnas: **N.º de presupuesto** (el del principal; debajo, en chico, la revisión si tiene y "+ N adicional/es": "REV01 + 1 adicional") · **Trabajo** · **Cliente / planta** (planta debajo, en chico) · **Responsable de obra** · **Pedidos abiertos** · **% del presupuesto gastado** (barra + %). *(F-15, W-05)*
-- **RN-OBR-03** "Pedidos abiertos" sale del contrato `PedidosDeObra` (§10.4). Semana 1 el puerto nulo devuelve `null` y se muestra **"—"** (no 0, para no decir "no hay pedidos" cuando el módulo todavía no está; resuelta DU-A12). *(F-15)*
+- **RN-OBR-02** Columnas: **N.º de presupuesto** (el del principal; debajo, en chico, la revisión si tiene y "+ N adicional/es": "REV01 + 1 adicional") · **Trabajo** · **Cliente / planta** (planta debajo, en chico) · **Responsable de obra** · **Tareas abiertas** · **% del presupuesto gastado** (barra + %). *(F-15, W-05)*
+- **RN-OBR-03** "Tareas abiertas" sale del contrato `PedidosDeObra` (§10.4). Semana 1 el puerto nulo devuelve `null` y se muestra **"—"** (no 0, para no decir "no hay tareas" cuando el módulo todavía no está; resuelta DU-A12). *(F-15)*
 - **RN-OBR-04** "% gastado" = gastado ÷ presupuestado de la obra, del contrato `AvanceGastoDeObra` (§10.4); en rojo si pasa el 100 %. Sin presupuesto cargado o hasta semana 3: **"—"**. Solo se muestra a quien tiene `rendicion` ≥ ver para esa obra; si no, "—". *(F-15 aprobado, W-05)*
 - **RN-OBR-05** Buscador "Buscar por N.º de presupuesto, cliente o trabajo…": encuentra la obra si el texto está en el **N.º de cualquiera de sus presupuestos** (principal o adicional), en el **cliente**, en el **nombre del trabajo** y en la **planta** (resuelta DU-11). Sin distinguir mayúsculas ni tildes. Para números se ignoran los separadores: "2131", "2-131" y "2 131 2026" encuentran `2-131-2026`. *(F-03 "N.º de presupuesto, está ok, con alguna palabra clave", W-05)*
 - **RN-OBR-06** La búsqueda y el filtro **"Responsable: todos ▾"** se aplican a las tres pestañas a la vez y los contadores muestran lo que queda.
 - **RN-OBR-07** Orden dentro de cada pestaña: En ejecución por % gastado de mayor a menor (como W-05 y W-12; sin dato, al final por N.º); Confirmadas por fecha de alta, la más nueva primero; Terminadas por fecha en que se terminó, la más nueva primero. *(resuelta DU-A20)*
-- **RN-OBR-08** Fila **"Servicios generales · pedidos que no son de una obra"**: al final de la pestaña **En ejecución**, con la cantidad de pedidos sin obra abiertos (contrato `PedidosDeObra::contarAbiertosSinObra()`) y sin % gastado; lleva a Pedidos sin obra (W-25, semana 2). Se muestra solo a quien tiene `pedidos` ≥ ver y no se muestra mientras hay texto en el buscador. Semana 1: no se muestra (no hay módulo Pedidos, resuelta DU-A12). *(W-05 aprobado, F-36)*
+- **RN-OBR-08** Fila **"Servicios generales · tareas que no son de una obra"**: al final de la pestaña **En ejecución**, con la cantidad de pedidos sin obra abiertos (contrato `PedidosDeObra::contarAbiertosSinObra()`) y sin % gastado; lleva a Tareas sin obra (W-25, semana 2). Se muestra solo a quien tiene `pedidos` ≥ ver y no se muestra mientras hay texto en el buscador. Semana 1: no se muestra (no hay módulo Pedidos, resuelta DU-A12). *(W-05 aprobado, F-36)*
 - **RN-OBR-09** Las obras **Terminadas** no se pierden: se consultan igual (ficha, documentos, historial, pedidos y rendición). *(F-22, D-017)*
 
 ### N.º de presupuesto y revisión
@@ -206,7 +206,7 @@ documentos de la obra en este módulo; pedidos, gastos, retiros y equipos en sem
 
 - **RN-OBR-16** El documento de aprobación es **opcional** y se puede agregar después: "La OC no es obligatoria para arrancar; se puede agregar después" / "El N.º de OC se completa cuando llega; no frena la obra". Si se carga, debe tener tipo y al menos el número o el adjunto (**archivo o link**, §4.8); si no se elige tipo pero hay número o adjunto, se asume **Orden de compra**. El archivo o link se puede sumar después, cuando llega la OC. *(D-027, W-06, W-23, ADR-014)*
 - **RN-OBR-17** Cliente: texto con **sugerencias** de los clientes ya cargados en otras obras (el desplegable "▾" de W-06), para escribirlo siempre igual; se puede escribir uno nuevo, con aviso si lo escrito se parece a uno existente ("¿Es Planta Ejemplo SA?"). No hay alta de clientes aparte: "el cliente es un dato de la obra". *(D-026, W-06, resuelta DU-06; modelo-datos)*
-- **RN-OBR-18** La obra **nace Confirmada** y con eso ya se le pueden cargar pedidos. "Con estos datos ya se pueden cargar pedidos a la obra." *(cap. 4.1, W-06)*
+- **RN-OBR-18** La obra **nace Confirmada** y con eso ya se le pueden cargar pedidos. "Con estos datos ya se pueden cargar tareas a la obra." *(cap. 4.1, W-06)*
 - **RN-OBR-19** El alta crea, en una sola operación, la obra, su presupuesto principal, sus dos contactos, sus adjuntos (oferta técnica y, si hay, documento de aprobación) y, si se cargaron con "+ agregar presupuesto adicional", sus adicionales. Si algo falla, no se crea nada y los adjuntos subidos siguen temporales (se purgan a las 24 h si no se reintenta). *(W-06, ADR-014)*
 - **RN-OBR-20** Una obra tiene **uno o más** presupuestos (hoy 1 a 3); los adicionales se agregan cuando aparecen, a la misma obra, desde la ficha o desde Documentos (W-21) con N.º, revisión, oferta técnica (**archivo o link**), OC si la hay (con su archivo o link) y descripción. *(F-18, cap. 4.1, W-21, ADR-014)*
 - **RN-OBR-21** Al guardar un adicional, quien tenga `presupuesto_rubro = editar` pasa directo a cargar sus montos (botón **"Guardar y cargar montos por rubro →"**); quien no, ve solo **"Guardar"** y el adicional queda "sin cargar" para administración. *(W-21, cap. 3)*
@@ -247,7 +247,7 @@ documentos de la obra en este módulo; pedidos, gastos, retiros y equipos en sem
 Flujo de W-22 (contrato con Pedidos):
 
 1. El front abre la ventana y pide `GET /api/obras/{id}/pedidos-abiertos`.
-2. Muestra "Esta obra tiene N pedidos abiertos" + tabla **Tarea · Propietario · Estado · completar · reasignar**, o nada si N = 0.
+2. Muestra "Esta obra tiene N tareas abiertas" + tabla **Tarea · Propietario · Estado · completar · reasignar**, o nada si N = 0.
 3. "Pasar a Terminada" → `POST /api/obras/{id}/estado {estado: "terminada", confirmo_pedidos_abiertos: <ids vistos>}`.
 4. El backend vuelve a consultar: si hay pedidos abiertos que no estaban en la lista confirmada (alguien cargó uno mientras tanto), responde **409** con la lista actualizada y no cambia el estado.
 
@@ -268,7 +268,7 @@ En semana 1 `PedidosDeObra` devuelve siempre `[]`, así que el paso 2 no muestra
 | Ver monto de la obra (y ganancia en semana 3) | `monto_obra` | ver | ídem |
 | Cargar monto de cada presupuesto | `monto_obra` | editar | ídem |
 | Ver "% gastado" y la pestaña Rendición | `rendicion` | ver | ídem |
-| Ver la pestaña Pedidos y la fila "Servicios generales" | `pedidos` | ver | (semana 2) |
+| Ver la pestaña Tareas y la fila "Servicios generales" | `pedidos` | ver | (semana 2) |
 
 Configuración inicial (de `identidad.md` §6.3): Obras = Ver para todos y Editar para Gerencia de
 Operaciones, Jefatura de Proyectos, Ingeniería de proyectos, Gerencia y Jefatura de Administración;

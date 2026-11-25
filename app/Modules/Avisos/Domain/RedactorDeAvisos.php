@@ -40,16 +40,16 @@ final class RedactorDeAvisos
                 : "{$actor} te reasignó {$c->tarea} · ".self::obra($c).$cita,
             TipoAviso::Tomado => $papel === Papel::Seguidor
                 ? "{$actor} tomó {$c->tarea} (que seguís) → En curso"
-                : "{$actor} tomó tu pedido {$c->tarea} → pasó a En curso",
+                : "{$actor} tomó tu tarea {$c->tarea} → pasó a En curso",
             TipoAviso::Bloqueado => $papel === Papel::Seguidor
                 ? "{$actor} bloqueó {$c->tarea}{$sigue}{$cita}"
-                : "{$actor} bloqueó tu pedido {$c->tarea}{$cita}",
+                : "{$actor} bloqueó tu tarea {$c->tarea}{$cita}",
             TipoAviso::Comentado => $papel === Papel::Solicitante
-                ? "{$actor} comentó en tu pedido {$c->tarea}{$cita}"
+                ? "{$actor} comentó en tu tarea {$c->tarea}{$cita}"
                 : "{$actor} comentó en {$c->tarea}{$cita}",
             TipoAviso::Completado => ($papel === Papel::Seguidor
                 ? "{$actor} completó {$c->tarea}{$sigue}{$cita}"
-                : "{$actor} completó tu pedido {$c->tarea}{$cita}").self::conComprobante($c),
+                : "{$actor} completó tu tarea {$c->tarea}{$cita}").self::conComprobante($c),
             TipoAviso::CompletadoGente => "{$actor} completó {$c->tarea}, que pidió {$c->solicitanteNombre}{$cita}",
             TipoAviso::Reabierto => "{$actor} reabrió {$c->tarea} (falta algo){$cita}",
             TipoAviso::VenceManana => "Vence mañana: {$c->tarea} · ".self::obra($c),
@@ -63,22 +63,22 @@ final class RedactorDeAvisos
 
         return match ($tipo) {
             TipoAviso::Asignado, TipoAviso::Reasignado => $papel === Papel::Sector
-                ? "Hay un pedido para {$c->sectorNombre}: {$c->tarea}"
-                : ($tipo === TipoAviso::Asignado ? 'Te asignaron' : 'Te reasignaron')." un pedido: {$c->tarea}",
-            TipoAviso::Tomado => "{$actor} tomó tu pedido: {$c->tarea}",
-            TipoAviso::Bloqueado => "{$actor} bloqueó tu pedido: {$c->tarea}",
+                ? "Hay una tarea para {$c->sectorNombre}: {$c->tarea}"
+                : ($tipo === TipoAviso::Asignado ? 'Te asignaron' : 'Te reasignaron')." una tarea: {$c->tarea}",
+            TipoAviso::Tomado => "{$actor} tomó tu tarea: {$c->tarea}",
+            TipoAviso::Bloqueado => "{$actor} bloqueó tu tarea: {$c->tarea}",
             TipoAviso::Comentado => $papel === Papel::Solicitante
-                ? "{$actor} comentó en tu pedido: {$c->tarea}"
+                ? "{$actor} comentó en tu tarea: {$c->tarea}"
                 : "{$actor} comentó en {$c->tarea}",
-            TipoAviso::Completado => "{$actor} completó tu pedido: {$c->tarea}",
-            TipoAviso::Reabierto => "{$actor} reabrió un pedido que completaste: {$c->tarea}",
+            TipoAviso::Completado => "{$actor} completó tu tarea: {$c->tarea}",
+            TipoAviso::Reabierto => "{$actor} reabrió una tarea que completaste: {$c->tarea}",
             TipoAviso::CompletadoGente, TipoAviso::VenceManana => null,
         };
     }
 
     private function alSector(ContextoDelAviso $c): string
     {
-        return "{$c->actorNombre} dejó en {$c->sectorNombre} (tu sector) {$c->tarea}: lo toma el primero que pueda";
+        return "{$c->actorNombre} dejó en {$c->sectorNombre} (tu sector) {$c->tarea}: la toma el primero que pueda";
     }
 
     private static function obra(ContextoDelAviso $c): string

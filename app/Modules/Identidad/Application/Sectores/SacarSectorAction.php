@@ -69,7 +69,7 @@ final class SacarSectorAction
 
     private function mensajeConPedidos(Sector $sector, int $pedidos): string
     {
-        $cuales = $pedidos === 1 ? 'su pedido que está' : "sus {$pedidos} pedidos que están";
+        $cuales = $pedidos === 1 ? 'su tarea que está' : "sus {$pedidos} tareas que están";
 
         return "Antes de sacar {$sector->nombre}, reasigná {$cuales} en el sector.";
     }

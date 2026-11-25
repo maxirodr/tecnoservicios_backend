@@ -90,7 +90,7 @@ final readonly class CambiarEstadoObraAction
         }
 
         throw new HttpResponseException(ApiResponse::error(
-            'Se cargaron pedidos nuevos en la obra mientras confirmabas. Revisalos antes de pasarla a Terminada.',
+            'Se cargaron tareas nuevas en la obra mientras confirmabas. Revisalas antes de pasarla a Terminada.',
             409,
             ['pedidos_abiertos' => array_map(PedidoAbiertoArray::de(...), $abiertos)],
         ));

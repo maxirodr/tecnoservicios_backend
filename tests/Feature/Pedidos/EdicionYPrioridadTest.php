@@ -35,7 +35,7 @@ final class EdicionYPrioridadTest extends PedidosTestCase
     {
         $this->actingAs($this->laura())->postJson('/api/pedidos', $this->alta($this->carla(), null, ['fecha_pedido' => '2026-10-20']))
             ->assertUnprocessable()
-            ->assertJsonPath('errors.fecha_pedido.0', 'La fecha de pedido no puede ser posterior a hoy.');
+            ->assertJsonPath('errors.fecha_pedido.0', 'La fecha en que se pidió no puede ser posterior a hoy.');
     }
 
     public function test_entrega_anterior_al_pedido_queda_urgente(): void
@@ -122,7 +122,7 @@ final class EdicionYPrioridadTest extends PedidosTestCase
 
         $this->actingAs($carla)->patchJson("/api/pedidos/{$pedido->id}", ['prioridad' => 'urgente'])
             ->assertForbidden()
-            ->assertJsonPath('message', 'Solo quien lo pidió puede corregir la prioridad.');
+            ->assertJsonPath('message', 'Solo quien la pidió puede corregir la prioridad.');
     }
 
     public function test_cambiar_entrega_recalcula_con_plazos_vigentes_y_lo_registra(): void
@@ -139,7 +139,7 @@ final class EdicionYPrioridadTest extends PedidosTestCase
             ->assertOk()
             ->assertJsonPath('data.0.que', 'Fecha de entrega: 23-10 → 15-10 (la prioridad pasó de Normal a Prioritario)')
             ->assertJsonPath('data.1.que', 'Fecha de entrega: 21-10 → 23-10 (la prioridad sigue Normal: 9 → 11 días)')
-            ->assertJsonPath('data.2.que', 'Creó el pedido');
+            ->assertJsonPath('data.2.que', 'Creó la tarea');
     }
 
     public function test_cambiar_fecha_de_pedido_recalcula(): void

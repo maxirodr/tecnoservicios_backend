@@ -123,16 +123,16 @@ final class InicioTest extends PedidosTestCase
         $this->actingAs($laura)->getJson('/api/pedidos/que-pedi?estado=todos')
             ->assertJsonPath('data.0.id', $abierto->id)
             ->assertJsonPath('data.1.id', $completado->id)
-            ->assertJsonPath('data.1.ultimo_movimiento.texto', 'completado');
+            ->assertJsonPath('data.1.ultimo_movimiento.texto', 'completada');
     }
 
-    public function test_creado_sin_tomar_dice_nadie_lo_tomo_todavia(): void
+    public function test_creada_sin_tomar_dice_nadie_la_tomo_todavia(): void
     {
         $laura = $this->laura();
         $this->crear($laura, $this->carla());
 
         $this->actingAs($laura)->getJson('/api/pedidos/que-pedi')
-            ->assertJsonPath('data.0.ultimo_movimiento', ['cuando' => '2026-10-19T10:00:00-03:00', 'texto' => 'creado; nadie lo tomó todavía']);
+            ->assertJsonPath('data.0.ultimo_movimiento', ['cuando' => '2026-10-19T10:00:00-03:00', 'texto' => 'creada; nadie la tomó todavía']);
     }
 
     public function test_ultimo_movimiento_es_la_ultima_linea_del_recorrido(): void

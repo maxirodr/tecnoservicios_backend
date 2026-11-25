@@ -108,7 +108,7 @@ final class MailDeAvisosTest extends AvisosTestCase
 
         $mail = new AvisoPedidoMail((int) Aviso::query()->value('id'));
 
-        $mail->assertHasSubject('Te asignaron un pedido: Alquiler de obrador');
+        $mail->assertHasSubject('Te asignaron una tarea: Alquiler de obrador');
         $mail->assertSeeInHtml('Servicios generales');
         $mail->assertSeeInHtml('20/11/2026');
         $mail->assertSeeInHtml('Urgente');

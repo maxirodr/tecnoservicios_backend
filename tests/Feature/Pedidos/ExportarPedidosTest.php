@@ -50,7 +50,17 @@ final class ExportarPedidosTest extends PedidosTestCase
         $this->actingAs($this->laura())->get('/api/pedidos/exportar')
             ->assertOk()
             ->assertHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-            ->assertDownload('pedidos-2026-10-19.xlsx');
+            ->assertDownload('tareas-2026-10-19.xlsx');
+    }
+
+    public function test_el_excel_dice_tareas_en_la_hoja_y_pedida_y_completada_en_las_columnas(): void
+    {
+        $this->assertSame('Tareas', PedidosAExcel::NOMBRE_HOJA);
+        $this->assertSame(
+            ['Obra', 'Tarea', 'Sector', 'Propietario', 'Solicitante', 'Pedida', 'Entrega', 'Prioridad', 'Estado',
+                'N.º de presupuesto', 'Con quién / para quién', 'Período', 'Aclaraciones', 'Completada'],
+            PedidosAExcel::ENCABEZADOS,
+        );
     }
 
     public function test_exportar_baja_todo_lo_filtrado_sin_paginar(): void

@@ -26,7 +26,7 @@ final class SeguidoresAlCrear
         $ids = array_values(array_unique($ids));
 
         if (in_array($solicitanteId, $ids, true) || in_array($propietarioId, $ids, true)) {
-            throw ValidationException::withMessages([self::CAMPO => ['Quien lo pide y el propietario ya reciben los avisos: no hace falta sumarlos como seguidores.']]);
+            throw ValidationException::withMessages([self::CAMPO => ['Quien la pide y el propietario ya reciben los avisos: no hace falta sumarlos como seguidores.']]);
         }
 
         if ($ids !== [] && User::query()->whereKey($ids)->where('activo', true)->count() !== count($ids)) {

@@ -35,12 +35,12 @@ final class TextoDeActividad
         $c = $actividad->cambios ?? [];
 
         return match ($actividad->accion) {
-            CrearPedidoAction::ACCION => ["{$quien} creó el pedido"],
-            TomarPedidoAction::ACCION => ["{$quien} lo tomó → En curso"],
-            BloquearPedidoAction::ACCION => ["{$quien} lo bloqueó: '".self::texto($c['motivo_bloqueo']['despues'] ?? null)."'"],
-            RetomarPedidoAction::ACCION => ["{$quien} lo retomó → En curso"],
+            CrearPedidoAction::ACCION => ["{$quien} creó la tarea"],
+            TomarPedidoAction::ACCION => ["{$quien} la tomó → En curso"],
+            BloquearPedidoAction::ACCION => ["{$quien} la bloqueó: '".self::texto($c['motivo_bloqueo']['despues'] ?? null)."'"],
+            RetomarPedidoAction::ACCION => ["{$quien} la retomó → En curso"],
             CompletarPedidoAction::ACCION => [self::completado($quien, $c)],
-            ReabrirPedidoAction::ACCION => ["{$quien} lo reabrió (falta algo): '".self::texto($c['comentario']['despues'] ?? null)."'"],
+            ReabrirPedidoAction::ACCION => ["{$quien} la reabrió (falta algo): '".self::texto($c['comentario']['despues'] ?? null)."'"],
             ReasignarPedidoAction::ACCION => [self::reasignado($quien, $c)],
             ComentarPedidoAction::ACCION => ["{$quien} comentó: '".self::texto($c['comentario']['despues'] ?? null)."'"],
             ActualizarPedidoAction::ACCION => array_map(static fn (string $l): string => "{$quien} editó · {$l}", TextoDeCambios::edicion($c)),
@@ -57,9 +57,9 @@ final class TextoDeActividad
         $c = $actividad->cambios ?? [];
 
         return match ($actividad->accion) {
-            CrearPedidoAction::ACCION => 'creado; nadie lo tomó todavía',
+            CrearPedidoAction::ACCION => 'creada; nadie la tomó todavía',
             ComentarPedidoAction::ACCION => "{$quien}: '".mb_strimwidth(self::texto($c['comentario']['despues'] ?? null), 0, self::LARGO_ULTIMO, '…')."'",
-            CompletarPedidoAction::ACCION => $comprobantes > 0 ? 'completado con comprobante' : 'completado',
+            CompletarPedidoAction::ACCION => $comprobantes > 0 ? 'completada con comprobante' : 'completada',
             default => self::lineas($actividad)[0] ?? $quien,
         };
     }
@@ -69,9 +69,9 @@ final class TextoDeActividad
      */
     private static function completado(string $quien, array $c): string
     {
-        $sinTomar = ($c['estado']['antes'] ?? null) === PedidoEstado::NoIniciada->value ? ' sin tomarlo' : '';
+        $sinTomar = ($c['estado']['antes'] ?? null) === PedidoEstado::NoIniciada->value ? ' sin tomarla' : '';
 
-        return "{$quien} lo completó{$sinTomar}: '".self::texto($c['comentario_cierre']['despues'] ?? null)."'";
+        return "{$quien} la completó{$sinTomar}: '".self::texto($c['comentario_cierre']['despues'] ?? null)."'";
     }
 
     /**
@@ -79,7 +79,7 @@ final class TextoDeActividad
      */
     private static function reasignado(string $quien, array $c): string
     {
-        $linea = "{$quien} lo reasignó de ".self::texto($c['propietario']['antes'] ?? null).' a '.self::texto($c['propietario']['despues'] ?? null);
+        $linea = "{$quien} la reasignó de ".self::texto($c['propietario']['antes'] ?? null).' a '.self::texto($c['propietario']['despues'] ?? null);
 
         if (isset($c['estado'])) {
             $linea .= ' → '.(PedidoEstado::tryFrom(self::texto($c['estado']['despues']))?->etiqueta() ?? '');

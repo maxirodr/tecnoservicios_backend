@@ -26,7 +26,7 @@ final class PedidoController
         $user = $this->usuario($request);
         $resultado = $crear->handle($user, $request->datos());
 
-        return $this->created(new PedidoDetalleResource($detalle->handle($user, $resultado->pedido->id, $resultado->avisados)), 'Creamos el pedido.');
+        return $this->created(new PedidoDetalleResource($detalle->handle($user, $resultado->pedido->id, $resultado->avisados)), 'Creamos la tarea.');
     }
 
     public function show(Request $request, int $pedido, DetallePedidoQuery $detalle): JsonResponse

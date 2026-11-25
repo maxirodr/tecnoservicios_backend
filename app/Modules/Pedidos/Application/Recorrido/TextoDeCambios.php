@@ -20,7 +20,7 @@ final class TextoDeCambios
     private const ETIQUETAS = [
         'tarea' => 'Tarea',
         'obra' => 'Obra',
-        'fecha_pedido' => 'Fecha de pedido',
+        'fecha_pedido' => 'Fecha en que se pidió',
         'fecha_entrega' => 'Fecha de entrega',
         'periodo_inicio' => 'Inicio del período',
         'periodo_fin' => 'Fin del período',

@@ -19,11 +19,11 @@ final class SeguirController
 
     public function store(Request $request, int $pedido, SeguirPedidoAction $seguir): JsonResponse
     {
-        return $this->ok(['sigo' => $seguir->handle($this->usuario($request), $pedido)], 'Lo seguís: está en Tareas que sigo.');
+        return $this->ok(['sigo' => $seguir->handle($this->usuario($request), $pedido)], 'La seguís: está en Tareas que sigo.');
     }
 
     public function destroy(Request $request, int $pedido, DejarDeSeguirPedidoAction $dejar): JsonResponse
     {
-        return $this->ok(['sigo' => $dejar->handle($this->usuario($request), $pedido)], 'Dejaste de seguirlo.');
+        return $this->ok(['sigo' => $dejar->handle($this->usuario($request), $pedido)], 'Dejaste de seguirla.');
     }
 }

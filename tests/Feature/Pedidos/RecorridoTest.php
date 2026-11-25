@@ -32,13 +32,13 @@ final class RecorridoTest extends PedidosTestCase
         $respuesta = $this->actingAs($laura)->getJson("/api/pedidos/{$pedido->id}/recorrido")->assertOk();
 
         $this->assertSame([
-            'Laura creó el pedido',
-            'Carla lo tomó → En curso',
-            "Carla lo bloqueó: 'Esperando presupuesto'",
-            'Carla lo retomó → En curso',
+            'Laura creó la tarea',
+            'Carla la tomó → En curso',
+            "Carla la bloqueó: 'Esperando presupuesto'",
+            'Carla la retomó → En curso',
             "Laura comentó: '30 bolsas.'",
-            "Carla lo completó: 'Entregado.'",
-            "Laura lo reabrió (falta algo): 'Faltaron 2 bolsas.'",
+            "Carla la completó: 'Entregado.'",
+            "Laura la reabrió (falta algo): 'Faltaron 2 bolsas.'",
         ], array_column((array) $respuesta->json('data'), 'que'));
         $respuesta->assertJsonPath('data.1.quien', ['id' => $carla->id, 'nombre' => 'Carla'])
             ->assertJsonPath('data.0.cuando', '2026-10-19T10:00:00-03:00');
@@ -74,7 +74,7 @@ final class RecorridoTest extends PedidosTestCase
         $this->actingAs($laura)->getJson("/api/pedidos/{$pedido->id}/recorrido?solo=cambios")
             ->assertJsonCount(2, 'data')
             ->assertJsonPath('data.0.que', "Con quién / para quién: 'Alquileres Andamios Oeste' → 'Corralón Centro'")
-            ->assertJsonPath('data.1.que', 'Creó el pedido');
+            ->assertJsonPath('data.1.que', 'Creó la tarea');
     }
 
     public function test_recorrido_fuera_de_alcance_devuelve_404(): void
@@ -93,6 +93,6 @@ final class RecorridoTest extends PedidosTestCase
         $this->accion($carla, $pedido, 'tomar')->assertOk();
         $carla->update(['activo' => false]);
 
-        $this->actingAs($laura)->getJson("/api/pedidos/{$pedido->id}/recorrido")->assertJsonPath('data.1.que', 'Carla lo tomó → En curso');
+        $this->actingAs($laura)->getJson("/api/pedidos/{$pedido->id}/recorrido")->assertJsonPath('data.1.que', 'Carla la tomó → En curso');
     }
 }

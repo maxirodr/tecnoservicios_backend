@@ -16,16 +16,16 @@ use OpenSpout\Writer\XLSX\Writer;
 
 /**
  * El `.xlsx` de "Exportar a Excel" (W-24, resuelta DU-P16): las columnas de la tabla más N.º de
- * presupuesto, Con quién / para quién, Período, Aclaraciones y Completado, en el orden recibido. Escribe
+ * presupuesto, Con quién / para quién, Período, Aclaraciones y Completada, en el orden recibido. Escribe
  * fila por fila (OpenSpout), así lo filtrado entero no se carga en memoria. Las fechas van como fechas.
  */
 final class PedidosAExcel
 {
-    public const NOMBRE_HOJA = 'Pedidos';
+    public const NOMBRE_HOJA = 'Tareas';
 
     public const ENCABEZADOS = [
-        'Obra', 'Tarea', 'Sector', 'Propietario', 'Solicitante', 'Pedido', 'Entrega', 'Prioridad', 'Estado',
-        'N.º de presupuesto', 'Con quién / para quién', 'Período', 'Aclaraciones', 'Completado',
+        'Obra', 'Tarea', 'Sector', 'Propietario', 'Solicitante', 'Pedida', 'Entrega', 'Prioridad', 'Estado',
+        'N.º de presupuesto', 'Con quién / para quién', 'Período', 'Aclaraciones', 'Completada',
     ];
 
     private const SIN_DATO = '—';
@@ -53,7 +53,7 @@ final class PedidosAExcel
     /** `pedidos-AAAA-MM-DD.xlsx`, con el día de la empresa. */
     public static function nombreDeArchivo(): string
     {
-        return 'pedidos-'.FechaEmpresa::hoyTexto().'.xlsx';
+        return 'tareas-'.FechaEmpresa::hoyTexto().'.xlsx';
     }
 
     /** Como en la tabla: el pedido en el sector, o la persona con "(inactivo)" si ya no está (RN-PED-60, PU-612). */

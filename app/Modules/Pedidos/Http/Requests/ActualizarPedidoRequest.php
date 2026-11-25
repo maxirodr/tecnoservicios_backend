@@ -50,7 +50,7 @@ final class ActualizarPedidoRequest extends PedidosRequest
             ...parent::messages(),
             'tarea.required' => 'Escribí la tarea.',
             'fecha_entrega.required' => 'Poné la fecha de entrega.',
-            'fecha_pedido.required' => 'Poné la fecha de pedido.',
+            'fecha_pedido.required' => 'Poné la fecha en que se pidió.',
         ];
     }
 
