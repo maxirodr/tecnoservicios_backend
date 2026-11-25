@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Gastos\Http\Controllers;
 
-use App\Modules\Gastos\Application\Carga\CargaRepetida;
+use App\Modules\Gastos\Application\Carga\FacturaRepetida;
 use App\Modules\Gastos\Application\Lecturas\OpcionesDeCargaQuery;
 use App\Modules\Gastos\Domain\NumeroComprobante;
 use App\Modules\Gastos\Http\Requests\BuscarObrasRequest;
@@ -29,24 +29,14 @@ final class GastoOpcionesController
         return $this->ok($opciones->obras($this->usuario($request), $request->buscar()));
     }
 
-    /** RN-GAS-08: al salir del campo Número o al elegir el proveedor. */
-    public function facturaExistente(FacturaExistenteRequest $request, CargaRepetida $repetida): JsonResponse
+    /** RN-GAS-08: al salir del campo Número o al elegir el proveedor; con alcance (§8.2). */
+    public function facturaExistente(FacturaExistenteRequest $request, FacturaRepetida $facturas): JsonResponse
     {
-        $existente = $repetida->facturaExistente($request->proveedorId(), NumeroComprobante::normalizar($request->numero()), $request->excluirId());
-
-        if ($existente === null) {
-            return $this->ok(['existe' => false]);
-        }
-
-        return $this->ok([
-            'existe' => true,
-            'gasto' => [
-                'id' => $existente->id,
-                'numero' => $existente->numero,
-                'fecha' => $existente->fecha->toDateString(),
-                'cargado_por' => ['id' => $existente->cargadoPor->id, 'nombre' => $existente->cargadoPor->nombre],
-            ],
-            'mensaje' => CargaRepetida::mensajeDeFacturaCargada($existente),
-        ]);
+        return $this->ok($facturas->aviso(
+            $this->usuario($request),
+            $request->proveedorId(),
+            NumeroComprobante::normalizar($request->numero()),
+            $request->excluirId(),
+        ));
     }
 }

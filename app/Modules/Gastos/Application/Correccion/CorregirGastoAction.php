@@ -10,6 +10,7 @@ use App\Modules\Gastos\Application\Carga\AlcanceDeCarga;
 use App\Modules\Gastos\Application\Carga\CargaRepetida;
 use App\Modules\Gastos\Application\Carga\DatosGasto;
 use App\Modules\Gastos\Application\Carga\Errores;
+use App\Modules\Gastos\Application\Carga\FacturaRepetida;
 use App\Modules\Gastos\Application\Carga\ValidarGasto;
 use App\Modules\Gastos\Domain\Events\GastoCorregido;
 use App\Modules\Gastos\Domain\Models\Gasto;
@@ -40,6 +41,7 @@ final readonly class CorregirGastoAction
         private DatosDeLaCorreccion $armar,
         private ValidarGasto $validar,
         private CargaRepetida $repetida,
+        private FacturaRepetida $facturas,
         private EscribirCorreccion $escribir,
         private AdjuntosService $adjuntos,
         private Dispatcher $eventos,
@@ -59,7 +61,7 @@ final readonly class CorregirGastoAction
             $this->exigirRenglonesPropios($gasto, $datos);
 
             $nuevo = $this->validar->handle($datos);
-            $this->repetida->verificar($nuevo, $datos, $gasto->id);
+            $this->repetida->verificar($actor, $nuevo, $datos, $gasto->id);
 
             $obrasAntes = $gasto->obraIds();
             $hubo = $this->escribir->aplicar($gasto, $nuevo, $actor->id);
@@ -73,7 +75,7 @@ final readonly class CorregirGastoAction
             }
 
             $gasto->updated_by = $actor->id;
-            $this->guardar($gasto);
+            $this->guardar($actor, $gasto);
             $this->eventos->dispatch(new GastoCorregido($gasto->id, array_values(array_unique([...$obrasAntes, ...$nuevo->obraIds()]))));
 
             return $gasto;
@@ -127,15 +129,15 @@ final readonly class CorregirGastoAction
         return $agregar !== [] || $quitar !== [];
     }
 
-    private function guardar(Gasto $gasto): void
+    private function guardar(User $actor, Gasto $gasto): void
     {
         try {
             // touch() guarda también la cabecera: updated_at cambia aunque solo cambien renglones o adjuntos (versión, 409).
             $gasto->touch();
         } catch (UniqueConstraintViolationException $e) {
-            $existente = $gasto->numero === null ? null : $this->repetida->facturaExistente($gasto->proveedor_id, $gasto->numero, $gasto->id);
+            $this->facturas->exigirQueNoExista($actor, $gasto->numero, $gasto->proveedor_id, $gasto->id);
 
-            throw $existente === null ? $e : CargaRepetida::facturaCargada($existente);
+            throw $e;
         }
     }
 }

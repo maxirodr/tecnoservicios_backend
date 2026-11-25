@@ -74,4 +74,36 @@ final class FacturaRepetidaTest extends GastosTestCase
             ->assertOk()->assertJsonPath('data', ['existe' => false]);
         $this->actingAs($this->marta())->getJson("/api/gastos/factura-existente?proveedor_id={$corralon->id}&numero=3-12345")->assertForbidden();
     }
+
+    public function test_aviso_de_factura_fuera_de_alcance_no_muestra_quien_ni_cual_es(): void
+    {
+        $this->celda('Ingeniería de proyectos', 'gastos', 'editar', 'propias');
+        $laura = $this->laura();
+        $nave = $this->obra('Piso industrial nave 3', $laura);
+        $losa = $this->obra('Reparación de losa tanque B');
+        $corralon = $this->proveedor();
+        $this->cargado($this->diego(), $this->facturaDeW10($corralon, $losa, $losa));
+        $aviso = 'Esa factura ya está cargada: 0003-00012345 de Corralón Centro.';
+
+        $this->actingAs($laura)->getJson("/api/gastos/factura-existente?proveedor_id={$corralon->id}&numero=3-12345")
+            ->assertOk()->assertJsonPath('data', ['existe' => true, 'mensaje' => $aviso]);
+        $this->cargar($laura, $this->facturaDeW10($corralon, $nave, $nave, [
+            'renglones' => [$this->renglon('Cemento x 50 kg', '30', '9800.00', $nave, 'materiales')],
+        ]))->assertUnprocessable()
+            ->assertJsonPath('message', $aviso)
+            ->assertJsonPath('errors', ['numero' => [$aviso]]);
+    }
+
+    public function test_aviso_de_factura_en_su_alcance_muestra_la_factura(): void
+    {
+        $this->celda('Ingeniería de proyectos', 'gastos', 'editar', 'propias');
+        $laura = $this->laura();
+        $nave = $this->obra('Piso industrial nave 3', $laura);
+        $corralon = $this->proveedor();
+        $primera = $this->cargado($this->diego(), $this->facturaDeW10($corralon, $nave, $this->obra('Reparación de losa tanque B')));
+
+        $this->actingAs($laura)->getJson("/api/gastos/factura-existente?proveedor_id={$corralon->id}&numero=3-12345")
+            ->assertOk()->assertJsonPath('data.gasto.id', $primera->id)
+            ->assertJsonPath('data.mensaje', 'Esa factura ya está cargada: 0003-00012345 de Corralón Centro (Diego, 19-oct).');
+    }
 }
