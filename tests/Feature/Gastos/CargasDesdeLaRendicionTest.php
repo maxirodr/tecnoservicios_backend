@@ -309,4 +309,25 @@ final class CargasDesdeLaRendicionTest extends GastosTestCase
         $this->actingAs($this->laura())->getJson("/api/obras/{$nave->id}/renglones-sin-documento")->assertForbidden();
         $this->actingAs($diego)->getJson('/api/obras/999999/renglones-sin-documento')->assertNotFound();
     }
+
+    public function test_con_control_cantidad_o_rendicion_editar_elige_el_proveedor_del_retiro_sin_proveedores_ver(): void
+    {
+        $nave = $this->obra('Piso industrial nave 3');
+        $cemento = $this->material($nave, 'Cemento x 50 kg');
+        $tecnobahia = $this->proveedor('Tecnobahía Ejemplo');
+        $sofia = $this->sofia();
+
+        $this->actingAs($sofia)->getJson('/api/proveedores/opciones?buscar=tecno')->assertForbidden();
+
+        foreach (['control_cantidad', 'rendicion'] as $i => $celda) {
+            $this->celda('Seguridad e Higiene', $celda, 'editar');
+            $quien = $this->persona("Sofía {$i}", 'Seguridad e Higiene');
+
+            $this->actingAs($quien)->getJson('/api/proveedores/opciones?buscar=tecno')->assertOk()
+                ->assertJsonPath('data.0.id', $tecnobahia->id);
+            $this->cargar($quien, $this->carga('retiro_remito', $this->renglon('Cemento', '10', '9800', $nave, 'materiales', ['material_id' => $cemento->id]),
+                ['numero' => "1-45{$i}", 'proveedor_id' => $tecnobahia->id]))->assertCreated();
+            $this->celda('Seguridad e Higiene', $celda, 'sin_acceso');
+        }
+    }
 }
