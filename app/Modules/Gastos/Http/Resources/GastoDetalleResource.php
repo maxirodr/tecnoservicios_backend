@@ -13,7 +13,6 @@ use App\Modules\Identidad\Domain\Models\User;
 use App\Modules\Proveedores\Domain\Cuit;
 use App\Shared\Adjuntos\Adjunto;
 use App\Shared\Adjuntos\Http\AdjuntoResource;
-use App\Shared\Concurrencia\VersionDeFila;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -59,7 +58,7 @@ final class GastoDetalleResource extends JsonResource
             'por_obra' => self::porObra($leido),
             'renglones_ocultos' => $leido->ocultos,
             'cargado_at' => FechaEmpresa::instante($gasto->created_at),
-            'updated_at' => VersionDeFila::iso($gasto->updated_at),
+            'updated_at' => FechaEmpresa::instante($gasto->updated_at),
             'updated_by' => self::usuario($gasto->editadoPor),
             'anulacion' => $gasto->anulado_at === null ? null : [
                 'anulado_at' => FechaEmpresa::instante($gasto->anulado_at),
