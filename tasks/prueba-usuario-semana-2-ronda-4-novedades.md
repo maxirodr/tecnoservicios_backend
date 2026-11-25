@@ -27,7 +27,7 @@
 
 ## 1. Código a probar
 
-- **Front:** `staging` @ `a3fb83e`, con los arreglos de PU-801…807 en 9 commits desde `0cbdc4d`. No hay dependencias
+- **Front:** `staging` @ `21dfe1a`, con los arreglos de PU-801…807 en 9 commits desde `0cbdc4d`, más un ajuste de un e2e. No hay dependencias
   nuevas.
 - **Backend:** `staging` @ `489df9c`. Sin cambios de código desde la ronda 3: son solo los reportes. La base
   `tecnoservicios_prueba_usuario` se reusa.
