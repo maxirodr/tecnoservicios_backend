@@ -1381,3 +1381,12 @@ resueltas** (va la propuesta; DU-G08 reemplazada por DU-R05): las reglas citan "
   {fecha de arranque}" con la etiqueta "Carga inicial". Lo revisa y aprueba administración, como las equivalencias de DU-21.
 - **¿Cambia lo que ve el cliente?** Sí (les pedimos el retirado por material) → **decide Juani**.
 - **Reglas que dependen:** RN-REN-08, RN-REN-50 (columna "Hasta"); importación de la semana 4.
+
+## QC S3 · decisiones de Juani (25-nov-2026)
+
+Del QC de la semana 3 en `main` (informe en la sesión de desarrollo). Las cuatro van como la recomendación:
+
+- **DU-G12 · Filtros de W-33 para quien solo ve.** ✅ Las opciones de obra y proveedor de los filtros de W-33 responden a quien tiene `gastos` ≥ ver, cada uno con su alcance ("solo sus obras": solo sus obras y los proveedores de sus renglones). Tienen búsqueda por texto en lugar de cortar en 20. Las opciones **de carga** siguen pidiendo poder cargar (§8.2). Cierra ALT-1 y ALT-2.
+- **DU-G13 · Formato de fecha.** ✅ dd/mm/aaaa en toda la app (PU-209), también en Gastos y Rendición. Donde `gastos.md` y `rendicion.md` escriben "17-oct" o "02-oct", se lee dd/mm/aaaa. Los rangos de período siguen el formato de `fechas.ts`.
+- **DU-G14 · Botón mientras guarda.** ✅ Queda como en el sistema de diseño en todo el sistema: el botón conserva su etiqueta, muestra el indicador de carga y le anuncia "Guardando…" al lector de pantalla (`aria-busy`). Donde la spec dice "el botón dice 'Guardando…'", se cumple así.
+- **DU-G15 · Textos que no estaban en la spec.** ✅ Va la propuesta del QC: los 25 casos donde la spec tiene un texto para esa situación vuelven al de la spec (incluidos los mensajes de éxito de materiales, que son los del back); el resto queda y se agrega a la spec como texto de la implementación.
