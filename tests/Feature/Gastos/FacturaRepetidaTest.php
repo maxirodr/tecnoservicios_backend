@@ -106,4 +106,25 @@ final class FacturaRepetidaTest extends GastosTestCase
             ->assertOk()->assertJsonPath('data.gasto.id', $primera->id)
             ->assertJsonPath('data.mensaje', 'Esa factura ya está cargada: 0003-00012345 de Corralón Centro (Diego, 19-oct).');
     }
+
+    public function test_si_otra_carga_confirma_la_misma_factura_en_el_medio_la_segunda_recibe_el_422(): void
+    {
+        $nave = $this->obra('Piso industrial nave 3');
+        $corralon = $this->proveedor();
+        $diego = $this->diego();
+        // La otra carga entra entre el control y el INSERT de esta: el índice único choca y la acción responde 422.
+        Gasto::creating(static function () use ($corralon, $diego): void {
+            if (DB::table('gastos')->where('numero', '0003-00012345')->doesntExist()) {
+                DB::table('gastos')->insert([
+                    'tipo_documento' => 'factura', 'origen' => 'factura', 'numero' => '0003-00012345', 'fecha' => '2026-10-17',
+                    'proveedor_id' => $corralon->id, 'cargado_por' => $diego->id, 'created_at' => now(), 'updated_at' => now(),
+                ]);
+            }
+        });
+
+        $this->cargar($this->carla(), $this->facturaDeW10($corralon, $nave, $nave))
+            ->assertUnprocessable()
+            ->assertJsonPath('message', 'Esa factura ya está cargada: 0003-00012345 de Corralón Centro (Diego, 19-oct).')
+            ->assertJsonPath('errors.existente.cargado_por.nombre', 'Diego');
+    }
 }
