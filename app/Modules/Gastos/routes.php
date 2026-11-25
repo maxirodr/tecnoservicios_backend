@@ -10,13 +10,15 @@ use App\Modules\Gastos\Http\Controllers\GastosCargadosController;
 use App\Modules\Gastos\Http\Controllers\HistorialGastoController;
 use App\Modules\Gastos\Http\Controllers\RenglonesSinDocumentoController;
 use App\Modules\Gastos\Http\Middleware\PuedeCargarGastos;
+use App\Modules\Gastos\Http\Middleware\PuedeCorregirGastos;
 use App\Modules\Gastos\Http\Middleware\VerGastos;
 use Illuminate\Support\Facades\Route;
 
 // Rutas del módulo Gastos (prefijo /api, middleware 'api'), gastos.md §12.1. Ver y corregir por la fila
 // `gastos` de la matriz (ver: `VerGastos`, con el 403 de §7); cargar según qué se carga (`PuedeCargarGastos`:
-// gastos, rendicion o control_cantidad en Editar, resuelta DU-R05). El alcance "solo sus obras" lo miran
-// los casos de uso. No hay ruta para borrar gastos (RN-GAS-41).
+// gastos, rendicion o control_cantidad en Editar, resuelta DU-R05). El PATCH también lo usa
+// `control_cantidad = editar`, solo para el remito de un retiro (§4.4, `PuedeCorregirGastos`). El alcance
+// "solo sus obras" lo miran los casos de uso. No hay ruta para borrar gastos (RN-GAS-41).
 
 $editar = 'permiso:gastos,editar';
 
@@ -30,7 +32,7 @@ Route::middleware('auth:sanctum')->group(function () use ($editar): void {
 
     Route::post('gastos', [GastoController::class, 'store'])->middleware([PuedeCargarGastos::class, 'idempotent']);
     Route::get('gastos/{gasto}', [GastoController::class, 'show'])->whereNumber('gasto')->middleware(VerGastos::class);
-    Route::patch('gastos/{gasto}', [GastoController::class, 'update'])->whereNumber('gasto')->middleware($editar);
+    Route::patch('gastos/{gasto}', [GastoController::class, 'update'])->whereNumber('gasto')->middleware(PuedeCorregirGastos::class);
     Route::post('gastos/{gasto}/anular', AnularGastoController::class)->whereNumber('gasto')->middleware([$editar, 'idempotent']);
     Route::get('gastos/{gasto}/historial', HistorialGastoController::class)->whereNumber('gasto')->middleware(VerGastos::class);
 
