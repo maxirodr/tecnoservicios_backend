@@ -82,7 +82,10 @@ final class ContratosYBuscadorTest extends ObrasTestCase
         $todas = $this->app->make(ObrasConsulta::class)->presupuestadoDeObras([$mixta->id, $vacia->id]);
         $this->assertCount(1, DB::getQueryLog());
 
-        $this->assertSame(['materiales' => '1000.50', 'insumos' => '99.50'], $todas[$mixta->id]->porRubro);
+        // Por clave: el orden de los rubros dentro de `porRubro` no es parte del contrato (el GROUP BY no lo fija).
+        $porRubro = $todas[$mixta->id]->porRubro;
+        ksort($porRubro);
+        $this->assertSame(['insumos' => '99.50', 'materiales' => '1000.50'], $porRubro);
         $this->assertSame(['200.00', '1300.00'], [$todas[$mixta->id]->sinDesglose, $todas[$mixta->id]->total]);
         $this->assertSame(
             [[$principal->id, 'por_rubro', '1100.00', true], [$adicional->id, 'solo_total', '200.00', false], [$sinCargar->id, 'sin_cargar', '0.00', false]],
