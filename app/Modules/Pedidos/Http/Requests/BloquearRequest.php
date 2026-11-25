@@ -14,7 +14,7 @@ final class BloquearRequest extends TextoObligatorioRequest
 
     protected function mensajeVacio(): string
     {
-        return 'Contá qué lo traba.';
+        return 'Contá qué la traba.';
     }
 
     protected function largo(): int

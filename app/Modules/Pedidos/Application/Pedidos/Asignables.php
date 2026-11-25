@@ -32,7 +32,7 @@ final readonly class Asignables
         }
 
         if (! $this->permisos->puede($persona, ClaveFuncion::Pedidos->value, Nivel::Ver)) {
-            throw ValidationException::withMessages([$campo => ["{$persona->nombre} no tiene acceso a Pedidos: elegí otra persona."]]);
+            throw ValidationException::withMessages([$campo => ["{$persona->nombre} no tiene acceso a Tareas: elegí otra persona."]]);
         }
 
         return $persona;
@@ -65,7 +65,7 @@ final readonly class Asignables
         }
 
         if (! $this->permisos->puede($activos->firstOrFail(), ClaveFuncion::Pedidos->value, Nivel::Ver)) {
-            throw ValidationException::withMessages([$campo => ["{$sector->nombre} no tiene acceso a Pedidos: elegí una persona."]]);
+            throw ValidationException::withMessages([$campo => ["{$sector->nombre} no tiene acceso a Tareas: elegí una persona."]]);
         }
 
         return $sector;

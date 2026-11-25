@@ -33,7 +33,7 @@ final class CompletarYReabrirTest extends PedidosTestCase
 
         $this->actingAs($carla)->getJson("/api/pedidos/{$pedido->id}/recorrido")
             ->assertOk()
-            ->assertJsonFragment(['que' => "Carla lo completó sin tomarlo: 'Entregado en obra, recibió el encargado.'"]);
+            ->assertJsonFragment(['que' => "Carla la completó sin tomarla: 'Entregado en obra, recibió el encargado.'"]);
     }
 
     public function test_completar_guarda_quien_y_cuando(): void
@@ -58,7 +58,7 @@ final class CompletarYReabrirTest extends PedidosTestCase
 
         $this->accion($carla, $pedido, 'completar', ['comentario' => 'Listo.'])
             ->assertConflict()
-            ->assertJsonPath('message', 'Primero retomalo: está bloqueado.')
+            ->assertJsonPath('message', 'Primero retomala: está bloqueada.')
             ->assertJsonPath('data.estado', 'bloqueada');
     }
 
@@ -109,7 +109,7 @@ final class CompletarYReabrirTest extends PedidosTestCase
         $pedido = $this->crear($this->laura(), $carla);
         $this->accion($carla, $pedido, 'completar', ['comentario' => 'Listo.'])->assertOk();
 
-        $this->accion($carla, $pedido, 'completar', ['comentario' => 'Listo.'])->assertConflict()->assertJsonPath('message', 'Ya está completado.');
+        $this->accion($carla, $pedido, 'completar', ['comentario' => 'Listo.'])->assertConflict()->assertJsonPath('message', 'Ya está completada.');
         Event::assertDispatchedTimes(PedidoCompletado::class, 1);
     }
 
@@ -162,7 +162,7 @@ final class CompletarYReabrirTest extends PedidosTestCase
 
         $this->accion($this->sofia(), $pedido, 'reabrir', ['comentario' => 'x'])
             ->assertForbidden()
-            ->assertJsonPath('message', 'Solo quien lo pidió puede reabrirlo.');
+            ->assertJsonPath('message', 'Solo quien la pidió puede reabrirla.');
     }
 
     public function test_reabrir_uno_abierto_devuelve_409(): void
@@ -183,7 +183,7 @@ final class CompletarYReabrirTest extends PedidosTestCase
 
         $this->accion($laura, $pedido, 'reabrir', ['comentario' => 'Faltaron 2 bolsas.'])
             ->assertUnprocessable()
-            ->assertJsonPath('errors.propietario_id.0', 'Carla está inactiva: elegí a quién se lo pasás.');
+            ->assertJsonPath('errors.propietario_id.0', 'Carla está inactiva: elegí a quién se la pasás.');
 
         $this->accion($laura, $pedido, 'reabrir', ['comentario' => 'Faltaron 2 bolsas.', 'propietario_id' => $diego->id])
             ->assertOk()

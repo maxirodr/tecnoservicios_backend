@@ -236,8 +236,8 @@ return [
         'fecha_inicio_prevista' => 'fecha de inicio prevista',
         'fecha_fin_prevista' => 'fecha de fin prevista',
         'carpeta_drive_url' => 'carpeta de Drive',
-        'confirmo_pedidos_abiertos' => 'pedidos abiertos',
-        'confirmo_pedidos_abiertos.*' => 'pedido abierto',
+        'confirmo_pedidos_abiertos' => 'tareas abiertas',
+        'confirmo_pedidos_abiertos.*' => 'tarea abierta',
 
         // Obras: contactos
         'contactos' => 'contactos',
@@ -323,7 +323,7 @@ return [
         'seguidores' => 'seguidores',
         'seguidores.*' => 'seguidor',
         'con_quien' => 'con quién / para quién',
-        'fecha_pedido' => 'fecha de pedido',
+        'fecha_pedido' => 'fecha en que se pidió',
         'fecha_entrega' => 'fecha de entrega',
         'periodo_inicio' => 'inicio del período',
         'periodo_fin' => 'fin del período',
@@ -343,7 +343,7 @@ return [
         'dir' => 'sentido del orden',
         'desde' => 'desde',
         'hasta' => 'hasta',
-        'de' => 'qué pedidos',
+        'de' => 'qué tareas',
 
         // Equipos en reparación (pedidos.md §4.4)
         'equipo' => 'equipo',

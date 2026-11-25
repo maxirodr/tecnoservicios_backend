@@ -86,7 +86,7 @@ final class AltaPedidoTest extends PedidosTestCase
 
         $this->actingAs($this->laura())->postJson('/api/pedidos', $this->alta($this->carla()))
             ->assertUnprocessable()
-            ->assertJsonPath('errors.propietario_id.0', 'Carla no tiene acceso a Pedidos: elegí otra persona.');
+            ->assertJsonPath('errors.propietario_id.0', 'Carla no tiene acceso a Tareas: elegí otra persona.');
     }
 
     public function test_pedido_sin_obra_queda_en_servicios_generales(): void

@@ -35,7 +35,7 @@ final readonly class ReabrirPedidoAction
     public function handle(User $actor, int $id, string $comentario, ?int $propietarioId, ?int $sectorId): Pedido
     {
         return $this->transiciones->ejecutar($actor, $id, AccionPedido::Reabrir, function (Pedido $pedido, PedidoEstado $destino) use ($actor, $comentario, $propietarioId, $sectorId): Pedido {
-            BuscarPedido::exigir($this->acceso->reabrir($actor, $pedido), 'Solo quien lo pidió puede reabrirlo.');
+            BuscarPedido::exigir($this->acceso->reabrir($actor, $pedido), 'Solo quien la pidió puede reabrirla.');
 
             $cambios = ['comentario_cierre' => ['antes' => $pedido->comentario_cierre, 'despues' => null]];
             $inactivo = $pedido->propietario !== null && ! $pedido->propietario->activo;
@@ -45,7 +45,7 @@ final readonly class ReabrirPedidoAction
             } elseif ($inactivo) {
                 $nombre = $pedido->propietario->nombre ?? '';
 
-                throw ValidationException::withMessages(['propietario_id' => ["{$nombre} está inactiva: elegí a quién se lo pasás."]]);
+                throw ValidationException::withMessages(['propietario_id' => ["{$nombre} está inactiva: elegí a quién se la pasás."]]);
             }
 
             $destino = $pedido->enElSector() ? PedidoEstado::NoIniciada : $destino;

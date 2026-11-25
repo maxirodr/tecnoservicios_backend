@@ -39,7 +39,7 @@ final class ComentariosYSeguirTest extends PedidosTestCase
 
     public function test_pedido_que_no_existe_dice_pedido_no_encontrado(): void
     {
-        $this->actingAs($this->laura())->getJson('/api/pedidos/999999')->assertNotFound()->assertJsonPath('message', 'Pedido no encontrado.');
+        $this->actingAs($this->laura())->getJson('/api/pedidos/999999')->assertNotFound()->assertJsonPath('message', 'Tarea no encontrada.');
     }
 
     public function test_comentario_guarda_autor_y_fecha(): void
@@ -136,7 +136,7 @@ final class ComentariosYSeguirTest extends PedidosTestCase
 
         $this->actingAs($laura)->postJson("/api/pedidos/{$pedido->id}/seguir")
             ->assertUnprocessable()
-            ->assertJsonPath('errors.pedido.0', 'Ya recibís los avisos de este pedido.');
+            ->assertJsonPath('errors.pedido.0', 'Ya recibís los avisos de esta tarea.');
     }
 
     public function test_seguir_dos_veces_no_duplica(): void

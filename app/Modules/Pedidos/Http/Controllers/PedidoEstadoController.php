@@ -33,35 +33,35 @@ final class PedidoEstadoController
     {
         $tomar->handle($this->usuario($request), $pedido);
 
-        return $this->detalle($request, $pedido, 'Lo tomaste: quedó En curso.');
+        return $this->detalle($request, $pedido, 'La tomaste: quedó En curso.');
     }
 
     public function bloquear(BloquearRequest $request, int $pedido, BloquearPedidoAction $bloquear): JsonResponse
     {
         $bloquear->handle($this->usuario($request), $pedido, $request->texto());
 
-        return $this->detalle($request, $pedido, 'Quedó Bloqueado.');
+        return $this->detalle($request, $pedido, 'Quedó Bloqueada.');
     }
 
     public function retomar(Request $request, int $pedido, RetomarPedidoAction $retomar): JsonResponse
     {
         $retomar->handle($this->usuario($request), $pedido);
 
-        return $this->detalle($request, $pedido, 'Lo retomaste: quedó En curso.');
+        return $this->detalle($request, $pedido, 'La retomaste: quedó En curso.');
     }
 
     public function completar(CompletarRequest $request, int $pedido, CompletarPedidoAction $completar): JsonResponse
     {
         $completar->handle($this->usuario($request), $pedido, $request->texto(), $request->comprobantes());
 
-        return $this->detalle($request, $pedido, 'Quedó Completado.');
+        return $this->detalle($request, $pedido, 'Quedó Completada.');
     }
 
     public function reabrir(ReabrirRequest $request, int $pedido, ReabrirPedidoAction $reabrir): JsonResponse
     {
         $reabrir->handle($this->usuario($request), $pedido, $request->texto(), $request->propietarioId(), $request->sectorId());
 
-        return $this->detalle($request, $pedido, 'Lo reabriste.');
+        return $this->detalle($request, $pedido, 'La reabriste.');
     }
 
     public function reasignar(ReasignarRequest $request, int $pedido, ReasignarPedidoAction $reasignar): JsonResponse
@@ -69,7 +69,7 @@ final class PedidoEstadoController
         $user = $this->usuario($request);
         $resultado = $reasignar->handle($user, $pedido, $request->propietarioId(), $request->sectorId(), $request->comentario());
 
-        return $this->ok(new PedidoDetalleResource($this->detalle->handle($user, $pedido, $resultado->avisados, true)), 'Lo reasignaste.');
+        return $this->ok(new PedidoDetalleResource($this->detalle->handle($user, $pedido, $resultado->avisados, true)), 'La reasignaste.');
     }
 
     private function detalle(Request $request, int $pedido, string $mensaje): JsonResponse

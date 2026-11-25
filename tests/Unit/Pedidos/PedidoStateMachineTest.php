@@ -54,7 +54,7 @@ final class PedidoStateMachineTest extends TestCase
     public function test_completar_desde_bloqueada_pide_retomarlo(): void
     {
         $this->expectExceptionObject(TransicionNoPermitida::para(AccionPedido::Completar, PedidoEstado::Bloqueada));
-        $this->expectExceptionMessage('Primero retomalo: está bloqueado.');
+        $this->expectExceptionMessage('Primero retomala: está bloqueada.');
 
         (new PedidoStateMachine)->destino(AccionPedido::Completar, PedidoEstado::Bloqueada);
     }
@@ -65,7 +65,7 @@ final class PedidoStateMachineTest extends TestCase
             (new PedidoStateMachine)->destino(AccionPedido::Tomar, PedidoEstado::EnCurso, 'Carla');
             $this->fail('Se esperaba TransicionNoPermitida');
         } catch (TransicionNoPermitida $e) {
-            $this->assertSame('Ya lo tomó Carla.', $e->getMessage());
+            $this->assertSame('Ya la tomó Carla.', $e->getMessage());
             $this->assertSame(PedidoEstado::EnCurso, $e->actual);
         }
     }

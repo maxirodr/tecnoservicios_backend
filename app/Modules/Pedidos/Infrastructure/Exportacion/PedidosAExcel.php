@@ -21,10 +21,10 @@ use OpenSpout\Writer\XLSX\Writer;
  */
 final class PedidosAExcel
 {
-    public const NOMBRE_HOJA = 'Pedidos';
+    public const NOMBRE_HOJA = 'Tareas';
 
     public const ENCABEZADOS = [
-        'Obra', 'Tarea', 'Sector', 'Propietario', 'Solicitante', 'Pedido', 'Entrega', 'Prioridad', 'Estado',
+        'Obra', 'Tarea', 'Sector', 'Propietario', 'Solicitante', 'Pedida', 'Entrega', 'Prioridad', 'Estado',
         'N.º de presupuesto', 'Con quién / para quién', 'Período', 'Aclaraciones', 'Completado',
     ];
 
@@ -53,7 +53,7 @@ final class PedidosAExcel
     /** `pedidos-AAAA-MM-DD.xlsx`, con el día de la empresa. */
     public static function nombreDeArchivo(): string
     {
-        return 'pedidos-'.FechaEmpresa::hoyTexto().'.xlsx';
+        return 'tareas-'.FechaEmpresa::hoyTexto().'.xlsx';
     }
 
     /** Como en la tabla: el pedido en el sector, o la persona con "(inactivo)" si ya no está (RN-PED-60, PU-612). */

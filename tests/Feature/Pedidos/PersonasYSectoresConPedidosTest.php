@@ -65,7 +65,7 @@ final class PersonasYSectoresConPedidosTest extends PedidosTestCase
 
         $this->actingAs($this->gerencia())->deleteJson("/api/sectores/{$compras->id}")
             ->assertUnprocessable()
-            ->assertJsonPath('errors.sector.0', 'Antes de sacar Compras, reasigná su pedido que está en el sector.');
+            ->assertJsonPath('errors.sector.0', 'Antes de sacar Compras, reasigná su tarea que está en el sector.');
         $this->assertDatabaseHas('sectores', ['id' => $compras->id, 'activo' => true]);
     }
 

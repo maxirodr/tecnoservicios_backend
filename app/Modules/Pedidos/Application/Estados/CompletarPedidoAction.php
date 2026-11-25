@@ -39,7 +39,7 @@ final readonly class CompletarPedidoAction
     public function handle(User $actor, int $id, string $comentario, array $comprobantes): Pedido
     {
         return $this->transiciones->ejecutar($actor, $id, AccionPedido::Completar, function (Pedido $pedido, PedidoEstado $destino) use ($actor, $comentario, $comprobantes): Pedido {
-            BuscarPedido::exigir($this->acceso->actuaComoPropietario($actor, $pedido), 'Solo el propietario puede completarlo.');
+            BuscarPedido::exigir($this->acceso->actuaComoPropietario($actor, $pedido), 'Solo el propietario puede completarla.');
 
             $cambios = [
                 'estado' => Transiciones::estado($pedido->estado, $destino),

@@ -17,7 +17,7 @@ use Illuminate\Http\JsonResponse;
  */
 final readonly class BuscarPedido
 {
-    public const NO_ENCONTRADO = 'Pedido no encontrado.';
+    public const NO_ENCONTRADO = 'Tarea no encontrada.';
 
     public function __construct(private AccesoPedido $acceso) {}
 

@@ -50,7 +50,7 @@ final class ExportarPedidosTest extends PedidosTestCase
         $this->actingAs($this->laura())->get('/api/pedidos/exportar')
             ->assertOk()
             ->assertHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-            ->assertDownload('pedidos-2026-10-19.xlsx');
+            ->assertDownload('tareas-2026-10-19.xlsx');
     }
 
     public function test_exportar_baja_todo_lo_filtrado_sin_paginar(): void

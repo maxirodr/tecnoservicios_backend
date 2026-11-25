@@ -41,7 +41,7 @@ final readonly class ReasignarPedidoAction
     public function handle(User $actor, int $id, ?int $propietarioId, ?int $sectorId, ?string $comentario): PedidoConAvisados
     {
         $pedido = $this->transiciones->ejecutar($actor, $id, AccionPedido::Reasignar, function (Pedido $pedido) use ($actor, $propietarioId, $sectorId, $comentario): Pedido {
-            BuscarPedido::exigir($this->acceso->reasignar($actor, $pedido), 'Solo el propietario o quien lo pidió pueden reasignarlo.');
+            BuscarPedido::exigir($this->acceso->reasignar($actor, $pedido), 'Solo el propietario o quien la pidió pueden reasignarla.');
 
             $anteriorId = $pedido->propietario_id;
             $estadoAntes = $pedido->estado;

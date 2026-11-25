@@ -89,7 +89,7 @@ final readonly class RecorridoQuery
 
         foreach ($actividades as $actividad) {
             $textos = match (true) {
-                $actividad->accion === CrearPedidoAction::ACCION => ['Creó el pedido'],
+                $actividad->accion === CrearPedidoAction::ACCION => ['Creó la tarea'],
                 $actividad->accion === ActualizarPedidoAction::ACCION => TextoDeCambios::edicion($actividad->cambios ?? []),
                 TextoDeCambios::esAdjunto($actividad->accion) => TextoDeCambios::adjuntos(
                     $actividad->cambios ?? [],

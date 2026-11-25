@@ -37,7 +37,7 @@ final class TomarYBloquearTest extends PedidosTestCase
         $laura = $this->laura();
         $pedido = $this->crear($laura, $this->carla());
 
-        $this->accion($laura, $pedido, 'tomar')->assertForbidden()->assertJsonPath('message', 'Solo el propietario puede tomarlo.');
+        $this->accion($laura, $pedido, 'tomar')->assertForbidden()->assertJsonPath('message', 'Solo el propietario puede tomarla.');
         $this->assertSame('no_iniciada', $pedido->refresh()->estado->value);
     }
 
@@ -51,7 +51,7 @@ final class TomarYBloquearTest extends PedidosTestCase
         $this->accion($carla, $pedido, 'tomar')
             ->assertConflict()
             ->assertJsonPath('data.estado', 'en_curso')
-            ->assertJsonPath('message', 'Ya lo tomó Carla.');
+            ->assertJsonPath('message', 'Ya la tomó Carla.');
         Event::assertDispatchedTimes(PedidoTomado::class, 1);
     }
 
@@ -87,7 +87,7 @@ final class TomarYBloquearTest extends PedidosTestCase
         $pedido = $this->pedidoEnElSector($carla);
 
         $this->accion($carla, $pedido, 'tomar')->assertOk();
-        $this->accion($pablo, $pedido, 'tomar')->assertConflict()->assertJsonPath('message', 'Ya lo tomó Carla.');
+        $this->accion($pablo, $pedido, 'tomar')->assertConflict()->assertJsonPath('message', 'Ya la tomó Carla.');
     }
 
     public function test_bloquear_exige_motivo(): void
@@ -97,7 +97,7 @@ final class TomarYBloquearTest extends PedidosTestCase
 
         $this->accion($carla, $pedido, 'bloquear', ['motivo' => '  '])
             ->assertUnprocessable()
-            ->assertJsonPath('errors.motivo.0', 'Contá qué lo traba.');
+            ->assertJsonPath('errors.motivo.0', 'Contá qué la traba.');
     }
 
     public function test_bloquear_desde_no_iniciada(): void
@@ -130,7 +130,7 @@ final class TomarYBloquearTest extends PedidosTestCase
         $this->accion($carla, $pedido, 'bloquear', ['motivo' => 'x'])
             ->assertConflict()
             ->assertJsonPath('data.estado', 'completada')
-            ->assertJsonPath('message', 'Está completado: si falta algo, reabrilo.');
+            ->assertJsonPath('message', 'Está completada: si falta algo, reabrila.');
     }
 
     public function test_retomar_vuelve_a_en_curso_y_no_genera_aviso(): void
@@ -161,7 +161,7 @@ final class TomarYBloquearTest extends PedidosTestCase
         $this->celda('Calidad', 'pedidos', 'ver', 'propias');
         $pedido = $this->crear($this->laura(), $this->carla());
 
-        $this->accion($this->sofia(), $pedido, 'tomar')->assertNotFound()->assertJsonPath('message', 'Pedido no encontrado.');
+        $this->accion($this->sofia(), $pedido, 'tomar')->assertNotFound()->assertJsonPath('message', 'Tarea no encontrada.');
     }
 
     private function pedidoEnElSector(User $deCompras): Pedido

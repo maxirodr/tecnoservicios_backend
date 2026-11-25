@@ -34,7 +34,7 @@ final readonly class SeguirPedidoAction
         $pedido = $this->buscar->visible($actor, $id);
 
         if ($pedido->esSolicitante($actor) || $pedido->esPropietario($actor)) {
-            throw ValidationException::withMessages(['pedido' => ['Ya recibís los avisos de este pedido.']]);
+            throw ValidationException::withMessages(['pedido' => ['Ya recibís los avisos de esta tarea.']]);
         }
 
         BuscarPedido::exigir($this->acceso->puedeNivel($actor, Nivel::Ver));

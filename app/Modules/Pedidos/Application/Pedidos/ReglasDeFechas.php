@@ -22,7 +22,7 @@ final class ReglasDeFechas
         $errores = [];
 
         if ($fechaPedido !== null && $fechaPedido > FechaEmpresa::hoyTexto()) {
-            $errores['fecha_pedido'] = ['La fecha de pedido no puede ser posterior a hoy.'];
+            $errores['fecha_pedido'] = ['La fecha en que se pidió no puede ser posterior a hoy.'];
         }
 
         if (($periodoInicio === null) !== ($periodoFin === null)) {
