@@ -14,12 +14,17 @@ use DateTimeInterface;
  */
 final class Legible
 {
+    /** El signo menos tipográfico (U+2212), no el guion. */
+    private const MENOS = '−';
+
     /**
      * @param  numeric-string  $importe
      */
     public static function importe(string $importe): string
     {
-        return Importe::desde($importe)->legible();
+        $texto = Importe::desde($importe)->legible();
+
+        return str_starts_with($texto, '-') ? self::MENOS.substr($texto, 1) : $texto;
     }
 
     /**
@@ -33,7 +38,7 @@ final class Legible
         $decimales = rtrim($decimales, '0');
         $texto = $decimales === '' ? $conPuntos : "{$conPuntos},{$decimales}";
 
-        return $negativo && $texto !== '0' ? "-{$texto}" : $texto;
+        return $negativo && $texto !== '0' ? self::MENOS.$texto : $texto;
     }
 
     /** "17-10-2026" */

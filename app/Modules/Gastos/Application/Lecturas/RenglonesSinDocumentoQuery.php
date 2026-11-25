@@ -6,6 +6,7 @@ namespace App\Modules\Gastos\Application\Lecturas;
 
 use App\Modules\Gastos\Application\Acceso\AccesoGasto;
 use App\Modules\Gastos\Application\Acceso\BuscarGasto;
+use App\Modules\Gastos\Application\Carga\AlcanceDeCarga;
 use App\Modules\Gastos\Domain\Enums\Origen;
 use App\Modules\Gastos\Domain\Models\Gasto;
 use App\Modules\Identidad\Domain\Enums\ClaveFuncion;
@@ -24,6 +25,8 @@ use Illuminate\Http\Exceptions\HttpResponseException;
  */
 final readonly class RenglonesSinDocumentoQuery
 {
+    public const OBRA_NO_ENCONTRADA = 'No encontramos esta obra.';
+
     public function __construct(
         private AccesoGasto $acceso,
         private ObrasConsulta $obras,
@@ -35,9 +38,11 @@ final readonly class RenglonesSinDocumentoQuery
      */
     public function handle(User $user, int $obraId): array
     {
-        $obra = $this->obras->resumen($obraId) ?? throw new HttpResponseException(ApiResponse::error('Obra no encontrada.', 404));
+        // Sin ninguna de las dos celdas, 403 antes de mirar la obra: no se confirma si existe.
+        BuscarGasto::exigir($this->acceso->puede($user, ClaveFuncion::Rendicion, Nivel::Ver) || $this->acceso->puede($user, ClaveFuncion::ControlCantidad, Nivel::Ver), AlcanceDeCarga::RENDICION_AJENA);
+        $obra = $this->obras->resumen($obraId) ?? throw new HttpResponseException(ApiResponse::error(self::OBRA_NO_ENCONTRADA, 404));
         $ve = $this->alcanza($user, ClaveFuncion::Rendicion, Nivel::Ver, $obraId) || $this->alcanza($user, ClaveFuncion::ControlCantidad, Nivel::Ver, $obraId);
-        BuscarGasto::exigir($ve);
+        BuscarGasto::exigir($ve, AlcanceDeCarga::RENDICION_AJENA);
 
         $cargados = Gasto::query()->with(LecturaDeGasto::DETALLE)
             ->whereIn('origen', [Origen::Amortizacion->value, Origen::RetiroRemito->value, Origen::Devolucion->value, Origen::MontoPeriodo->value])

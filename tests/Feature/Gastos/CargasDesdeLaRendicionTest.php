@@ -36,7 +36,7 @@ final class CargasDesdeLaRendicionTest extends GastosTestCase
         $diego = $this->diego();
 
         $this->cargar($diego, $this->amortizacion($nave))->assertCreated()
-            ->assertJsonPath('message', 'Amortización cargada.')
+            ->assertJsonPath('message', '✓ Amortización cargada.')
             ->assertJsonPath('data.documento', 'Amortización')
             ->assertJsonPath('data.renglones.0.rubro.clave', 'amortizacion')
             ->assertJsonPath('data.proveedor.es_generico', true);
@@ -99,7 +99,7 @@ final class CargasDesdeLaRendicionTest extends GastosTestCase
 
         $this->cargar($this->diego(), [...$datos, 'numero' => '1-456', 'proveedor_id' => $this->proveedor('Tecnobahía Ejemplo')->id])
             ->assertCreated()
-            ->assertJsonPath('message', 'Retiro cargado. Ya suma en la rendición y en el control por cantidad.')
+            ->assertJsonPath('message', '✓ Retiro cargado. Ya suma en la rendición y en el control por cantidad.')
             ->assertJsonPath('data.documento', 'Retiro · remito 0001-00000456')
             ->assertJsonPath('data.total', '180000.00');
     }
@@ -184,7 +184,7 @@ final class CargasDesdeLaRendicionTest extends GastosTestCase
 
         $this->cargar($this->diego(), $this->carga('devolucion', $this->renglon('Cemento x 50 kg (sobrante)', '-4', '9800', $nave, 'materiales', ['material_id' => $cemento->id])))
             ->assertCreated()
-            ->assertJsonPath('message', 'Devolución cargada. Ya resta en la rendición.')
+            ->assertJsonPath('message', '✓ Devolución cargada. Ya resta en la rendición.')
             ->assertJsonPath('data.total', '-39200.00')
             ->assertJsonPath('data.renglones.0.cantidad', '-4.000')
             ->assertJsonPath('data.proveedor.es_generico', true);
@@ -240,7 +240,7 @@ final class CargasDesdeLaRendicionTest extends GastosTestCase
         $periodo = $this->carga('monto_periodo', $this->renglon('Fijos 1 al 31-oct', '1', '260000', $nave, 'fijos'), ['periodo_desde' => '2026-10-01', 'periodo_hasta' => '2026-10-31']);
 
         $this->cargar($this->diego(), $periodo)->assertCreated()
-            ->assertJsonPath('message', 'Período cargado. Ya resta en la rendición.')
+            ->assertJsonPath('message', '✓ Período cargado. Ya resta en la rendición.')
             ->assertJsonPath('data.fecha', '2026-10-31')
             ->assertJsonPath('data.renglones.0.fecha', '2026-10-31')
             ->assertJsonPath('data.documento', 'Período 1 al 31-oct');
@@ -305,9 +305,14 @@ final class CargasDesdeLaRendicionTest extends GastosTestCase
             ->assertJsonCount(0, 'data.retiros')
             ->assertJsonPath('data.puede', ['amortizacion' => true, 'retiros' => true, 'devoluciones' => true, 'periodos' => true]);
 
-        $this->actingAs($this->sofia())->getJson("/api/obras/{$nave->id}/renglones-sin-documento")->assertForbidden();
-        $this->actingAs($this->laura())->getJson("/api/obras/{$nave->id}/renglones-sin-documento")->assertForbidden();
-        $this->actingAs($diego)->getJson('/api/obras/999999/renglones-sin-documento')->assertNotFound();
+        $sofia = $this->sofia();
+        $this->actingAs($sofia)->getJson("/api/obras/{$nave->id}/renglones-sin-documento")->assertForbidden()
+            ->assertJsonPath('message', 'No podés cargar en esta rendición.');
+        $this->actingAs($sofia)->getJson('/api/obras/999999/renglones-sin-documento')->assertForbidden();
+        $this->actingAs($this->laura())->getJson("/api/obras/{$nave->id}/renglones-sin-documento")->assertForbidden()
+            ->assertJsonPath('message', 'No podés cargar en esta rendición.');
+        $this->actingAs($diego)->getJson('/api/obras/999999/renglones-sin-documento')->assertNotFound()
+            ->assertJsonPath('message', 'No encontramos esta obra.');
     }
 
     public function test_con_control_cantidad_o_rendicion_editar_elige_el_proveedor_del_retiro_sin_proveedores_ver(): void

@@ -24,7 +24,7 @@ final class CargarFacturaTest extends GastosTestCase
 
         $respuesta = $this->cargar($this->diego(), $this->facturaDeW10($this->proveedor(), $nave, $losa))
             ->assertCreated()
-            ->assertJsonPath('message', 'Factura cargada. Ya se restó en la rendición de Piso industrial nave 3 y Reparación de losa tanque B.')
+            ->assertJsonPath('message', '✓ Factura cargada. Ya se restó en la rendición de Piso industrial nave 3 y Reparación de losa tanque B.')
             ->assertJsonPath('data.numero', '0003-00012345')
             ->assertJsonPath('data.documento', 'Factura 0003-00012345')
             ->assertJsonPath('data.total', '905600.00')
@@ -65,7 +65,7 @@ final class CargarFacturaTest extends GastosTestCase
         $datos = ['origen' => 'factura', 'numero' => '1-1', 'fecha' => '2026-10-17', 'proveedor_id' => $this->proveedor()->id,
             'renglones' => [$this->renglon('Cemento a stock', '10', '9800', null, null)]];
 
-        $this->cargar($this->carla(), $datos)->assertCreated()->assertJsonPath('message', 'Factura cargada. No va a ninguna obra (todo sin obra).');
+        $this->cargar($this->carla(), $datos)->assertCreated()->assertJsonPath('message', '✓ Factura cargada. No va a ninguna obra (todo sin obra).');
     }
 
     public function test_factura_exige_numero_fecha_y_proveedor(): void
@@ -290,6 +290,19 @@ final class CargarFacturaTest extends GastosTestCase
         );
 
         $datos['renglones'][0]['material_id'] = $cemento->id;
+        $datos['renglones'][4]['material_nuevo'] = ['nombre' => 'Flete', 'unidad' => 'viaje'];
+        $this->cargar($this->diego(), $datos)->assertUnprocessable()->assertJsonPath(
+            'errors',
+            $this->error('renglones.4.material_id', 'Renglón 5: elegí primero la obra.'),
+        );
+        $datos['renglones'][4]['material_nuevo'] = null;
+        $datos['renglones'][4]['material_id'] = $cemento->id;
+        $this->cargar($this->diego(), $datos)->assertUnprocessable()->assertJsonPath(
+            'errors',
+            $this->error('renglones.4.material_id', 'Renglón 5: elegí primero la obra.'),
+        );
+
+        $datos['renglones'][4]['material_id'] = null;
         $datos['renglones'][1]['material_nuevo'] = ['nombre' => 'Arena gruesa', 'unidad' => 'm³'];
         $this->cargar($this->diego(), $datos)->assertCreated()
             ->assertJsonPath('data.renglones.0.material', ['id' => $cemento->id, 'nombre' => 'Cemento x 50 kg', 'unidad' => 'bolsa'])
