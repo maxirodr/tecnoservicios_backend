@@ -44,9 +44,13 @@ final readonly class ObrasConsultaEloquent implements ObrasConsulta
             ->map(static fn (mixed $id): int => (int) $id)->all());
     }
 
-    public function opciones(?string $texto, int $limite): array
+    public function opciones(?string $texto, int $limite, ?array $soloEstas = null): array
     {
         $query = Obra::query()->with('principal');
+
+        if ($soloEstas !== null) {
+            $query->whereKey($soloEstas === [] ? [0] : $soloEstas);
+        }
 
         if ($texto !== null && trim($texto) !== '') {
             (new PorBusqueda($texto))->aplicar($query);
