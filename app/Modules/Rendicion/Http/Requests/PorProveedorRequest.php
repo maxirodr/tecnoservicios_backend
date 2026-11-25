@@ -12,7 +12,7 @@ use Illuminate\Validation\Rule;
  * `GET /api/obras/{id}/rendicion/por-proveedor?rubro=&desde=&hasta=` (W-37, RN-REN-37): `rubro` es uno de los
  * 12 del resumen (INSUMOS incluye EPP); `desde`/`hasta` por fecha efectiva, AAAA-MM-DD, hasta ≥ desde.
  */
-final class PorProveedorRequest extends RendicionRequest
+final class PorProveedorRequest extends LecturaDeRendicionRequest
 {
     /**
      * @return array<string, mixed>

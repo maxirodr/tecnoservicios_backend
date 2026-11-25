@@ -37,6 +37,15 @@ final class PermisosDeRendicionTest extends RendicionTestCase
         }
     }
 
+    public function test_sin_acceso_a_la_rendicion_un_filtro_invalido_da_403_y_no_422(): void
+    {
+        foreach (['/rubros/materiales?orden=x', '/por-proveedor?desde=x'] as $ruta) {
+            $this->actingAs($this->calidad())->getJson("/api/obras/{$this->ampliacion->id}/rendicion{$ruta}")
+                ->assertForbidden()->assertJsonPath('message', 'No tenés acceso a la rendición.');
+            $this->actingAs($this->responsableAmpliacion)->getJson("/api/obras/{$this->ampliacion->id}/rendicion{$ruta}")->assertUnprocessable();
+        }
+    }
+
     public function test_sin_sesion_devuelve_401(): void
     {
         $this->getJson("/api/obras/{$this->ampliacion->id}/rendicion")->assertUnauthorized();

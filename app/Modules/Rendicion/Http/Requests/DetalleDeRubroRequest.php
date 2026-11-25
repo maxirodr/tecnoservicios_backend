@@ -9,7 +9,7 @@ use App\Modules\Rendicion\Domain\Renglones\OrdenDeRenglones;
 use Illuminate\Validation\Rule;
 
 /** `GET /api/obras/{id}/rendicion/rubros/{clave}?orden=fecha|proveedor|total&dir=asc|desc` (W-36, RN-REN-31). */
-final class DetalleDeRubroRequest extends RendicionRequest
+final class DetalleDeRubroRequest extends LecturaDeRendicionRequest
 {
     /**
      * @return array<string, mixed>

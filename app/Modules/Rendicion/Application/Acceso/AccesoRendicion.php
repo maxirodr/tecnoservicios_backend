@@ -43,15 +43,25 @@ final readonly class AccesoRendicion
     }
 
     /**
+     * La celda `rendicion` ≥ ver, sin mirar la obra: 403 "No tenés acceso a la rendición.".
+     *
+     * @throws HttpResponseException
+     */
+    public function exigirRendicion(User $user): void
+    {
+        if (! $this->tiene($user, ClaveFuncion::Rendicion, Nivel::Ver)) {
+            throw new HttpResponseException(ApiResponse::error(self::SIN_RENDICION, 403));
+        }
+    }
+
+    /**
      * W-11, W-36, W-37, W-44: `rendicion` ≥ ver para esa obra.
      *
      * @throws HttpResponseException
      */
     public function obraDeRendicion(User $user, int $obraId): ObraResumen
     {
-        if (! $this->tiene($user, ClaveFuncion::Rendicion, Nivel::Ver)) {
-            throw new HttpResponseException(ApiResponse::error(self::SIN_RENDICION, 403));
-        }
+        $this->exigirRendicion($user);
 
         return $this->visible($obraId, fn (ObraResumen $obra): bool => $this->puede($user, ClaveFuncion::Rendicion, Nivel::Ver, $obra));
     }
