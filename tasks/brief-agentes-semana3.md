@@ -206,3 +206,82 @@ Respetalos exactamente. Si tenés que cambiarlos, reportalo.
 - la integración real front ↔ back con el caso de referencia cargado por la API;
 - la prueba del cliente de la semana 3;
 - QC.
+
+---
+
+## Tanda 2 (2026-11-25) — la tanda 1 ya está en `main`
+
+- **Qué hay en `main`:**
+  - back `d5d7126`, con 1143 tests en verde, pint y phpstan;
+  - front `87a0ffd`, con las rutas de W-46 y W-33 alineadas a las de Gastos: `rutaRenglonesSinDocumento` →
+    `/obras/:id/rendicion/sin-documento` y `rutaGastosDeObra` → `/gastos?obra=:id&fecha=todas`.
+- **Qué ya está probado:**
+  - el caso de referencia da exacto en Rendición con un fake (`RendicionCasoDeReferenciaTest`);
+  - en Gastos, cargado por la API (`CasoDeReferenciaEnGastosTest`).
+- **Qué falta:** cruzar los dos y la integración real front ↔ back.
+- **Reglas:** las mismas de arriba.
+- **Ronda 4 de QA en paralelo:** prueba `staging` en `…_qa_s2r4`, con puertos 8340 y 5316. No la toques.
+
+| Agente | Worktree · rama | Base · puertos | Qué hace |
+|---|---|---|---|
+| **Integración S3** | back `tecnoservicios_backend_gastos` y front `tecnoservicios_frontend_gastos` · `feat/w3-integracion` en los dos (ya desde `main`) | tests: `tecnoservicios_testing_gastos` · integración real: `tecnoservicios_integracion`, 8320/5312, con `BACKEND_DIR` apuntando al worktree del back | Ver abajo. |
+| **QC S3** | sin worktree; **solo lectura** en las carpetas principales (`tecnoservicios_backend`, `tecnoservicios_frontend`, en `main`) | — | Ver abajo. |
+
+**Integración S3:**
+
+1. **El caso de referencia, de punta a punta, en el backend.** Un test nuevo que:
+   - carga los 21 renglones por la **API de Gastos**, con la misma obra, presupuestos y montos de `rendicion.md` §9.1
+     cargados por la API de Obras;
+   - pide **la API de Rendición**: W-11, W-36 de INSUMOS, W-37, W-48, W-12 y el % de W-05;
+   - verifica §9.3 y §9.4 al centavo;
+   - anula la 0004-00000020 y verifica que la rendición se actualiza sola, por los eventos y la invalidación del cache,
+     sin limpiar nada a mano.
+
+   Si algo no da, arreglá en el módulo dueño del dato con el diff mínimo y su test.
+2. **Contratos front ↔ back de la semana 3.** Front Gastos supuso estas formas: 422 con
+   `errors.confirmar_remito_repetido` / `errors.confirmar_superposicion`, la factura repetida con `errors.existente.id`
+   y los grupos de W-33 en `meta.grupos`.
+   - **El caso clave:** "ver todos" desde la rendición manda `fecha=todas`, y el back sin `desde`/`hasta` usa el mes
+     en curso. Que "sin límite de fecha" llegue de verdad sin límite (RN-GAS-35). Revisá qué parámetros manda el front
+     y qué acepta el back.
+   - **Rendición:** el porcentaje del listado pasó a string decimal.
+   - **Qué revisar:** cada endpoint de `gastos.md` §12 y `rendicion.md` §12 contra lo que manda y espera el front
+     (schemas zod, `api/*.ts`).
+   - **Cada diferencia:** arreglala con el diff mínimo, del lado que se aparta de la spec, con su test, y listala en el
+     reporte.
+3. **HU-087, encender la semana 3:**
+   - `gastos` y `rendiciones` en `MODULOS_ENTREGADOS_POR_DEFECTO`;
+   - la barra con Gastos y Rendiciones, con "(ver)" según la matriz, en el orden de RN-IDE-11;
+   - la barra de abajo y "Más" en el celular;
+   - el segundo Vite "semana 3" de `playwright.config.ts` ya no hace falta si todo arranca encendido: simplificalo
+     sin perder cobertura;
+   - los e2e y la integración existentes al día con la barra nueva.
+4. **Integración real (`npm run e2e:integracion`), specs nuevos contra el backend real:**
+   - **Diego (Gerencia de Administración):** carga una factura repartida en dos obras con un renglón EPP. En la
+     rendición de cada obra se ve lo que restó, con INSUMOS incluyendo EPP.
+   - **Desde W-11:** "+ cargar período" (horas) y el retiro con remito desde W-48. Resta llevar baja.
+   - **W-33 → W-34:** corrige el importe de un renglón y la rendición cambia; anula y deja de sumar.
+   - **Laura (Ingeniería):**
+     - ve "Gastos (ver)" y "Rendiciones (ver)";
+     - ve solo sus obras;
+     - no ve monto ni ganancia;
+     - no puede cargar.
+   - **@celular:** W-44 se lee, y la factura se carga en el celular.
+
+   Es la "señal de que el plazo peligra" del backlog §8.
+5. **Matriz de trazabilidad:** completá las filas de F-13, F-15, F-17, F-48 y F-54 con los tests reales.
+
+**QC S3:**
+- **Qué revisás:** el código de la semana 3 en `main` (back `app/Modules/Gastos`, `app/Modules/Rendicion`, los cambios
+  en `app/Modules/Obras`; front `src/features/gastos`, `src/features/rendicion`) contra `gastos.md`, `rendicion.md`,
+  `backlog.md` §7 y la DoD (§3).
+- **No editás nada.**
+- **Entregás `C:\Users\GREEN\AppData\Local\Temp\claude\4fe530b1c11d8e8d\7321fd61-f89b-4a2a-ab84-df45cc04969d\scratchpad\qc-s3.md`, con:**
+  1. **Criterios no cumplidos o mal cumplidos:** cada historia y cada criterio de aceptación, con archivo:línea.
+  2. **Reglas de dinero:** redondeo, negativos, EPP → INSUMOS, solo total, períodos y anulados.
+  3. **Permisos y alcance:** cada endpoint con su celda de la matriz, "solo sus obras" y el IDOR.
+  4. **Textos que no están en la spec,** en una tabla (texto · dónde · propuesta: queda o cambia por el de la spec), para
+     que Juani decida de una vez.
+  5. **Riesgos para la prueba del cliente** ("comparan con su rendición en Excel").
+- **Severidad:** bloqueante, alta, media o baja, como QA.
+- **Formato:** sin adornos y sin opinar de estilo.
