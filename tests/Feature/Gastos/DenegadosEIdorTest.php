@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Gastos;
 
 use App\Modules\Gastos\Domain\Models\Gasto;
+use App\Modules\Gastos\Domain\Models\GastoRenglon;
 use App\Modules\Identidad\Domain\Models\User;
 use App\Modules\Obras\Domain\Models\Obra;
 use Tests\Feature\Gastos\Support\GastosTestCase;
@@ -82,6 +83,6 @@ final class DenegadosEIdorTest extends GastosTestCase
         ])->assertUnprocessable()
             ->assertJsonPath('errors', $this->error('renglones.0.id', 'Renglón 1: ese renglón no es de este comprobante.'));
         $this->assertSame($this->ajeno->id, $deOtro->fresh()?->gasto_id);
-        $this->assertCount(5, $propio->fresh()?->renglones ?? []);
+        $this->assertSame(5, GastoRenglon::query()->where('gasto_id', $propio->id)->count());
     }
 }

@@ -17,7 +17,11 @@ use Illuminate\Database\QueryException;
  */
 final class AvanceGastoDeObraEloquent implements AvanceGastoDeObra
 {
-    /** El listado pide % y pasadas de las mismas obras: se calcula una vez (RN-REN-42). @var array<string, array<int, ResumenDeRendicion|null>> */
+    /**
+     * El listado pide % y pasadas de las mismas obras: se calcula una vez (RN-REN-42).
+     *
+     * @var array<string, array<int, ResumenDeRendicion|null>>
+     */
     private array $calculadas = [];
 
     public function __construct(private readonly RendicionesDeVariasObras $rendiciones) {}
