@@ -27,7 +27,7 @@
 > del gastado), ADR-008 (importes), ADR-010 (historial), ADR-011 (idempotencia), ADR-014 (archivo o link), ADR-015
 > (primer usuario por comando).
 > Lo nuevo de esta especificación va a `docs/dudas.md` como **DU-I01…DU-I09** (abiertas): cada regla que depende de una
-> se escribe con la propuesta y cita "propuesta DU-INN" hasta que Juani decida.
+> se escribe con la propuesta y cita "resuelta DU-INN" hasta que Juani decida.
 > Personas, obras, mails, números e importes de este archivo son **ficticios** (los de las maquetas). Fechas en
 > dd/mm/aaaa (DU-G13).
 
@@ -69,7 +69,7 @@ DU-I04) ni usuarios (los carga gerencia en W-39, F-58).
 | Informe | `.xlsx` que devuelve cada corrida (§5.8) | Resumen, faltantes, avisos y control de números, para administración. |
 | Faltante | fila del informe con "Bloquea: Sí" | Un dato sin el cual esa obra o esa tarea **no entra** (DU-21, DU-20). |
 | Aviso (del informe) | fila del informe con "Bloquea: No" | Algo que entra igual pero conviene mirar (obra sin presupuesto por rubro). No es un aviso de la campana. |
-| Fecha de corte | `fecha_corte` de cada obra | Hasta qué día (inclusive) está el gastado acumulado y el retirado (propuesta DU-I02). |
+| Fecha de corte | `fecha_corte` de cada obra | Hasta qué día (inclusive) está el gastado acumulado y el retirado (resuelta DU-I02). |
 | Equivalencia de rubro | hoja "Rubros" | "INSUMO" → INSUMOS, aprobada por administración (DU-21). |
 | Huella | SHA-256 del archivo | Identifica el archivo ensayado y aprobado (RN-IMP-05). |
 | Corrida | `importacion_corridas` | Registro de cada ensayo o carga: quién aprobó, cuándo, cuántas filas (§11.3). |
@@ -124,13 +124,13 @@ miles y coma decimal ("1.250.000,50"), **hasta 2 decimales**, sin signo `$`; can
 | Cliente | **Sí** | texto ≤ 150 | `cliente` | obras.md §4.1 |
 | Planta | No | texto ≤ 150 | `planta` | obras.md §4.1 |
 | Responsable de obra (mail) | **Sí** | mail de un usuario activo del sistema | `responsable_id` | obras.md §4.1 |
-| Estado | **Sí** | En ejecución · Confirmada | estado final de la obra (RN-IMP-21; Confirmada: propuesta DU-I07) | F-62 |
+| Estado | **Sí** | En ejecución · Confirmada | estado final de la obra (RN-IMP-21; Confirmada: resuelta DU-I07) | F-62 |
 | Inicio previsto · Fin previsto | No | fecha · fecha (fin ≥ inicio) | `fecha_inicio_prevista`, `fecha_fin_prevista` | obras.md §4.1 |
 | Carpeta de Drive | No | link | `carpeta_drive_url` | obras.md §4.1 |
 | Oferta técnica (link) | **Sí** | link | adjunto `presupuesto` del principal (ADR-014; el archivo se puede subir después en la ficha) | obras.md §4.1 |
 | Solicitante en planta · nombre / mail / teléfono | **Sí** las tres | texto ≤ 120 · mail · texto ≤ 50 | contacto `solicitante` | obras.md §4.4 |
 | Comprador · nombre / mail / teléfono | **Sí** las tres | ídem | contacto `comprador` | obras.md §4.4 |
-| Fecha de corte | **Sí** si la obra tiene filas en Gastado o retirado en Materiales | fecha, no posterior a hoy | fecha de los renglones de carga inicial (RN-IMP-23) | propuesta DU-I02 |
+| Fecha de corte | **Sí** si la obra tiene filas en Gastado o retirado en Materiales | fecha, no posterior a hoy | fecha de los renglones de carga inicial (RN-IMP-23) | resuelta DU-I02 |
 | Total gastado según su planilla | No (control) | importe | se compara con la suma de la hoja Gastado (RN-IMP-24) | su hoja "General" |
 
 ### 5.2 Archivo `obras` · hoja **Presupuestos** (una fila por presupuesto; el principal solo si trae montos u OC)
@@ -170,7 +170,7 @@ NexoSmart los pasa a la columna que corresponde al armar la plantilla.
 | Aprobado | **Sí** | Sí · No | lo marca administración; solo "Sí" se usa (RN-IMP-16) |
 | Aprobó | **Sí** si Aprobado = Sí | nombre de quien aprobó | queda en el historial del gasto (RN-IMP-17) |
 
-### 5.5 Archivo `obras` · hoja **Materiales** (lista de W-48 y retirado hasta el corte, DU-R09; propuesta DU-I06)
+### 5.5 Archivo `obras` · hoja **Materiales** (lista de W-48 y retirado hasta el corte, DU-R09; resuelta DU-I06)
 
 | Columna | Obligatoria | Formato | Va a |
 |---|---|---|---|
@@ -255,7 +255,7 @@ Archivo `informe-{obras|tareas}-{ensayo|confirmada}-{AAAAMMDD-HHMM}.xlsx` en la 
 
 ### 6.4 Obras
 
-- **RN-IMP-18** **Obligatorios de la obra:** los de `obras.md` §4.1, con sus mismas validaciones: N.º de presupuesto y revisión, trabajo, cliente, responsable (usuario activo), oferta técnica (como **link**: un archivo se sube después en la ficha, ADR-014) y los dos contactos con nombre, mail y teléfono. Estado: **En ejecución** o **Confirmada** (propuesta DU-I07); otro valor es faltante. *(obras.md §4.1, RN-OBR-10…19; DU-21)*
+- **RN-IMP-18** **Obligatorios de la obra:** los de `obras.md` §4.1, con sus mismas validaciones: N.º de presupuesto y revisión, trabajo, cliente, responsable (usuario activo), oferta técnica (como **link**: un archivo se sube después en la ficha, ADR-014) y los dos contactos con nombre, mail y teléfono. Estado: **En ejecución** o **Confirmada** (resuelta DU-I07); otro valor es faltante. *(obras.md §4.1, RN-OBR-10…19; DU-21)*
 - **RN-IMP-19** **Una obra incompleta no se carga** (DU-21): con **un** faltante en la obra, en sus presupuestos, en su gastado o en sus materiales, **no entra nada de esa obra** (ni sus tareas, que quedan con el faltante "La obra {N.º} no está en el sistema"). El informe lista todos los faltantes juntos, no de a uno. *(DU-21 "las obras no se cargan incompletas: planilla de faltantes por obra que completa administración")*
 - **RN-IMP-20** **Obra que ya está en el sistema** (su N.º principal ya existe, por ejemplo porque administración la cargó a mano en producción): **no se cambia** nada de la obra, de sus presupuestos ni de sus montos (aviso "La obra ya está en el sistema: sus datos y presupuestos no se tocan; si falta algo, se completa en la ficha y en W-13."); su **gastado** y sus **materiales** sí entran si cumplen las reglas de abajo. *(RN-IMP-08)*
 - **RN-IMP-21** La obra **nace Confirmada** (RN-OBR-18) y, si la plantilla dice En ejecución, pasa a **En ejecución** en la misma transacción, por la transición permitida (RN-OBR-29), con su registro en el historial. No genera avisos (no hay avisos de obras). *(obras.md RN-OBR-18, 29)*
@@ -266,9 +266,9 @@ Archivo `informe-{obras|tareas}-{ensayo|confirmada}-{AAAAMMDD-HHMM}.xlsx` en la 
 - **RN-IMP-23** **El gastado entra como una carga inicial por obra:** un gasto `sin_documento` / `saldo_inicial` con fecha = **fecha de corte** de la obra, proveedor **genérico**, "cargó" = quien aprobó, y **un renglón por rubro del sistema** (las filas que van al mismo rubro se suman: "INSUMO 80.000 + INSUMOS 45.500,50" → INSUMOS 125.500,50), con cantidad 1, precio unitario = el importe, total = el importe, obra = la obra, concepto "Gastado hasta el {fecha de corte} según su rendición". Un rubro en 0 no genera renglón; un importe negativo es faltante ("El gastado no puede ser negativo."). **EPP** queda en EPP (en el resumen suma a INSUMOS, C17); FIJOS y HORAS LIQUIDADAS entran como cualquier rubro (la carga inicial acepta los 13, `gastos.md` §4.3). La fecha de corte no puede ser posterior a hoy. *(F-62 "un total por rubro", DU-21, gastos.md §4.3, RN-REN-08)*
 - **RN-IMP-24** **Control contra su planilla:** si la obra trae "Total gastado según su planilla", la suma de su hoja Gastado tiene que dar **igual al centavo**; si no, faltante: "La suma por rubro (2.347.500,50) no da el total de su planilla (2.437.500,50): diferencia 90.000." *(QA F-62 "conteos contra el origen")*
 - **RN-IMP-25** **Sin doble conteo:** si la obra ya tiene en el sistema renglones **no anulados** de otro origen con fecha **hasta la fecha de corte inclusive**, el gastado de esa obra es faltante: "La obra ya tiene 3 renglones cargados con fecha hasta el 30/11/2026: se contarían dos veces. Anulalos o cargá el acumulado sin ellos." Los renglones con fecha **posterior** al corte no molestan: son lo cargado después. *(ADR-007, RN-GAS-47)*
-- **RN-IMP-26** **Lo posterior al corte se carga en el sistema:** lo que tenga fecha después del corte va por W-10, W-35 o W-46 como cualquier gasto, y **no** se suma al acumulado. HORAS LIQUIDADAS y FIJOS: el acumulado incluye los **períodos enteros** ya liquidados; el primer período que se carga en W-46 empieza el día siguiente al último incluido. *(propuesta DU-I02; gastos.md §5.5)*
-- **RN-IMP-27** **Una carga inicial de gastado vigente por obra.** No se **corrige** en W-34 (no tiene "Editar"; `PATCH` 422 "La carga inicial no se corrige: anulala y volvé a importarla."); se **anula** como cualquier gasto (RN-GAS-40, con motivo) y se vuelve a importar el gastado de esa obra con la plantilla corregida (la obra ya existe: RN-IMP-20). *(propuesta DU-I09; RN-GAS-40)*
-- **RN-IMP-28** **Lista de materiales:** de la hoja Materiales, con las validaciones de W-48 (`rendicion.md` §4.2): nombre no repetido en la obra, unidad obligatoria, cantidad presupuestada ≥ 0, presupuesto de **esa** obra si tiene más de uno. Un material que ya está en la obra (mismo nombre normalizado) no se duplica; si la cantidad presupuestada difiere, aviso "Cemento x 50 kg ya está en la lista con 120: no se cambia." *(propuesta DU-I06; RN-REN-47)*
+- **RN-IMP-26** **Lo posterior al corte se carga en el sistema:** lo que tenga fecha después del corte va por W-10, W-35 o W-46 como cualquier gasto, y **no** se suma al acumulado. HORAS LIQUIDADAS y FIJOS: el acumulado incluye los **períodos enteros** ya liquidados; el primer período que se carga en W-46 empieza el día siguiente al último incluido. *(resuelta DU-I02; gastos.md §5.5)*
+- **RN-IMP-27** **Una carga inicial de gastado vigente por obra.** No se **corrige** en W-34 (no tiene "Editar"; `PATCH` 422 "La carga inicial no se corrige: anulala y volvé a importarla."); se **anula** como cualquier gasto (RN-GAS-40, con motivo) y se vuelve a importar el gastado de esa obra con la plantilla corregida (la obra ya existe: RN-IMP-20). *(resuelta DU-I09; RN-GAS-40)*
+- **RN-IMP-28** **Lista de materiales:** de la hoja Materiales, con las validaciones de W-48 (`rendicion.md` §4.2): nombre no repetido en la obra, unidad obligatoria, cantidad presupuestada ≥ 0, presupuesto de **esa** obra si tiene más de uno. Un material que ya está en la obra (mismo nombre normalizado) no se duplica; si la cantidad presupuestada difiere, aviso "Cemento x 50 kg ya está en la lista con 120: no se cambia." *(resuelta DU-I06; RN-REN-47)*
 - **RN-IMP-29** **Retirado hasta el corte (DU-R09):** si hay al menos un material con retirado > 0, una segunda carga inicial de la obra (`sin_documento` / `saldo_inicial`, fecha = corte, proveedor genérico) con **un renglón por material**: cantidad = lo retirado (en la unidad del material), precio unitario **0**, total **0**, rubro MATERIALES, `material_id` = ese material, concepto "Retirado hasta el {fecha de corte} (el importe está en el gastado acumulado)". **No suma plata** (el importe ya está en el gastado por rubro) y "Resta llevar" da bien desde el primer día. Retirado 0 o vacío: sin renglón. Una vigente por obra, como RN-IMP-27. *(DU-R09 opción b, RN-REN-50)*
 - **RN-IMP-30** **W-48:** los renglones de carga inicial de un material se muestran en una **primera columna "Hasta {fecha de corte} · Carga inicial"**, que **no** cuenta entre las 6 fechas más recientes de RN-REN-50. Si además hay que agrupar fechas viejas posteriores al corte, se juntan en esa misma columna con la fecha más nueva agrupada: "Hasta {fecha} · incluye carga inicial". *(DU-R09 "columna 'Hasta {fecha de arranque}' con la etiqueta 'Carga inicial'"; ajusta RN-REN-50, §16)*
 - **RN-IMP-31** Retirado mayor que lo presupuestado **no frena**: aviso "Cemento x 50 kg: retirado 160 de 150 presupuestadas (resta llevar −10)." y en W-48 se ve en rojo como cualquier exceso (RN-REN-50). *(RN-REN-50, N18)*
@@ -276,15 +276,15 @@ Archivo `informe-{obras|tareas}-{ensayo|confirmada}-{AAAAMMDD-HHMM}.xlsx` en la 
 ### 6.6 Tareas abiertas
 
 - **RN-IMP-32** **Solo lo abierto:** entran las filas "Tarea" en **No iniciada, En curso o Bloqueada**. Las **Completada** no se importan (se cuentan en el Resumen: "Completadas (no se importan): 12"). Una fila sin estado es faltante "Poné el estado." *(F-62 "los pedidos abiertos", análisis de la minuta §1 "sin estado 8")*
-- **RN-IMP-33** **Para entrar, una tarea necesita:** Clave única; Tarea; Obra que esté **en el sistema y no Terminada**, o "Sin obra"; **propietario** (persona activa de un sector con Tareas ≥ Ver) **o** "(en el sector)" con un **Sector** activo con Tareas ≥ Ver; Estado; **Fecha de entrega**; y si está **Bloqueada**, el motivo en Notas. Si falta algo, **no entra**: queda en "Faltantes" y en "Para completar por sector" (sector = el del propietario, o el de la columna Sector, o "Administración" si no hay ninguno), para que el sector lo complete **antes de la apertura**. Lo que siga faltando el día de la apertura no entra (propuesta DU-I03) y el sector lo carga a mano en W-08. *(DU-20 "los abiertos sin fecha de entrega o sin propietario se listan antes del arranque para que el sector los complete", DU-14, RN-PED-02, 03)*
+- **RN-IMP-33** **Para entrar, una tarea necesita:** Clave única; Tarea; Obra que esté **en el sistema y no Terminada**, o "Sin obra"; **propietario** (persona activa de un sector con Tareas ≥ Ver) **o** "(en el sector)" con un **Sector** activo con Tareas ≥ Ver; Estado; **Fecha de entrega**; y si está **Bloqueada**, el motivo en Notas. Si falta algo, **no entra**: queda en "Faltantes" y en "Para completar por sector" (sector = el del propietario, o el de la columna Sector, o "Administración" si no hay ninguno), para que el sector lo complete **antes de la apertura**. Lo que siga faltando el día de la apertura no entra (resuelta DU-I03) y el sector lo carga a mano en W-08. *(DU-20 "los abiertos sin fecha de entrega o sin propietario se listan antes del arranque para que el sector los complete", DU-14, RN-PED-02, 03)*
 - **RN-IMP-34** **Cómo entra:** con `carga_inicial = true`, el **estado de la minuta**, el propietario y su sector (o en el sector), **solicitante** el de la minuta si se encuentra (si no, vacío), **fecha de pedido** la de la minuta o vacía (no posterior a hoy: si no, faltante), entrega, período (los dos o ninguno), "con quién" (≤ 150; si es más largo, faltante "'Con quién' tiene más de 150 caracteres."), los **links** (hasta 10, solo http/https; uno inválido es faltante) como adjuntos `pedido` tipo link, y las **Notas**: si está Bloqueada, como **motivo de bloqueo**; si no, como **aclaraciones**. Una **En curso** tiene que tener propietario: "(en el sector)" + En curso es faltante "Una tarea En curso tiene que tener propietario: elegí quién la tiene." *(DU-20, pedidos.md §4.6, RN-PED-05, 06, 24)*
 - **RN-IMP-35** **Prioridad:** la de la minuta (Urgente, Prioritario, Normal). Si está vacía o es **P3** (nunca se usó): calculada con los plazos vigentes (W-50) si están las dos fechas; si no, **Normal**. Queda **corregida a mano** (`prioridad_manual`, con la marca "(corregida a mano)" y la sugerencia de RN-PED-13) **solo** si están las dos fechas y la de la minuta difiere de la calculada. Una tarea sin fecha de pedido conserva su prioridad hasta que alguien cargue la fecha (RN-PED-14). *(DU-20 "prioridad la de la minuta (o calculada si hay las dos fechas; si no, Normal)", RN-PED-11…14)*
 - **RN-IMP-36** Las vencidas (entrega anterior a hoy) entran igual y se ven **vencidas** desde el primer día, como cualquier tarea. *(F-04)*
-- **RN-IMP-37** **Sin avisos ni mails al importar:** importar una tarea **no** dispara el aviso de asignación ni ningún otro, en la campana ni por mail (nadie recibe 40 mails el día de la apertura; cada uno ve sus tareas en Mis tareas). Desde la importación, las tareas funcionan como cualquier otra: el **recordatorio "vence mañana"** (en el sistema, no por mail) sale por su fecha, y tomar, bloquear, comentar, completar o reasignar avisan como siempre (sin solicitante, RN-AVI-15). *(propuesta DU-I05; RN-AVI-05, 15, 16)*
+- **RN-IMP-37** **Sin avisos ni mails al importar:** importar una tarea **no** dispara el aviso de asignación ni ningún otro, en la campana ni por mail (nadie recibe 40 mails el día de la apertura; cada uno ve sus tareas en Mis tareas). Desde la importación, las tareas funcionan como cualquier otra: el **recordatorio "vence mañana"** (en el sistema, no por mail) sale por su fecha, y tomar, bloquear, comentar, completar o reasignar avisan como siempre (sin solicitante, RN-AVI-15). *(resuelta DU-I05; RN-AVI-05, 15, 16)*
 
 ### 6.7 Documentos de la minuta
 
-- **RN-IMP-38** **Lo que es documento va a la obra:** las filas "Documento" (presupuestos, OC, certificados que hoy viven en la minuta) entran a **Documentos de la obra** (W-20) como **Certificado** (con su fecha, obligatoria) u **Otro**, con nombre = la columna Tarea (≤ 120) y **sus links** (1 a 10; sin link es faltante "Un documento necesita al menos un link."). Entran sin importar el estado de la fila en la minuta (un documento no se "completa"), solo de obras que están en el sistema; "Sin obra" en un documento es faltante. La OC de un presupuesto se puede cargar en cambio en la hoja Presupuestos (documento de aprobación). *(DU-20 "los que son documentos (presupuesto, OC, certificado) van a Documentos de la obra y no a pedidos"; propuesta DU-I08; obras.md §4.5)*
+- **RN-IMP-38** **Lo que es documento va a la obra:** las filas "Documento" (presupuestos, OC, certificados que hoy viven en la minuta) entran a **Documentos de la obra** (W-20) como **Certificado** (con su fecha, obligatoria) u **Otro**, con nombre = la columna Tarea (≤ 120) y **sus links** (1 a 10; sin link es faltante "Un documento necesita al menos un link."). Entran sin importar el estado de la fila en la minuta (un documento no se "completa"), solo de obras que están en el sistema; "Sin obra" en un documento es faltante. La OC de un presupuesto se puede cargar en cambio en la hoja Presupuestos (documento de aprobación). *(DU-20 "los que son documentos (presupuesto, OC, certificado) van a Documentos de la obra y no a pedidos"; resuelta DU-I08; obras.md §4.5)*
 
 ### 6.8 Recorrido e historial
 
@@ -379,15 +379,15 @@ que la pantalla (FE-01).
 | # | Caso | Resultado esperado |
 |---|---|---|
 | 1 | Tarea abierta de una obra que **no** está en la hoja Obras ni en el sistema | No entra; faltante "La obra … no está en el sistema…" (RN-IMP-33). |
-| 2 | Tarea abierta de una obra **Terminada** (de las solapas ocultas de la minuta) | No entra; faltante "…está Terminada: completá la tarea en la minuta o pasala a 'Sin obra'…" (propuesta DU-I07). |
-| 3 | Tarea de una obra **Confirmada** (todavía no empezó) | La obra se carga Confirmada en la hoja Obras (sin gastado) y la tarea entra (propuesta DU-I07). |
+| 2 | Tarea abierta de una obra **Terminada** (de las solapas ocultas de la minuta) | No entra; faltante "…está Terminada: completá la tarea en la minuta o pasala a 'Sin obra'…" (resuelta DU-I07). |
+| 3 | Tarea de una obra **Confirmada** (todavía no empezó) | La obra se carga Confirmada en la hoja Obras (sin gastado) y la tarea entra (resuelta DU-I07). |
 | 4 | "INSUMO" en la hoja Gastado, sin fila en Rubros | La obra entera no entra; faltante; "Rubros por revisar" sugiere INSUMOS sin aplicarlo (RN-IMP-16, 19). |
 | 5 | "LOGÍSTICA" con tilde | Igual que 4: necesita su fila aprobada (RN-IMP-16). |
 | 6 | "INSUMO" y "INSUMOS" en la misma obra, los dos aprobados a INSUMOS | Un solo renglón INSUMOS con la suma (RN-IMP-23). |
 | 7 | Obra en ejecución **sin presupuesto por rubro** (solo total o sin cargar) | Entra; aviso; la rendición muestra lo gastado y, si hay total, el total contra lo gastado (RN-IMP-22, RN-REN-07, 10). |
 | 8 | Obra con gastado y **sin fecha de corte** | Faltante "Falta la fecha de corte."; no entra (RN-IMP-19). |
 | 9 | En **producción** ya hay una factura de la obra del 25/11/2026 (cargada a mano antes de importar) y el corte es el 30/11/2026 | El gastado de esa obra es faltante por doble conteo (RN-IMP-25); administración anula la factura o la descuenta del acumulado. |
-| 10 | Lo que el cliente cargó **en la prueba de la semana 3** (en el entorno de prueba) | No pasa a producción (propuesta DU-I01): no hay doble conteo. Si Juani decidiera arrancar en la misma base, aplica el caso 9. |
+| 10 | Lo que el cliente cargó **en la prueba de la semana 3** (en el entorno de prueba) | No pasa a producción (resuelta DU-I01): no hay doble conteo. Si Juani decidiera arrancar en la misma base, aplica el caso 9. |
 | 11 | Factura del 02/12/2026 (después del corte) que está en su Excel | No va en el acumulado; se carga en W-10 (RN-IMP-26). |
 | 12 | HORAS LIQUIDADAS: acumulado hasta la quincena 16/11–30/11 | El primer período en W-46 es 01/12–15/12 (RN-IMP-26). |
 | 13 | Se corre el ensayo, se arregla un espacio en la plantilla y se confirma sin ensayar | "No se guardó nada: primero corré el ensayo de este archivo." (huella distinta, RN-IMP-05). |
@@ -467,13 +467,13 @@ reversible.
   (RN-IMP-27); una tarea se edita (W-32) o se completa con "Cargada por error en la carga inicial"; una obra se edita
   (W-23); un material se corrige en W-48 (no se quita si tiene retirado, RN-REN-53). *(técnica; RN-GAS-41 "no se borran
   gastos")*
-- **RN-IMP-45** **Entorno:** el arranque es en **producción, con la base limpia** (propuesta DU-I01): lo cargado en las
+- **RN-IMP-45** **Entorno:** el arranque es en **producción, con la base limpia** (resuelta DU-I01): lo cargado en las
   pruebas de las semanas 1 a 3 (entorno de prueba) **no** pasa. El primer usuario lo crea NexoSmart con
   `identidad:crear-administrador` (ADR-015); **gerencia carga los usuarios en W-39** de producción, cada uno con su sector
   y su jefatura (F-58; ~13 personas, 11 sectores, Pañol y Logística sin usuario por ahora); si en las pruebas cambiaron
   algo de la tabla de permisos (W-15), lo repiten en producción. Las obras que cargaron en la prueba entran por la hoja
   Obras (NexoSmart puede copiarlas a la plantilla para que administración solo revise).
-- **RN-IMP-46** **Proveedores:** no se importan (propuesta DU-I04): el gastado entra por rubro con el proveedor genérico y
+- **RN-IMP-46** **Proveedores:** no se importan (resuelta DU-I04): el gastado entra por rubro con el proveedor genérico y
   cada proveedor se da de alta con su primera factura (W-38, con el aviso de parecidos, RN-PRV-11). La "lista de
   equivalencias de proveedores" de DU-A19 no se usa porque no hay proveedores en la carga.
 
@@ -585,12 +585,12 @@ Resueltas que se aplican tal cual: DU-20, DU-21, DU-R09, DU-P10, DU-14, DU-A19, 
 | Dónde | Dice hoy | Lo que pide esta especificación |
 |---|---|---|
 | `gastos.md` §4.3, fila "Carga inicial" | cantidad 1, material "—", un gasto | Dos cargas iniciales por obra: **gastado** (cantidad 1, precio = importe, rubro cualquiera de los 13) y **retirado** (cantidad = retirado, precio 0, rubro MATERIALES, **material obligatorio**) (RN-IMP-23, 29, DU-R09). |
-| `gastos.md` RN-GAS-37 | se corrige cualquier gasto no anulado | Salvo `origen = saldo_inicial`: solo se anula (RN-IMP-27, propuesta DU-I09). |
+| `gastos.md` RN-GAS-37 | se corrige cualquier gasto no anulado | Salvo `origen = saldo_inicial`: solo se anula (RN-IMP-27, resuelta DU-I09). |
 | `gastos.md` §12.4 | sin contrato de carga inicial | `Gastos\Contracts\CargaInicialDeGastos` (§11.4). |
 | `rendicion.md` RN-REN-50 | 6 fechas más recientes + "Hasta {fecha}" | Primera columna fija "Hasta {corte} · Carga inicial" fuera de las 6 (RN-IMP-30). |
 | `rendicion.md` §12.4.3 | `MaterialesDeObra` sin alta en la lista | `agregarALaLista` (§11.4). |
-| `pedidos.md` §4.6 | "Fecha de entrega y propietario los completa el sector antes del arranque" | Sin completar, no entran (propuesta DU-I03); "(en el sector)" vale salvo En curso (RN-IMP-34); prioridad manual si difiere de la calculada (RN-IMP-35); marca en el detalle (RN-IMP-40). |
-| `pedidos.md` / `avisos.md` | — | La carga inicial no dispara `PedidoAsignado` (RN-IMP-37, propuesta DU-I05). |
-| `proveedores.md` RN-PRV-11 | "La carga inicial entra depurada, con una lista de equivalencias de proveedores" | No hay proveedores en la carga inicial (propuesta DU-I04). |
+| `pedidos.md` §4.6 | "Fecha de entrega y propietario los completa el sector antes del arranque" | Sin completar, no entran (resuelta DU-I03); "(en el sector)" vale salvo En curso (RN-IMP-34); prioridad manual si difiere de la calculada (RN-IMP-35); marca en el detalle (RN-IMP-40). |
+| `pedidos.md` / `avisos.md` | — | La carga inicial no dispara `PedidoAsignado` (RN-IMP-37, resuelta DU-I05). |
+| `proveedores.md` RN-PRV-11 | "La carga inicial entra depurada, con una lista de equivalencias de proveedores" | No hay proveedores en la carga inicial (resuelta DU-I04). |
 | `modelo-datos.md` | Importacion "(registro de corridas)" sin detalle | `importacion_corridas`, `importacion_filas` (§11.3). |
 | `qa/matriz-trazabilidad.md` F-62 | "spec pendiente" | Reglas y tests de §14. |

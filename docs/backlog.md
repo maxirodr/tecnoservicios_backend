@@ -2425,17 +2425,16 @@ Dudas de esta semana: DU-08, DU-17, DU-18 y DU-19, **resueltas el 12-nov**; **DU
 > **Método:** comandos que corre NexoSmart en el servidor, con plantillas que completa administración, **ensayo** que no
 > guarda nada y deja un informe, y confirmación **solo** del archivo ensayado y aprobado (`importacion.md` §4).
 
-**15 historias** (HU-088…HU-102) en 5 épicas. Resumen de estado DoR: **6 ✅ listas y 9 con un criterio ⛔** que depende de
-las dudas nuevas **DU-I01…DU-I09** (abiertas; decide Juani). Los criterios ⛔ se construyen con la propuesta y se ajustan si
-Juani decide otra cosa; ninguna historia entera queda frenada.
+**15 historias** (HU-088…HU-102) en 5 épicas, **todas ✅ en DoR**: las dudas **DU-I01…DU-I09** se resolvieron el
+25-nov-2026 (va la propuesta).
 
-| Épica | Historias | ✅ | Con criterio ⛔ (DU-I) |
-|---|---|---|---|
-| AA · Contratos, plantillas, ensayo y confirmación | HU-088…HU-091 | 4 | — |
-| AB · Equivalencias de rubros y personas | HU-092…HU-093 | 2 | — |
-| AC · Obras en ejecución con su gastado | HU-094…HU-096 | 0 | HU-094 (I07), HU-095 (I02, I09), HU-096 (I06) |
-| AD · Tareas abiertas y documentos de la minuta | HU-097…HU-099 | 0 | HU-097 (I03, I05), HU-098 (I08), HU-099 (I09 en W-34) |
-| AE · Arranque y acompañamiento | HU-100…HU-102 | 0 | HU-100 (I01, I04), HU-101 (I01), HU-102 (I05) |
+| Épica | Historias | Dudas que aplican (resueltas) |
+|---|---|---|
+| AA · Contratos, plantillas, ensayo y confirmación | HU-088…HU-091 | — |
+| AB · Equivalencias de rubros y personas | HU-092…HU-093 | — |
+| AC · Obras en ejecución con su gastado | HU-094…HU-096 | I02, I06, I07, I09 |
+| AD · Tareas abiertas y documentos de la minuta | HU-097…HU-099 | I03, I05, I08, I09 |
+| AE · Arranque y acompañamiento | HU-100…HU-102 | I01, I04, I05 |
 
 > **Orden de construcción sugerido:** AA (HU-088 contratos y tablas → HU-089 → HU-090 → HU-091) → AB → AC (HU-094 → HU-095
 > → HU-096) → AD (HU-097 → HU-098 → HU-099) → AE. Sin los contratos de carga inicial de cada módulo (HU-088) Importacion
@@ -2620,11 +2619,11 @@ en producción el jueves.
   5. **Dado** una obra cuyo N.º principal ya está en el sistema, **entonces** no se toca nada de ella y el informe lo avisa
      (RN-IMP-20).
   6. **Dado** Estado = Confirmada, **entonces** entra Confirmada (sin gastado obligatorio); **dado** cualquier otro estado,
-     faltante (RN-IMP-18). **⛔ DU-I07** (obras Confirmadas y Terminadas).
+     faltante (RN-IMP-18). ✅ resuelta  (obras Confirmadas y Terminadas).
 - **Reglas:** importacion.md RN-IMP-18…22 · obras.md §4.1, RN-OBR-10…19, 29, 31…37.
 - **Permisos:** quien aprueba (RN-IMP-04).
 - **Dependencias:** HU-091.
-- **DoR:** ✅ listo, salvo el criterio 6 (⛔ DU-I07: se construye con la propuesta).
+- **DoR:** ✅ listo, salvo el criterio 6 (✅ resuelta : se construye con la propuesta).
 
 #### HU-095 · Gastado acumulado por rubro como carga inicial en la rendición
 - **F-62 · F-49 · W-11 · W-36 · W-33 · W-34**
@@ -2639,15 +2638,15 @@ en producción el jueves.
   3. **Dado** "Total gastado según su planilla" distinto de la suma, **entonces** faltante con la diferencia (RN-IMP-24).
   4. **Dado** renglones no anulados de otro origen con fecha hasta el corte, **entonces** faltante por doble conteo; con fecha
      posterior, no (RN-IMP-25).
-  5. **Dado** una fecha de corte por obra, posterior a hoy o vacía con gastado, **entonces** faltante (RN-IMP-23). **⛔ DU-I02**
+  5. **Dado** una fecha de corte por obra, posterior a hoy o vacía con gastado, **entonces** faltante (RN-IMP-23). ✅ resuelta 
      (una fecha por obra).
   6. **Dado** la carga inicial en W-34, **entonces** documento "Carga inicial", proveedor "—", **sin Editar** (`PATCH` 422 "La
      carga inicial no se corrige: anulala y volvé a importarla."); anulada, se puede volver a importar (RN-IMP-27, 41).
-     **⛔ DU-I09**.
+     ✅ resuelta .
 - **Reglas:** importacion.md RN-IMP-23…27, 41, 42 · rendicion.md RN-REN-08, 29 · gastos.md RN-GAS-29, 40.
 - **Permisos:** ver: la matriz (RN-IMP-43); anular: `gastos = editar`.
 - **Dependencias:** HU-094, HU-092.
-- **DoR:** ✅ listo, salvo los criterios 5 y 6 (⛔ DU-I02, DU-I09: se construyen con la propuesta).
+- **DoR:** ✅ listo, salvo los criterios 5 y 6 (✅ resuelta , DU-I09: se construyen con la propuesta).
 
 #### HU-096 · Lista de materiales y retirado hasta el corte en el control por cantidad
 - **F-62 · F-66 · W-48 · DU-R09**
@@ -2655,7 +2654,7 @@ en producción el jueves.
   llevar" dé bien desde el primer día sin contar la plata dos veces.
 - **Criterios de aceptación**
   1. **Dado** la hoja Materiales, **entonces** la lista entra con las validaciones de W-48 (nombre no repetido, unidad,
-     presupuesto si hay más de uno); un material que ya está no se duplica y se avisa si difiere (RN-IMP-28). **⛔ DU-I06**
+     presupuesto si hay más de uno); un material que ya está no se duplica y se avisa si difiere (RN-IMP-28). ✅ resuelta 
      (la lista por la plantilla).
   2. **Dado** retirado > 0, **entonces** una carga inicial de retirado con un renglón por material: cantidad = retirado, precio
      0, total 0, rubro MATERIALES, el material, fecha = corte; **no suma** en la rendición (RN-IMP-29, DU-R09).
@@ -2665,7 +2664,7 @@ en producción el jueves.
 - **Reglas:** importacion.md RN-IMP-28…31 · rendicion.md RN-REN-47, 50, 53.
 - **Permisos:** ver `control_cantidad:ver`.
 - **Dependencias:** HU-094, HU-082, HU-083.
-- **DoR:** ✅ listo, salvo el criterio 1 (⛔ DU-I06: se construye con la propuesta).
+- **DoR:** ✅ listo, salvo el criterio 1 (✅ resuelta : se construye con la propuesta).
 
 ### Épica AD · Tareas abiertas y documentos de la minuta
 
@@ -2678,19 +2677,19 @@ en producción el jueves.
      las Completada no se importan y se cuentan en el Resumen; una sin estado es faltante (RN-IMP-32).
   2. **Dado** una fila sin fecha de entrega, sin propietario (ni "(en el sector)" con su sector), de una obra que no está en el
      sistema o está Terminada, o Bloqueada sin motivo, **entonces** no entra y queda en "Para completar por sector" (RN-IMP-33).
-     **⛔ DU-I03** (lo que el sector no completa no entra).
+     ✅ resuelta  (lo que el sector no completa no entra).
   3. **Dado** una Bloqueada, **entonces** las Notas son su motivo; en las demás, las aclaraciones; "(en el sector)" + En curso
      es faltante (RN-IMP-34).
   4. **Dado** la prioridad de la minuta vacía o P3, **entonces** calculada si están las dos fechas, si no Normal; **dado** una
      distinta de la calculada, queda "(corregida a mano)" (RN-IMP-35).
   5. **Dado** la carga confirmada, **entonces** **0 avisos y 0 mails** de asignación; el recordatorio "vence mañana" sale por su
-     fecha (RN-IMP-37). **⛔ DU-I05**.
+     fecha (RN-IMP-37). ✅ resuelta .
   6. **Dado** una tarea sin solicitante, **entonces** "Solicitante: —", la reabre cualquiera con Tareas = Editar y al completarla
      no hay aviso al solicitante ni a su superior (RN-PED-61, RN-AVI-15).
 - **Reglas:** importacion.md RN-IMP-32…37 · pedidos.md §4.6, RN-PED-11…14, 61 · avisos.md RN-AVI-15, 16.
 - **Permisos:** quien aprueba (RN-IMP-04); ver: la matriz.
 - **Dependencias:** HU-093, HU-094.
-- **DoR:** ✅ listo, salvo los criterios 2 y 5 (⛔ DU-I03, DU-I05: se construyen con la propuesta).
+- **DoR:** ✅ listo, salvo los criterios 2 y 5 (✅ resuelta , DU-I05: se construyen con la propuesta).
 
 #### HU-098 · Documentos de la minuta a Documentos de la obra
 - **F-62 · F-19 · W-20 · DU-20**
@@ -2698,13 +2697,13 @@ en producción el jueves.
   **para** que la ficha arranque con su legajo de links y la lista de tareas sin ruido.
 - **Criterios de aceptación**
   1. **Dado** una fila "Documento" de una obra en el sistema, con al menos un link, **entonces** entra a Documentos de la obra
-     como Certificado (con su fecha) u Otro, con su nombre y sus links, sin importar el estado de la fila (RN-IMP-38). **⛔ DU-I08**.
+     como Certificado (con su fecha) u Otro, con su nombre y sus links, sin importar el estado de la fila (RN-IMP-38). ✅ resuelta .
   2. **Dado** un documento sin link, sin fecha siendo Certificado, o "Sin obra", **entonces** faltante (RN-IMP-38).
   3. **Dado** la ficha (W-20), **entonces** el historial dice "Carla agregó Certificado N°1 (carga inicial)" (RN-IMP-39).
 - **Reglas:** importacion.md RN-IMP-38, 39 · obras.md §4.5, RN-OBR-23.
 - **Permisos:** quien aprueba; ver: `obras:ver`.
 - **Dependencias:** HU-094.
-- **DoR:** ✅ listo, salvo el criterio 1 (⛔ DU-I08: se construye con la propuesta).
+- **DoR:** ✅ listo, salvo el criterio 1 (✅ resuelta : se construye con la propuesta).
 
 #### HU-099 · La marca "Carga inicial" en la tarea, el recorrido y el gasto
 - **F-62 · F-34 · W-09 · W-42 · W-34**
@@ -2716,11 +2715,11 @@ en producción el jueves.
   2. **Dado** su recorrido, **entonces** la primera línea es "30/11/2026 18:10 · Carga inicial desde la minuta (aprobó Carla)"
      (RN-IMP-39).
   3. **Dado** una carga inicial de gasto en W-34, **entonces** título "Carga inicial · {obra} · gastado hasta el {corte}" (o
-     "· retirado hasta el {corte}") y solo "Anular" (RN-IMP-41). **⛔ DU-I09**.
+     "· retirado hasta el {corte}") y solo "Anular" (RN-IMP-41). ✅ resuelta .
 - **Reglas:** importacion.md RN-IMP-39…41.
 - **Permisos:** los de ver la tarea o el gasto.
 - **Dependencias:** HU-097, HU-095.
-- **DoR:** ✅ listo, salvo el criterio 3 (⛔ DU-I09: se construye con la propuesta).
+- **DoR:** ✅ listo, salvo el criterio 3 (✅ resuelta : se construye con la propuesta).
 
 ### Épica AE · Arranque y acompañamiento
 
@@ -2731,18 +2730,18 @@ en producción el jueves.
 - **Criterios de aceptación**
   1. **Dado** producción con la versión de la semana 4, **entonces** migraciones al día, primer usuario creado con
      `identidad:crear-administrador`, las cuatro entregas encendidas en la barra y `/api/health` en 200 (RN-IMP-45).
-     **⛔ DU-I01** (producción limpia).
+     ✅ resuelta  (producción limpia).
   2. **Dado** la hoja Personas, **entonces** cada mail es de un usuario activo de producción con sector y jefatura, cargado por
      gerencia en W-39, y la tabla de permisos repite lo que hayan cambiado en las pruebas (RN-IMP-45).
   3. **Dado** cada `--confirmar`, **entonces** antes hay un respaldo de la base; hasta la apertura, una carga mal hecha se deshace
      restaurándolo (RN-IMP-44).
-  4. **Dado** la carga, **entonces** no se importan proveedores; se dan de alta con su primera factura (RN-IMP-46). **⛔ DU-I04**.
+  4. **Dado** la carga, **entonces** no se importan proveedores; se dan de alta con su primera factura (RN-IMP-46). ✅ resuelta .
   5. **Dado** la carpeta de la importación, **entonces** es privada del servidor y tiene fecha de borrado a los 30 días de la
      apertura (RN-IMP-12).
 - **Reglas:** importacion.md RN-IMP-12, 44…46 · §12.1, §12.2 · identidad.md RN-IDE-09.
 - **Permisos:** W-39: `usuarios:editar` (gerencias y Dirección).
 - **Dependencias:** las historias de AA a AD en `main`.
-- **DoR:** ✅ listo, salvo los criterios 1 y 4 (⛔ DU-I01, DU-I04: se construyen con la propuesta).
+- **DoR:** ✅ listo, salvo los criterios 1 y 4 (✅ resuelta , DU-I04: se construyen con la propuesta).
 
 #### HU-101 · Carga real, conteos contra el origen y apertura
 - **F-62 · F-63 · cap. 13 criterio n.º 4 · importacion.md §12.2 y §12.3**
@@ -2758,12 +2757,12 @@ en producción el jueves.
   3. **Dado** la apertura, **entonces** cada propietario entra y ve sus tareas en PC y celular, y la campana no tiene avisos de
      asignación de la carga (§12.3).
   4. **Dado** la apertura, **entonces** las notas de entrega de la semana 4 le dicen al cliente que la minuta y las rendiciones
-     en Excel quedan de consulta y que lo posterior al corte se carga en el sistema (cap. 14, RN-IMP-26). **⛔ DU-I01** (si se
+     en Excel quedan de consulta y que lo posterior al corte se carga en el sistema (cap. 14, RN-IMP-26). ✅ resuelta  (si se
      arranca en otra base, cambian las notas).
 - **Reglas:** importacion.md RN-IMP-04, 05, 26 · §12.2, §12.3.
 - **Permisos:** —
 - **Dependencias:** HU-100.
-- **DoR:** ✅ listo, salvo el criterio 4 (⛔ DU-I01).
+- **DoR:** ✅ listo, salvo el criterio 4 (✅ resuelta ).
 
 #### HU-102 · Guía por sector y cierre del acompañamiento
 - **F-63 · cap. 13 criterio n.º 4 · importacion.md §12.4** (entregable de documentación, no pantalla)
@@ -2775,11 +2774,11 @@ en producción el jueves.
   2. **Dado** el acompañamiento, **entonces** se registra por semana la cantidad de filas nuevas en la minuta contra tareas
      nuevas en el sistema, y se cierra con **dos semanas seguidas sin filas nuevas** (plan de pruebas, criterio n.º 4).
   3. **Dado** la guía, **entonces** dice que las tareas que vinieron de la minuta no avisaron al importarse y que se ven en Mis
-     tareas (RN-IMP-37). **⛔ DU-I05**.
+     tareas (RN-IMP-37). ✅ resuelta .
 - **Reglas:** importacion.md §12.4, RN-IMP-37.
 - **Permisos:** —
 - **Dependencias:** HU-101.
-- **DoR:** ✅ listo, salvo el criterio 3 (⛔ DU-I05).
+- **DoR:** ✅ listo, salvo el criterio 3 (✅ resuelta ).
 
 **Control de completitud de la semana 4:** las **2 F-XX que arrancan** tienen historia: F-62 (HU-088…HU-101) y F-63 (HU-100,
 HU-101, HU-102: lo que el sistema necesita y la guía; la capacitación es servicio). Pantallas que se tocan (ya existen): W-09

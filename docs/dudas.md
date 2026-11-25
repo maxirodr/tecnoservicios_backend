@@ -1422,7 +1422,8 @@ cliente.
 
 ### Semana 4 · Carga inicial
 
-#### DU-I01 · ¿Dónde se arranca: en producción limpia o en el entorno donde probaron?
+#### DU-I01 · ¿Dónde se arranca: en producción limpia o en el entorno donde probaron? — ✅ resuelta (25-nov-2026)
+- **Decisión (Juani, 25-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** `arquitectura.md` §8 (entornos local, staging y producción) · ADR-015 ("el primer usuario de producción se crea
   con `identidad:crear-administrador`") · roadmap cap. 14 (semanas 1 a 3: "cargan dos o tres obras reales y sus usuarios",
   "lo usan en paralelo con la minuta", "cargan las facturas de una obra en curso") · F-62.
@@ -1439,7 +1440,8 @@ cliente.
 - **Reglas que dependen:** RN-IMP-45, RN-IMP-25 (caso 10 de §10), §12.2.
 - **¿Cambia lo que ve el cliente?** Sí (vuelven a cargar sus usuarios; lo de las pruebas no está) → **decide Juani**.
 
-#### DU-I02 · Fecha de corte: ¿una para todas las obras o una por obra?
+#### DU-I02 · Fecha de corte: ¿una para todas las obras o una por obra? — ✅ resuelta (25-nov-2026)
+- **Decisión (Juani, 25-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-62 ("su gastado acumulado") · roadmap cap. 14 ("las rendiciones al día del arranque") · análisis de las
   rendiciones (seis planillas en estados distintos: una "en curso" con tres gastos cargados).
 - **Por qué importa:** cada rendición está al día hasta una fecha distinta. Con una fecha única, una rendición atrasada
@@ -1453,7 +1455,8 @@ cliente.
 - **Reglas que dependen:** §5.1 (columna Fecha de corte), RN-IMP-23, RN-IMP-26, RN-IMP-30.
 - **¿Cambia lo que ve el cliente?** Sí (qué fecha ponen y qué cargan después) → **decide Juani**.
 
-#### DU-I03 · Tareas abiertas que el sector no completa antes de la apertura
+#### DU-I03 · Tareas abiertas que el sector no completa antes de la apertura — ✅ resuelta (25-nov-2026)
+- **Decisión (Juani, 25-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** DU-20 ("los abiertos sin fecha de entrega o sin propietario se listan antes del arranque para que el sector
   los complete") · DU-14 (fecha de entrega obligatoria: sin ella no hay prioridad, recordatorio ni vencido) · criterio de
   aceptación n.º 3.
@@ -1468,7 +1471,8 @@ cliente.
 - **Reglas que dependen:** RN-IMP-33, RN-IMP-34.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 
-#### DU-I04 · ¿Se carga la base de proveedores en la carga inicial?
+#### DU-I04 · ¿Se carga la base de proveedores en la carga inicial? — ✅ resuelta (25-nov-2026)
+- **Decisión (Juani, 25-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-62 (tareas abiertas y obras con gastado **por rubro**: no nombra proveedores) · DU-A19 / RN-PRV-11 ("la carga
   inicial entra depurada, con una lista de equivalencias de proveedores que revisa y aprueba administración") · cap. 10
   ("hoy el mismo proveedor aparece escrito de varias formas").
@@ -1482,7 +1486,8 @@ cliente.
 - **Reglas que dependen:** RN-IMP-46; `proveedores.md` RN-PRV-11.
 - **¿Cambia lo que ve el cliente?** Sí (el día 1 la base de proveedores está vacía) → **decide Juani**.
 
-#### DU-I05 · ¿Importar las tareas dispara avisos o mails?
+#### DU-I05 · ¿Importar las tareas dispara avisos o mails? — ✅ resuelta (25-nov-2026)
+- **Decisión (Juani, 25-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** cap. 7 (aviso de asignación "al propietario, en el sistema y por mail") · `avisos.md` RN-AVI-08 (asignado:
   siempre por mail) y RN-AVI-16 (recordatorio) · F-63 ("arranca usándolo, no estudiándolo").
 - **Por qué importa:** si cada tarea importada se trata como una asignación nueva, el día de la apertura Diego recibe una
@@ -1494,7 +1499,8 @@ cliente.
 - **Reglas que dependen:** RN-IMP-37; caso 27 de §10.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 
-#### DU-I06 · Lista de materiales de las obras en ejecución: ¿por la plantilla o a mano en W-48?
+#### DU-I06 · Lista de materiales de las obras en ejecución: ¿por la plantilla o a mano en W-48? — ✅ resuelta (25-nov-2026)
+- **Decisión (Juani, 25-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** DU-R09 ("por material **de la lista**, la cantidad ya retirada") · RN-REN-47 ("la lista la carga administración
   una vez, en W-48") · análisis de las rendiciones (la planilla de retiro, con la lista y los retiros, está en las seis).
 - **Por qué importa:** el retirado de DU-R09 necesita que la lista exista antes. Si se carga a mano en W-48, administración
@@ -1506,7 +1512,8 @@ cliente.
 - **Reglas que dependen:** §5.5, RN-IMP-28, RN-IMP-29.
 - **¿Cambia lo que ve el cliente?** Sí (qué completan) → **decide Juani**.
 
-#### DU-I07 · Obras que no están en ejecución pero tienen tareas abiertas
+#### DU-I07 · Obras que no están en ejecución pero tienen tareas abiertas — ✅ resuelta (25-nov-2026)
+- **Decisión (Juani, 25-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** F-62 ("las obras **en ejecución**") · análisis de la minuta §7 ("18 pedidos abiertos están en solapas
   ocultas") · RN-PED-07 (los pedidos de varias obras o sin obra puntual van "Sin obra", nombrando las obras).
 - **Por qué importa:** una tarea abierta necesita su obra en el sistema. Hay obras que todavía no arrancaron (Confirmadas)
@@ -1518,7 +1525,8 @@ cliente.
 - **Reglas que dependen:** §5.1 (Estado), RN-IMP-18, RN-IMP-33; casos 2 y 3 de §10.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 
-#### DU-I08 · ¿Qué filas "documento" de la minuta se traen?
+#### DU-I08 · ¿Qué filas "documento" de la minuta se traen? — ✅ resuelta (25-nov-2026)
+- **Decisión (Juani, 25-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** DU-20 ("los que son documentos (presupuesto, OC, certificado) van a Documentos de la obra") · análisis de la
   minuta §5 (~179 filas son documentos; 80 sin propietario; casi todas "Completada" porque no hay nada que resolver).
 - **Por qué importa:** DU-20 lo dice dentro de los "abiertos", pero un documento casi nunca está abierto. Si se toman solo
@@ -1529,7 +1537,8 @@ cliente.
 - **Reglas que dependen:** RN-IMP-38; casos 25 y 26 de §10.
 - **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
 
-#### DU-I09 · La carga inicial de gastado: ¿se corrige en W-34 o se anula y se vuelve a importar?
+#### DU-I09 · La carga inicial de gastado: ¿se corrige en W-34 o se anula y se vuelve a importar? — ✅ resuelta (25-nov-2026)
+- **Decisión (Juani, 25-nov-2026):** va la propuesta tal como está escrita.
 - **Fuente:** `gastos.md` RN-GAS-37 ("con `gastos = editar`, cualquier gasto no anulado") y RN-GAS-40 (anular) · DU-21 (los
   números de la carga los aprueba administración) · W-34 (el formulario de edición es el de la carga que lo creó, y la
   carga inicial no tiene formulario).
