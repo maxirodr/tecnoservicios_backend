@@ -1,0 +1,211 @@
+# A-01 · ficha de obra: la página baja sola al entrar (PC). scrollY final, cambios de scrollY (ms desde la navegación) y tira [top,bottom] en px de documento
+## 06-ficha-salto rep 1 (carga directa)
+{
+  "rep": 1,
+  "/obras/5 768px": {
+    "scrollY": 15,
+    "cambios": [
+      "0ms→0"
+    ],
+    "tira": {
+      "top": 745,
+      "bottom": 785,
+      "alto": 768
+    },
+    "titulo": "3-931-2026 · QAS2R3-A Reemplazo integral de cañería de vapor",
+    "altoDoc": 1019
+  },
+  "/obras/6 768px": {
+    "scrollY": 25,
+    "cambios": [
+      "0ms→0"
+    ],
+    "tira": {
+      "top": 755,
+      "bottom": 795,
+      "alto": 768
+    },
+    "titulo": "9-983-2026 · QAS2R3-B Reemplazo integral de cañería de vapor",
+    "altoDoc": 1123
+  },
+  "/obras/1 768px": {
+    "scrollY": 0,
+    "cambios": [
+      "0ms→0"
+    ],
+    "tira": {
+      "top": 647,
+      "bottom": 687,
+      "alto": 768
+    },
+    "titulo": "9-822-2026 · QAS2R2-B Cambio de válvulas planta norte",
+    "altoDoc": 1058
+  },
+  "/obras/5 1000px": {
+    "scrollY": 0,
+    "cambios": [
+      "0ms→0"
+    ],
+    "tira": {
+      "top": 745,
+      "bottom": 785,
+      "alto": 1000
+    },
+    "titulo": "3-931-2026 · QAS2R3-A Reemplazo integral de cañería de vapor",
+    "altoDoc": 1019
+  },
+  "/obras/5 768px reduced-motion": {
+    "scrollY": 15,
+    "cambios": [
+      "0ms→0"
+    ],
+    "tira": {
+      "top": 745,
+      "bottom": 785,
+      "alto": 768
+    },
+    "titulo": "3-931-2026 · QAS2R3-A Reemplazo integral de cañería de vapor",
+    "altoDoc": 1019
+  }
+}
+## 06-ficha-salto rep 2
+{
+  "rep": 2,
+  "/obras/5 768px": {
+    "scrollY": 15,
+    "cambios": [
+      "0ms→0",
+      "6373ms→15"
+    ],
+    "tira": {
+      "top": 745,
+      "bottom": 785,
+      "alto": 768
+    },
+    "titulo": "3-931-2026 · QAS2R3-A Reemplazo integral de cañería de vapor",
+    "altoDoc": 1019
+  },
+  "/obras/6 768px": {
+    "scrollY": 25,
+    "cambios": [
+      "0ms→0",
+      "6602ms→25"
+    ],
+    "tira": {
+      "top": 755,
+      "bottom": 795,
+      "alto": 768
+    },
+    "titulo": "9-983-2026 · QAS2R3-B Reemplazo integral de cañería de vapor",
+    "altoDoc": 1123
+  },
+  "/obras/5 657px": {
+    "scrollY": 126,
+    "cambios": [
+      "0ms→0"
+    ],
+    "tira": {
+      "top": 745,
+      "bottom": 785,
+      "alto": 657
+    },
+    "titulo": "3-931-2026 · QAS2R3-A Reemplazo integral de cañería de vapor",
+    "altoDoc": 1019
+  },
+  "/obras/6 657px": {
+    "scrollY": 136,
+    "cambios": [
+      "0ms→0",
+      "6456ms→136"
+    ],
+    "tira": {
+      "top": 755,
+      "bottom": 795,
+      "alto": 657
+    },
+    "titulo": "9-983-2026 · QAS2R3-B Reemplazo integral de cañería de vapor",
+    "altoDoc": 1123
+  },
+  "/obras/1 657px": {
+    "scrollY": 28,
+    "cambios": [
+      "0ms→0"
+    ],
+    "tira": {
+      "top": 647,
+      "bottom": 687,
+      "alto": 657
+    },
+    "titulo": "9-822-2026 · QAS2R2-B Cambio de válvulas planta norte",
+    "altoDoc": 1058
+  },
+  "spa-yAntes": 0,
+  "spa:/obras/5 657px": {
+    "scrollY": 0,
+    "cambios": [],
+    "tira": null,
+    "altoDoc": 657
+  },
+  "/obras/5 657px reduced-motion": {
+    "scrollY": 126,
+    "cambios": [
+      "0ms→0"
+    ],
+    "tira": {
+      "top": 745,
+      "bottom": 785,
+      "alto": 657
+    },
+    "titulo": "3-931-2026 · QAS2R3-A Reemplazo integral de cañería de vapor",
+    "altoDoc": 1019
+  }
+}
+## 07-ficha-spa rep 2 (clic desde Obras › Confirmadas)
+{
+  "rep": 2,
+  "links-657": [
+    "/obras/nueva",
+    "/obras/6",
+    "/obras/5",
+    "/obras/4",
+    "/obras/3",
+    "/obras/2",
+    "/obras/1"
+  ],
+  "spa-657": {
+    "url": "/obras/6",
+    "scrollY": 136,
+    "cambios": [
+      "0ms→0",
+      "2166ms→136"
+    ],
+    "tira": [
+      755,
+      795
+    ],
+    "h1Top": -27
+  },
+  "links-768": [
+    "/obras/nueva",
+    "/obras/6",
+    "/obras/5",
+    "/obras/4",
+    "/obras/3",
+    "/obras/2",
+    "/obras/1"
+  ],
+  "spa-768": {
+    "url": "/obras/6",
+    "scrollY": 25,
+    "cambios": [
+      "0ms→0",
+      "2266ms→25"
+    ],
+    "tira": [
+      755,
+      795
+    ],
+    "h1Top": 84
+  }
+}
+## 05-pestanas rep 1 · obra-ficha (1366x768): entrar scrollY=15
