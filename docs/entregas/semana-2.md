@@ -1,5 +1,5 @@
-> **BORRADOR. No mandar todavía.** Se manda cuando la ronda 4 de QA apruebe la semana 2 y el cambio de "Pedidos" a
-> "Tareas" (DU-C01) esté en `staging`. Juani lo revisa antes de enviarlo.
+> **LISTO PARA MANDAR** cuando el servidor de staging tenga el deploy del 25-nov (semana 3 + "Tareas"). La semana 2
+> quedó aprobada en la ronda 4 de QA. Juani lo revisa antes de enviarlo.
 
 # Entrega 2 · Semana 2: las tareas (la minuta)
 

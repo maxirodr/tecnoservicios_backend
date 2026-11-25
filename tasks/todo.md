@@ -161,3 +161,11 @@ Las tres ramas de la tanda 2 están **pusheadas, sin mergear** (`feat/w2-pedidos
 - [ ] Tanda 2: HU-087 (encender gastos y rendiciones), integración real con el caso de referencia cargado por la API y comparado con la rendición (W-11), confirmar contratos de Front Gastos (422 con `errors.confirmar_*`, `errors.existente`, `meta.grupos`, `fecha=todas` vs el default del mes del back), revisar textos que inventaron los agentes, matriz F-13/F-15/F-17/F-48/F-54.
 - [ ] Worktrees de la tanda 1 (`*_gastos`, `*_rendicion`, `tecnoservicios_frontend_fix`): ya mergeadas; reusar en la tanda 2 o borrar.
 
+### 2026-11-25
+- [x] Semana 2 APROBADA (ronda 4); PU-901…903 arreglados. Notas de entrega listas: .
+- [x] Semana 3 en  y  (back , front ): tanda 2 (caso de referencia de punta a punta, HU-087), tanda 3 (QC, DU-G12…G15) y "Pedidos" → "Tareas" (DU-C01). Back 1179, vitest 769, e2e 119, integración 59/59.
+- [ ] Deploy de staging (Juani): pull, composer install, migrate --force (4 migraciones), config:cache, queue:restart; front build.
+- [ ] Mandar notas de la semana 2 después del deploy.
+- [ ] Prueba de usuario de la semana 3: .
+- [ ] Pendientes chicos: remito a un retiro ya cargado (sin pantalla, se decide si la prueba lo pide); precio sugerido de devolución desde facturas.
+
