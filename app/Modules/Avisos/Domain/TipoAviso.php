@@ -35,15 +35,15 @@ enum TipoAviso: string
     public function nombreEnMisAvisos(): string
     {
         return match ($this) {
-            self::Asignado => 'Me asignan un pedido',
-            self::Reasignado => 'Me reasignan un pedido',
-            self::Tomado => 'Toman (En curso) un pedido que pedí',
-            self::Completado => 'Completan un pedido que pedí',
+            self::Asignado => 'Me asignan una tarea',
+            self::Reasignado => 'Me reasignan una tarea',
+            self::Tomado => 'Toman (En curso) una tarea que pedí',
+            self::Completado => 'Completan una tarea que pedí',
             self::VenceManana => 'Vence mañana una tarea mía',
-            self::Bloqueado => 'Bloquean un pedido que pedí, con el motivo',
-            self::Comentado => 'Comentan en un pedido mío',
-            self::Reabierto => 'Reabren un pedido que completé',
-            self::CompletadoGente => 'Completan un pedido de mi gente',
+            self::Bloqueado => 'Bloquean una tarea que pedí, con el motivo',
+            self::Comentado => 'Comentan en una tarea mía',
+            self::Reabierto => 'Reabren una tarea que completé',
+            self::CompletadoGente => 'Completan una tarea de mi gente',
         };
     }
 

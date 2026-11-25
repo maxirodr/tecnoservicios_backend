@@ -17,14 +17,14 @@ final class MisAvisosPorMailTest extends AvisosTestCase
         $this->actingAs($laura)->getJson('/api/me/avisos-por-mail')
             ->assertOk()
             ->assertJsonPath('data', [
-                ['tipo' => 'asignado', 'nombre' => 'Me asignan un pedido', 'por_mail' => true, 'se_puede_cambiar' => false, 'solo_en_el_sistema' => false],
-                ['tipo' => 'reasignado', 'nombre' => 'Me reasignan un pedido', 'por_mail' => true, 'se_puede_cambiar' => false, 'solo_en_el_sistema' => false],
-                ['tipo' => 'tomado', 'nombre' => 'Toman (En curso) un pedido que pedí', 'por_mail' => false, 'se_puede_cambiar' => true, 'solo_en_el_sistema' => false],
-                ['tipo' => 'completado', 'nombre' => 'Completan un pedido que pedí', 'por_mail' => false, 'se_puede_cambiar' => true, 'solo_en_el_sistema' => false],
+                ['tipo' => 'asignado', 'nombre' => 'Me asignan una tarea', 'por_mail' => true, 'se_puede_cambiar' => false, 'solo_en_el_sistema' => false],
+                ['tipo' => 'reasignado', 'nombre' => 'Me reasignan una tarea', 'por_mail' => true, 'se_puede_cambiar' => false, 'solo_en_el_sistema' => false],
+                ['tipo' => 'tomado', 'nombre' => 'Toman (En curso) una tarea que pedí', 'por_mail' => false, 'se_puede_cambiar' => true, 'solo_en_el_sistema' => false],
+                ['tipo' => 'completado', 'nombre' => 'Completan una tarea que pedí', 'por_mail' => false, 'se_puede_cambiar' => true, 'solo_en_el_sistema' => false],
                 ['tipo' => 'vence_manana', 'nombre' => 'Vence mañana una tarea mía', 'por_mail' => false, 'se_puede_cambiar' => false, 'solo_en_el_sistema' => true],
-                ['tipo' => 'bloqueado', 'nombre' => 'Bloquean un pedido que pedí, con el motivo', 'por_mail' => false, 'se_puede_cambiar' => true, 'solo_en_el_sistema' => false],
-                ['tipo' => 'comentado', 'nombre' => 'Comentan en un pedido mío', 'por_mail' => false, 'se_puede_cambiar' => true, 'solo_en_el_sistema' => false],
-                ['tipo' => 'reabierto', 'nombre' => 'Reabren un pedido que completé', 'por_mail' => false, 'se_puede_cambiar' => true, 'solo_en_el_sistema' => false],
+                ['tipo' => 'bloqueado', 'nombre' => 'Bloquean una tarea que pedí, con el motivo', 'por_mail' => false, 'se_puede_cambiar' => true, 'solo_en_el_sistema' => false],
+                ['tipo' => 'comentado', 'nombre' => 'Comentan en una tarea mía', 'por_mail' => false, 'se_puede_cambiar' => true, 'solo_en_el_sistema' => false],
+                ['tipo' => 'reabierto', 'nombre' => 'Reabren una tarea que completé', 'por_mail' => false, 'se_puede_cambiar' => true, 'solo_en_el_sistema' => false],
             ]);
     }
 

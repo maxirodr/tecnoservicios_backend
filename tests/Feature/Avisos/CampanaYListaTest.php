@@ -38,14 +38,14 @@ final class CampanaYListaTest extends AvisosTestCase
         $viejo = $this->aviso($laura);
         $this->travelBack();
         $nuevo = $this->aviso($laura, ['tipo' => 'completado', 'actor_id' => $laura->id, 'datos' => [
-            'texto' => 'Carla completó tu pedido Alquiler de obrador', 'tarea' => 'Alquiler de obrador', 'obra' => null, 'actor_nombre' => 'Carla',
+            'texto' => 'Carla completó tu tarea Alquiler de obrador', 'tarea' => 'Alquiler de obrador', 'obra' => null, 'actor_nombre' => 'Carla',
         ]]);
 
         $respuesta = $this->actingAs($laura)->getJson('/api/avisos')->assertOk();
 
         $respuesta->assertJsonPath('data.0.id', $nuevo->id)
             ->assertJsonPath('data.1.id', $viejo->id)
-            ->assertJsonPath('data.0.texto', 'Carla completó tu pedido Alquiler de obrador')
+            ->assertJsonPath('data.0.texto', 'Carla completó tu tarea Alquiler de obrador')
             ->assertJsonPath('data.0.pedido', ['id' => 88, 'tarea' => 'Alquiler de obrador'])
             ->assertJsonPath('data.0.obra', null)
             ->assertJsonPath('data.0.actor', ['id' => $laura->id, 'nombre' => 'Carla'])
