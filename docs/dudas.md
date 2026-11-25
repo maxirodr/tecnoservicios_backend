@@ -1412,3 +1412,131 @@ Del QC de la semana 3 en `main` (informe en la sesión de desarrollo). Las cuatr
   - el funcionamiento.
 - **Concordancia:** la palabra es femenina: "la tarea", "completada", "asignada".
 - **Specs:** `pedidos.md` y `avisos.md` se actualizan con los textos nuevos.
+
+## Analista funcional · especificación de la semana 4 · Carga inicial (25-nov-2026)
+
+Dudas que aparecieron al escribir `especificacion/importacion.md`. No re-preguntan nada firmado ni resuelto (DU-20,
+DU-21, DU-R09, DU-P10, DU-14, DU-A19, DU-C01 y DU-G13 se aplican tal cual). Todas abiertas: cada regla se construye con
+la propuesta y cita "propuesta DU-INN" hasta la decisión. Solo están las que frenan la carga o cambian lo que ve el
+cliente.
+
+### Semana 4 · Carga inicial
+
+#### DU-I01 · ¿Dónde se arranca: en producción limpia o en el entorno donde probaron?
+- **Fuente:** `arquitectura.md` §8 (entornos local, staging y producción) · ADR-015 ("el primer usuario de producción se crea
+  con `identidad:crear-administrador`") · roadmap cap. 14 (semanas 1 a 3: "cargan dos o tres obras reales y sus usuarios",
+  "lo usan en paralelo con la minuta", "cargan las facturas de una obra en curso") · F-62.
+- **Por qué importa:** en el entorno de prueba hay datos reales mezclados con pruebas: tareas cargadas en paralelo con la
+  minuta (que la importación traería otra vez), facturas de la semana 3 que ya están dentro del gastado acumulado de su
+  rendición (doble conteo) y lo que se tocó para probar. Si se arranca ahí, hay que limpiar a mano; si se arranca en
+  producción, hay que volver a cargar usuarios y obras.
+- **Opciones:** (a) producción nueva y limpia: gerencia carga los usuarios en W-39 (~13), las obras entran por la plantilla
+  (NexoSmart puede copiar a la plantilla las que ya cargaron, para que administración solo revise) · (b) se sigue en la
+  base de prueba: antes de importar, administración revisa una por una las tareas, facturas y obras de las pruebas y anula,
+  completa o deja cada cosa; la importación bloquea el gastado de las obras con renglones hasta el corte (RN-IMP-25).
+- **Propuesta:** (a). Es la única que garantiza que el gastado del día 1 sea el de su rendición y no el de su rendición
+  más lo probado; el costo (usuarios y obras) es de una mañana.
+- **Reglas que dependen:** RN-IMP-45, RN-IMP-25 (caso 10 de §10), §12.2.
+- **¿Cambia lo que ve el cliente?** Sí (vuelven a cargar sus usuarios; lo de las pruebas no está) → **decide Juani**.
+
+#### DU-I02 · Fecha de corte: ¿una para todas las obras o una por obra?
+- **Fuente:** F-62 ("su gastado acumulado") · roadmap cap. 14 ("las rendiciones al día del arranque") · análisis de las
+  rendiciones (seis planillas en estados distintos: una "en curso" con tres gastos cargados).
+- **Por qué importa:** cada rendición está al día hasta una fecha distinta. Con una fecha única, una rendición atrasada
+  entra como si estuviera al día y lo que falta no se carga nunca; lo que tenga fecha posterior al corte y también esté en
+  el acumulado se cuenta dos veces.
+- **Opciones:** (a) una fecha de corte **por obra** (el último día que tiene al día esa rendición), no posterior a hoy; lo
+  posterior se carga en el sistema con W-10/W-35/W-46 · (b) una sola fecha para todas (el día anterior a la apertura) y
+  administración pone al día todas las rendiciones antes.
+- **Propuesta:** (a). Es como trabajan (cada rendición tiene su ritmo) y el sistema protege igual el doble conteo
+  (RN-IMP-25). Horas y fijos: el acumulado lleva períodos enteros y el primero en el sistema empieza al día siguiente.
+- **Reglas que dependen:** §5.1 (columna Fecha de corte), RN-IMP-23, RN-IMP-26, RN-IMP-30.
+- **¿Cambia lo que ve el cliente?** Sí (qué fecha ponen y qué cargan después) → **decide Juani**.
+
+#### DU-I03 · Tareas abiertas que el sector no completa antes de la apertura
+- **Fuente:** DU-20 ("los abiertos sin fecha de entrega o sin propietario se listan antes del arranque para que el sector
+  los complete") · DU-14 (fecha de entrega obligatoria: sin ella no hay prioridad, recordatorio ni vencido) · criterio de
+  aceptación n.º 3.
+- **Por qué importa:** DU-20 dice que se listan, no qué pasa si el día de la apertura siguen sin completar. Una tarea sin
+  entrega no tiene recordatorio ni vencido (rompe el criterio n.º 3) y las listas no la saben ordenar; una sin propietario
+  no está en Mis tareas de nadie.
+- **Opciones:** (a) **no entran**: quedan en el informe ("Para completar por sector") y el sector las carga a mano en W-08
+  cuando las complete (o se vuelve a correr el lote: lo ya importado no se duplica) · (b) entran "en el sector" y sin
+  entrega, marcadas para completar.
+- **Propuesta:** (a). Sin propietario sí pueden entrar si el sector elige explícitamente "(en el sector)" (como F-32), salvo
+  una En curso, que tiene que tener quién la tiene.
+- **Reglas que dependen:** RN-IMP-33, RN-IMP-34.
+- **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+
+#### DU-I04 · ¿Se carga la base de proveedores en la carga inicial?
+- **Fuente:** F-62 (tareas abiertas y obras con gastado **por rubro**: no nombra proveedores) · DU-A19 / RN-PRV-11 ("la carga
+  inicial entra depurada, con una lista de equivalencias de proveedores que revisa y aprueba administración") · cap. 10
+  ("hoy el mismo proveedor aparece escrito de varias formas").
+- **Por qué importa:** RN-PRV-11 da por hecho que la carga trae proveedores, pero con el gastado por rubro no hace falta
+  ninguno (va con el proveedor genérico). Si se cargan, hay que armar y aprobar la lista de equivalencias de proveedores
+  (el mismo trabajo que la de rubros, sobre los 191 valores escritos a mano de la minuta y los libros de gastos).
+- **Opciones:** (a) no se importan: cada proveedor se da de alta con su primera factura (W-38 alta rápida, con aviso de
+  parecidos) · (b) una hoja "Proveedores" (nombre, CUIT) depurada con su lista de equivalencias aprobada por administración.
+- **Propuesta:** (a). Es lo que dice F-62, la base nace limpia de verdad (solo los que se usan) y no suma una tabla de
+  equivalencias a la semana. RN-PRV-11 se ajusta: la lista de equivalencias de proveedores no se usa.
+- **Reglas que dependen:** RN-IMP-46; `proveedores.md` RN-PRV-11.
+- **¿Cambia lo que ve el cliente?** Sí (el día 1 la base de proveedores está vacía) → **decide Juani**.
+
+#### DU-I05 · ¿Importar las tareas dispara avisos o mails?
+- **Fuente:** cap. 7 (aviso de asignación "al propietario, en el sistema y por mail") · `avisos.md` RN-AVI-08 (asignado:
+  siempre por mail) y RN-AVI-16 (recordatorio) · F-63 ("arranca usándolo, no estudiándolo").
+- **Por qué importa:** si cada tarea importada se trata como una asignación nueva, el día de la apertura Diego recibe una
+  ráfaga de mails de tareas que ya tenía en la minuta, y la campana arranca llena de avisos que no son novedades.
+- **Opciones:** (a) ninguno: las tareas aparecen en Mis tareas; desde ahí avisan como cualquier tarea (el recordatorio
+  "vence mañana" sale por su fecha) · (b) un solo aviso por persona en la campana ("Tenés 7 tareas de la minuta") ·
+  (c) el aviso de asignación normal, con mail.
+- **Propuesta:** (a). No inventa un aviso nuevo y nadie pierde nada: la capacitación del día 1 les muestra Mis tareas.
+- **Reglas que dependen:** RN-IMP-37; caso 27 de §10.
+- **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+
+#### DU-I06 · Lista de materiales de las obras en ejecución: ¿por la plantilla o a mano en W-48?
+- **Fuente:** DU-R09 ("por material **de la lista**, la cantidad ya retirada") · RN-REN-47 ("la lista la carga administración
+  una vez, en W-48") · análisis de las rendiciones (la planilla de retiro, con la lista y los retiros, está en las seis).
+- **Por qué importa:** el retirado de DU-R09 necesita que la lista exista antes. Si se carga a mano en W-48, administración
+  tipea de nuevo decenas de materiales por obra justo la semana de la apertura, y el retirado no se puede importar hasta
+  que lo termine.
+- **Opciones:** (a) la hoja "Materiales" de la plantilla trae la lista **y** lo retirado, con las mismas validaciones de W-48
+  · (b) administración carga la lista en W-48 antes de la importación y la plantilla trae solo lo retirado por nombre.
+- **Propuesta:** (a). Es su misma planilla de retiro; lo que cambia es que la revisan en una planilla y no tipean.
+- **Reglas que dependen:** §5.5, RN-IMP-28, RN-IMP-29.
+- **¿Cambia lo que ve el cliente?** Sí (qué completan) → **decide Juani**.
+
+#### DU-I07 · Obras que no están en ejecución pero tienen tareas abiertas
+- **Fuente:** F-62 ("las obras **en ejecución**") · análisis de la minuta §7 ("18 pedidos abiertos están en solapas
+  ocultas") · RN-PED-07 (los pedidos de varias obras o sin obra puntual van "Sin obra", nombrando las obras).
+- **Por qué importa:** una tarea abierta necesita su obra en el sistema. Hay obras que todavía no arrancaron (Confirmadas)
+  con tareas abiertas (habilitaciones, alojamiento), y obras ya terminadas en solapas ocultas con tareas que nadie cerró.
+- **Opciones:** (a) la hoja Obras acepta también **Confirmadas** (sin gastado) para traer sus tareas; de las **Terminadas**
+  no entra nada: sus tareas abiertas se completan en la minuta o pasan a "Sin obra" nombrando la obra · (b) solo En
+  ejecución; las tareas de las demás van todas "Sin obra" · (c) también Terminadas, con su gastado.
+- **Propuesta:** (a).
+- **Reglas que dependen:** §5.1 (Estado), RN-IMP-18, RN-IMP-33; casos 2 y 3 de §10.
+- **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+
+#### DU-I08 · ¿Qué filas "documento" de la minuta se traen?
+- **Fuente:** DU-20 ("los que son documentos (presupuesto, OC, certificado) van a Documentos de la obra") · análisis de la
+  minuta §5 (~179 filas son documentos; 80 sin propietario; casi todas "Completada" porque no hay nada que resolver).
+- **Por qué importa:** DU-20 lo dice dentro de los "abiertos", pero un documento casi nunca está abierto. Si se toman solo
+  los abiertos, los certificados y OC de las obras en ejecución quedan en la minuta y la ficha de la obra arranca vacía.
+- **Opciones:** (a) todas las filas documento de las obras que entran, con al menos un link, sin importar su estado · (b)
+  solo las abiertas · (c) ninguna: administración las sube después en W-20.
+- **Propuesta:** (a). La OC de un presupuesto puede ir en cambio como documento de aprobación en la hoja Presupuestos.
+- **Reglas que dependen:** RN-IMP-38; casos 25 y 26 de §10.
+- **¿Cambia lo que ve el cliente?** Sí → **decide Juani**.
+
+#### DU-I09 · La carga inicial de gastado: ¿se corrige en W-34 o se anula y se vuelve a importar?
+- **Fuente:** `gastos.md` RN-GAS-37 ("con `gastos = editar`, cualquier gasto no anulado") y RN-GAS-40 (anular) · DU-21 (los
+  números de la carga los aprueba administración) · W-34 (el formulario de edición es el de la carga que lo creó, y la
+  carga inicial no tiene formulario).
+- **Por qué importa:** si se edita en W-34, un número aprobado con su tabla de equivalencias cambia sin pasar por la misma
+  revisión, y hay que construir un formulario de edición que hoy no existe.
+- **Opciones:** (a) no se corrige: se **anula** (con motivo) y se vuelve a importar el gastado de esa obra con la plantilla
+  corregida (ensayo + aprobación) · (b) se corrige en W-34 como cualquier gasto.
+- **Propuesta:** (a). Queda tachada la versión mala, con su motivo, y la nueva pasa por el mismo control.
+- **Reglas que dependen:** RN-IMP-27, RN-IMP-41, RN-IMP-44; `gastos.md` RN-GAS-37 (excepción).
+- **¿Cambia lo que ve el cliente?** Sí (W-34 sin "Editar" en la carga inicial) → **decide Juani**.
