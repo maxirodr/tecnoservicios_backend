@@ -23,6 +23,9 @@ final class GastadoDeObrasFalso implements GastadoDeObras
 
     public int $consultasDeRenglones = 0;
 
+    /** Corre después de leer los totales y antes de devolverlos: simula lo que pasa mientras dura la consulta. */
+    public ?\Closure $mientrasSeConsultan = null;
+
     public static function registrar(Container $app): self
     {
         $falso = new self;
@@ -68,6 +71,10 @@ final class GastadoDeObrasFalso implements GastadoDeObras
                 $rubro = $fila['renglon']->rubroClave;
                 $totales[$obra][$rubro] = bcadd($totales[$obra][$rubro] ?? '0', $this->numero($fila['renglon']->total), 2);
             }
+        }
+
+        if ($this->mientrasSeConsultan !== null) {
+            ($this->mientrasSeConsultan)();
         }
 
         return $totales;
