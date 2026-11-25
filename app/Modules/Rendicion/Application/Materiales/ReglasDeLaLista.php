@@ -27,7 +27,7 @@ final readonly class ReglasDeLaLista
     {
         $existente = Material::query()
             ->where('obra_id', $obraId)
-            ->where('nombre_clave', TextoComparable::de($nombre))
+            ->where('nombre_clave', TextoComparable::claveDeMaterial($nombre))
             ->when($excepto !== null, static fn ($q) => $q->whereKeyNot($excepto))
             ->first();
 

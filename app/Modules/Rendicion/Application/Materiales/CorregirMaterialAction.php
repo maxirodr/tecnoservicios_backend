@@ -47,7 +47,7 @@ final readonly class CorregirMaterialAction
             if ($datos->trae('nombre') && $datos->nombre !== null) {
                 $this->reglas->nombreLibre($material->obra_id, $datos->nombre, $material->id);
                 $material->nombre = $datos->nombre;
-                $material->nombre_clave = TextoComparable::de($datos->nombre);
+                $material->nombre_clave = TextoComparable::claveDeMaterial($datos->nombre);
             }
 
             if ($datos->trae('unidad') && $datos->unidad !== null) {

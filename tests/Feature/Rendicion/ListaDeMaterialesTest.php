@@ -64,6 +64,19 @@ final class ListaDeMaterialesTest extends RendicionTestCase
         $this->assertSame(0, Material::query()->count());
     }
 
+    public function test_nombre_de_150_caracteres_que_se_alarga_al_compararlo_se_guarda(): void
+    {
+        $diego = $this->diego();
+        $obra = $this->obraDe($diego);
+        // "ß" se compara como "ss": la clave de comparación pasa los 150 caracteres del nombre.
+        $nombre = str_repeat('ß', 150);
+
+        $this->actingAs($diego)->postJson("/api/obras/{$obra->id}/materiales", ['nombre' => $nombre, 'unidad' => 'bolsa', 'cantidad_presupuestada' => '10'])
+            ->assertCreated()->assertJsonPath('data.nombre', $nombre);
+        $this->actingAs($diego)->postJson("/api/obras/{$obra->id}/materiales", ['nombre' => $nombre, 'unidad' => 'bolsa', 'cantidad_presupuestada' => '10'])
+            ->assertUnprocessable();
+    }
+
     public function test_material_doble_envio_crea_uno_solo(): void
     {
         $diego = $this->diego();
