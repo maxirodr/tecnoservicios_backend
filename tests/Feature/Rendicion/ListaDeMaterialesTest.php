@@ -6,6 +6,7 @@ namespace Tests\Feature\Rendicion;
 
 use App\Modules\Rendicion\Domain\Models\Material;
 use App\Shared\Actividad\Actividad;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\Feature\Rendicion\Support\RendicionTestCase;
 use Tests\Feature\Rendicion\Support\Renglon;
@@ -121,6 +122,18 @@ final class ListaDeMaterialesTest extends RendicionTestCase
             ->assertUnprocessable()
             ->assertJsonPath('errors.material.0', 'Cemento x 50 kg ya tiene 2 retiros o pedidos: no se puede quitar. Corregí la cantidad presupuestada.');
         $this->assertNotNull(Material::query()->find($cemento->id));
+    }
+
+    public function test_quitar_bloquea_el_material_antes_de_contar_sus_renglones(): void
+    {
+        $diego = $this->diego();
+        $malla = $this->material($this->obraDe($diego), 'Malla sima', 'paño', '30');
+        DB::enableQueryLog();
+
+        $this->actingAs($diego)->deleteJson("/api/materiales/{$malla->id}")->assertOk();
+
+        $bloqueos = array_filter(DB::getQueryLog(), static fn (array $q): bool => str_contains($q['query'], 'from `materiales`') && str_contains($q['query'], 'for update'));
+        $this->assertCount(1, $bloqueos, 'Un retiro simultáneo espera al bloqueo y se cuenta: 422 en lugar del 500 de la clave foránea.');
     }
 
     public function test_quitar_un_material_sin_renglones_queda_en_actividades(): void
