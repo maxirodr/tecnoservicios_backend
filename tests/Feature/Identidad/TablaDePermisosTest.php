@@ -26,6 +26,13 @@ final class TablaDePermisosTest extends IdentidadTestCase
         $this->actingAs($this->usuarioDe('Compras'))->getJson('/api/permisos')->assertForbidden();
     }
 
+    public function test_la_funcion_pedidos_se_llama_tareas_y_conserva_su_clave(): void
+    {
+        $this->actingAs($this->usuarioDe('Dirección'))->getJson('/api/permisos')
+            ->assertOk()
+            ->assertJsonPath('data.funciones.0', ['clave' => 'pedidos', 'nombre' => 'Tareas', 'admite_editar' => true, 'admite_alcance' => true, 'orden' => 1]);
+    }
+
     public function test_endpoint_responde_403_aunque_el_menu_lo_oculte(): void
     {
         $laura = $this->usuarioDe('Ingeniería de proyectos');
