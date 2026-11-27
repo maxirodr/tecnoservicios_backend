@@ -23,9 +23,13 @@ final class TextosDicenTareaNoPedidoTest extends TestCase
     /**
      * Textos que dicen "pedido" con otro sentido, archivo => texto.
      * Rendición: el material "pedido" es el que se compró para la obra (los renglones de la factura), no una tarea.
+     * Carga inicial: "Fecha de pedido" es el nombre exacto de la columna de la plantilla (`importacion.md` §5.6), la
+     * misma palabra que la minuta del cliente; la plantilla no es una pantalla del sistema.
      */
     private const EXCEPCIONES = [
         'app/Modules/Rendicion/Application/Materiales/QuitarMaterialAction.php' => ['1 retiro o pedido', ' retiros o pedidos'],
+        'app/Modules/Importacion/Domain/Plantilla/Columnas.php' => ['Fecha de pedido'],
+        'app/Modules/Importacion/Domain/Plantilla/ComoCompletar.php' => ['Tareas · Fecha de pedido, Fecha de entrega'],
     ];
 
     #[Test]

@@ -21,7 +21,7 @@ interface UsuariosConsulta
      */
     public function activos(): array;
 
-    /** Sin mayúsculas, tildes ni espacios de más ("compras" = "Compras"). */
+    /** Sin mayúsculas, tildes ni espacios de más. */
     public function sectorPorNombre(string $nombre): ?SectorConsultado;
 
     /**

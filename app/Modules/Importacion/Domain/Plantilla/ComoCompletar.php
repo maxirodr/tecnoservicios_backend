@@ -54,7 +54,7 @@ final class ComoCompletar
         ['Tareas · Propietario', "Obligatorio en una tarea: como figura en la minuta (nombre o mail) o '(en el sector)' con el Sector. Una En curso necesita persona."],
         ['Tareas · Solicitante', 'Opcional. Si no se encuentra, la tarea entra sin solicitante.'],
         ['Tareas · Estado', 'Obligatorio en una tarea: No iniciada, En curso, Bloqueada o Completada (las Completadas no se traen).'],
-        ['Tareas · Fecha de pedido, Fecha de entrega', 'La entrega es obligatoria en una tarea; la de pedido, opcional (no posterior a hoy).'],
+        ['Tareas · Fecha de pedido, Fecha de entrega', 'La entrega es obligatoria en una tarea; la fecha en que se pidió, opcional (no posterior a hoy).'],
         ['Tareas · Inicio y Fin del período', 'Opcionales: las dos o ninguna.'],
         ['Tareas · Links', 'Hasta 10, uno por línea dentro de la celda. Un documento necesita al menos uno.'],
         ['Tareas · Notas', 'Si está Bloqueada, el motivo (obligatorio); si no, las aclaraciones.'],
