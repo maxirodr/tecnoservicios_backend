@@ -1549,3 +1549,66 @@ cliente.
 - **Propuesta:** (a). Queda tachada la versión mala, con su motivo, y la nueva pasa por el mismo control.
 - **Reglas que dependen:** RN-IMP-27, RN-IMP-41, RN-IMP-44; `gastos.md` RN-GAS-37 (excepción).
 - **¿Cambia lo que ve el cliente?** Sí (W-34 sin "Editar" en la carga inicial) → **decide Juani**.
+
+## Cliente · pedidos de Bruno (TSB) sobre la semana 3 (26-nov-2026)
+
+Agregados al documento firmado (cambio de alcance chico). Se construyen con esta propuesta; Juani puede cambiar cualquier
+punto antes de la prueba.
+
+#### DU-C02 · Parte de horas: cargar una vez y que se reparta en las obras — ✅ va la propuesta
+- **Pedido:** "una solapa más… 'Parte Diario'… cada hora que sube de cada empleado va para una obra distinta, y se
+  asignan solas" (o, como alternativa, empleado por empleado). Hoy las horas se cargan obra por obra desde la rendición,
+  como un monto por período sin detalle por persona (RN-REN-17, DU-R04).
+- **Propuesta:**
+  - **Dónde:** en "Cargar factura / gasto" (W-10), un tercer **Tipo de documento: "Parte de horas"**.
+  - **Cabecera:**
+    - período Desde y Hasta (obligatorio);
+    - concepto, por defecto "Horas {período}";
+    - la planilla como archivo o link (opcional).
+  - **Renglones:**
+    - Empleado (texto, sugiere los ya cargados);
+    - Obra (obligatoria, o "(sin obra)" como en la factura);
+    - Horas (hasta 2 decimales);
+    - Valor hora;
+    - Total = horas × valor hora, redondeado como cualquier renglón.
+  - **Rubro:** siempre **HORAS LIQUIDADAS**.
+  - **Fecha efectiva** de cada renglón: el Hasta, como horas y fijos.
+  - **"Pegar desde Excel":** acepta filas copiadas de su planilla (empleado · obra por N.º o nombre · horas · valor
+    hora). Lo que no se reconoce queda marcado para elegir a mano.
+  - **Al guardar:** un solo comprobante con un renglón por persona y obra. Cada obra ve en su rendición lo suyo, y la
+    confirmación dice en qué obras restó.
+  - **Superposición:** si en el mismo período y la misma obra ya hay horas cargadas como monto por período, avisa y
+    guarda si se confirma (para no contar dos veces), como DU-G09.
+  - **Qué no cambia:** la carga por período en la rendición sigue para los FIJOS y para quien prefiera cargar las horas
+    como un total.
+  - **Privacidad (valor hora por persona):** el nombre y el valor hora de cada renglón los ven solo quienes tienen
+    **Gastos = editar**. Los demás (por ejemplo Ingeniería en sus obras) ven "Parte de horas · N h · total" sin el
+    detalle por persona.
+  - **Permiso para cargar:** Gastos = editar.
+
+#### DU-C03 · Facturas pagas o impagas — ✅ va la propuesta
+- **Pedido:** "agregarle la opción de 'paga' o 'impaga', para que el responsable de pagos… tenga eso para tildar".
+- **Propuesta:**
+  - **Estado:** solo para el Tipo **Factura**. Cada factura arranca **Impaga**.
+  - **Marcar como paga:** se hace desde el detalle (W-34) con "Marcar como paga", con la fecha del pago (por defecto,
+    hoy). Se deshace con "Marcar como impaga". Queda en el historial quién y cuándo.
+  - **Gastos cargados (W-33):** columna o insignia "Impaga" / "Paga 20/11/2026", filtro **Pago: Todas · Impagas ·
+    Pagas**, y el total de lo filtrado (con Impagas, es lo que se debe).
+  - **Buscador:** muestra la marca "(impaga)".
+  - **No cambia la rendición:** el gastado no depende del pago.
+  - **Permiso nuevo en la tabla: "Pagos de facturas"** (`pagos`, ver o editar, sin alcance). Ver muestra el estado y el
+    filtro; editar marca y desmarca.
+  - **Configuración inicial:**
+    - Gerencia de Administración y Jefatura de Administración: editar;
+    - Dirección y Compras: ver;
+    - el resto: sin acceso.
+
+    Gerencia la ajusta en la tabla de permisos.
+
+#### Cantidades de materiales (pregunta 2 de Bruno) — ya existe
+- Es **Control por cantidad** (F-66, W-48), dentro de la rendición de cada obra.
+- **Qué permite:**
+  - la lista de materiales con la cantidad presupuestada (6 bolsas de cemento, 10 m³ de piedra) y su precio;
+  - cada retiro con remito descuenta y muestra cuánto resta llevar.
+- **Permisos:** lo editan quienes tienen "Control por cantidad = editar" y lo ven los que tienen "ver".
+- No hace falta desarrollo.
