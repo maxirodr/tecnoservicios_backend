@@ -178,3 +178,12 @@ Las tres ramas de la tanda 2 están **pusheadas, sin mergear** (`feat/w2-pedidos
 - [ ] Prueba de usuario de la semana 3 (otra sesión) → leer reportes y arreglar.
 - [ ] Mandar notas de la semana 2 (ya deployado staging con "Tareas").
 - [ ] Textos de pantalla que la guía marcó confusos (no cambiados): "Tomar → En curso", "Propietario", "Links" con archivos, placeholder "dd/mm/yyyy", "— —" en Sin desglose, "pasado" pegado al nombre. Ver si la prueba S3 los marca.
+
+### 2026-11-27
+- [x] Semana 4 en `main` y `staging`: importación (comandos, ensayo/confirmación, informe, obras con gastado y retirado, tareas sin avisos, documentos), front de la carga inicial, guías por sector y capturas.
+- [x] Pedidos de Bruno: parte de horas (DU-C02, con "Pegar desde Excel", privacidad del valor hora y superposición en los dos sentidos) y facturas pagas o impagas (DU-C03, permiso nuevo "Pagos de facturas").
+- [x] Verificación: back 1275, vitest 817, e2e mock 134, integración real 59/59. `staging` = `main` (back `d7fbc46`, front `262ce06`).
+- [ ] Deploy de staging (Juani): 5 migraciones nuevas.
+- [ ] Prueba de usuario de la semana 3 desde cero (con el rol 8 de los agregados).
+- [ ] Prueba de la semana 4 (carga inicial): falta prompt de QA; se arma después de la S3.
+- [ ] Redis local: `stop-writes-on-bgsave-error` en `no` en memoria porque falla el snapshot RDB; revisar si vuelve al reiniciar.
