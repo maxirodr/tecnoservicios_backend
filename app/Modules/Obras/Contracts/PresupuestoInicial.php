@@ -11,8 +11,8 @@ namespace App\Modules\Obras\Contracts;
 final readonly class PresupuestoInicial
 {
     /**
-     * @param  'oc'|'ot'|'contrato'|'mail'|null  $aprobacionTipo
-     * @param  'sin_cargar'|'por_rubro'|'solo_total'  $modo
+     * @param  string|null  $aprobacionTipo  un valor de `AprobacionTipo` (oc · ot · contrato · mail)
+     * @param  string  $modo  un valor de `ModoCarga` (sin_cargar · por_rubro · solo_total)
      * @param  array<string, numeric-string>  $montos  clave del rubro presupuestable => importe (los vacíos no vienen)
      * @param  numeric-string|null  $total
      * @param  numeric-string|null  $montoObra

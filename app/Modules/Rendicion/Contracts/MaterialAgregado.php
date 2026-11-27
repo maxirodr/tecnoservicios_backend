@@ -6,13 +6,10 @@ namespace App\Modules\Rendicion\Contracts;
 
 /**
  * Lo que devuelve `MaterialesDeObra::agregarALaLista` (RN-IMP-28): el material de la lista y, si ya estaba por su
- * nombre, la cantidad presupuestada que tiene (no se cambia).
+ * nombre, la cantidad presupuestada que tiene (no se cambia), como texto decimal de 3 decimales.
  */
 final readonly class MaterialAgregado
 {
-    /**
-     * @param  numeric-string|null  $cantidadExistente
-     */
     public function __construct(
         public int $id,
         public bool $nuevo,

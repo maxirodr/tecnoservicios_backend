@@ -33,6 +33,13 @@ interface CargaInicialDeObras
     /** El trabajo de la obra que ya tiene ese N.º en cualquiera de sus presupuestos (RN-OBR-12). */
     public function obraConNumero(string $numero): ?string;
 
+    /**
+     * Los presupuestos de la obra, N.º => id (para la lista de materiales, RN-IMP-28).
+     *
+     * @return array<string, int>
+     */
+    public function presupuestos(int $obraId): array;
+
     /** `confirmada` · `en_ejecucion` · `terminada`, o null si la obra no existe. */
     public function estado(int $obraId): ?string;
 

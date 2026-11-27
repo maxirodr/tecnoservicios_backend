@@ -16,7 +16,7 @@ interface CargaInicialDeGastos
 {
     /**
      * @param  'gastado'|'retirado'  $tipo
-     * @param  non-empty-list<RenglonInicial>  $renglones
+     * @param  list<RenglonInicial>  $renglones  al menos uno
      * @param  list<string>  $historial  líneas que se suman al historial del gasto (equivalencias, RN-IMP-17)
      *
      * @throws CargaRechazada

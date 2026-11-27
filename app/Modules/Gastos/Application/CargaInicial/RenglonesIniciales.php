@@ -78,7 +78,11 @@ final readonly class RenglonesIniciales
         );
     }
 
-    /** DU-R09: el retirado no suma plata (el importe ya está en el gastado por rubro). */
+    /**
+     * DU-R09: el retirado no suma plata (el importe ya está en el gastado por rubro).
+     *
+     * @param  numeric-string  $precio
+     */
     private function exigirRetirado(int $obraId, RenglonInicial $r, string $precio): void
     {
         if ($r->rubroClave !== self::RUBRO_RETIRADO || bccomp($precio, '0', TotalDeRenglon::ESCALA_IMPORTE) !== 0) {

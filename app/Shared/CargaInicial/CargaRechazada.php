@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\CargaInicial;
 
+use Closure;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\ValidationException;
 use RuntimeException;

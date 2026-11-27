@@ -83,6 +83,11 @@ final readonly class CargaInicialDeObrasConCasosDeUso implements CargaInicialDeO
         return $presupuesto?->obra->nombre_trabajo;
     }
 
+    public function presupuestos(int $obraId): array
+    {
+        return array_map(intval(...), Presupuesto::query()->where('obra_id', $obraId)->pluck('id', 'numero')->all());
+    }
+
     public function estado(int $obraId): ?string
     {
         return Obra::query()->find($obraId)?->estado->value;
