@@ -191,6 +191,15 @@ final class ParteDeHorasTest extends GastosTestCase
         $this->actingAs($diego)->getJson('/api/gastos/empleados?buscar=juan')->assertOk()->assertJsonPath('data', ['Juana Ruiz', 'Juan Pérez']);
     }
 
+    public function test_sugerencias_no_repiten_por_tildes_y_usan_como_se_escribio_la_ultima_vez(): void
+    {
+        $diego = $this->diego();
+        $this->cargar($diego, $this->parte([$this->horas('Juan Perez', $this->nave, '8', '5200')]))->assertCreated();
+        $this->cargar($diego, $this->parte([$this->horas('Juan Pérez', $this->losa, '8', '5200')]))->assertCreated();
+
+        $this->actingAs($diego)->getJson('/api/gastos/empleados?buscar=juan')->assertOk()->assertJsonPath('data', ['Juan Pérez']);
+    }
+
     public function test_sugerencias_de_empleados_piden_gastos_editar_y_respetan_el_alcance(): void
     {
         $this->cargar($this->diego(), $this->parteDelCaso49($this->nave, $this->losa))->assertCreated();
