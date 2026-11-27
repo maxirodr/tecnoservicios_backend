@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Shared\Providers;
 
+use App\Shared\Actividad\CargaInicialEnCurso;
 use App\Shared\Actividad\EloquentRegistroActividad;
 use App\Shared\Actividad\RegistroActividad;
 use App\Shared\Adjuntos\Console\PurgarAdjuntosHuerfanosCommand;
@@ -33,6 +34,7 @@ final class SharedServiceProvider extends ModuleServiceProvider
     {
         $this->app->bind(RegistroActividad::class, EloquentRegistroActividad::class);
         $this->app->singleton(ContextosAdjuntos::class);
+        $this->app->singleton(CargaInicialEnCurso::class);
         $this->app->singleton(FuentesBusqueda::class);
 
         // PU-202: con MySQL caído, un solo intento de conexión por pedido (o job); el resto falla al instante.

@@ -10,6 +10,8 @@ use App\Modules\Pedidos\Application\Acceso\ComprobanteAdjuntos;
 use App\Modules\Pedidos\Application\Acceso\EquipoAdjuntos;
 use App\Modules\Pedidos\Application\Acceso\MiGente;
 use App\Modules\Pedidos\Application\Acceso\PedidoAdjuntos;
+use App\Modules\Pedidos\Application\CargaInicial\CargaInicialDeTareasConCasosDeUso;
+use App\Modules\Pedidos\Contracts\CargaInicialDeTareas;
 use App\Modules\Pedidos\Contracts\PedidosParaRecordar;
 use App\Modules\Pedidos\Domain\Models\EquipoReparacion;
 use App\Modules\Pedidos\Domain\Models\Pedido;
@@ -25,8 +27,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 /**
  * Pedidos (pedidos.md): rutas, `PedidosParaRecordar` para Avisos, el puerto `PedidosDeObra` de Obras
  * (reemplaza a `PedidosDeObraNulo`, HU-059 c4), el de Identidad `PedidosDePersonasYSectores` (HU-058), el
- * grupo Pedidos del buscador (HU-057) y los contextos de adjuntos `pedido`, `comprobante_cierre`,
- * `equipo_inventario` y `equipo_presupuesto`.
+ * grupo Pedidos del buscador (HU-057), la carga inicial de tareas (`CargaInicialDeTareas`, importacion.md §11.4)
+ * y los contextos de adjuntos `pedido`, `comprobante_cierre`, `equipo_inventario` y `equipo_presupuesto`.
  */
 final class PedidosServiceProvider extends ModuleServiceProvider
 {
@@ -36,6 +38,7 @@ final class PedidosServiceProvider extends ModuleServiceProvider
         // `bind` (no `bindIf`): pisa las nulas de Obras e Identidad sin depender del orden de los providers.
         $this->app->bind(PedidosDeObra::class, PedidosDeObraEloquent::class);
         $this->app->bind(PedidosDePersonasYSectores::class, PedidosDePersonasYSectoresEloquent::class);
+        $this->app->bind(CargaInicialDeTareas::class, CargaInicialDeTareasConCasosDeUso::class);
         // "Mi gente" se recuerda solo mientras dura el pedido al servidor.
         $this->app->scoped(MiGente::class);
     }

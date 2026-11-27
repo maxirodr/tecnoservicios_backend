@@ -173,7 +173,7 @@ final class ListaDeMaterialesTest extends RendicionTestCase
         $data = $this->actingAs($diego)->getJson("/api/obras/{$obra->id}/control-cantidad")->assertOk()->json('data');
 
         $this->assertSame(['2026-10-04', '2026-10-05', '2026-10-06', '2026-10-07', '2026-10-08', '2026-10-09'], $data['columnas']['fechas']);
-        $this->assertSame(['fecha' => '2026-10-03'], $data['columnas']['hasta']);
+        $this->assertSame(['fecha' => '2026-10-03', 'carga_inicial' => false, 'incluye_otras' => true], $data['columnas']['hasta']);
         $fila = $data['materiales'][0];
         $this->assertSame(['13.500', '156.000', '-6.000', '9000.00'], [$fila['retirado_hasta'], $fila['total_retirado'], $fila['resta_llevar'], $fila['total']]);
         $this->assertArrayNotHasKey('2026-10-01', $fila['retirado_por_fecha']);

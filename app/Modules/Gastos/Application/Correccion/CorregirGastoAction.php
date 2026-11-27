@@ -12,12 +12,14 @@ use App\Modules\Gastos\Application\Carga\DatosGasto;
 use App\Modules\Gastos\Application\Carga\Errores;
 use App\Modules\Gastos\Application\Carga\FacturaRepetida;
 use App\Modules\Gastos\Application\Carga\ValidarGasto;
+use App\Modules\Gastos\Domain\Enums\Origen;
 use App\Modules\Gastos\Domain\Events\GastoCorregido;
 use App\Modules\Gastos\Domain\Models\Gasto;
 use App\Modules\Identidad\Domain\Enums\ClaveFuncion;
 use App\Modules\Identidad\Domain\Enums\Nivel;
 use App\Modules\Identidad\Domain\Models\User;
 use App\Shared\Concurrencia\VersionDeFila;
+use App\Shared\Http\ApiResponse;
 use Carbon\CarbonInterface;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Connection;
@@ -35,6 +37,9 @@ use Illuminate\Validation\ValidationException;
 final readonly class CorregirGastoAction
 {
     public const RENGLON_AJENO = 'Ese renglón no es de este comprobante.';
+
+    /** RN-IMP-27 (resuelta DU-I09): la carga inicial no tiene formulario de edición; se anula y se vuelve a importar. */
+    public const CARGA_INICIAL = 'La carga inicial no se corrige: anulala y volvé a importarla.';
 
     public function __construct(
         private Connection $db,
@@ -61,6 +66,11 @@ final readonly class CorregirGastoAction
 
         return $this->db->transaction(function () use ($actor, $id, $cambios, $version): Gasto {
             $gasto = $this->buscar->paraCorregir($actor, $id);
+
+            if ($gasto->origen === Origen::SaldoInicial) {
+                throw new HttpResponseException(ApiResponse::error(self::CARGA_INICIAL, 422));
+            }
+
             VersionDeFila::bloquearYVerificar($gasto, $version);
 
             $datos = $this->armar->armar($gasto, $cambios);
