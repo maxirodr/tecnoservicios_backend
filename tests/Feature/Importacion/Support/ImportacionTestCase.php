@@ -126,9 +126,10 @@ abstract class ImportacionTestCase extends TestCase
      */
     protected function informe(string $salida): array
     {
-        $this->assertSame(1, preg_match('/Informe: (\S+\.xlsx)/', $salida, $m), 'La salida no trae la ruta del informe');
+        $ruta = preg_match('/Informe: (\S+\.xlsx)/', $salida, $m) === 1 ? $m[1] : '';
+        $this->assertFileExists($ruta, 'La salida no trae la ruta del informe');
         $reader = new Reader;
-        $reader->open($m[1]);
+        $reader->open($ruta);
         $hojas = [];
 
         foreach ($reader->getSheetIterator() as $sheet) {
