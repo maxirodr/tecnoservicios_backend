@@ -28,6 +28,7 @@ final readonly class CargaRepetida
         private ObrasConsulta $obras,
         private Rubros $rubros,
         private FacturaRepetida $facturas,
+        private SuperposicionDelParte $parte,
     ) {}
 
     /**
@@ -40,6 +41,7 @@ final readonly class CargaRepetida
             Origen::RetiroRemito => $datos->confirmarRemitoRepetido || $this->remito($gasto, $excluir),
             Origen::Amortizacion => $this->amortizacion($gasto, $excluir),
             Origen::MontoPeriodo => $datos->confirmarSuperposicion || $this->superposicion($gasto, $excluir),
+            Origen::ParteHoras => $datos->confirmarSuperposicion || $this->parte->verificar($gasto),
             default => null,
         };
     }
@@ -88,18 +90,28 @@ final readonly class CargaRepetida
             return true;
         }
 
-        $pisados = $this->vigentes(Origen::MontoPeriodo, $excluir)->with('renglones')
-            ->whereHas('renglones', static fn (Builder $q) => $q->where('obra_id', $renglon->obraId)->where('rubro_id', $renglon->rubroId))
+        // Las horas también pueden venir de un parte (DU-C02): se avisa en los dos sentidos para no contar dos veces.
+        $origenes = [Origen::MontoPeriodo->value];
+        if ($renglon->rubroId === $this->rubros->idDe(Rubros::HORAS_LIQUIDADAS)) {
+            $origenes[] = Origen::ParteHoras->value;
+        }
+        $obraId = $renglon->obraId;
+
+        $pisados = Gasto::query()->whereIn('origen', $origenes)->whereNull('anulado_at')
+            ->when($excluir !== null, static fn (Builder $q) => $q->whereKeyNot($excluir))
+            ->with(['renglones' => static fn ($q) => $q->where('obra_id', $obraId)])
+            ->whereHas('renglones', static fn (Builder $q) => $q->where('obra_id', $obraId)->where('rubro_id', $renglon->rubroId))
             ->where('periodo_desde', '<=', $gasto->periodoHasta)->where('periodo_hasta', '>=', $gasto->periodoDesde)
-            ->orderBy('periodo_desde')->get();
+            ->orderBy('periodo_desde')->orderBy('id')->get();
 
         if ($pisados->isEmpty()) {
             return true;
         }
 
         $rubro = $this->rubros->porId($renglon->rubroId)?->nombre;
-        $obra = $this->obras->resumen($renglon->obraId)?->nombreTrabajo;
-        $periodos = $pisados->map(static fn (Gasto $g): string => 'del '.EtiquetaDocumento::periodo($g->periodo_desde, $g->periodo_hasta)
+        $obra = $this->obras->resumen($obraId)?->nombreTrabajo;
+        $periodos = $pisados->map(static fn (Gasto $g): string => ($g->origen === Origen::ParteHoras ? 'en el parte de horas del ' : 'del ')
+            .EtiquetaDocumento::periodo($g->periodo_desde, $g->periodo_hasta)
             .' ('.Importe::desde(TotalDeRenglon::suma(array_values($g->renglones->pluck('total')->all())))->legible().')')->implode(' y ');
 
         throw ValidationException::withMessages(['confirmar_superposicion' => ["Ya hay {$rubro} de {$obra} {$periodos}. ¿Cargar igual?"]]);

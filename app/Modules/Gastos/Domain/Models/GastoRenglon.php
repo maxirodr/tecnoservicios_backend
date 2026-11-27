@@ -27,6 +27,7 @@ use Illuminate\Support\Carbon;
  * @property int|null $rubro_id
  * @property int|null $material_id
  * @property string|null $detalle
+ * @property string|null $empleado parte de horas (DU-C02): la persona; cantidad = horas, precio = valor hora
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property-read Gasto $gasto
@@ -39,7 +40,7 @@ class GastoRenglon extends Model
 
     protected $fillable = [
         'gasto_id', 'orden', 'fecha', 'concepto', 'cantidad', 'precio_unitario', 'total', 'obra_id', 'rubro_id',
-        'material_id', 'detalle',
+        'material_id', 'detalle', 'empleado',
     ];
 
     /**

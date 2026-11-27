@@ -8,8 +8,11 @@ use App\Modules\Gastos\Application\Acceso\AccesoGasto;
 use App\Modules\Gastos\Application\Acceso\BuscarGasto;
 use App\Modules\Gastos\Application\Correccion\EscribirCorreccion;
 use App\Modules\Gastos\Application\FechaEmpresa;
+use App\Modules\Gastos\Application\Pagos\CambiarPagoAction;
+use App\Modules\Gastos\Domain\Enums\Origen;
 use App\Modules\Identidad\Domain\Models\User;
 use App\Shared\Actividad\Actividad;
+use App\Shared\Adjuntos\AdjuntosService;
 
 /**
  * F-14 · F-46 · W-34: el historial del gasto, del más viejo al más nuevo (RN-GAS-42). Con "solo sus obras"
@@ -40,8 +43,10 @@ final readonly class HistorialDeGastoQuery
 
         $lineas = [];
 
+        $ocultas = self::ocultas($gasto->origen, $this->acceso->vePagos($user), $this->acceso->veDetallePorPersona($user));
+
         foreach ($actividades as $actividad) {
-            if (! self::laVe($actividad, $visibles)) {
+            if (in_array($actividad->accion, $ocultas, true) || ! self::laVe($actividad, $visibles)) {
                 continue;
             }
 
@@ -55,6 +60,23 @@ final readonly class HistorialDeGastoQuery
         }
 
         return $lineas;
+    }
+
+    /**
+     * Sin `pagos` ≥ ver, las líneas de pago (RN-GAS-60); en el parte de horas sin `gastos = editar`, los cambios
+     * de renglones (nombres y valor hora) y de la planilla (RN-GAS-57).
+     *
+     * @return list<string>
+     */
+    private static function ocultas(Origen $origen, bool $vePagos, bool $detallePorPersona): array
+    {
+        return [
+            ...($vePagos ? [] : [CambiarPagoAction::PAGADA, CambiarPagoAction::IMPAGADA]),
+            ...($origen !== Origen::ParteHoras || $detallePorPersona ? [] : [
+                EscribirCorreccion::RENGLON_CAMBIADO, EscribirCorreccion::RENGLON_AGREGADO, EscribirCorreccion::RENGLON_QUITADO,
+                AdjuntosService::ACCION_AGREGADO, AdjuntosService::ACCION_QUITADO,
+            ]),
+        ];
     }
 
     /**

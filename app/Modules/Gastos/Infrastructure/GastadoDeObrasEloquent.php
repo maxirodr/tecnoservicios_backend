@@ -58,13 +58,13 @@ final readonly class GastadoDeObrasEloquent implements GastadoDeObras
                 'gasto_renglones.id', 'gasto_renglones.gasto_id', 'gasto_renglones.fecha', 'gasto_renglones.concepto',
                 'gasto_renglones.cantidad', 'gasto_renglones.precio_unitario', 'gasto_renglones.total', 'gasto_renglones.rubro_id',
                 'gasto_renglones.material_id', 'gastos.origen', 'gastos.tipo_documento', 'gastos.numero', 'gastos.proveedor_id',
-                'gastos.periodo_desde', 'gastos.periodo_hasta', 'gastos.rendido_por',
+                'gastos.periodo_desde', 'gastos.periodo_hasta', 'gastos.rendido_por', 'gasto_renglones.empleado',
                 'proveedores.nombre AS proveedor_nombre', 'proveedores.es_generico AS proveedor_generico',
             ]);
 
         $this->filtrar($query, $filtro);
 
-        return array_values($query->get()->map(fn (object $f): RenglonImputado => new RenglonImputado(
+        $renglones = array_values($query->get()->map(fn (object $f): RenglonImputado => new RenglonImputado(
             (int) $f->id,
             (int) $f->gasto_id,
             (string) $f->fecha,
@@ -83,7 +83,17 @@ final readonly class GastadoDeObrasEloquent implements GastadoDeObras
             $f->periodo_desde === null ? null : (string) $f->periodo_desde,
             $f->periodo_hasta === null ? null : (string) $f->periodo_hasta,
             $f->rendido_por === null ? null : (string) $f->rendido_por,
+            $filtro->detallePorPersona && $f->empleado !== null ? (string) $f->empleado : null,
         ))->all());
+
+        if ($filtro->detallePorPersona) {
+            return $renglones;
+        }
+
+        // Parte de horas sin detalle por persona (RN-GAS-57): uno por parte; el límite, después de resumir.
+        $resumidos = PartesResumidos::de($renglones);
+
+        return $filtro->limite === null ? $resumidos : array_slice($resumidos, 0, $filtro->limite);
     }
 
     public function contarRenglonesPorMaterial(array $materialIds): array
@@ -137,7 +147,7 @@ final readonly class GastadoDeObrasEloquent implements GastadoDeObras
 
         $query->orderBy($columna, $dir)->orderBy('gasto_renglones.fecha', $dir)->orderBy('gasto_renglones.id', $dir);
 
-        if ($filtro->limite !== null) {
+        if ($filtro->limite !== null && $filtro->detallePorPersona) {
             $query->limit($filtro->limite);
         }
     }

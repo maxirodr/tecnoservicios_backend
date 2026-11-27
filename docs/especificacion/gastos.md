@@ -31,9 +31,10 @@ la rendición de cada obra" (cap. 8). Hoy la misma factura se carga "en facturas
 una obra" (Bruno, 16-oct); con el sistema se carga **una vez**, renglón por renglón, como su libro de gastos, y la
 rendición, el % gastado de la obra, el control por cantidad y lo gastado por proveedor salen solos de esos renglones
 (ADR-007). También entran los gastos que hoy rinden sin factura (tickets, combustible, consumo de stock, amortización,
-retiros con remito, devoluciones y los montos de horas y fijos). **No** hay vencimientos, condición ni estado de pago,
-ni cuenta corriente de proveedores: siguen en Tango (cap. 8, D-033, D-040). El sistema no modela aprobaciones: la
-factura llega ya aprobada (cap. 4.3).
+retiros con remito, devoluciones, los montos de horas y fijos y el **parte de horas**, §5.13). **No** hay
+vencimientos, condición de pago ni cuenta corriente de proveedores: siguen en Tango (cap. 8, D-033, D-040). Lo único
+de pagos es la marca **paga / impaga** de cada factura, para quien paga (§5.14, DU-C03). El sistema no modela
+aprobaciones: la factura llega ya aprobada (cap. 4.3).
 
 ## 2. Funcionalidades y pantallas cubiertas
 
@@ -50,6 +51,8 @@ factura llega ya aprobada (cap. 4.3).
 | F-46 | Ver, corregir o anular un gasto, con quién lo cargó y cuándo | W-34 | completa |
 | F-57 | Gastos del proveedor: lo imputado por obra, en su ficha | W-14 "Gastado por obra" | completa (Gastos implementa el puerto `GastadoPorProveedor`, `proveedores.md` §10.3) |
 | F-54 (dato) | HORAS LIQUIDADAS y FIJOS como monto total por período (DU-18) | W-46, sección "Horas liquidadas y fijos por período" (resuelta DU-R04) | el registro, sus reglas, la sección y su endpoint (§5.5) |
+| F-39 · F-54 (agregado DU-C02) | **Parte de horas**: las horas de cada empleado, una vez, y cada renglón va a su obra en HORAS LIQUIDADAS | W-10, tercer tipo de documento | §5.13 (pedido de Bruno, 26-nov) |
+| F-45 · F-46 (agregado DU-C03) | **Facturas pagas o impagas**: marcar y desmarcar, filtro Pago y total de lo filtrado | W-33 · W-34 · W-18 | §5.14 (pedido de Bruno, 26-nov) |
 | F-03 (gastos) | Buscador general: grupo **Gastos** por número de factura | W-18 | se suma el grupo |
 | F-14 (gastos) | Quién hizo qué y cuándo en cada gasto | W-34 | completa |
 | F-15 (aporte) | "% del presupuesto gastado" del listado de obras | W-05 | Gastos aporta el gastado (§12.5); el puerto `AvanceGastoDeObra` lo implementa Rendición |
@@ -72,7 +75,10 @@ Gastos cargados (W-33), con la marca "(ver)" si solo tiene Ver (RN-IDE-12).
 | Rubro | `rubros` (clave) | Lista cerrada de su rendición (13, con EPP). |
 | Proveedor genérico | `es_generico` | "Gastos sin comprobante" (DU-A18): el proveedor de lo que no tiene uno. |
 | Rendido por | `rendido_por` | Quién rindió los gastos sin comprobante (puede no ser usuario: un supervisor de obra). |
-| Qué se carga | `origen` | De qué carga vino: `factura`, `sin_comprobante`, `combustible`, `consumo_stock`, `amortizacion`, `retiro_remito`, `devolucion`, `monto_periodo`, `saldo_inicial` (semana 4). No se edita. |
+| Qué se carga | `origen` | De qué carga vino: `factura`, `sin_comprobante`, `combustible`, `consumo_stock`, `amortizacion`, `retiro_remito`, `devolucion`, `monto_periodo`, `parte_horas` (DU-C02), `saldo_inicial` (semana 4). No se edita. |
+| Parte de horas · parte diario | `origen = parte_horas` | Las horas de un período, un renglón por persona y obra, con su valor hora; todo en HORAS LIQUIDADAS (DU-C02, §5.13). |
+| Empleado | `gasto_renglones.empleado` | La persona de un renglón del parte de horas (texto: no es un usuario del sistema). |
+| Paga · impaga | `gastos.pagado_at`, `pagado_por` | Si la factura ya se pagó y cuándo (DU-C03, §5.14). Solo facturas; no toca la rendición. |
 | Retiro · remito | `origen = retiro_remito` | Material retirado (hoy, de Tecnobahía) con su remito; la factura queda en Tango (C14). |
 | Devolución | `origen = devolucion` | Material devuelto: renglón con cantidad y total negativos, resta (C15). También es cómo se carga una nota de crédito por material devuelto (resuelta DU-G05): **no hay tipo "nota de crédito"**. |
 | Amortización | `origen = amortizacion` | Amortización de herramientas: un renglón por obra con el monto a mano. |
@@ -98,6 +104,7 @@ Gastos cargados (W-33), con la marca "(ver)" si solo tiene Ver (RN-IDE-12).
 | cargado_por, created_at | ref. usuario · fecha y hora | automático | quien carga | F-46 · W-34 "Cargó: Diego · 17-oct 10:42" |
 | updated_by, updated_at | ref. usuario · fecha y hora | automático | última corrección; `updated_at` es la versión (409, RN-GAS-39) | W-34 "Última edición: Diego · 17-oct 11:05" (ver §4.6) |
 | anulado_at, anulado_por, motivo_anulacion | fecha y hora · ref. usuario · texto ≤ 2000 | al anular | motivo no vacío | W-34 "Anular" · modelo-datos |
+| pagado_at, pagado_por | fecha · ref. usuario | No (solo facturas; vacío = **impaga**) | fecha ≤ hoy (Argentina); solo `pagos = editar` (RN-GAS-59) | DU-C03 |
 
 El **total** del gasto no se guarda ni se tipea: es la suma de sus renglones (RN-GAS-11).
 
@@ -115,6 +122,7 @@ El **total** del gasto no se guarda ni se tipea: es la suma de sus renglones (RN
 | rubro_id | ref. rubro | **Sí** si hay obra; opcional sin obra | uno de los permitidos para esa carga (§4.3) | F-40 · cap. 9 · modelo-datos (CHECK) |
 | material_id | ref. material de la obra | No (en un retiro, **sí**: de la lista o fuera de presupuesto) | un material de **esa** obra (`MaterialesDeObra::perteneceAObra`); la cantidad va en la unidad del material | DU-17 · W-46 · W-48 · resuelta DU-G03, DU-R06 |
 | detalle | texto ≤ 250 | No | — | F-41 "la cotización en el detalle" · modelo-datos |
+| empleado | texto ≤ 120 | parte de horas **Sí** · resto no | sin espacios al borde ni dobles; no vacío. Lo ven solo quienes tienen `gastos = editar` (RN-GAS-57) | DU-C02 |
 
 ### 4.3 Qué pide cada carga (`origen`)
 
@@ -128,7 +136,9 @@ El **total** del gasto no se guarda ni se tipea: es la suma de sus renglones (RN
 | Retiro con remito | W-46 | `sin_documento` / `retiro_remito` | **Sí** (N.º de remito) | **de la base** (resuelta DU-G03) | — | la obra de la pantalla | los 11 (MATERIALES por defecto) | > 0 | **Sí**: de la lista, o "No está en la lista" (nombre y unidad) = fuera de presupuesto | 0 a 1 `remito` |
 | Devolución de materiales | W-46 | `sin_documento` / `devolucion` | No | de la base, opcional (si no, el genérico) | — | la obra de la pantalla | los 11 (MATERIALES por defecto) | **< 0** | de la lista o fuera de presupuesto, opcional | — |
 | Monto por período | W-46, sección "Horas liquidadas y fijos por período" (resuelta DU-R04) | `sin_documento` / `monto_periodo` | No | el genérico | — | la obra de la pantalla (**un** renglón) | **FIJOS** o **HORAS LIQUIDADAS** | 1 (el monto va en el precio) | — | — |
-| Carga inicial | Importación (semana 4) | `sin_documento` / `saldo_inicial` | No | el genérico | — | obra | cualquiera | 1 | — | — |
+| Carga inicial · gastado | Importación (semana 4, `importacion.md` RN-IMP-23) | `sin_documento` / `saldo_inicial` | No | el genérico | — | obra | cualquiera de los 13 | 1 (precio = el importe) | — | — |
+| Carga inicial · retirado | Importación (semana 4, `importacion.md` RN-IMP-29, DU-R09) | `sin_documento` / `saldo_inicial` | No | el genérico | — | obra | MATERIALES | = lo retirado (precio **0**, total 0) | **Sí**, de la lista | — |
+| Parte de horas | W-10, tipo "Parte de horas" (DU-C02) | `sin_documento` / `parte_horas` | No | el genérico | — | obra o "(sin obra)", una por renglón | **HORAS LIQUIDADAS**, siempre | **las horas**, > 0, hasta 2 decimales | — | 0 a 1 `comprobante_gasto` (la planilla) |
 
 ### 4.4 Adjuntos (ADR-014, `identidad.md` §6.6)
 
@@ -175,13 +185,17 @@ Aplicados en `modelo-datos.md` el 24-nov-2026.
 5. Los renglones no tienen **unidad**: la unidad es la del material (`materiales.unidad`), también en lo de fuera de
    presupuesto, que se crea con su unidad al cargar (resuelta DU-G03 con el contrato `MaterialesDeObra`).
 6. `cantidad` negativa **solo** con `origen = devolucion` (resuelta DU-G05: no hay nota de crédito).
+7. (DU-C02, 27-nov) `gasto_renglones.empleado` (varchar 120, null): la persona de cada renglón del parte de horas;
+   `origen = parte_horas`. Sin tabla de empleados: es texto, como "rendido por".
+8. (DU-C03, 27-nov) `gastos.pagado_at` (date, null) y `gastos.pagado_por` (FK users, null): factura paga y quién la
+   marcó; vacío = impaga. Índice `(tipo_documento, pagado_at)` para el filtro Pago de W-33.
 
 ## 5. Reglas de negocio
 
 ### 5.1 Entrada al módulo (F-02, F-45; W-17, W-33)
 
 - **RN-GAS-01** El ítem **Gastos** de la barra aparece con `gastos` ≥ Ver y abre **Gastos cargados** (W-33); con solo Ver, "Gastos (ver)" y sin botones de carga ni edición. Con `gastos = editar`, W-33 muestra **"+ Cargar factura / gasto"**, que abre W-10. En el celular, "Gastos" está en "Más" (W-41). *(F-02, W-17, W-33, RN-IDE-11, RN-IDE-12, DU-A12)*
-- **RN-GAS-02** La carga es **una sola pantalla con dos modos**: arriba, **Tipo de documento: Factura · Sin documento**. "Factura" es W-10; "Sin documento" es W-35 (tickets, combustible, consumo de stock). Al cambiar de modo se conservan los renglones ya escritos (concepto, cantidad, precio, obra, rubro); se vacían número y proveedor. Amortización, retiros, devoluciones, horas y fijos se cargan desde la rendición de la obra (W-46, §5.4 y §5.5), con el permiso de §8.1. *(W-10 "Sin documento para lo que no tiene factura: tickets, combustible por carga y consumo de stock propio", W-35, W-11 "+ cargar renglón sin documento (W-46)")*
+- **RN-GAS-02** La carga es **una sola pantalla con dos modos**: arriba, **Tipo de documento: Factura · Sin documento**. "Factura" es W-10; "Sin documento" es W-35 (tickets, combustible, consumo de stock). Al cambiar de modo se conservan los renglones ya escritos (concepto, cantidad, precio, obra, rubro); se vacían número y proveedor. Amortización, retiros, devoluciones, horas y fijos se cargan desde la rendición de la obra (W-46, §5.4 y §5.5), con el permiso de §8.1. El tercer tipo, **"Parte de horas"**, es el de §5.13 (DU-C02). *(W-10 "Sin documento para lo que no tiene factura: tickets, combustible por carga y consumo de stock propio", W-35, W-11 "+ cargar renglón sin documento (W-46)")*
 
 ### 5.2 Cargar una factura (F-39…F-43; W-10, W-38)
 
@@ -194,7 +208,7 @@ Aplicados en `modelo-datos.md` el 24-nov-2026.
 - **RN-GAS-09** **Renglones**: columnas **Concepto · Cantidad · Precio unitario · Total · Obra · Rubro** (como su libro de gastos) y "+ agregar renglón"; se quitan con "quitar". Al menos uno: "Cargá al menos un renglón." Cada renglón: concepto ("Escribí el concepto."), cantidad ("Poné la cantidad."; "La cantidad no puede ser 0."), precio ("Poné el precio unitario."; "El precio no puede ser negativo."), obra o "(sin obra)" ("Elegí la obra o '(sin obra)'.") y, si tiene obra, rubro ("Elegí el rubro."). Opcional: **detalle** (cotización, aclaraciones) y **material** (RN-GAS-14). Los errores se muestran en el renglón que corresponde ("Renglón 3: elegí el rubro."). *(F-39, F-40, W-10)*
 - **RN-GAS-10** **Total del renglón** = cantidad × precio unitario, calculado solo, con el redondeo de §4.5; no se tipea. Una cantidad negativa en una factura: 422 "La cantidad va en negativo solo en una devolución." *(F-41, ADR-008, C15)*
 - **RN-GAS-11** **Total de la factura** = suma de los renglones, y al lado **el reparto por obra**: "905.600 · Nave 3: 549.000 · Losa tanque B: 311.600 · sin obra: 45.000", en vivo mientras se carga. No hay un total para tipear aparte, así que **siempre suma**: la persona lo compara con el papel antes de guardar y, si no coincide, corrige los renglones (en general falta uno o hay un precio mal tipeado). Una diferencia de centavos por el redondeo del proveedor se acepta: la rendición se lleva en pesos. Si el papel da más, se puede sumar un renglón "Ajuste de redondeo"; no se cargan renglones negativos para bajar el total. Junto al botón: "Importes sin IVA (netos)". *(W-10 "Total de la factura (cantidad × precio, suma de renglones)", F-41)*
-- **RN-GAS-12** **Rubros** que se ofrecen al imputar: los **11 de su lista para imputar gastos** (MATERIALES, INSUMOS, EPP, SUBCONTRATOS, LOGISTICA, AMORTIZACION, MANTENIMIENTO, OBRADORES/BAÑOS, SERVICIOS GENERALES, MAQUINAS/HERRAMIENTAS, VIATICOS). **FIJOS** y **HORAS LIQUIDADAS** no se ofrecen: se cargan como monto por período (§5.5). Si llegan por la API: 422 "FIJOS y HORAS LIQUIDADAS se cargan como monto por período, desde la rendición." EPP se imputa como rubro propio; que en el resumen sume en INSUMOS lo hace la rendición. *(cap. 9 "Rubros", F-54, C17, C18; su columna auxiliar "Tipos" tiene esos 11)*
+- **RN-GAS-12** **Rubros** que se ofrecen al imputar: los **11 de su lista para imputar gastos** (MATERIALES, INSUMOS, EPP, SUBCONTRATOS, LOGISTICA, AMORTIZACION, MANTENIMIENTO, OBRADORES/BAÑOS, SERVICIOS GENERALES, MAQUINAS/HERRAMIENTAS, VIATICOS). **FIJOS** y **HORAS LIQUIDADAS** no se ofrecen: se cargan como monto por período (§5.5) y HORAS LIQUIDADAS, también con el parte de horas (§5.13). Si llegan por la API: 422 "FIJOS y HORAS LIQUIDADAS se cargan como monto por período, desde la rendición." EPP se imputa como rubro propio; que en el resumen sume en INSUMOS lo hace la rendición. *(cap. 9 "Rubros", F-54, C17, C18; su columna auxiliar "Tipos" tiene esos 11)*
 - **RN-GAS-13** **Obra del renglón**: cualquier obra existente, **en cualquier estado** (también Confirmada y Terminada); el selector muestra "N.º · nombre del trabajo" y "Obra terminada" al lado si lo está. **"(sin obra)"** deja `obra_id` vacío: lo que no es de ninguna obra (stock, vehículos, oficina) y la **compra a stock**, así no se cuenta dos veces con su consumo (RN-GAS-19). Sin obra el rubro es opcional. **Un renglón que va a dos obras se divide en dos renglones** (6 bolsas a una, 4 a la otra): no hay reparto por porcentaje. La factura **se carga completa**. *(F-40, D-035, C10, C11, W-10, DU-A15, RN-OBR-25, RN-OBR-34)*
 - **RN-GAS-14** **Material** (control por cantidad): si la obra del renglón tiene materiales (W-48), el renglón puede asociarse a uno de **esa** obra ("Material: Cemento x 50 kg ▾", opcional; las opciones salen de `GET /api/obras/{obra}/materiales/opciones`, de Rendición) para que cuente como "pedido" en W-48; o elegir **"No está en la lista"** y escribir el material y su unidad, que queda como material **fuera de presupuesto** de la obra (`MaterialesDeObra::crearFueraDePresupuesto`, en la misma transacción; si ya existe con ese nombre en la obra, se usa ese). La cantidad va **en la unidad del material** (el formulario la muestra al lado: "bolsas"). Si el material no es de esa obra: 422 "El material Cemento x 50 kg es de otra obra: quitá el material o elegí uno de esta obra." (también al corregir la obra de un renglón que tiene material). Si la obra no tiene materiales, el campo ofrece solo "No está en la lista". En el formulario, cambiar la obra del renglón borra el material elegido. *(resuelta DU-17: "Un renglón de factura de otro proveedor puede asociarse a un material de la lista para contar como 'pedido'"; W-48 "lo que se compró fuera de presupuesto"; `rendicion.md` RN-REN-49, RN-REN-53 y §12.4.1 invariante 4; resuelta DU-R06)*
 - **RN-GAS-15** Adelanto y saldo de un subcontrato van **en dos renglones** (o en sus dos facturas), como hoy; la moneda extranjera, **convertida**, con la cotización en el detalle; la bonificación, **aplicada al precio**. El sistema no calcula ninguna de las tres cosas. *(F-41, C9)*
@@ -239,7 +253,7 @@ estas y `rendicion.md` las cita, no las repite.
 ### 5.7 Detalle, corregir y anular (F-46, F-14; W-34)
 
 - **RN-GAS-36** **Detalle** (W-34): título "Factura 0003-00012345 · Corralón Centro" (o "Sin documento · rendido por Laura · 18-10-2026", "Retiro · remito 0001-00000456 · {proveedor}", "Amortización · Piso industrial nave 3", "Período 1 al 15-oct · HORAS LIQUIDADAS · Piso industrial nave 3"); datos **Tipo de documento · Número · Fecha · Proveedor** (con CUIT si tiene) · **Rendido por** · **Período** (si corresponde) · **Archivo** (cada adjunto, para bajar o abrir) · **Cargó: Diego · 17-oct 10:42** · **Última edición: Diego · 17-oct 11:05** (si se corrigió); los renglones **Concepto · Cantidad · Precio unitario · Total · Obra · Rubro** (más **Fecha** en sin documento, **Material** y **Detalle** si tienen) y "Total de la factura" con el reparto por obra; abajo, el **Historial**. Con `gastos = editar`: **Editar** y **Anular**. *(F-46, W-34)*
-- **RN-GAS-37** **Corregir**: con `gastos = editar`, cualquier gasto no anulado, también de una obra Terminada. Se corrigen **todos** los datos de la cabecera (número, fecha, proveedor, rendido por, período, adjuntos) y los renglones (cambiar, agregar, quitar), con las mismas validaciones de la carga (incluido el duplicado, RN-GAS-08, sin contarse a sí mismo). No se cambian el **tipo de documento** ni **qué se cargó** (origen): una factura cargada como sin documento se **anula y se carga de nuevo**. Debe quedar al menos un renglón. Guardar sin cambios no registra nada. *(F-46 "corregir"; resuelta DU-G11)*
+- **RN-GAS-37** **Corregir**: con `gastos = editar`, cualquier gasto no anulado, también de una obra Terminada. Se corrigen **todos** los datos de la cabecera (número, fecha, proveedor, rendido por, período, adjuntos) y los renglones (cambiar, agregar, quitar), con las mismas validaciones de la carga (incluido el duplicado, RN-GAS-08, sin contarse a sí mismo). No se cambian el **tipo de documento** ni **qué se cargó** (origen): una factura cargada como sin documento se **anula y se carga de nuevo**. Debe quedar al menos un renglón. Guardar sin cambios no registra nada. **Salvo la carga inicial** (`origen = saldo_inicial`): no se corrige, solo se anula (W-34 sin "Editar", `puede.editar = false`; `PATCH` 422 "La carga inicial no se corrige: anulala y volvé a importarla.", `importacion.md` RN-IMP-27). *(F-46 "corregir"; resuelta DU-G11; carga inicial: resuelta DU-I09)*
 - **RN-GAS-38** **Al corregir, la rendición se recalcula en todas las obras afectadas**, las de antes y las de después (cambiar un renglón de obra lo saca de una y lo suma en la otra): `GastoCorregido` con la unión de las dos listas. *(cap. 8, ADR-007)*
 - **RN-GAS-39** Corrección simultánea: el formulario manda el `updated_at` con que se abrió; si otra persona lo cambió mientras tanto, 409 "Alguien cambió esto mientras lo tenías abierto. Actualizá y revisá." y no se guarda nada (`VersionDeFila`). *(técnica, PU-002)*
 - **RN-GAS-40** **Anular**: con `gastos = editar`, con **motivo obligatorio** ("Contá por qué se anula."). La ventana dice "Anular la factura 0003-00012345 · Deja de sumar en la rendición de Piso industrial nave 3 y Reparación de losa tanque B. No se puede deshacer." El gasto queda **tachado** con "Anulada por Diego el 18-oct 9:30: 'Cargada dos veces'.", **deja de sumar** en la rendición, el % gastado, el control por cantidad y lo gastado por proveedor, conserva sus adjuntos y su historial, y su número queda libre para volver a cargarlo bien. `GastoAnulado` después del commit. *(W-34 "Anular en lugar de borrar", "Anular la deja tachada y deja de sumar en la rendición", RN-IDE-48)*
@@ -269,6 +283,30 @@ estas y `rendicion.md` las cita, no las repite.
 
 - **RN-GAS-50** Aceptan `Idempotency-Key` **todos los POST** del módulo: cargar (`POST /api/gastos`, cualquier carga) y anular. Mismo envío → misma respuesta y **un solo gasto**. Anular uno ya anulado responde 409 con el estado actual. Cargar, corregir y anular se hacen dentro de una transacción con el gasto **bloqueado para escritura** (`lockForUpdate`) al corregir o anular, y la amortización única por obra (RN-GAS-23) se verifica con la obra bloqueada, para que dos cargas a la vez no dejen dos. Los eventos salen **después del commit**. *(ADR-011, CLAUDE.md regla 5)*
 
+### 5.13 Parte de horas (DU-C02, pedido de Bruno del 26-nov)
+
+Hoy las horas se cargan obra por obra como un monto por período (§5.5). Con el parte se cargan **una vez** y cada
+renglón va solo a su obra. La carga por período de W-46 sigue igual para FIJOS y para quien prefiera cargar las horas
+como un total.
+
+- **RN-GAS-51** En "Cargar factura / gasto" (W-10) hay un tercer **Tipo de documento: "Parte de horas"** (`tipo_documento = sin_documento`, `origen = parte_horas`). Lo carga quien tiene **`gastos = editar`**, con su alcance (RN-GAS-49: con "solo sus obras", solo a sus obras y sin "(sin obra)"). Proveedor: el genérico, siempre. En las listas el documento es "**Parte de horas 1 al 15-oct**" (W-33, W-34, W-11, W-36) y el título de W-34, "Parte de horas 1 al 15-oct · HORAS LIQUIDADAS". *(DU-C02 "Dónde", "Permiso para cargar")*
+- **RN-GAS-52** **Cabecera**: **Desde** y **Hasta**, obligatorios, con las reglas y los textos de RN-GAS-27 ("Poné desde y hasta.", "El 'hasta' no puede ser anterior al 'desde'.", "El período no puede empezar después de hoy."); **Concepto** (≤ 250), por defecto "Horas 1 al 15-oct" (si viene vacío, lo pone el backend); **Planilla (opcional)**: archivo o link, 0 a 1 (contexto `comprobante_gasto`). La **fecha** del gasto y de cada renglón es el **Hasta** (`periodo_hasta`), como horas y fijos: es la fecha efectiva de la rendición y puede ser posterior a hoy. *(DU-C02 "Cabecera", "Fecha efectiva")*
+- **RN-GAS-53** **Renglones**: **Empleado · Obra · Horas · Valor hora · Total**, uno por persona y obra (si a una persona le corresponden dos valores hora en la misma obra, van en dos renglones). **Empleado**: texto, obligatorio ("Renglón 2: escribí el empleado."), sin espacios al borde ni dobles. **Obra**: una obra **o** "(sin obra)", como en la factura (RN-GAS-09, 13). **Horas** (`cantidad`): mayor que cero ("Renglón 2: poné las horas."), hasta 2 decimales ("Renglón 2: hasta 2 decimales en las horas."). **Valor hora** (`precio_unitario`): mayor que cero ("Renglón 2: poné el valor hora."), hasta 2 decimales. **Total** = horas × valor hora, redondeado como cualquier renglón (§4.5); lo calcula el backend. **Rubro**: siempre **HORAS LIQUIDADAS** (lo que mande el front se ignora). **Concepto** de cada renglón: el de la cabecera. Hasta 200 renglones (RN-GAS-09). *(DU-C02 "Renglones", "Rubro")*
+- **RN-GAS-54** **"Pegar desde Excel"** es del formulario: acepta filas copiadas de su planilla (empleado · obra por N.º o nombre · horas · valor hora) y llena los renglones; lo que no reconoce queda marcado para elegir a mano ("Elegí la obra." en la fila). El backend recibe los renglones ya armados, como cualquier carga. *(DU-C02 "Pegar desde Excel")*
+- **RN-GAS-55** **Superposición con un monto por período**: si en una obra del parte ya hay **HORAS LIQUIDADAS cargadas como monto por período** (no anulado) cuyo período se superpone con el del parte, avisa sin frenar, una línea por obra: "Ya hay HORAS LIQUIDADAS de Piso industrial nave 3 del 1 al 15-oct (1.300.000) cargadas como monto por período. ¿Cargar igual?"; se guarda solo si se confirma (`confirmar_superposicion: true`), como RN-GAS-28. Al corregir, vuelve a avisar solo si cambió el período o se sumó una obra. *(DU-C02 "Superposición", resuelta DU-G09)*
+- **RN-GAS-55b** **Al revés:** cargar HORAS LIQUIDADAS como monto por período (W-46) en una obra que ya tiene un **parte de horas** vigente cuyo período se superpone también avisa, con lo del parte en esa obra: "Ya hay HORAS LIQUIDADAS de Piso industrial nave 3 en el parte de horas del 10 al 25-oct (41.600). ¿Cargar igual?"; se guarda si se confirma. Los FIJOS no miran el parte. *(DU-C02, para no contar dos veces cargues por donde cargues)*
+- **RN-GAS-56** **Al guardar**: un solo comprobante con sus renglones, en una transacción, con la actividad `creado` y `GastoImputado` con las obras después del commit (RN-GAS-16). Confirmación: "✓ Parte de horas cargado. Ya se restó en la rendición de Piso industrial nave 3 y Reparación de losa tanque B." (todo sin obra: "✓ Parte de horas cargado. No va a ninguna obra (todo sin obra)."). Se corrige y se anula en W-34 como cualquier gasto (RN-GAS-37…42); el historial nombra al empleado: "Diego cambió el valor hora de 'Juan Pérez': 5.200 → 5.500 (total 460.200 → 486.750)". **Empleados ya cargados**: el campo Empleado sugiere los nombres de partes anteriores (`GET /api/gastos/empleados?buscar=`, máx. 20, el más reciente primero; con `gastos = editar`, y con "solo sus obras", solo los de sus obras). *(DU-C02 "Al guardar", "sugiere los ya cargados")*
+- **RN-GAS-57** **Privacidad del valor hora**: el **nombre** y el **valor hora** de cada renglón los ven solo quienes tienen **`gastos = editar`** (con su alcance). Los demás ven el parte **resumido por obra**, sin el detalle por persona: un renglón por obra con el concepto, las horas sumadas y el total ("Horas 1 al 15-oct · 120 h · 624.000"), sin empleado ni valor hora (`resumido: true`, `precio_unitario: null`). Vale en W-34, W-11 ("Últimos gastos"), W-36 y W-37; además, sin `gastos = editar` la **planilla** no viaja ni se baja (404) y el historial no muestra los cambios de renglones ni de la planilla del parte. El total por obra, el gastado y los totales de W-33 son los mismos para todos. *(DU-C02 "Privacidad (valor hora por persona)"; resumido por obra para que horas y total no dejen sacar el valor hora de cada uno)*
+
+### 5.14 Facturas pagas o impagas (DU-C03, pedido de Bruno del 26-nov)
+
+- **RN-GAS-58** El estado de pago es **solo de las facturas** (`tipo_documento = factura`). Cada factura arranca **Impaga** (`pagado_at` vacío). **No cambia la rendición**: el gastado, el % gastado y lo gastado por proveedor no dependen del pago. No hay vencimientos, condición de pago ni cuenta corriente (siguen en Tango). *(DU-C03 "Estado", "No cambia la rendición")*
+- **RN-GAS-59** **Marcar como paga** (W-34): con **`pagos = editar`** y viendo la factura (`gastos` ≥ ver, con su alcance), con la **fecha del pago**, por defecto hoy (Argentina), no posterior a hoy ("La fecha no puede ser posterior a hoy."). Si ya está paga, se puede cambiar la fecha; con la misma fecha no registra nada. **Marcar como impaga** la deja sin fecha; si ya está impaga, no registra nada. Otro tipo de documento: 422 "Solo las facturas se marcan como pagas o impagas." Anulada: 409 "Está anulada: no se marca como paga ni impaga." Mandan el `updated_at` con que se abrió (409 RN-GAS-39) y aceptan `Idempotency-Key` (RN-GAS-50). Marcar cuenta como edición: cambia la versión y la "Última edición". Confirmación: "Marcamos la factura como paga." / "Marcamos la factura como impaga." *(DU-C03 "Marcar como paga")*
+- **RN-GAS-60** **Historial** (W-34), solo para quien tiene `pagos` ≥ ver: "María marcó la factura como paga (20-11-2026)", "María cambió la fecha del pago: 20-11-2026 → 21-11-2026", "María marcó la factura como impaga" (acciones `pagada`, `impagada`). *(DU-C03 "Queda en el historial quién y cuándo")*
+- **RN-GAS-61** **Gastos cargados (W-33)**, con `pagos` ≥ ver: cada factura trae su estado (insignia "Impaga" o "Paga 20/11/2026") y está el filtro **Pago: Todas · Impagas · Pagas** (`pago=impagas|pagas`), que deja solo facturas y se suma a los demás filtros (RN-GAS-30); el pie "Total de lo filtrado" suma lo filtrado (con Impagas, **es lo que se debe**; los anulados no suman, RN-GAS-34). Sin `pagos` ≥ ver el estado no viaja y el filtro responde 403 "No tenés acceso al estado de pago de las facturas." *(DU-C03 "Gastos cargados (W-33)")*
+- **RN-GAS-62** **Detalle (W-34)**, con `pagos` ≥ ver: "Impaga" o "Paga · 20/11/2026 · marcó María"; con `pagos = editar` y la factura no anulada, **Marcar como paga** (con la fecha) o **Marcar como impaga** (`puede.marcar_pago`). **Buscador (W-18)**, con `pagos` ≥ ver: las facturas impagas llevan la marca "(impaga)" (`impaga: true`). *(DU-C03 "Marcar como paga", "Buscador")*
+- **RN-GAS-63** **Permiso nuevo "Pagos de facturas"** (`pagos`, fila 13 de la tabla, ver o editar, **sin** alcance): ver muestra el estado y el filtro; editar marca y desmarca. Configuración inicial: **Editar** Gerencia de Administración y Jefatura de Administración · **Ver** Dirección y Compras · el resto **Sin acceso**; Gerencia la ajusta en la tabla de permisos (`identidad.md` §6.1, §6.3). *(DU-C03 "Permiso nuevo", "Configuración inicial")*
+
 ## 6. Estados y transiciones
 
 | De | Acción | A | Quién | Requisitos | Evento |
@@ -279,6 +317,10 @@ estas y `rendicion.md` las cita, no las repite.
 | Anulada | Corregir · Anular | — | — | **409** "Está anulada: no se corrige. Si hace falta, cargala de nuevo." | — |
 
 No hay "desanular" ni borrar (RN-GAS-41). Cada acción registra su actividad en la misma transacción.
+
+Estado de pago de una factura vigente (RN-GAS-58…60), aparte del de arriba: **Impaga** → *Marcar como paga (fecha)* →
+**Paga** → *Marcar como impaga* → **Impaga**; quién: `pagos = editar`; requisitos: factura no anulada + `updated_at`;
+sin evento (no toca la rendición); actividad `pagada` / `impagada`.
 
 ## 7. Pantallas: vacío, cargando, error y sin permiso
 
@@ -310,6 +352,9 @@ No hay "desanular" ni borrar (RN-GAS-41). Cada acción registra su actividad en 
 | `control_cantidad` | editar | cargar retiros con remito (W-46 sección retiros, abierta desde W-48) y asociar o quitar su remito (`identidad.md` §6.1 fila 9, §6.6) | sus obras |
 | `control_cantidad` | ver | bajar el remito de un retiro (`identidad.md` §6.6) | sus obras |
 | `proveedores` | editar | "+ nuevo proveedor" desde la factura (W-38) | — |
+| `gastos` | editar | cargar el **parte de horas** (W-10) y ver el empleado y el valor hora de cada renglón (RN-GAS-57) | ídem (RN-GAS-49) |
+| `pagos` | ver | el estado de pago de las facturas en W-33, W-34 y el buscador, el filtro Pago y su historial (RN-GAS-60…62) | — (sin alcance) |
+| `pagos` | editar | además: marcar como paga o impaga (RN-GAS-59) | — |
 
 Configuración inicial (`identidad.md` §6.3): **Editar·todas** Gerencia de Administración, Jefatura de Administración y
 Compras · **Ver·todas** Dirección, Gerencia de Operaciones y Jefatura de Proyectos · **Ver·solo sus obras** Ingeniería
@@ -342,8 +387,14 @@ personas (Gerencia y Jefatura de Administración, Compras).
 | Lista de W-46 de una obra | `rendicion` **o** `control_cantidad` | ver (para cargar, la celda de cada sección) | sí | 403 · 404 |
 | "Gastado por obra" del proveedor | `proveedores` ≥ ver **y** `gastos` ≥ ver | ver | sí | 403 · 404 |
 | Grupo Gastos del buscador | `gastos` | ver | sí | el grupo no viaja |
+| Cargar un parte de horas (W-10) · sugerencias de empleados | `gastos` | editar | sí (RN-GAS-49) | 403 · 422 |
+| Ver el estado de pago (W-33, W-34, buscador) y filtrar por Pago | `pagos` (y `gastos` ≥ ver para la factura) | ver | el de `gastos` | estado ausente · filtro 403 |
+| Marcar como paga o impaga | `pagos` (y ver la factura) | editar | el de `gastos` | 403 · 404 · 409 · 422 |
 
-El detalle trae `puede: {editar, anular}` para mostrar u ocultar botones; la API vuelve a verificar todo (RN-IDE-14).
+Configuración inicial de `pagos` (DU-C03): Editar Gerencia de Administración y Jefatura de Administración · Ver
+Dirección y Compras · Sin acceso el resto.
+
+El detalle trae `puede: {editar, anular, marcar_pago}` para mostrar u ocultar botones; la API vuelve a verificar todo (RN-IDE-14).
 Cada endpoint tiene test de permitido, denegado e IDOR (ADR-006).
 
 ## 9. Avisos
@@ -405,6 +456,16 @@ escucha Rendición para recalcular (invalidar su cache), no Avisos.
 | 46 | Factura con 201 renglones | 422 "Hasta 200 renglones por comprobante: dividilo en dos cargas." |
 | 47 | Se manda `POST /api/gastos` con `total: "1.00"` en un renglón | Se ignora: el backend calcula el total. |
 | 48 | Se asocia como factura un adjunto subido por otra persona o de contexto `pedido` | 422 "Ese adjunto no se puede usar acá." (RN-IDE-46). |
+| 49 | Diego carga el parte del 1 al 15-oct: Juan Pérez 88,5 h a 5.200 en Nave 3 y 16 h en Losa tanque B; Pablo Gómez 8 h a 4.800 sin obra | 201; tres renglones en HORAS LIQUIDADAS con fecha 15-oct; totales 460.200 · 83.200 · 38.400; "✓ Parte de horas cargado. Ya se restó en la rendición de Piso industrial nave 3 y Reparación de losa tanque B."; `GastoImputado` con las dos obras. |
+| 50 | Parte con un renglón sin empleado, otro con 0 h y otro con 8,125 h | 422 "Renglón 1: escribí el empleado.", "Renglón 2: poné las horas.", "Renglón 3: hasta 2 decimales en las horas." |
+| 51 | Parte con rubro MATERIALES en un renglón (por la API) | Se guarda en HORAS LIQUIDADAS (se ignora). |
+| 52 | Nave 3 ya tiene HORAS LIQUIDADAS del 1 al 15-oct por 1.300.000 (monto por período) y Diego carga un parte del 10 al 25-oct con un renglón en Nave 3 | Avisa "Ya hay HORAS LIQUIDADAS de Piso industrial nave 3 del 1 al 15-oct (1.300.000) cargadas como monto por período. ¿Cargar igual?"; se guarda solo si confirma. |
+| 53 | Laura (Ingeniería, Gastos Ver·solo sus obras, responsable de Nave 3) abre el parte del caso 49 | Ve un renglón "Horas 1 al 15-oct · 88,5 h · 460.200" sin nombre ni valor hora, "Esta factura tiene además…" por los otros dos; sin planilla; en W-36 de Nave 3 lo mismo. |
+| 54 | Laura pide `GET /api/gastos/empleados` | 403. |
+| 55 | Carla (Compras, Pagos = Ver) abre la factura 0003-00012345 | Ve "Impaga", sin "Marcar como paga". `POST …/marcar-paga`: 403. |
+| 56 | María (Jefatura de Administración, Pagos = Editar) la marca paga el 20-11 y después impaga | Historial "María marcó la factura como paga (20-11-2026)" y "María marcó la factura como impaga"; la rendición no cambia. |
+| 57 | Marcar paga con fecha de mañana · marcar paga un retiro · marcar paga una factura anulada | 422 "La fecha no puede ser posterior a hoy." · 422 "Solo las facturas se marcan como pagas o impagas." · 409 "Está anulada: no se marca como paga ni impaga." |
+| 58 | W-33 con Pago = Impagas, del 1 al 19-oct | Solo facturas sin pagar; el pie suma lo que se debe. Con Laura (Pagos sin acceso): 403 "No tenés acceso al estado de pago de las facturas." y sus filas sin `pago`. |
 
 ## 11. Celular y polling
 
@@ -427,7 +488,7 @@ con zona `America/Argentina/Buenos_Aires`. Importes y cantidades como **string d
 
 | Método y ruta | Payload | Respuesta `data` | Errores |
 |---|---|---|---|
-| `GET /api/gastos?obra_id=\|sin_obra&proveedor_id=&rubro=&desde=&hasta=&tipo=factura\|sin_documento&agrupar=proveedor\|obra\|rubro&page=` | — | `[GastoFila]` paginado de a 50; `meta: {total_filtrado, comprobantes, anulados, desde, hasta}`; con `agrupar`, `grupos: [{clave, nombre, subtotal, comprobantes, filas: [GastoFila]}]` | 403 · 422 |
+| `GET /api/gastos?obra_id=\|sin_obra&proveedor_id=&rubro=&desde=&hasta=&tipo=factura\|sin_documento&pago=impagas\|pagas&agrupar=proveedor\|obra\|rubro&page=` (`pago` pide `pagos` ≥ ver, RN-GAS-61) | — | `[GastoFila]` paginado de a 50; `meta: {total_filtrado, comprobantes, anulados, desde, hasta}`; con `agrupar`, `grupos: [{clave, nombre, subtotal, comprobantes, filas: [GastoFila]}]` | 403 · 422 |
 | `GET /api/gastos/filtros/obras?buscar=` | — | `[{id, numero, nombre_trabajo}]` (filtro Obra de W-33: máx. 20 coincidencias por búsqueda, por nombre del trabajo o N.º; todas las obras o solo las suyas con alcance propias; resuelta DU-G12) | 403 |
 | `GET /api/gastos/filtros/proveedores?buscar=` | — | `[{id, nombre, cuit, es_generico}]` (filtro Proveedor de W-33: los proveedores de los gastos que ve, con alcance propias solo los de sus renglones; máx. 20 coincidencias por búsqueda, por nombre o CUIT; resuelta DU-G12) | 403 |
 | `GET /api/gastos/opciones` | — | `{rubros: [{clave, nombre, se_imputa: true\|false, carga_por_periodo}], origenes_sin_documento: ["sin_comprobante","combustible","consumo_stock"]}` | 403 |
@@ -439,6 +500,9 @@ con zona `America/Argentina/Buenos_Aires`. Importes y cantidades como **string d
 | `POST /api/gastos/{id}/anular` | `{motivo}` | `GastoDetalle` | 403 · 404 · 409 · 422 |
 | `GET /api/gastos/{id}/historial` | — | `[{cuando, quien: {id, nombre}, que: "Diego cambió el rubro de 'Guantes de trabajo': MATERIALES → INSUMOS"}]` | 404 |
 | `GET /api/obras/{obra}/renglones-sin-documento` | — | `{obra: {id, numero, nombre_trabajo, estado}, amortizacion: GastoDetalle\|null, retiros: [GastoDetalle], devoluciones: [GastoDetalle], periodos: [GastoDetalle], ultimo_proveedor_retiro: {id, nombre}\|null, puede: {amortizacion, retiros, devoluciones, periodos}}` (W-46; ruta del módulo Gastos; `puede` según §8.1) | 403 · 404 |
+| `GET /api/gastos/empleados?buscar=` | — | `["Juan Pérez", "Pablo Gómez"]` (RN-GAS-56: máx. 20, el usado más reciente primero; `gastos = editar`; con alcance propias, solo de sus obras) | 403 |
+| `POST /api/gastos/{id}/marcar-paga` | `{fecha?: "2026-11-20", updated_at}` (sin `fecha` = hoy) | `GastoDetalle`, `message` "Marcamos la factura como paga." | 403 · 404 · 409 · 422 |
+| `POST /api/gastos/{id}/marcar-impaga` | `{updated_at}` | `GastoDetalle`, `message` "Marcamos la factura como impaga." | 403 · 404 · 409 · 422 |
 | `GET /api/buscar?q=` (grupo de `GastosEnBuscador`) | — | §12.3 | grupo ausente sin `gastos` ≥ ver |
 | `GET /api/proveedores/{id}/gastado-por-obra` (Proveedores) | — | `proveedores.md` §10.3, con datos | 403 · 404 |
 | `POST /api/adjuntos` · `GET /api/adjuntos/{id}` (Shared) | contextos `comprobante_gasto`, `remito` | `obras.md` §10.5 | §4.4 |
@@ -487,6 +551,15 @@ Proveedores (`GET /api/proveedores/opciones`, `POST /api/proveedores`) y persona
 { "tipo_documento": "sin_documento", "origen": "monto_periodo", "periodo_desde": "2026-10-01", "periodo_hasta": "2026-10-15",
   "renglones": [ { "concepto": "Horas liquidadas 1 al 15-oct", "cantidad": "1", "precio_unitario": "1300000.00", "obra_id": 12, "rubro": "horas_liquidadas" } ],
   "confirmar_superposicion": false }
+// GastoAlta — parte de horas (W-10, DU-C02): cantidad = horas, precio_unitario = valor hora; rubro y concepto del renglón los pone el backend
+{ "tipo_documento": "sin_documento", "origen": "parte_horas", "periodo_desde": "2026-10-01", "periodo_hasta": "2026-10-15",
+  "concepto": "Horas 1 al 15-oct",        // opcional: vacío = "Horas 1 al 15-oct"
+  "adjuntos": [64],                       // la planilla, 0 a 1, contexto "comprobante_gasto"
+  "renglones": [ { "empleado": "Juan Pérez", "obra_id": 12, "cantidad": "88.5", "precio_unitario": "5200.00" },
+                 { "empleado": "Juan Pérez", "obra_id": 14, "cantidad": "16", "precio_unitario": "5200.00" },
+                 { "empleado": "Pablo Gómez", "obra_id": null, "cantidad": "8", "precio_unitario": "4800.00" } ],
+  "confirmar_superposicion": false }
+// Corregir un parte (PATCH): además de lo de siempre, "concepto" (cabecera) y "empleado" en cada renglón.
 
 // GastoFila (W-33)
 { "id": 501, "fecha": "2026-10-17", "tipo_documento": "factura", "origen": "factura",
@@ -495,7 +568,9 @@ Proveedores (`GET /api/proveedores/opciones`, `POST /api/proveedores`) y persona
   "obras": [ { "id": 12, "nombre_trabajo": "Piso industrial nave 3" }, { "id": 14, "nombre_trabajo": "Reparación de losa tanque B" }, null ],
   "rubros": ["materiales", "maquinas_herramientas", "insumos", "logistica"],
   "total": "905600.00", "total_filtrado": "549000.00",   // total_filtrado: solo con filtro de obra o rubro, o con alcance propias
-  "cargado_por": { "id": 3, "nombre": "Diego" }, "anulado": false }
+  "cargado_por": { "id": 3, "nombre": "Diego" }, "anulado": false,
+  "pago": { "estado": "paga", "pagado_at": "2026-11-20", "pagado_por": { "id": 5, "nombre": "María" } } }
+  // "pago" viaja solo con pagos ≥ ver: null si no es factura; impaga = { "estado": "impaga", "pagado_at": null, "pagado_por": null }
 
 // GastoDetalle = GastoFila +
 { "numero": "0003-00012345", "rendido_por": null, "periodo_desde": null, "periodo_hasta": null,
@@ -505,19 +580,23 @@ Proveedores (`GET /api/proveedores/opciones`, `POST /api/proveedores`) y persona
                    "precio_unitario": "9800.00", "total": "294000.00",
                    "obra": { "id": 12, "numero": "2-131-2026", "nombre_trabajo": "Piso industrial nave 3", "estado": "en_ejecucion" },
                    "rubro": { "clave": "materiales", "nombre": "MATERIALES" },
-                   "material": { "id": 301, "nombre": "Cemento x 50 kg", "unidad": "bolsa" }, "detalle": null } ],
+                   "material": { "id": 301, "nombre": "Cemento x 50 kg", "unidad": "bolsa" }, "detalle": null,
+                   "empleado": null, "resumido": false } ],
+  // Parte de horas: con gastos = editar, cada renglón con "empleado": "Juan Pérez"; sin él, uno por obra con
+  // "id": null, "empleado": null, "precio_unitario": null, "cantidad" = horas sumadas y "resumido": true (RN-GAS-57).
   "por_obra": [ { "obra": { "id": 12, "nombre_trabajo": "Piso industrial nave 3" }, "total": "549000.00" }, { "obra": null, "total": "45000.00" } ],
   "renglones_ocultos": 0,                 // con alcance propias: cuántos no ve (RN-GAS-48)
   "cargado_at": "2026-10-17T10:42:00-03:00", "updated_at": "2026-10-17T11:05:00-03:00", "updated_by": { "id": 3, "nombre": "Diego" },
   "anulacion": null,                      // { "anulado_at": "…", "anulado_por": {id, nombre}, "motivo": "Cargada dos veces" }
-  "puede": { "editar": true, "anular": true } }
+  "puede": { "editar": true, "anular": true, "marcar_pago": true } }   // marcar_pago: pagos = editar, factura no anulada
 ```
 
 ### 12.3 Buscador
 
 `GastosEnBuscador` (RN-GAS-44) devuelve en `GET /api/buscar?q=` el grupo
 `{tipo: "gastos", cantidad, resultados: [{id, documento: "Factura 0003-00012345", proveedor: {id, nombre, es_generico}|null, fecha, total, anulado}]}`
-(con alcance propias, `total` = sus renglones). El genérico (`es_generico: true`) se muestra "—" (HU-085).
+(con alcance propias, `total` = sus renglones). El genérico (`es_generico: true`) se muestra "—" (HU-085). Con
+`pagos` ≥ ver cada resultado suma `impaga: true|false` (true solo en facturas impagas: "(impaga)", RN-GAS-62).
 
 ### 12.4 Contratos con otros módulos
 
@@ -533,6 +612,7 @@ Proveedores (`GET /api/proveedores/opciones`, `POST /api/proveedores`) y persona
 | Eventos `GastoImputado`, `GastoCorregido`, `GastoAnulado` (`Gastos\Domain\Events`) | Gastos **publica** (después del commit) | `{gastoId, obraIds: list<int>}` (`obraIds` sin el "sin obra"; en `GastoCorregido`, antes ∪ después) | Rendición invalida el cache de esas obras (ADR-007, `rendicion.md` §8) |
 | `Shared\Busqueda\FuenteBusqueda` | implementa | `puedeBuscar`, `buscar` | RN-GAS-44 |
 | `Shared\Adjuntos\AutorizaAdjuntos` | implementa (`GastoAdjuntos`) | `puedeVer`, `puedeEditar` | §4.4 |
+| `Gastos\Contracts\CargaInicialDeGastos` | Gastos **implementa** (bind en `GastosServiceProvider`); la usa Importacion | `cargar(actorId, obraId, fechaCorte, tipo (gastado · retirado), list<RenglonInicial{rubroClave, concepto, cantidad, precio, ?materialId}>, list<string> historial): gastoId` (origen `saldo_inicial`, proveedor genérico, `GastoImputado` después del commit) · `vigente(obraId, tipo): ?CargaInicialVigente{gastoId, fechaCorte, cargo, cargadaEl, porClave}` · `renglonesHastaFecha(obraId, fecha): int` (otros orígenes, no anulados). Rechaza con `CargaRechazada` (los textos de la carga) | `importacion.md` §11.4, RN-IMP-23…29 |
 
 Gastos usa los contratos de materiales y rubros de Rendición y Rendición usa el de gastos de Gastos: los tres van por
 `Contracts/` (ADR-003), sin que ninguno use la `Infrastructure` del otro. La FK `gasto_renglones.rubro_id → rubros`
@@ -561,6 +641,11 @@ con un test por punto (§13, fila F-15 · F-17 · F-49…F-53 · F-66):
 7. Horas y fijos: `origen = monto_periodo`, rubro `fijos` o `horas_liquidadas`, `periodo_desde ≤ periodo_hasta`, un
    renglón por gasto (RN-GAS-27).
 8. Las cargas de W-46 se autorizan como dice §8.1 (resuelta DU-R05).
+9. **Parte de horas** (DU-C02, RN-GAS-57): `FiltroRenglones.detallePorPersona` (por defecto `false`) decide cómo
+   vienen sus renglones. Con `false`, uno por parte y obra con las horas y el total sumados, `resumido = true`,
+   `empleado = null` (y `precioUnitario` sin sentido: Rendición no lo muestra); con `true` (quien mira tiene
+   `gastos = editar` sobre esa obra, lo decide Rendición), uno por persona con `empleado`. Los totales por rubro no
+   cambian. `RenglonImputado` suma al final `?string $empleado = null` y `bool $resumido = false`.
 
 Qué saca Rendición de cada cosa: **por obra + rubro**, `totalesPorRubro`; **renglones** (últimos gastos, W-36, W-37,
 W-48), `renglonesDeObra` con `FiltroRenglones` (`rubroClaves`, `desde`/`hasta`, `soloConMaterial`, `orden`, `limite`);
@@ -590,6 +675,8 @@ rendición se invalida con los tres eventos de §12.4.
 | F-15 · F-17 · F-49…F-53 · F-66 | RN-GAS-45…47, §12.5 | `GastadoDeObrasTest` (contrato de `rendicion.md` §12.4.1): `test_totales_por_rubro_excluye_anulados_y_sin_obra` · `test_totales_por_rubro_de_varias_obras_en_una_consulta` · `test_renglones_de_obra_filtra_y_ordena_por_fecha_efectiva` · `test_fecha_efectiva_de_un_periodo_es_periodo_hasta` · `test_renglones_con_material_incluyen_devoluciones_negativas` · `test_contar_renglones_por_material_incluye_anulados` · `test_renglones_de_obra_sin_n_mas_1` · `test_compra_a_stock_sin_obra_y_consumo_con_obra_no_se_cuentan_dos_veces` · `test_eventos_traen_todas_las_obras_afectadas` |
 | F-61 / ADR-006 | RN-GAS-48, 49 | `test_alcance_propias_ve_solo_sus_renglones` · `test_alcance_propias_total_es_de_sus_renglones` · `test_gasto_sin_renglones_en_sus_obras_devuelve_404` · `test_alcance_propias_baja_el_archivo_de_la_factura` · `test_editar_propias_no_imputa_a_otras_obras_ni_sin_obra` · `test_editar_propias_no_corrige_facturas_con_renglones_ajenos` |
 | Idempotencia | RN-GAS-50 | `test_cada_post_de_gastos_acepta_idempotency_key` (cargar y anular) |
+| F-39 · F-54 (DU-C02) | RN-GAS-51…57 | `ParteDeHorasTest` (carga, validaciones, rubro fijo, fecha = hasta, superposición, permisos, sugerencias, corregir y anular) · `PrivacidadDelParteTest` (W-34, planilla, historial y, en `tests/Feature/Rendicion`, W-11 y W-36 resumidos sin `gastos = editar`) |
+| F-45 · F-46 (DU-C03) | RN-GAS-58…63 | `EstadoDePagoTest` (marcar, desmarcar, fecha, solo facturas, anulada, versión, idempotencia, historial, permitido/denegado/IDOR) · `FiltroDePagoTest` (W-33, total de lo filtrado, sin permiso, buscador) · `ConfiguracionInicialTest` (fila `pagos`) |
 | F-02 | RN-GAS-01 | front `menuPara.test.ts` → `muestra_gastos_con_ver_marcado`, `oculta_cargar_sin_editar` |
 | F-13 | §11 | E2E (Playwright, 390 px): `celular_rinde_tickets_con_foto` · `celular_ve_gastos_en_tarjetas` |
 
@@ -608,6 +695,9 @@ crédito: RN-GAS-25; reemplaza a DU-R03) · DU-G06 (total con filtro y alcance "
 RN-GAS-31, 48) · DU-G07 (buscador: RN-GAS-44) · ~~DU-G08~~ **reemplazada por DU-R05** (permiso de las cargas desde la
 rendición: §8.1) · DU-G09 (superposición de montos por período: RN-GAS-28; la fecha, la de DU-R04) · DU-G10 (número de
 factura y "la misma factura": RN-GAS-07, 08) · DU-G11 (corregir y anular: RN-GAS-34, 37, 41).
+
+**Pedidos del cliente (Bruno, 26-nov; van tal cual, `docs/dudas.md` "Cliente · pedidos de Bruno"):** DU-C02 (parte de
+horas: §5.13, RN-GAS-51…57) · DU-C03 (facturas pagas o impagas: §5.14, RN-GAS-58…63).
 
 **De `rendicion.md` que se aplican acá:** DU-R04 (sección de W-46 y fecha = `periodo_hasta`: RN-GAS-22, 27), DU-R05
 (permisos de W-46: §8.1), DU-R06 (cantidad en la unidad del material: RN-GAS-14), DU-R07 (etiquetas de documento y

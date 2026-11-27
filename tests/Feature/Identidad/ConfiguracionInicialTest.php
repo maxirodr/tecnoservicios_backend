@@ -17,26 +17,27 @@ final class ConfiguracionInicialTest extends IdentidadTestCase
     private const FUNCIONES = [
         'pedidos', 'equipos_reparacion', 'obras', 'estado_obra', 'presupuesto_rubro', 'monto_obra',
         'gastos', 'rendicion', 'control_cantidad', 'proveedores', 'usuarios_permisos', 'plazos_prioridad',
+        'pagos',
     ];
 
-    /** §6.3, copiada de la especificación (E/V/- y P = solo sus obras). */
+    /** §6.3, copiada de la especificación (E/V/- y P = solo sus obras). La 13, `pagos`, es de DU-C03. */
     private const ESPERADA = [
-        'Dirección' => ['E', 'E', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'E', 'V'],
-        'Calidad' => ['E', 'E', 'V', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-        'Gerencia de Operaciones' => ['E', 'E', 'E', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'E', 'E'],
-        'Jefatura de Proyectos' => ['E', 'E', 'E', 'V', 'V', '-', 'V', 'V', 'V', 'V', '-', '-'],
-        'Ingeniería de proyectos' => ['E', 'E', 'E', 'V', 'VP', '-', 'VP', 'VP', 'VP', '-', '-', '-'],
-        'Seguridad e Higiene' => ['E', 'E', 'V', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-        'Gerencia de Administración' => ['E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E'],
-        'Jefatura de Administración' => ['E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', '-', '-'],
-        'Compras' => ['E', 'E', 'V', '-', 'E', '-', 'E', 'E', 'E', 'E', '-', '-'],
-        'RRHH' => ['E', 'E', 'V', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-        'Pañol y Logística' => ['E', 'E', 'V', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+        'Dirección' => ['E', 'E', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'E', 'V', 'V'],
+        'Calidad' => ['E', 'E', 'V', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+        'Gerencia de Operaciones' => ['E', 'E', 'E', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'E', 'E', '-'],
+        'Jefatura de Proyectos' => ['E', 'E', 'E', 'V', 'V', '-', 'V', 'V', 'V', 'V', '-', '-', '-'],
+        'Ingeniería de proyectos' => ['E', 'E', 'E', 'V', 'VP', '-', 'VP', 'VP', 'VP', '-', '-', '-', '-'],
+        'Seguridad e Higiene' => ['E', 'E', 'V', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+        'Gerencia de Administración' => ['E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E'],
+        'Jefatura de Administración' => ['E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', 'E', '-', '-', 'E'],
+        'Compras' => ['E', 'E', 'V', '-', 'E', '-', 'E', 'E', 'E', 'E', '-', '-', 'V'],
+        'RRHH' => ['E', 'E', 'V', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
+        'Pañol y Logística' => ['E', 'E', 'V', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
     ];
 
     private const NIVELES = ['E' => 'editar', 'V' => 'ver', '-' => 'sin_acceso'];
 
-    public function test_migracion_carga_el_catalogo_de_doce_funciones(): void
+    public function test_migracion_carga_el_catalogo_de_trece_funciones(): void
     {
         $funciones = Funcion::query()->orderBy('orden')->get();
 
@@ -59,7 +60,7 @@ final class ConfiguracionInicialTest extends IdentidadTestCase
             }
         }
 
-        $this->assertCount(11 * 12, $celdas);
+        $this->assertCount(11 * 13, $celdas);
     }
 
     public function test_migracion_de_permisos_es_idempotente(): void
@@ -71,8 +72,24 @@ final class ConfiguracionInicialTest extends IdentidadTestCase
         $migracion->up();
 
         $this->assertSame($antes, $this->celdas());
-        $this->assertSame(12, Funcion::query()->count());
+        $this->assertSame(13, Funcion::query()->count());
         $this->assertSame(11, DB::table('sectores')->count());
+    }
+
+    /** DU-C03: la fila `pagos` se carga aparte y no pisa lo que Gerencia ya cambió. */
+    public function test_migracion_de_la_funcion_pagos_es_idempotente_y_sin_alcance(): void
+    {
+        $pagos = Funcion::query()->where('clave', 'pagos')->firstOrFail();
+        $this->assertSame('Pagos de facturas', $pagos->nombre);
+        $this->assertFalse($pagos->admite_alcance);
+        DB::table('permisos')->where('funcion_id', $pagos->id)->where('nivel', 'ver')->limit(1)->update(['nivel' => 'editar']);
+        $antes = $this->celdas();
+
+        $migracion = require database_path('migrations/2026_11_27_100002_cargar_la_funcion_pagos.php');
+        $migracion->up();
+
+        $this->assertSame($antes, $this->celdas());
+        $this->assertSame(13, Funcion::query()->count());
     }
 
     public function test_jefatura_de_administracion_no_edita_usuarios_y_la_gerencia_si(): void

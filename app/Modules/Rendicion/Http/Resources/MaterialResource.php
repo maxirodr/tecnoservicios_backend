@@ -39,7 +39,12 @@ final class MaterialResource
         return [
             'columnas' => [
                 'fechas' => $control->columnas->fechas,
-                'hasta' => $control->columnas->hasta === null ? null : ['fecha' => $control->columnas->hasta],
+                // RN-IMP-30: "Hasta {fecha} · Carga inicial" o "· incluye carga inicial" si también agrupa otras fechas.
+                'hasta' => $control->columnas->hasta === null ? null : [
+                    'fecha' => $control->columnas->hasta,
+                    'carga_inicial' => $control->columnas->cargaInicial,
+                    'incluye_otras' => $control->columnas->agrupaOtras,
+                ],
             ],
             'materiales' => array_map(static fn (FilaDeMaterial $f): array => [
                 ...self::material($f->material, $f->presupuestoNumero),

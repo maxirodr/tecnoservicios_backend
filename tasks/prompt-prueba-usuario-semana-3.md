@@ -119,6 +119,7 @@ reparte las sesiones guardadas. **Como máximo 3 subagentes con navegador a la v
 | 5 | **Celular y accesibilidad** | Ver abajo. | sí |
 | 6 | **Tareas, regresión y backend** | Ver abajo. | sí (y Lead) |
 | 7 | **QC final** | Ver abajo. | no |
+| 8 | **Agregados del cliente: parte de horas y pagos** | Ver abajo. | sí |
 
 **Rol 1 · El caso de referencia, a mano.** Es la prueba del cliente simulada.
 - **Datos:** con Diego cargá desde las pantallas, como lo haría administración:
@@ -231,6 +232,31 @@ reparte las sesiones guardadas. **Como máximo 3 subagentes con navegador a la v
   - workers y `schedule:work`;
   - que el cache de la rendición no deje números viejos después de cargar, corregir o anular.
 
+**Rol 8 · Agregados del cliente** (pedidos de Bruno; DU-C02 y DU-C03 en `docs/dudas.md`, `gastos.md` RN-GAS-51…63 y
+`rendicion.md` RN-REN-62 y 63):
+- **Parte de horas (W-10, tipo "Parte de horas"):**
+  - período, renglones con empleado (con sugerencias), obra, horas y valor hora;
+  - **"Pegar desde Excel"** con filas reales de una planilla ficticia: obras por N.º y por nombre, una que no existe,
+    decimales con coma;
+  - total en vivo y confirmación con las obras donde restó;
+  - en cada rendición, HORAS LIQUIDADAS sube lo justo;
+  - superposición en los dos sentidos (parte sobre horas por período, y horas por período sobre un parte), con "Cargar
+    igual";
+  - corregir y anular.
+- **Privacidad:** con Gastos = editar se ve el detalle por persona (empleado y valor hora). **Laura (Ingeniería)** ve el
+  parte resumido por obra, sin nombres ni valor hora, en W-34, W-36 y W-11, y la planilla le da "no encontrado". Que se
+  filtre un valor hora por persona a quien no edita Gastos es **alta**.
+- **Pagos:**
+  - toda factura nueva arranca "Impaga";
+  - "Marcar como paga" con fecha (no futura) y "Marcar como impaga";
+  - en W-33 la insignia y el filtro Pago, con el total de lo impago;
+  - "(impaga)" en el buscador;
+  - historial;
+  - en la tabla de permisos, la fila "Pagos de facturas" con la configuración inicial (editar: Gerencia y Jefatura de
+    Administración; ver: Dirección y Compras).
+  - Compras ve el estado pero no marca; un sector sin acceso no ve ni la insignia ni el filtro.
+  - Un gasto sin documento no tiene estado de pago.
+
 **Rol 7 · QC final.**
 - Evidencia y duplicados.
 - Lo "esperado" del §1 no reportado como hallazgo.
@@ -240,7 +266,7 @@ reparte las sesiones guardadas. **Como máximo 3 subagentes con navegador a la v
 **Tandas y ingresos:**
 - **Tanda 1:** roles 1, 2 y 6.
 - **Tanda 2:** roles 3 y 4.
-- **Tanda 3:** rol 5.
+- **Tanda 3:** roles 5 y 8.
 - **Al final:** QC y consolidación.
 - **Ingresos (20 códigos por IP por hora):** el Lead entra una vez con cada persona y reparte las sesiones. Dirección y
   un sector sin acceso: dalos de alta con Diego.

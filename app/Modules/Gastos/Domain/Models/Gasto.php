@@ -36,11 +36,14 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $anulado_at
  * @property int|null $anulado_por
  * @property string|null $motivo_anulacion
+ * @property Carbon|null $pagado_at
+ * @property int|null $pagado_por
  * @property-read Collection<int, GastoRenglon> $renglones
  * @property-read Proveedor $proveedor
  * @property-read User $cargadoPor
  * @property-read User|null $editadoPor
  * @property-read User|null $anuladoPor
+ * @property-read User|null $pagadoPor
  * @property-read Collection<int, Adjunto> $adjuntos
  */
 class Gasto extends Model
@@ -76,12 +79,25 @@ class Gasto extends Model
             'updated_by' => 'integer',
             'anulado_por' => 'integer',
             'anulado_at' => 'datetime',
+            'pagado_at' => 'date',
+            'pagado_por' => 'integer',
         ];
     }
 
     public function anulado(): bool
     {
         return $this->anulado_at !== null;
+    }
+
+    /** Solo las facturas tienen estado de pago (DU-C03, RN-GAS-58). */
+    public function tieneEstadoDePago(): bool
+    {
+        return $this->tipo_documento === TipoDocumento::Factura;
+    }
+
+    public function impaga(): bool
+    {
+        return $this->tieneEstadoDePago() && $this->pagado_at === null;
     }
 
     /** El contexto de sus adjuntos: el remito en un retiro, el comprobante en facturas y W-35; el resto, ninguno. */
@@ -94,7 +110,7 @@ class Gasto extends Model
     {
         return match (true) {
             $origen === Origen::RetiroRemito => self::CONTEXTO_REMITO,
-            $origen === Origen::Factura, $origen->esSinDocumentoDeW35() => self::CONTEXTO_COMPROBANTE,
+            $origen === Origen::Factura, $origen->esSinDocumentoDeW35(), $origen === Origen::ParteHoras => self::CONTEXTO_COMPROBANTE,
             default => null,
         };
     }
@@ -155,6 +171,14 @@ class Gasto extends Model
     public function anuladoPor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'anulado_por');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function pagadoPor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'pagado_por');
     }
 
     /**

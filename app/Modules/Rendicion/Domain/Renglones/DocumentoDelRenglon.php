@@ -24,7 +24,7 @@ final class DocumentoDelRenglon
             return 'Sin documento';
         }
 
-        $periodo = $origen === Origen::MontoPeriodo;
+        $periodo = $origen->tienePeriodo();
 
         return EtiquetaDocumento::de(
             $origen,

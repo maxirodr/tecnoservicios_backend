@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Gastos\Application\Acceso;
 
+use App\Modules\Gastos\Domain\Enums\Origen;
 use App\Modules\Gastos\Domain\Models\Gasto;
 use App\Modules\Identidad\Domain\Enums\ClaveFuncion;
 use App\Modules\Identidad\Domain\Enums\Nivel;
@@ -24,6 +25,11 @@ final readonly class GastoAdjuntos implements AutorizaAdjuntos
     public function puedeVer(User $user, Model $sujeto): bool
     {
         if (! $sujeto instanceof Gasto) {
+            return false;
+        }
+
+        // La planilla del parte de horas tiene nombres y valores hora: solo con `gastos = editar` (RN-GAS-57).
+        if ($sujeto->origen === Origen::ParteHoras && ! $this->acceso->veDetallePorPersona($user)) {
             return false;
         }
 

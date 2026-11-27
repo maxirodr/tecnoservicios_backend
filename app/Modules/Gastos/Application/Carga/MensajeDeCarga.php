@@ -46,8 +46,17 @@ final class MensajeDeCarga
             $origen === Origen::Amortizacion => 'Amortización cargada.',
             $origen === Origen::Devolucion => 'Devolución cargada. Ya resta en la rendición.',
             $origen === Origen::MontoPeriodo => 'Período cargado. Ya resta en la rendición.',
-            $nombres === '' => ($origen === Origen::Factura ? 'Factura cargada.' : 'Gasto cargado.').' No va a ninguna obra (todo sin obra).',
-            default => ($origen === Origen::Factura ? 'Factura cargada.' : 'Gasto cargado.')." Ya se restó en la rendición de {$nombres}.",
+            $nombres === '' => self::cargado($origen).' No va a ninguna obra (todo sin obra).',
+            default => self::cargado($origen)." Ya se restó en la rendición de {$nombres}.",
+        };
+    }
+
+    private static function cargado(Origen $origen): string
+    {
+        return match ($origen) {
+            Origen::Factura => 'Factura cargada.',
+            Origen::ParteHoras => 'Parte de horas cargado.',
+            default => 'Gasto cargado.',
         };
     }
 

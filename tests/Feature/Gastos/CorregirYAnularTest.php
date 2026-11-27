@@ -82,7 +82,7 @@ final class CorregirYAnularTest extends GastosTestCase
             ->assertJsonPath('data.proveedor.nombre', 'Corralón Centro')
             ->assertJsonPath('data.renglones_ocultos', 0)
             ->assertJsonPath('data.anulacion', null)
-            ->assertJsonPath('data.puede', ['editar' => false, 'anular' => false]);
+            ->assertJsonPath('data.puede', ['editar' => false, 'anular' => false, 'marcar_pago' => false]);
         $this->assertSame(['Diego cargó la factura (5 renglones)'], $this->historial());
     }
 
@@ -208,7 +208,7 @@ final class CorregirYAnularTest extends GastosTestCase
             ->assertJsonPath('data.anulado', true)
             ->assertJsonPath('data.anulacion.motivo', 'Cargada dos veces')
             ->assertJsonPath('data.anulacion.anulado_por.nombre', 'Diego')
-            ->assertJsonPath('data.puede', ['editar' => false, 'anular' => false]);
+            ->assertJsonPath('data.puede', ['editar' => false, 'anular' => false, 'marcar_pago' => false]);
 
         $this->assertSame([$this->nave->id => [], $this->losa->id => []], $this->app->make(GastadoDeObras::class)->totalesPorRubro([$this->nave->id, $this->losa->id]));
         $this->assertContains("Diego anuló la factura: 'Cargada dos veces'", $this->historial());

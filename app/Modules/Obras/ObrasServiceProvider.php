@@ -6,9 +6,11 @@ namespace App\Modules\Obras;
 
 use App\Modules\Identidad\Contracts\ObrasDelResponsable;
 use App\Modules\Obras\Application\Acceso\ObraAdjuntos;
+use App\Modules\Obras\Application\CargaInicial\CargaInicialDeObrasConCasosDeUso;
 use App\Modules\Obras\Application\Ports\AvanceGastoDeObra;
 use App\Modules\Obras\Application\Ports\MaterialesDePresupuesto;
 use App\Modules\Obras\Application\Ports\PedidosDeObra;
+use App\Modules\Obras\Contracts\CargaInicialDeObras;
 use App\Modules\Obras\Contracts\ObrasConsulta;
 use App\Modules\Obras\Domain\Models\Obra;
 use App\Modules\Obras\Domain\Models\ObraDocumento;
@@ -35,6 +37,7 @@ final class ObrasServiceProvider extends ModuleServiceProvider
     public array $bindings = [
         ObrasConsulta::class => ObrasConsultaEloquent::class,
         ObrasDelResponsable::class => ObrasDelResponsableEloquent::class,
+        CargaInicialDeObras::class => CargaInicialDeObrasConCasosDeUso::class,
     ];
 
     public function register(): void

@@ -26,6 +26,11 @@ final readonly class RubrosDeLaCarga
             return $this->rubros->idDe(Rubros::AMORTIZACION);
         }
 
+        // El parte de horas va siempre a HORAS LIQUIDADAS: lo que mande el front se ignora (RN-GAS-53).
+        if ($origen === Origen::ParteHoras) {
+            return $this->rubros->idDe(Rubros::HORAS_LIQUIDADAS);
+        }
+
         $rubro = $renglon->rubroClave === null ? null : $this->rubros->porClave($renglon->rubroClave);
 
         if ($renglon->rubroClave === null) {

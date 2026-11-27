@@ -31,10 +31,13 @@ final class CargarGastoRequest extends GastosRequest
             'rendido_por' => ['nullable', 'string', 'max:'.self::LARGO_RENDIDO_POR],
             'periodo_desde' => ['nullable', 'date_format:Y-m-d'],
             'periodo_hasta' => ['nullable', 'date_format:Y-m-d'],
+            'concepto' => ['nullable', 'string', 'max:'.self::LARGO_TEXTO],
             'adjuntos' => ['nullable', 'array', 'max:'.self::MAX_ADJUNTOS],
             'adjuntos.*' => ['integer', 'distinct'],
             'renglones' => ['present', 'array'],
             ...$this->reglasDeRenglones(),
+            // En el parte de horas el concepto es el de la cabecera (RN-GAS-52).
+            'renglones.*.concepto' => [$this->input('origen') === Origen::ParteHoras->value ? 'nullable' : 'required', 'string', 'max:'.self::LARGO_TEXTO],
             'confirmar_remito_repetido' => ['sometimes', 'boolean'],
             'confirmar_superposicion' => ['sometimes', 'boolean'],
         ];
@@ -50,6 +53,7 @@ final class CargarGastoRequest extends GastosRequest
             'origen.required' => 'Elegí qué se carga.',
             'origen.in' => 'Elegí qué se carga.',
             'renglones.present' => 'Cargá al menos un renglón.',
+            ...($this->input('origen') === Origen::ParteHoras->value ? self::mensajesDelParte() : []),
         ];
     }
 
@@ -81,6 +85,7 @@ final class CargarGastoRequest extends GastosRequest
             $this->renglones(),
             $this->boolean('confirmar_remito_repetido'),
             $this->boolean('confirmar_superposicion'),
+            self::texto($this->input('concepto')),
         );
     }
 }

@@ -88,7 +88,7 @@ y vuelve a la factura, donde se adjunta. Un proveedor no tiene adjuntos ni campo
   Se muestran hasta 5, los más parecidos primero. Se puede guardar igual. *(W-38 aprobado: "Aviso de parecidos para no cargar el mismo proveedor dos veces")*
 - **RN-PRV-09** El aviso de parecidos también se muestra al **editar** el nombre (excluyendo al propio proveedor) y en el **alta rápida** desde la factura. *(W-38, F-42)*
 - **RN-PRV-10** Alta rápida (F-42): desde la carga de una factura (W-10, semana 3) se abre el mismo formulario W-38; Al guardar, el proveedor queda elegido en la factura y la persona sigue con la factura, donde adjunta el archivo o link (§4.2). Mismo endpoint y mismas reglas. Requiere `proveedores = editar`. *(F-42 aprobado, ADR-014)*
-- **RN-PRV-11** No hay baja ni fusión de proveedores en la Etapa 1 (F-56 dice "alta y edición"). Un duplicado que se cuele y no tenga gastos se corrige renombrándolo. La carga inicial (semana 4) entra **depurada**, con una lista de equivalencias de proveedores que revisa y aprueba administración. *(resuelta DU-A19)*
+- **RN-PRV-11** No hay baja ni fusión de proveedores en la Etapa 1 (F-56 dice "alta y edición"). Un duplicado que se cuele y no tenga gastos se corrige renombrándolo. La carga inicial (semana 4) **no trae proveedores**: el gastado entra por rubro con el proveedor genérico y cada proveedor se da de alta con su primera factura (W-38, con el aviso de parecidos); la lista de equivalencias de proveedores no se usa (`importacion.md` RN-IMP-46). *(resuelta DU-A19; carga inicial: resuelta DU-I04)*
 
 ### Proveedor genérico (F-44)
 

@@ -30,6 +30,9 @@ final readonly class ControlPorCantidadQuery
 {
     public const RUBRO_MATERIALES = 'materiales';
 
+    /** `RenglonImputado::$origen` de la carga inicial (`importacion.md` RN-IMP-29). */
+    private const ORIGEN_CARGA_INICIAL = 'saldo_inicial';
+
     public function __construct(
         private GastadoDeObras $gastado,
         private ObrasConsulta $obras,
@@ -45,10 +48,8 @@ final readonly class ControlPorCantidadQuery
         $renglones = $materiales->isEmpty() ? [] : $this->gastado->renglonesDeObra($obra->id, new FiltroRenglones(soloConMaterial: true));
         $retirado = RetiradoDeMaterial::porMaterial($renglones);
         $idsDeLista = $lista->modelKeys();
-        $columnas = ColumnasDeFechas::de(array_values(array_map(
-            static fn (RenglonImputado $r): string => $r->fecha,
-            array_filter($renglones, static fn (RenglonImputado $r): bool => in_array($r->materialId, $idsDeLista, true)),
-        )));
+        $deLaLista = array_values(array_filter($renglones, static fn (RenglonImputado $r): bool => in_array($r->materialId, $idsDeLista, true)));
+        $columnas = self::columnas($deLaLista);
         $numeros = $this->numerosDePresupuestos($obra->id);
 
         $filas = array_values($lista->map(fn (Material $m): FilaDeMaterial => self::fila($m, $retirado[$m->id] ?? RetiradoDeMaterial::nada(), $columnas, $numeros[$m->presupuesto_id ?? 0] ?? null))->all());
@@ -69,6 +70,27 @@ final readonly class ControlPorCantidadQuery
                     || $this->acceso->puede($user, ClaveFuncion::Rendicion, Nivel::Editar, $obra),
             ],
         );
+    }
+
+    /**
+     * RN-IMP-30: lo retirado hasta el corte (carga inicial) va en la primera columna, fuera de las 6 fechas.
+     *
+     * @param  list<RenglonImputado>  $renglones
+     */
+    private static function columnas(array $renglones): ColumnasDeFechas
+    {
+        $fechas = [];
+        $corte = null;
+
+        foreach ($renglones as $renglon) {
+            if ($renglon->origen === self::ORIGEN_CARGA_INICIAL) {
+                $corte = $corte === null ? $renglon->fecha : max($corte, $renglon->fecha);
+            } else {
+                $fechas[] = $renglon->fecha;
+            }
+        }
+
+        return ColumnasDeFechas::de($fechas, $corte);
     }
 
     private static function fila(Material $material, RetiradoDeMaterial $retirado, ColumnasDeFechas $columnas, ?string $presupuesto): FilaDeMaterial

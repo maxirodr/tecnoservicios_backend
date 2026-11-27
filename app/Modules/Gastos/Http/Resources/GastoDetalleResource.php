@@ -53,8 +53,11 @@ final class GastoDetalleResource extends JsonResource
                 'cuit' => $proveedor->cuit === null ? null : Cuit::formatear($proveedor->cuit),
                 'es_generico' => $proveedor->es_generico,
             ],
-            'adjuntos' => array_values($gasto->adjuntos->map(static fn (Adjunto $a): array => (new AdjuntoResource($a))->resolve())->all()),
-            'renglones' => array_map(static fn (GastoRenglon $r): array => self::renglon($r, $rubros), $leido->renglones),
+            // Parte de horas sin `gastos = editar`: sin la planilla y resumido por obra (RN-GAS-57).
+            'adjuntos' => $leido->vista->detallePorPersona ? array_values($gasto->adjuntos->map(static fn (Adjunto $a): array => (new AdjuntoResource($a))->resolve())->all()) : [],
+            'renglones' => $leido->vista->detallePorPersona
+                ? array_map(static fn (GastoRenglon $r): array => self::renglon($r, $rubros), $leido->renglones)
+                : RenglonesDelParte::resumidos($leido->renglones, static fn (GastoRenglon $r): array => self::renglon($r, $rubros)),
             'por_obra' => self::porObra($leido),
             'renglones_ocultos' => $leido->ocultos,
             'cargado_at' => FechaEmpresa::instante($gasto->created_at),
@@ -65,7 +68,7 @@ final class GastoDetalleResource extends JsonResource
                 'anulado_por' => self::usuario($gasto->anuladoPor),
                 'motivo' => $gasto->motivo_anulacion,
             ],
-            'puede' => $leido->puede,
+            'puede' => [...$leido->puede, 'marcar_pago' => $leido->vista->marcaPago],
         ];
     }
 
@@ -93,6 +96,8 @@ final class GastoDetalleResource extends JsonResource
             'rubro' => $rubro === null ? null : ['clave' => $rubro->clave, 'nombre' => $rubro->nombre],
             'material' => $r->material === null ? null : ['id' => $r->material->id, 'nombre' => $r->material->nombre, 'unidad' => $r->material->unidad],
             'detalle' => $r->detalle,
+            'empleado' => $r->empleado,
+            'resumido' => false,
         ];
     }
 

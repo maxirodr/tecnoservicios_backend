@@ -87,7 +87,7 @@ final class RendicionCasoDeReferenciaTest extends RendicionTestCase
 
         $this->assertSame([921, 920, 919, 917, 916, 914, 913, 912, 918, 911], array_column($data['ultimos_gastos'], 'renglon_id'));
         $this->assertSame(['renglon_id' => 921, 'gasto_id' => 315, 'fecha' => '2026-11-30', 'documento' => 'Período 1 al 30-nov', 'proveedor' => null,
-            'concepto' => 'Fijos 1 al 30-nov', 'rubro' => ['clave' => 'fijos', 'nombre' => 'FIJOS'], 'total' => '260000.00'], $data['ultimos_gastos'][0]);
+            'concepto' => 'Fijos 1 al 30-nov', 'empleado' => null, 'rubro' => ['clave' => 'fijos', 'nombre' => 'FIJOS'], 'total' => '260000.00'], $data['ultimos_gastos'][0]);
         $this->assertNotContains(904, array_column($data['ultimos_gastos'], 'renglon_id'));
     }
 

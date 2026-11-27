@@ -7,6 +7,8 @@ namespace App\Modules\Gastos\Application\Lecturas;
 use App\Modules\Gastos\Application\Carga\CargarGastoAction;
 use App\Modules\Gastos\Application\Correccion\AnularGastoAction;
 use App\Modules\Gastos\Application\Correccion\EscribirCorreccion;
+use App\Modules\Gastos\Application\Pagos\CambiarPagoAction;
+use App\Modules\Gastos\Application\Pagos\TextoDelPago;
 use App\Modules\Gastos\Domain\Enums\Origen;
 use App\Shared\Actividad\Actividad;
 use App\Shared\Adjuntos\AdjuntosService;
@@ -20,13 +22,17 @@ final class TextoDeHistorial
 {
     private const CAMPOS_CABECERA = [
         'numero' => 'el número', 'fecha' => 'la fecha', 'proveedor' => 'el proveedor',
-        'rendido_por' => 'quién rindió', 'periodo' => 'el período',
+        'rendido_por' => 'quién rindió', 'periodo' => 'el período', 'concepto' => 'el concepto',
     ];
 
     private const CAMPOS_RENGLON = [
         'concepto' => 'el concepto', 'cantidad' => 'la cantidad', 'precio' => 'el precio', 'obra' => 'la obra',
         'rubro' => 'el rubro', 'material' => 'el material', 'detalle' => 'el detalle', 'fecha' => 'la fecha',
+        'empleado' => 'el empleado',
     ];
+
+    /** En el parte de horas la cantidad son las horas y el precio, el valor hora (RN-GAS-56). */
+    private const CAMPOS_DEL_PARTE = ['cantidad' => 'las horas', 'precio' => 'el valor hora'];
 
     /**
      * @return list<string>
@@ -41,7 +47,9 @@ final class TextoDeHistorial
             CargarGastoAction::ACCION => ["cargó {$que}".self::renglones($c)],
             AnularGastoAction::ACCION => ["anuló {$que}: '".self::texto($c['motivo']['despues'] ?? '')."'"],
             EscribirCorreccion::EDITADO => self::cambios($c, self::CAMPOS_CABECERA, null),
-            EscribirCorreccion::RENGLON_CAMBIADO => self::cambios($c, self::CAMPOS_RENGLON, self::texto($c['renglon']['antes'] ?? '')),
+            EscribirCorreccion::RENGLON_CAMBIADO => self::cambios($c, $origen === Origen::ParteHoras ? [...self::CAMPOS_RENGLON, ...self::CAMPOS_DEL_PARTE] : self::CAMPOS_RENGLON, self::texto($c['renglon']['antes'] ?? '')),
+            CambiarPagoAction::PAGADA => [TextoDelPago::pagada($c)],
+            CambiarPagoAction::IMPAGADA => ['marcó la factura como impaga'],
             EscribirCorreccion::RENGLON_AGREGADO => ['agregó el renglón '.self::texto($c['renglon']['despues'] ?? '')],
             EscribirCorreccion::RENGLON_QUITADO => ["quitó el renglón '".self::texto($c['renglon']['antes'] ?? '')."'"],
             AdjuntosService::ACCION_AGREGADO => self::adjuntos($c, 'agregó', 'despues'),
@@ -49,7 +57,14 @@ final class TextoDeHistorial
             default => [],
         };
 
-        return array_map(static fn (string $frase): string => "{$quien} {$frase}", $frases);
+        $lineas = array_map(static fn (string $frase): string => "{$quien} {$frase}", $frases);
+
+        // RN-IMP-17: de dónde salió cada número de la carga inicial.
+        if ($actividad->accion === CargarGastoAction::ACCION && isset($c['equivalencias'])) {
+            $lineas[] = self::texto($c['equivalencias']['despues']);
+        }
+
+        return $lineas;
     }
 
     public static function queSeCargo(Origen $origen): string
@@ -61,6 +76,7 @@ final class TextoDeHistorial
             Origen::Devolucion => 'la devolución',
             Origen::Amortizacion => 'la amortización',
             Origen::MontoPeriodo => 'el período',
+            Origen::ParteHoras => 'el parte de horas',
             Origen::SaldoInicial => 'la carga inicial',
         };
     }
@@ -71,8 +87,11 @@ final class TextoDeHistorial
     private static function renglones(array $c): string
     {
         $n = (int) self::texto($c['renglones']['despues'] ?? 0);
+        $cuantos = $n === 1 ? '1 renglón' : "{$n} renglones";
+        // RN-IMP-39: "cargó la carga inicial (5 renglones, gastado hasta el 30/11/2026)".
+        $corte = isset($c['carga_inicial']) ? ', '.self::texto($c['carga_inicial']['despues']) : '';
 
-        return $n === 1 ? ' (1 renglón)' : " ({$n} renglones)";
+        return " ({$cuantos}{$corte})";
     }
 
     /**

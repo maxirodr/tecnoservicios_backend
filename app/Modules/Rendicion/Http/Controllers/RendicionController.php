@@ -43,9 +43,11 @@ final class RendicionController
 
     public function rubro(DetalleDeRubroRequest $request, int $obra, string $clave, DetalleDeRubroQuery $detalle): JsonResponse
     {
-        $resumen = $this->acceso->obraDeRendicion($this->usuario($request), $obra);
+        $user = $this->usuario($request);
+        $resumen = $this->acceso->obraDeRendicion($user, $obra);
+        $porPersona = $this->acceso->detallePorPersona($user, $resumen);
 
-        return $this->ok(LecturasResource::detalle($detalle->handle($resumen, $clave, $request->orden(), $request->dir())));
+        return $this->ok(LecturasResource::detalle($detalle->handle($resumen, $clave, $request->orden(), $request->dir(), $porPersona)));
     }
 
     public function porProveedor(PorProveedorRequest $request, int $obra, PorProveedorQuery $porProveedor): JsonResponse

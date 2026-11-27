@@ -18,6 +18,7 @@ enum Origen: string
     case RetiroRemito = 'retiro_remito';
     case Devolucion = 'devolucion';
     case MontoPeriodo = 'monto_periodo';
+    case ParteHoras = 'parte_horas';
     case SaldoInicial = 'saldo_inicial';
 
     public function tipoDocumento(): TipoDocumento
@@ -47,6 +48,12 @@ enum Origen: string
     public function tieneUnSoloRenglon(): bool
     {
         return $this === self::Amortizacion || $this === self::MontoPeriodo;
+    }
+
+    /** Con período desde–hasta y fecha efectiva = el "hasta": horas y fijos (RN-GAS-27) y el parte de horas (RN-GAS-52). */
+    public function tienePeriodo(): bool
+    {
+        return $this === self::MontoPeriodo || $this === self::ParteHoras;
     }
 
     /**

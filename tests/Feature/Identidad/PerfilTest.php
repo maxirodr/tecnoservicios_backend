@@ -11,7 +11,7 @@ use App\Modules\Identidad\Domain\Models\User;
 /** F-02 · F-10 · W-17 · W-19 · HU-003 (RN-IDE-11…16). */
 final class PerfilTest extends IdentidadTestCase
 {
-    public function test_me_devuelve_las_doce_funciones_con_nivel_y_alcance(): void
+    public function test_me_devuelve_las_trece_funciones_con_nivel_y_alcance(): void
     {
         $laura = $this->usuarioDe('Ingeniería de proyectos');
 

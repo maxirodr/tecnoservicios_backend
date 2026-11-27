@@ -13,7 +13,7 @@ use App\Modules\Gastos\Application\Carga\DatosRenglon;
 final readonly class CambiosGasto
 {
     /**
-     * @param  array<string, string|int|null>  $cabecera  numero, fecha, proveedor_id, rendido_por, periodo_desde, periodo_hasta
+     * @param  array<string, string|int|null>  $cabecera  numero, fecha, proveedor_id, rendido_por, periodo_desde, periodo_hasta, concepto (parte de horas)
      * @param  list<DatosRenglon>|null  $renglones
      * @param  list<int>|null  $adjuntos
      */

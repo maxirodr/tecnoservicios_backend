@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Gastos\Application\Carga;
 
+use App\Modules\Gastos\Domain\Enums\Origen;
 use App\Modules\Gastos\Domain\Models\Gasto;
 use App\Shared\Adjuntos\AdjuntosService;
 use Illuminate\Validation\ValidationException;
@@ -55,7 +56,8 @@ final readonly class ValidarGasto
             $errores->campo(AdjuntosService::CAMPO_ERROR, AdjuntosService::MENSAJE_NO_UTILIZABLE);
         }
 
-        if ($contexto === Gasto::CONTEXTO_REMITO && count($datos->adjuntos) > self::MAX_REMITOS) {
+        // El remito de un retiro y la planilla del parte de horas: 0 a 1 (RN-GAS-52).
+        if (($contexto === Gasto::CONTEXTO_REMITO || $datos->origen === Origen::ParteHoras) && count($datos->adjuntos) > self::MAX_REMITOS) {
             $errores->campo(AdjuntosService::CAMPO_ERROR, 'Son demasiados (máximo '.self::MAX_REMITOS.').');
         }
     }

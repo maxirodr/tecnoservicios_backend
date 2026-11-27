@@ -6,7 +6,9 @@ namespace App\Modules\Gastos;
 
 use App\Modules\Gastos\Application\Acceso\AccesoGasto;
 use App\Modules\Gastos\Application\Acceso\GastoAdjuntos;
+use App\Modules\Gastos\Application\CargaInicial\CargaInicialDeGastosConCasosDeUso;
 use App\Modules\Gastos\Application\Rubros;
+use App\Modules\Gastos\Contracts\CargaInicialDeGastos;
 use App\Modules\Gastos\Contracts\GastadoDeObras;
 use App\Modules\Gastos\Domain\Models\Gasto;
 use App\Modules\Gastos\Infrastructure\GastadoDeObrasEloquent;
@@ -31,6 +33,7 @@ final class GastosServiceProvider extends ModuleServiceProvider
         // `bind` (no `bindIf`): pisa las nulas sin depender del orden de los providers.
         $this->app->bind(GastadoDeObras::class, GastadoDeObrasEloquent::class);
         $this->app->bind(GastadoPorProveedor::class, GastadoPorProveedorEloquent::class);
+        $this->app->bind(CargaInicialDeGastos::class, CargaInicialDeGastosConCasosDeUso::class);
         // El alcance y el catálogo se recuerdan solo mientras dura el pedido al servidor.
         $this->app->scoped(AccesoGasto::class);
         $this->app->scoped(Rubros::class);

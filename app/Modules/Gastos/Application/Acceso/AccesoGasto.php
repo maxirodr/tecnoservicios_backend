@@ -121,6 +121,24 @@ final class AccesoGasto
         return array_values(array_unique($obras));
     }
 
+    /** Nombre y valor hora de cada renglón del parte de horas (RN-GAS-57): `gastos = editar`. */
+    public function veDetallePorPersona(User $user): bool
+    {
+        return $this->puede($user, ClaveFuncion::Gastos, Nivel::Editar);
+    }
+
+    /** Estado de pago de las facturas y el filtro Pago (RN-GAS-61…63): `pagos` ≥ ver. */
+    public function vePagos(User $user): bool
+    {
+        return $this->puede($user, ClaveFuncion::Pagos, Nivel::Ver);
+    }
+
+    /** Marcar como paga o impaga (RN-GAS-59): `pagos = editar`. */
+    public function marcaPagos(User $user): bool
+    {
+        return $this->puede($user, ClaveFuncion::Pagos, Nivel::Editar);
+    }
+
     /**
      * @return list<ClaveFuncion> las celdas en Editar que habilitan esta carga
      */

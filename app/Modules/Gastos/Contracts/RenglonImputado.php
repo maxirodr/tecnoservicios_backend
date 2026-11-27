@@ -17,6 +17,8 @@ final readonly class RenglonImputado
      * @param  string  $cantidad  escala 3, "12.500"
      * @param  string  $precioUnitario  escala 2
      * @param  string  $total  escala 2, = round(cantidad × precio, 2)
+     * @param  string|null  $empleado  parte de horas con detalle por persona (DU-C02); null si no o si viene resumido
+     * @param  bool  $resumido  parte de horas sin detalle: las horas y el total de la obra sumados, sin valor hora (RN-GAS-57)
      */
     public function __construct(
         public int $renglonId,
@@ -37,5 +39,7 @@ final readonly class RenglonImputado
         public ?string $periodoDesde,
         public ?string $periodoHasta,
         public ?string $rendidoPor,
+        public ?string $empleado = null,
+        public bool $resumido = false,
     ) {}
 }

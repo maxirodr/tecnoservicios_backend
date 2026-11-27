@@ -127,6 +127,8 @@ final class RendicionResource
             'documento' => DocumentoDelRenglon::etiqueta($renglon),
             'proveedor' => DocumentoDelRenglon::proveedor($renglon),
             'concepto' => $renglon->concepto,
+            // Parte de horas: el nombre solo con `gastos = editar` (RN-REN-63).
+            'empleado' => $renglon->empleado,
         ];
     }
 

@@ -20,6 +20,7 @@ use LogicException;
  * @property int|null $user_id
  * @property string $accion
  * @property array<string, array{antes: mixed, despues: mixed}>|null $cambios
+ * @property bool $carga_inicial
  * @property Carbon $created_at
  * @property-read User|null $user
  */
@@ -29,7 +30,7 @@ final class Actividad extends Model
 
     protected $table = 'actividades';
 
-    protected $fillable = ['sujeto_type', 'sujeto_id', 'user_id', 'accion', 'cambios'];
+    protected $fillable = ['sujeto_type', 'sujeto_id', 'user_id', 'accion', 'cambios', 'carga_inicial'];
 
     protected static function booted(): void
     {
@@ -46,6 +47,7 @@ final class Actividad extends Model
             'sujeto_id' => 'integer',
             'user_id' => 'integer',
             'cambios' => CambiosOrdenados::class,
+            'carga_inicial' => 'boolean',
             'created_at' => 'datetime',
         ];
     }
