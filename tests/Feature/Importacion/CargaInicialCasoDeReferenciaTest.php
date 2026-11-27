@@ -102,8 +102,10 @@ final class CargaInicialCasoDeReferenciaTest extends ImportacionTestCase
 
         $gastado = Gasto::query()->with('renglones')->where('origen', 'saldo_inicial')->orderBy('id')->firstOrFail();
         $this->assertCount(5, $gastado->renglones);
-        $historial = $this->getJson("/api/gastos/{$gastado->id}")->assertOk()->assertJsonPath('data.puede.editar', false)->json('data.historial');
-        $this->assertStringContainsString('Equivalencias aprobadas por Carla: INSUMO → INSUMOS, LOGÍSTICA → LOGISTICA.', json_encode($historial, JSON_UNESCAPED_UNICODE) ?: '');
+        $this->getJson("/api/gastos/{$gastado->id}")->assertOk()->assertJsonPath('data.puede.editar', false)->assertJsonPath('data.documento', 'Carga inicial');
+        $historial = $this->getJson("/api/gastos/{$gastado->id}/historial")->assertOk()->json('data');
+        $this->assertStringContainsString('Carla cargó la carga inicial (5 renglones, gastado hasta el 30/11/2026)', json_encode($historial, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '');
+        $this->assertStringContainsString('Equivalencias aprobadas por Carla: INSUMO → INSUMOS, LOGÍSTICA → LOGISTICA.', json_encode($historial, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '');
     }
 
     /**
@@ -117,7 +119,7 @@ final class CargaInicialCasoDeReferenciaTest extends ImportacionTestCase
             ['1-200-2026 · fila 12', "No encontramos a 'Cari' en la hoja Personas.", 'Administración'],
             ['2-131-2026 · fila 4', "La obra 2-131-2026 no está en el sistema: cargala en la hoja Obras o pasá la tarea a 'Sin obra' nombrando la obra en la tarea.", 'el sector Ingeniería de proyectos'],
         ], $faltantes);
-        $this->assertSame(['Cari', '13', 'Carla'], [$informe['Personas por revisar'][0][0], (string) $informe['Personas por revisar'][0][1], $informe['Personas por revisar'][0][2]]);
+        $this->assertSame(['Cari', '7', 'Carla'], [$informe['Personas por revisar'][0][0], (string) $informe['Personas por revisar'][0][1], $informe['Personas por revisar'][0][2]]);
         $this->assertCount(3, $informe['Para completar por sector']);
     }
 

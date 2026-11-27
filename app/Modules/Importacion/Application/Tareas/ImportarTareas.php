@@ -30,7 +30,6 @@ final readonly class ImportarTareas implements ImportadorDeLote
     public function __construct(
         private Connection $db,
         private LeerTareas $leer,
-        private PersonasDeLaMinuta $personas,
         private RegistroDeCorridas $corridas,
         private CargaInicialDeTareas $tareas,
         private CargaInicialDeObras $obras,
@@ -43,7 +42,7 @@ final readonly class ImportarTareas implements ImportadorDeLote
 
     public function correr(array $hojas, Contexto $ctx): array
     {
-        $this->personas->cargar($hojas[C::HOJA_PERSONAS] ?? []);
+        $this->leer->personas($hojas[C::HOJA_PERSONAS] ?? []);
         $filas = $hojas[C::HOJA_TAREAS] ?? [];
         $repetidas = self::repetidas($filas);
         $importadas = $this->corridas->importadas(C::HOJA_TAREAS, array_map(strval(...), array_keys(self::porClave($filas))));

@@ -86,7 +86,7 @@ final readonly class LeerMateriales
     {
         $escrito = $r->texto(C::PRESUPUESTO);
         $deLaObra = $obra->existente === null
-            ? array_map(static fn ($p): string => $p->numero, $obra->presupuestos)
+            ? ($obra->presupuestos === [] ? [$obra->numero] : array_map(static fn ($p): string => $p->numero, $obra->presupuestos))
             : array_keys($this->obras->presupuestos($obra->existente));
 
         if ($escrito === null) {

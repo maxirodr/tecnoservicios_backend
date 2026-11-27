@@ -62,9 +62,9 @@ final class MaterialesDeObraFalsos implements MaterialesDeObra
     {
         $clave = Str::of($material->nombre)->ascii()->lower()->squish()->toString();
         $creado = Material::query()->firstOrCreate(
-            ["obra_id" => $obraId, "nombre_clave" => $clave],
-            ["nombre" => $material->nombre, "unidad" => $material->unidad, "cantidad_presupuestada" => $material->cantidadPresupuestada,
-                "fuera_de_presupuesto" => false, "created_by" => $actorId, "updated_by" => $actorId],
+            ['obra_id' => $obraId, 'nombre_clave' => $clave],
+            ['nombre' => $material->nombre, 'unidad' => $material->unidad, 'cantidad_presupuestada' => $material->cantidadPresupuestada,
+                'fuera_de_presupuesto' => false, 'created_by' => $actorId, 'updated_by' => $actorId],
         );
 
         return new MaterialAgregado($creado->id, $creado->wasRecentlyCreated, $creado->wasRecentlyCreated ? null : $creado->cantidad_presupuestada);

@@ -46,6 +46,16 @@ final readonly class LeerTareas
         private PersonasDeLaMinuta $personas,
     ) {}
 
+    /**
+     * La hoja Personas, antes de leer las filas (RN-IMP-15).
+     *
+     * @param  list<FilaLeida>  $filas
+     */
+    public function personas(array $filas): void
+    {
+        $this->personas->cargar($filas);
+    }
+
     public function fila(FilaLeida $fila, Informe $informe): TareaDelLote
     {
         $r = new RevisorDeFila(C::HOJA_TAREAS, $fila, $fila->texto(C::CLAVE) ?? "fila {$fila->numero}", Informe::ADMINISTRACION);

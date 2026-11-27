@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Importacion;
 
+use App\Modules\Gastos\Contracts\CargaInicialDeGastos;
+use App\Modules\Gastos\Contracts\CargaInicialVigente;
 use App\Modules\Gastos\Domain\Events\GastoImputado;
 use App\Modules\Gastos\Domain\Models\Gasto;
 use App\Modules\Importacion\Application\Corridas\CorrerCarga;
@@ -18,10 +20,11 @@ use App\Modules\Obras\Domain\Events\PresupuestoMontosCambiados;
 use App\Modules\Obras\Domain\Models\Obra;
 use App\Modules\Rendicion\Domain\Events\MaterialCambiado;
 use App\Shared\Actividad\Actividad;
+use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use RuntimeException;
 use Tests\Feature\Importacion\Support\ImportacionTestCase;
 use Tests\Feature\Importacion\Support\PlantillasDelCasoDeReferencia;
 use ZipArchive;
@@ -65,7 +68,7 @@ final class MetodoYCorridasTest extends ImportacionTestCase
         $this->assertSame(['ensayo', 'terminada', null], [$corrida->modo->value, $corrida->estado->value, $corrida->aprobo_id]);
         $this->assertSame(hash_file('sha256', $this->carpeta.'/obras.xlsx'), $corrida->huella);
         $this->assertFileExists($this->carpeta.'/'.$corrida->informe);
-        $this->assertSame(['obras' => 3, 'guardadas' => 2, 'ya_estaban' => 0, 'con_faltantes' => 1, 'faltantes' => 2], $corrida->resumen);
+        $this->assertEquals(['obras' => 3, 'guardadas' => 2, 'ya_estaban' => 0, 'con_faltantes' => 1, 'faltantes' => 2], $corrida->resumen);
     }
 
     public function test_confirmar_sin_ensayo_del_mismo_archivo_no_guarda(): void
@@ -177,15 +180,51 @@ final class MetodoYCorridasTest extends ImportacionTestCase
 
     public function test_logs_no_tienen_valores_de_celdas(): void
     {
-        Log::spy();
+        $registros = [];
+        Event::listen(MessageLogged::class, static function (MessageLogged $m) use (&$registros): void {
+            $registros[] = $m->message.' '.json_encode($m->context, JSON_UNESCAPED_UNICODE);
+        });
 
         [, $salida] = $this->correr('importacion:obras', ['archivo' => 'obras.xlsx']);
 
         foreach (['Ampliación', 'laura@ejemplo.com', '2.347.500', 'VARIOS', 'Planta Ejemplo'] as $valor) {
-            $this->assertStringNotContainsString($valor, $salida);
+            $this->assertStringNotContainsString($valor, $salida.implode("\n", $registros));
         }
-        Log::shouldNotHaveReceived('info');
-        Log::shouldNotHaveReceived('error');
+    }
+
+    public function test_una_obra_que_falla_no_deja_nada_y_la_corrida_sigue(): void
+    {
+        $registros = [];
+        Event::listen(MessageLogged::class, static function (MessageLogged $m) use (&$registros): void {
+            $registros[] = [$m->message, $m->context];
+        });
+        $this->correr('importacion:obras', ['archivo' => 'obras.xlsx']);
+        $this->app->bind(CargaInicialDeGastos::class, static fn (): CargaInicialDeGastos => new class implements CargaInicialDeGastos
+        {
+            public function cargar(int $actorId, int $obraId, string $fechaCorte, string $tipo, array $renglones, array $historial = []): int
+            {
+                throw new RuntimeException('Ampliación de nave de ensayo 1.250.000');
+            }
+
+            public function vigente(int $obraId, string $tipo): ?CargaInicialVigente
+            {
+                return null;
+            }
+
+            public function renglonesHastaFecha(int $obraId, string $fecha): int
+            {
+                return 0;
+            }
+        });
+
+        [$codigo, $salida] = $this->correr('importacion:obras', ['archivo' => 'obras.xlsx', '--confirmar' => true, '--aprobo' => 'carla@ejemplo.com']);
+
+        $this->assertSame(1, $codigo);
+        $this->assertStringContainsString('Obra 1-200-2026: error inesperado, no se guardó nada de esta obra (ver informe).', $salida);
+        $this->assertStringContainsString('1 obras guardadas, 0 ya estaban, 2 con faltantes', $salida);
+        $this->assertSame(['Reparación de losa tanque B'], Obra::query()->pluck('nombre_trabajo')->all());
+        $this->assertSame('con_errores', Corrida::query()->orderByDesc('id')->firstOrFail()->estado->value);
+        $this->assertSame([['Carga inicial: error inesperado', ['corrida' => (int) Corrida::query()->max('id'), 'hoja' => 'Obras', 'fila' => 2, 'tipo' => RuntimeException::class]]], $registros);
     }
 
     public function test_plantilla_vacia_con_listas_y_como_completar(): void
