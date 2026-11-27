@@ -146,6 +146,26 @@ final class ParteDeHorasTest extends GastosTestCase
         $this->cargar($diego, $this->parte([$this->horas('Juan Pérez', $this->losa, '8', '5200')]))->assertCreated();
     }
 
+    public function test_horas_por_periodo_superpuestas_con_un_parte_avisan_y_se_guardan_si_se_confirma(): void
+    {
+        $diego = $this->diego();
+        $this->cargar($diego, $this->parte([$this->horas('Juan Pérez', $this->nave, '8', '5200'), $this->horas('Ana Gómez', $this->losa, '4', '5000')],
+            ['periodo_desde' => '2026-10-10', 'periodo_hasta' => '2026-10-25']))->assertCreated();
+        $horas = ['tipo_documento' => 'sin_documento', 'origen' => 'monto_periodo', 'periodo_desde' => '2026-10-01', 'periodo_hasta' => '2026-10-15',
+            'renglones' => [$this->renglon('Horas liquidadas 1 al 15-oct', '1', '1300000.00', $this->nave, 'horas_liquidadas')]];
+
+        // Al revés de RN-GAS-55: solo cuenta lo del parte en esa obra (8 × 5.200), no lo de Losa tanque B.
+        $this->cargar($diego, $horas)->assertUnprocessable()->assertJsonPath('errors.confirmar_superposicion', [
+            'Ya hay HORAS LIQUIDADAS de Piso industrial nave 3 en el parte de horas del 10 al 25-oct (41.600). ¿Cargar igual?',
+        ]);
+        $this->assertSame(0, Gasto::query()->where('origen', 'monto_periodo')->count());
+
+        $this->cargar($diego, [...$horas, 'confirmar_superposicion' => true])->assertCreated();
+        // Los FIJOS no son horas: no miran el parte.
+        $this->cargar($diego, ['tipo_documento' => 'sin_documento', 'origen' => 'monto_periodo', 'periodo_desde' => '2026-10-01', 'periodo_hasta' => '2026-10-31',
+            'renglones' => [$this->renglon('Fijos 1 al 31-oct', '1', '260000.00', $this->nave, 'fijos')]])->assertCreated();
+    }
+
     public function test_parte_de_horas_pide_gastos_editar(): void
     {
         $this->celda('Compras', 'gastos', 'ver');
