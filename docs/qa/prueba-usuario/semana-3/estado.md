@@ -1,29 +1,55 @@
-# Estado · Prueba de usuario Semana 3 · ronda 1 · **cortada a pedido** (2026-11-25, ~15 h Argentina)
+# Estado · Prueba de usuario Semana 3 · ronda 1 · pausada el viernes 27/11 a las ~15:15 (Argentina) · sigue el lunes
 
-La ronda se paró a mitad de la **tanda 1** (roles 1, 2 y 6). **No hay veredicto** ni hallazgos consolidados.
+**No hay veredicto ni hallazgos consolidados.** Los borradores son parciales; los IDs `R1-NN` y `R2-NN` todavía no se renumeraron.
 
-- **Código:** backend `staging` @ `473e2da`, front `staging` @ `a78552c`.
-- **Entorno:** base `tecnoservicios_prueba_usuario` reseteada con `migrate:fresh --seed` (verificada con tinker). Usuarios dados de alta con Diego: Dora (Dirección, id 7), QAS3 Calidad (Calidad, sin acceso, id 8), QA Lead S3 A (id 9), QA Lead S3 B (id 10). Procesos parados.
-- **Ingresos reales:** 10, a las 14:20 Argentina (las sesiones quedaron fuera del repo).
+## Entorno
 
-## Hasta dónde llegó cada rol
+- **Código:** backend `staging` @ `fb123b7`, front `staging` @ `262ce06`.
+- **Base:** `tecnoservicios_prueba_usuario`, reseteada el 27/11 con `migrate:fresh --seed` (verificada con tinker).
+- **Usuarios dados de alta con Diego:** Dora (Dirección, id 7), QAS3 Calidad (sin acceso, id 8), QA Lead S3 A (id 9), QA Lead S3 B (id 10).
+- **Ingresos reales:** 10, a las 14:42.
+- **Procesos:** parados. Los worktrees `_qa_s3` y la base quedan como están.
 
-| Rol | Llegó a | Datos en la base |
+## Tanda 1 (roles 1, 2 y 6), cortada a mitad
+
+### Rol 1 · Caso de referencia
+
+**Hecho:**
+- La obra 1 "Ampliación de nave de ensayo" está cargada por pantalla, con sus presupuestos, monto y 4 materiales.
+- Los **21 renglones de §9.2** están verificados en la base. Única diferencia: el concepto del retiro dice "Endurecedor superficial", sin "(bolsa)".
+- La factura **0002-00000555 ya está anulada**. La 0004-00000020 **no**.
+
+**Falta:**
+- la comparación al centavo de §9.3 y §9.4;
+- anular la 0004-00000020 y medir que la rendición se actualice sola;
+- terminar el borrador.
+
+### Rol 2 · Carga de facturas y gastos
+
+**Hecho:**
+- W-10: el reparto en vivo, la factura repetida (aviso y 422), el alta rápida W-38 y el redondeo de decimales.
+- Datos en las obras 5 y 6 `QAS3-R2`.
+
+**Falta:** W-35, W-46, W-33 (incluido el "549.000 de 905.600"), W-34, W-14 y el buscador.
+
+### Rol 6 · Tareas, regresión y backend
+
+**Hecho:** solo los datos: las obras 3 y 4 `QAS3-R6` y el gasto 1, que ya está anulado.
+
+**Falta:** todo lo demás.
+
+## Posibles hallazgos ya vistos (reproducidos 2 veces, falta consolidarlos)
+
+| Posible hallazgo | Visto por | Qué pasa |
 |---|---|---|
-| 1 · Caso de referencia | Cargó la obra y los renglones de `rendicion.md` §9 por pantalla y comparó; iba a anular la 0004-00000020 y medir la actualización sin recargar. | obra 1 "Ampliación de nave de ensayo", obra 2 `QAS3-R1 Obra de control` |
-| 2 · Carga de facturas y gastos | Cargas de W-10/W-35 en curso. | obras 4 y 5 `QAS3-R2` |
-| 6 · Tareas, regresión y backend | Textos del backend revisados; tarea de punta a punta en curso. | obras 3 y 6 `QAS3-R6`, 3 tareas |
+| R1-01 = R2-02 | Rol 1 y Rol 2 | **W-48 no carga en una obra sin renglones de MATERIALES sin material.** La API devuelve `sin_material: null` y el front exige un texto; la pantalla dice "No pudimos cargar esta información…". |
+| R1-02 | Rol 1 | El alta rápida W-38 hace que la factura de atrás muestre errores de validación, sin que se haya tocado "Guardar factura". |
+| R2-01 | Rol 2 | Con la base sin gastos, W-33 dice primero "No hay gastos con estos filtros." (es el mes en curso) y recién con "Limpiar filtros" aparece "Todavía no hay gastos cargados.". |
+| R2-03 | Rol 2 | El aviso de factura repetida muestra la fecha como "27-nov". DU-G13 pide dd/mm/aaaa. |
 
-En total quedaron 32 gastos y 48 renglones. **Ningún rol llegó a escribir su borrador.**
+## Para el lunes
 
-## Capturas
-
-- `capturas/` tiene 46 capturas: 43 `F-…` de lo que anda, más `R1-01-1.png`, `R1-01-2.png` y `R2-01-1.png`.
-- Las tres de hallazgo son posibles hallazgos **sin verificar ni describir**: no cuentan como hallazgos.
-
-## Para retomar
-
-La anulación de la 0004-00000020 puede o no haberse hecho: revisarlo en la base antes de seguir. Hay dos caminos:
-
-- **Seguir sobre esta base.** El rol 1 verifica en la base qué renglones de §9.2 están, completa los que falten y hace la anulación.
-- **Volver a correr la ronda completa.** Reset y tanda 1 de nuevo: es lo más limpio para la comparación al centavo.
+1. Levantar los procesos con `scratchpad\s3\proc\arrancar.sh`.
+2. Ver si siguen andando las sesiones. Si Redis se reinició, hay que volver a ingresar.
+3. Relanzar los roles 1, 2 y 6 para que sigan desde su borrador, sin rehacer lo cargado.
+4. Seguir con las tandas 2 (roles 3 y 4) y 3 (roles 5 y 8), y cerrar con el QC.
