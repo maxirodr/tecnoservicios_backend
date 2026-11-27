@@ -1,0 +1,109 @@
+# Tu primer día · Jefatura de Administración
+
+Desde hoy las tareas, las facturas y las rendiciones están en el sistema. Esto es lo que necesitás para el primer día.
+
+## Tu primer día
+
+### 1. Qué ves al entrar
+
+Entrás con tu mail y el código de 6 números que te llega, como en las pruebas. Arriba dice
+**"Hola, {tu nombre} · Jefatura de Administración"** y abajo, **Mis tareas**: lo que tenés que hacer vos, de todas las obras juntas, con
+lo vencido y lo urgente arriba.
+
+- **En la computadora**, la barra de arriba: **Inicio · Tareas · Obras · Calendario · Gastos · Rendiciones · Proveedores**.
+- **En el celular**, la barra de abajo: **Tareas · Obras · Avisos · Más**.
+- Al lado de **Mis tareas**: **Tareas que pedí** (lo que le pediste a otros) y **Tareas que sigo**. Como tenés gente a cargo, también **Tareas de mi gente**.
+- La **campana** cuenta lo nuevo.
+
+| Computadora | Celular |
+|---|---|
+| ![Inicio en la computadora](capturas/pc-inicio-administracion.png) | ![Inicio en el celular](capturas/celular-inicio-administracion.png) |
+
+### 2. Tus tareas de la minuta ya están acá
+
+Las tareas abiertas de la minuta ya están cargadas, con quién la tiene (una persona o el sector) y su fecha de
+entrega. Las ves en **Mis tareas** como cualquier otra.
+
+- **No te avisaron al cargarlas:** ni la campana ni un mail. Por eso, el primer día entrá a mirarlas.
+- **En el detalle tienen la marca "Carga inicial"**: "Vino de la minuta al arrancar el sistema."
+- Si la minuta no decía quién la pidió o cuándo, vas a ver **"Solicitante: —"** y **"Pedida: —"**.
+- Desde ahora funcionan como cualquier tarea: el recordatorio del día anterior a la entrega llega igual.
+
+La minuta queda **de consulta**: lo nuevo se carga acá.
+
+### 3. Cargar una tarea
+
+1. En **Mis tareas**, tocá **"+ Nueva tarea"**.
+2. Completá **Tarea** (qué hay que hacer), **Obra** (o "Sin obra / Servicios generales"), **Sector** y
+   **Propietario** (una sola persona: quien la resuelve) y la **Fecha de entrega**.
+3. Si hace falta, sumá **Aclaraciones** y **"Links o archivos (Drive, Maps, web)"** con **Subir archivo** o
+   **Pegar link**.
+4. Tocá **"Crear tarea"**. Abajo te dice a quién le llega el aviso.
+
+La **prioridad se calcula sola** con la fecha en que se pidió y la de entrega; se puede cambiar a mano.
+
+![Nueva tarea en la computadora](capturas/pc-tarea-nueva.png)
+
+### 4. Tomarla y completarla
+
+1. Tocá la tarea en **Mis tareas** para abrirla.
+2. **"Tomar → En curso"**: avisás que la estás haciendo. Si dice **"Sin propietario · la toma el primero que
+   pueda"**, es de tu sector: el que toca **"Tomar"** primero se la queda.
+3. Cuando está hecha, **"Completar"**: escribí un **Comentario** (es obligatorio) y, si corresponde, el
+   comprobante (remito, recibo o foto). En el celular podés sacarle la foto al remito.
+4. **"Completar y avisar"**: la tarea pasa a Completada y le avisa a quien la pidió.
+
+Si algo te frena, **"Bloquear…"** y contá qué falta. Si no es tuya, **"Reasignar"**.
+
+| Abrir y tomar | Completar con el comprobante |
+|---|---|
+| ![Detalle de una tarea en el celular](capturas/celular-tarea-detalle.png) | ![Completar una tarea en el celular](capturas/celular-tarea-completar.png) |
+
+### Cargar una factura
+
+1. **Gastos** → **"+ Cargar factura / gasto"**.
+2. **Factura**: **Número**, **Fecha** y **Proveedor** (si no está, **"nuevo proveedor"**: el sistema avisa si
+   se parece a uno ya cargado). Si querés, el archivo o el link de la factura: el papel queda en la oficina,
+   como hoy.
+3. Un **renglón** por cosa: **Concepto**, **Cantidad**, **Precio unitario**, **Obra** y **Rubro**. Si va a dos
+   obras, **"+ agregar renglón"** y lo dividís (por ejemplo, 6 bolsas a una y 4 a otra).
+4. Revisá el **"Total de la factura"** (importes sin IVA) y tocá **"Guardar factura"**. Cada renglón ya resta
+   en la rendición de su obra.
+
+Lo gastado **hasta el corte** ya está cargado como **"Carga inicial"**: lo que tenga fecha **después del corte**
+(por ejemplo, una factura del 02/12) se carga acá, como cualquier gasto.
+
+![Cargar una factura](capturas/pc-factura-cargar.png)
+
+### Leer la rendición
+
+**Rendiciones** muestra las **"Rendiciones en curso"**: tocá una obra para abrir la suya. Es su hoja "General",
+al día:
+
+- por rubro, **Presupuestado**, **Gastado**, **Saldo** y **% consumido**; lo pasado se marca **"pasado"** en
+  rojo, y un rubro con gasto y sin presupuesto, **"sin presupuesto"**;
+- abajo, **"Total de la obra"** y **"Monto de la obra y ganancia"** (la prevista y la del día);
+- **"Por proveedor"** y **"Control por cantidad"** (los materiales: lo presupuestado, lo retirado y lo que
+  resta llevar);
+- tocando un rubro ves cada renglón que lo forma. **"Se actualiza sola con cada gasto cargado."**
+
+El primer día arranca con lo gastado **al corte**, que es lo de su Excel. EPP se ve dentro de INSUMOS, como en su
+General.
+
+![Rendición de una obra](capturas/pc-rendicion-administracion.png)
+
+### Tareas de tu gente
+
+- **Inicio · "Tareas de mi gente"**: todo lo abierto de las personas que dependen de vos, persona por persona,
+  con lo vencido en rojo.
+- **Tareas · "Carga por persona"**: cuántas abiertas, vencidas y "Vencen esta semana" tiene cada uno, para
+  repartir mejor. Tocando una persona ves sus tareas abiertas.
+
+| Tareas de mi gente | Carga por persona |
+|---|---|
+| ![Tareas de mi gente](capturas/pc-mi-gente.png) | ![Carga por persona](capturas/pc-carga-por-persona.png) |
+
+### Si algo no se entiende
+
+Cualquier cosa que no se entienda, que te resulte más lenta que la minuta o que no funcione, contanos por Discord
+con una captura. En la primera semana estamos con ustedes.
