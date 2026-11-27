@@ -10,7 +10,7 @@ use DateTimeInterface;
 /**
  * Columna "Documento" con las mismas etiquetas que la rendición (RN-GAS-29, RN-REN-29, resuelta DU-R07):
  * "Factura 0003-00012345" · "Sin documento" · "Consumo de stock" · "Amortización" · "Retiro · remito
- * 0001-00000456" · "Devolución" · "Período 1 al 15-oct" · "Carga inicial".
+ * 0001-00000456" · "Devolución" · "Período 1 al 15-oct" · "Parte de horas 1 al 15-oct" (DU-C02) · "Carga inicial".
  */
 final class EtiquetaDocumento
 {
@@ -26,6 +26,7 @@ final class EtiquetaDocumento
             Origen::RetiroRemito => trim('Retiro · remito '.($numero ?? '')),
             Origen::Devolucion => 'Devolución',
             Origen::MontoPeriodo => 'Período '.self::periodo($desde, $hasta),
+            Origen::ParteHoras => 'Parte de horas '.self::periodo($desde, $hasta),
             Origen::SaldoInicial => 'Carga inicial',
         };
     }

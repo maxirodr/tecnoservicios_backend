@@ -41,9 +41,11 @@ final class LecturasResource
             'renglones' => array_map(static fn (RenglonImputado $r): array => [
                 ...RendicionResource::renglonBase($r),
                 'cantidad' => $r->cantidad,
-                'precio_unitario' => $r->precioUnitario,
+                // Parte de horas resumido: sin valor hora (RN-REN-63).
+                'precio_unitario' => $r->resumido ? null : $r->precioUnitario,
                 'total' => $r->total,
                 'rubro_clave' => $r->rubroClave,
+                'resumido' => $r->resumido,
             ], $detalle['renglones']),
         ];
     }

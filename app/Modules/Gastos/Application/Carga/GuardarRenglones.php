@@ -40,6 +40,7 @@ final readonly class GuardarRenglones
             'rubro_id' => $renglon->rubroId,
             'material_id' => $this->materialId($renglon, $userId),
             'detalle' => $renglon->detalle,
+            'empleado' => $renglon->empleado,
         ])->save();
 
         return $fila;

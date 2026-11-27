@@ -106,7 +106,7 @@ final class ProveedorYBuscadorTest extends GastosTestCase
             $this->assertSame(1, $grupo['cantidad'] ?? null, $texto);
             $this->assertSame([
                 'id' => $factura->id, 'documento' => 'Factura 0003-00012345', 'proveedor' => ['id' => $factura->proveedor_id, 'nombre' => 'Corralón Centro', 'es_generico' => false],
-                'fecha' => '2026-10-17', 'total' => '905600.00', 'anulado' => false,
+                'fecha' => '2026-10-17', 'total' => '905600.00', 'anulado' => false, 'impaga' => true,
             ], $grupo['resultados'][0] ?? null);
         }
 

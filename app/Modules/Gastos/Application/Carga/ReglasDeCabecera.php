@@ -31,7 +31,7 @@ final readonly class ReglasDeCabecera
 
         return [
             'numero' => $this->numero($datos, $errores),
-            'fecha' => $datos->origen === Origen::MontoPeriodo ? $hasta : $this->fecha($datos->fecha, $errores),
+            'fecha' => $datos->origen->tienePeriodo() ? $hasta : $this->fecha($datos->fecha, $errores),
             'proveedorId' => $this->proveedor($datos, $errores),
             'rendidoPor' => $this->rendidoPor($datos, $errores),
             'desde' => $desde,
@@ -76,13 +76,14 @@ final readonly class ReglasDeCabecera
     }
 
     /**
-     * RN-GAS-27: dos fechas, hasta ≥ desde, desde ≤ hoy; el "hasta" puede ser futuro (los fijos del mes).
+     * RN-GAS-27 y RN-GAS-52 (parte de horas): dos fechas, hasta ≥ desde, desde ≤ hoy; el "hasta" puede ser
+     * futuro (los fijos del mes).
      *
      * @return array{0: string|null, 1: string|null}
      */
     private function periodo(DatosGasto $datos, Errores $errores): array
     {
-        if ($datos->origen !== Origen::MontoPeriodo) {
+        if (! $datos->origen->tienePeriodo()) {
             return [null, null];
         }
 

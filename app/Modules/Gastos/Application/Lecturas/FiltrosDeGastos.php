@@ -8,7 +8,7 @@ use App\Modules\Gastos\Domain\Enums\TipoDocumento;
 
 /**
  * Filtros de W-33 ya validados (RN-GAS-30): `desde`/`hasta` ya con el mes en curso por defecto o null =
- * sin límite (RN-GAS-35). `agrupar`: proveedor · obra · rubro (RN-GAS-33).
+ * sin límite (RN-GAS-35). `agrupar`: proveedor · obra · rubro (RN-GAS-33). `pago`: impagas · pagas (RN-GAS-61).
  */
 final readonly class FiltrosDeGastos
 {
@@ -29,5 +29,6 @@ final readonly class FiltrosDeGastos
         public ?string $hasta = null,
         public ?TipoDocumento $tipo = null,
         public ?string $agrupar = null,
+        public ?string $pago = null,
     ) {}
 }

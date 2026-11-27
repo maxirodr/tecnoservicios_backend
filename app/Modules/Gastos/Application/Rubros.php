@@ -16,6 +16,8 @@ final class Rubros
 {
     public const AMORTIZACION = 'amortizacion';
 
+    public const HORAS_LIQUIDADAS = 'horas_liquidadas';
+
     /** @var array<int, RubroDelCatalogo>|null */
     private ?array $indice = null;
 

@@ -28,6 +28,8 @@ abstract class GastosRequest extends FormRequest
 
     public const LARGO_UNIDAD = 20;
 
+    public const LARGO_EMPLEADO = 120;
+
     /** DECIMAL(14,3): 11 enteros. */
     public const MAXIMO_CANTIDAD = '99999999999.999';
 
@@ -44,7 +46,8 @@ abstract class GastosRequest extends FormRequest
         return [
             'renglones.*' => ['array'],
             'renglones.*.fecha' => ['nullable', 'date_format:Y-m-d'],
-            'renglones.*.concepto' => ['required', 'string', 'max:'.self::LARGO_TEXTO],
+            // Obligatorio salvo en el parte de horas, donde va el de la cabecera: lo mira `ReglasDeRenglones`.
+            'renglones.*.concepto' => ['nullable', 'string', 'max:'.self::LARGO_TEXTO],
             'renglones.*.cantidad' => ['required', 'numeric', 'decimal:0,3', 'gte:-'.self::MAXIMO_CANTIDAD, 'lte:'.self::MAXIMO_CANTIDAD],
             'renglones.*.precio_unitario' => ['required', 'numeric', 'decimal:0,2', 'lte:'.Importe::MAXIMO],
             'renglones.*.obra_id' => ['present', 'nullable', 'integer'],
@@ -54,6 +57,7 @@ abstract class GastosRequest extends FormRequest
             'renglones.*.material_nuevo.nombre' => ['required_with:renglones.*.material_nuevo', 'string', 'max:'.self::LARGO_MATERIAL],
             'renglones.*.material_nuevo.unidad' => ['required_with:renglones.*.material_nuevo', 'string', 'max:'.self::LARGO_UNIDAD],
             'renglones.*.detalle' => ['nullable', 'string', 'max:'.self::LARGO_TEXTO],
+            'renglones.*.empleado' => ['nullable', 'string', 'max:'.self::LARGO_EMPLEADO],
         ];
     }
 
@@ -94,6 +98,23 @@ abstract class GastosRequest extends FormRequest
     }
 
     /**
+     * En el parte de horas la cantidad son las horas y el precio, el valor hora (RN-GAS-53).
+     *
+     * @return array<string, string>
+     */
+    protected static function mensajesDelParte(): array
+    {
+        return [
+            'renglones.*.cantidad.required' => 'Renglón :position: poné las horas.',
+            'renglones.*.cantidad.numeric' => 'Renglón :position: poné las horas.',
+            'renglones.*.cantidad.decimal' => 'Renglón :position: hasta 2 decimales en las horas.',
+            'renglones.*.precio_unitario.required' => 'Renglón :position: poné el valor hora.',
+            'renglones.*.precio_unitario.numeric' => 'Renglón :position: poné el valor hora.',
+            'renglones.*.precio_unitario.decimal' => 'Renglón :position: hasta 2 decimales en el valor hora.',
+        ];
+    }
+
+    /**
      * @return list<DatosRenglon>
      */
     protected function renglones(): array
@@ -122,6 +143,7 @@ abstract class GastosRequest extends FormRequest
                 self::entero($r['material_id'] ?? null),
                 $nuevo === null ? null : new MaterialNuevo((string) self::texto($nuevo['nombre'] ?? null), (string) self::texto($nuevo['unidad'] ?? null)),
                 self::texto($r['detalle'] ?? null),
+                self::texto($r['empleado'] ?? null),
             );
         }
 

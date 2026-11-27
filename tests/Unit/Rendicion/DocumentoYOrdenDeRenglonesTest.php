@@ -41,10 +41,10 @@ final class DocumentoYOrdenDeRenglonesTest extends TestCase
     public function test_etiqueta_de_la_rendicion_es_la_misma_de_gastos_tambien_sin_numero(): void
     {
         foreach (Origen::cases() as $origen) {
-            $extra = $origen === Origen::MontoPeriodo ? ['desde' => '2026-10-01', 'hasta' => '2026-10-15'] : [];
+            $extra = $origen->tienePeriodo() ? ['desde' => '2026-10-01', 'hasta' => '2026-10-15'] : [];
             $renglon = Renglon::de(1, 1, '2026-10-15', $origen->value, 'X', '1.00', 'materiales', $extra);
-            $desde = $origen === Origen::MontoPeriodo ? CarbonImmutable::parse('2026-10-01') : null;
-            $hasta = $origen === Origen::MontoPeriodo ? CarbonImmutable::parse('2026-10-15') : null;
+            $desde = $origen->tienePeriodo() ? CarbonImmutable::parse('2026-10-01') : null;
+            $hasta = $origen->tienePeriodo() ? CarbonImmutable::parse('2026-10-15') : null;
 
             $this->assertSame(EtiquetaDocumento::de($origen, null, $desde, $hasta), DocumentoDelRenglon::etiqueta($renglon), $origen->value);
         }

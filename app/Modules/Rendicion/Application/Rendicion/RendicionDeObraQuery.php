@@ -44,7 +44,7 @@ final readonly class RendicionDeObraQuery
         $resumen = $this->resumen($obra->id);
         $verMonto = $this->acceso->puede($user, ClaveFuncion::MontoObra, Nivel::Ver, $obra);
         $monto = $verMonto ? $this->obras->montoDeObra($obra->id) : null;
-        $ultimos = $this->renglones->renglonesDeObra($obra->id, new FiltroRenglones(limite: self::ULTIMOS_GASTOS));
+        $ultimos = $this->renglones->renglonesDeObra($obra->id, new FiltroRenglones(limite: self::ULTIMOS_GASTOS, detallePorPersona: $this->acceso->detallePorPersona($user, $obra)));
 
         return new RendicionDeObra(
             $obra,

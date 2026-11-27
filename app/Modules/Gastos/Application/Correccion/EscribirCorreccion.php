@@ -6,6 +6,7 @@ namespace App\Modules\Gastos\Application\Correccion;
 
 use App\Modules\Gastos\Application\Carga\GastoAGuardar;
 use App\Modules\Gastos\Application\Carga\GuardarRenglones;
+use App\Modules\Gastos\Domain\Enums\Origen;
 use App\Modules\Gastos\Domain\EtiquetaDocumento;
 use App\Modules\Gastos\Domain\Legible;
 use App\Modules\Gastos\Domain\Models\Gasto;
@@ -29,7 +30,7 @@ final readonly class EscribirCorreccion
 
     public const OBRAS = '_obras';
 
-    private const CAMPOS_DE_RENGLON = ['concepto', 'cantidad', 'precio', 'obra', 'rubro', 'material', 'detalle', 'fecha'];
+    private const CAMPOS_DE_RENGLON = ['concepto', 'cantidad', 'precio', 'obra', 'rubro', 'material', 'detalle', 'fecha', 'empleado'];
 
     public function __construct(
         private GuardarRenglones $renglones,
@@ -58,7 +59,7 @@ final readonly class EscribirCorreccion
             'periodo_hasta' => $nuevo->periodoHasta,
         ]);
         $gasto->unsetRelation('proveedor');
-        $cambios = self::diferencias($antes, $this->valores($gasto));
+        $cambios = [...self::diferencias($antes, $this->valores($gasto)), ...self::conceptoDelParte($gasto, $nuevo)];
 
         if ($cambios !== []) {
             $this->actividad->registrar($gasto, self::EDITADO, $cambios);
@@ -95,7 +96,7 @@ final readonly class EscribirCorreccion
         foreach ($guardados as $quitado) {
             $quitado->delete();
             $this->actividad->registrar($gasto, self::RENGLON_QUITADO, [
-                'renglon' => ['antes' => $quitado->concepto, 'despues' => null],
+                'renglon' => ['antes' => $quitado->empleado ?? $quitado->concepto, 'despues' => null],
                 self::OBRAS => ['antes' => [$quitado->obra_id], 'despues' => null],
             ]);
             $hubo = true;
@@ -122,12 +123,21 @@ final readonly class EscribirCorreccion
             return false;
         }
 
+        // En el parte de horas el concepto es de la cabecera: se registra una vez, en `editado`.
+        if ($gasto->origen === Origen::ParteHoras) {
+            unset($cambios['concepto']);
+        }
+
+        if ($cambios === []) {
+            return false;
+        }
+
         if ($antes['total'] !== $despues['total']) {
             $cambios['total'] = ['antes' => $antes['total'], 'despues' => $despues['total']];
         }
 
         $this->actividad->registrar($gasto, self::RENGLON_CAMBIADO, [
-            'renglon' => ['antes' => $antes['concepto'], 'despues' => $despues['concepto']],
+            'renglon' => ['antes' => $antes['empleado'] ?? $antes['concepto'], 'despues' => $despues['empleado'] ?? $despues['concepto']],
             ...$cambios,
             self::OBRAS => ['antes' => [$obras[0]], 'despues' => [$obras[1]]],
         ]);
@@ -147,6 +157,17 @@ final readonly class EscribirCorreccion
             'rendido_por' => $gasto->rendido_por,
             'periodo' => $gasto->periodo_desde === null ? null : EtiquetaDocumento::periodo($gasto->periodo_desde, $gasto->periodo_hasta),
         ];
+    }
+
+    /**
+     * @return array<string, array{antes: string|null, despues: string|null}>
+     */
+    private static function conceptoDelParte(Gasto $gasto, GastoAGuardar $nuevo): array
+    {
+        $antes = $gasto->renglones->first()?->concepto;
+        $despues = $nuevo->renglones[0]->concepto ?? null;
+
+        return $gasto->origen !== Origen::ParteHoras || $antes === $despues ? [] : ['concepto' => ['antes' => $antes, 'despues' => $despues]];
     }
 
     /**

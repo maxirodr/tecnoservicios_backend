@@ -30,11 +30,12 @@ final readonly class DetalleDeRubroQuery
     /**
      * @param  'fecha'|'proveedor'|'total'  $orden
      * @param  'asc'|'desc'|null  $dir
+     * @param  bool  $detallePorPersona  el parte de horas por persona, con `gastos = editar` (RN-REN-63)
      * @return array{fila: FilaDeRubro, subtotales: array<string, numeric-string>, renglones: list<RenglonImputado>}
      *
      * @throws HttpResponseException 404 si el rubro no tiene fila propia en el resumen
      */
-    public function handle(ObraResumen $obra, string $clave, string $orden, ?string $dir): array
+    public function handle(ObraResumen $obra, string $clave, string $orden, ?string $dir, bool $detallePorPersona = false): array
     {
         $fila = $this->rendicion->resumen($obra->id)->rubro($clave);
 
@@ -42,7 +43,7 @@ final readonly class DetalleDeRubroQuery
             throw new HttpResponseException(ApiResponse::error(self::SIN_DETALLE, 404));
         }
 
-        $renglones = $this->gastado->renglonesDeObra($obra->id, new FiltroRenglones(rubroClaves: [$fila->clave, ...$fila->incluye], orden: $orden, dir: $dir ?? OrdenDeRenglones::direccionPorDefecto($orden)));
+        $renglones = $this->gastado->renglonesDeObra($obra->id, new FiltroRenglones(rubroClaves: [$fila->clave, ...$fila->incluye], orden: $orden, dir: $dir ?? OrdenDeRenglones::direccionPorDefecto($orden), detallePorPersona: $detallePorPersona));
         $subtotales = [];
 
         foreach ($fila->incluye as $incluida) {
