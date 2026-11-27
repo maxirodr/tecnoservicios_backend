@@ -35,7 +35,8 @@ final class TextoDeActividad
         $c = $actividad->cambios ?? [];
 
         return match ($actividad->accion) {
-            CrearPedidoAction::ACCION => ["{$quien} creó la tarea"],
+            // RN-IMP-39: "Carga inicial desde la minuta (aprobó Carla)", con la fecha que pone el front.
+            CrearPedidoAction::ACCION => [$actividad->carga_inicial ? "Carga inicial desde la minuta (aprobó {$quien})" : "{$quien} creó la tarea"],
             TomarPedidoAction::ACCION => ["{$quien} la tomó → En curso"],
             BloquearPedidoAction::ACCION => ["{$quien} la bloqueó: '".self::texto($c['motivo_bloqueo']['despues'] ?? null)."'"],
             RetomarPedidoAction::ACCION => ["{$quien} la retomó → En curso"],
