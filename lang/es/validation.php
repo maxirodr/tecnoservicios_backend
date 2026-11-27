@@ -375,6 +375,10 @@ return [
         'renglones.*.material_nuevo.nombre' => 'material',
         'renglones.*.material_nuevo.unidad' => 'unidad',
         'renglones.*.detalle' => 'detalle',
+        // Parte de horas y facturas pagas (DU-C02, DU-C03)
+        'concepto' => 'concepto',
+        'renglones.*.empleado' => 'empleado',
+        'pago' => 'pago',
         'confirmar_remito_repetido' => 'cargar igual el remito',
         'confirmar_superposicion' => 'cargar igual el período',
     ],

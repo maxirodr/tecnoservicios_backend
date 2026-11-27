@@ -8,6 +8,7 @@ use App\Modules\Gastos\Application\FechaEmpresa;
 use App\Modules\Gastos\Application\Lecturas\FiltrosDeGastos;
 use App\Modules\Gastos\Application\Rubros;
 use App\Modules\Gastos\Domain\Enums\TipoDocumento;
+use App\Modules\Gastos\Infrastructure\Consultas\PorPago;
 use App\Modules\Rendicion\Contracts\RubroDelCatalogo;
 use Illuminate\Validation\Rule;
 
@@ -38,6 +39,7 @@ final class ListarGastosRequest extends GastosRequest
             'hasta' => ['nullable', 'date_format:Y-m-d'],
             'tipo' => ['nullable', Rule::in(array_column(TipoDocumento::cases(), 'value'))],
             'agrupar' => ['nullable', Rule::in([FiltrosDeGastos::AGRUPAR_PROVEEDOR, FiltrosDeGastos::AGRUPAR_OBRA, FiltrosDeGastos::AGRUPAR_RUBRO])],
+            'pago' => ['nullable', Rule::in([PorPago::IMPAGAS, PorPago::PAGAS])],
             'page' => ['nullable', 'integer', 'min:1'],
         ];
     }
@@ -56,6 +58,7 @@ final class ListarGastosRequest extends GastosRequest
             $porDefecto ? FechaEmpresa::hoy() : self::texto($this->input('hasta')),
             $this->filled('tipo') ? TipoDocumento::from($this->string('tipo')->toString()) : null,
             self::texto($this->input('agrupar')),
+            self::texto($this->input('pago')),
         );
     }
 }

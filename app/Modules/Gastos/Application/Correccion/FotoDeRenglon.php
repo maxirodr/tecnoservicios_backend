@@ -27,7 +27,7 @@ final class FotoDeRenglon
     ) {}
 
     /**
-     * @return array{concepto: string, cantidad: string, precio: string, total: string, obra: string, rubro: string, material: string|null, detalle: string|null, fecha: string}
+     * @return array{concepto: string, cantidad: string, precio: string, total: string, obra: string, rubro: string, material: string|null, detalle: string|null, fecha: string, empleado: string|null}
      */
     public function de(GastoRenglon $renglon): array
     {
@@ -41,15 +41,18 @@ final class FotoDeRenglon
             'material' => $renglon->material_id === null ? null : $this->material($renglon->material_id),
             'detalle' => $renglon->detalle,
             'fecha' => Legible::fecha($renglon->fecha),
+            'empleado' => $renglon->empleado,
         ];
     }
 
-    /** "'Arena fina (m³)' · 2 × 40.000 · Piso industrial nave 3 · MATERIALES" */
+    /** "'Arena fina (m³)' · 2 × 40.000 · Piso industrial nave 3 · MATERIALES" (en el parte de horas, el empleado). */
     public function resumen(GastoRenglon $renglon): string
     {
         $foto = $this->de($renglon);
 
-        return "'{$foto['concepto']}' · {$foto['cantidad']} × {$foto['precio']} · {$foto['obra']} · {$foto['rubro']}";
+        $nombre = $foto['empleado'] ?? $foto['concepto'];
+
+        return "'{$nombre}' · {$foto['cantidad']} × {$foto['precio']} · {$foto['obra']} · {$foto['rubro']}";
     }
 
     public function obra(?int $obraId): string

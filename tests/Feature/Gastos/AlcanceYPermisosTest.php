@@ -36,7 +36,7 @@ final class AlcanceYPermisosTest extends GastosTestCase
             ->assertJsonPath('data.renglones_ocultos', 3)
             ->assertJsonPath('data.total', '549000.00')
             ->assertJsonPath('data.obras', [['id' => $this->nave->id, 'nombre_trabajo' => 'Piso industrial nave 3']])
-            ->assertJsonPath('data.puede', ['editar' => false, 'anular' => false]);
+            ->assertJsonPath('data.puede', ['editar' => false, 'anular' => false, 'marcar_pago' => false]);
     }
 
     public function test_alcance_propias_total_es_de_sus_renglones(): void

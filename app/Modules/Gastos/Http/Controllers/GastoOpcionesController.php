@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Gastos\Http\Controllers;
 
 use App\Modules\Gastos\Application\Carga\FacturaRepetida;
+use App\Modules\Gastos\Application\Lecturas\EmpleadosDelParteQuery;
 use App\Modules\Gastos\Application\Lecturas\OpcionesDeCargaQuery;
 use App\Modules\Gastos\Domain\NumeroComprobante;
 use App\Modules\Gastos\Http\Requests\BuscarObrasRequest;
@@ -27,6 +28,12 @@ final class GastoOpcionesController
     public function obras(BuscarObrasRequest $request, OpcionesDeCargaQuery $opciones): JsonResponse
     {
         return $this->ok($opciones->obras($this->usuario($request), $request->buscar()));
+    }
+
+    /** RN-GAS-56: empleados ya cargados en partes de horas (`gastos = editar`, con su alcance). */
+    public function empleados(BuscarObrasRequest $request, EmpleadosDelParteQuery $empleados): JsonResponse
+    {
+        return $this->ok($empleados->handle($this->usuario($request), $request->buscar()));
     }
 
     /** RN-GAS-08: al salir del campo Número o al elegir el proveedor; con alcance (§8.2). */

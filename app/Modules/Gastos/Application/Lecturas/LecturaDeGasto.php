@@ -21,10 +21,10 @@ use App\Modules\Identidad\Domain\Models\User;
 final readonly class LecturaDeGasto
 {
     /** @var list<string> */
-    public const FILA = ['renglones.obra', 'proveedor', 'cargadoPor'];
+    public const FILA = ['renglones.obra', 'proveedor', 'cargadoPor', 'pagadoPor'];
 
     /** @var list<string> */
-    public const DETALLE = ['renglones.obra.principal', 'renglones.material', 'proveedor', 'cargadoPor', 'editadoPor', 'anuladoPor', 'adjuntos.subidoPor'];
+    public const DETALLE = ['renglones.obra.principal', 'renglones.material', 'proveedor', 'cargadoPor', 'editadoPor', 'anuladoPor', 'adjuntos.subidoPor', 'pagadoPor'];
 
     public function __construct(private AccesoGasto $acceso) {}
 
@@ -43,6 +43,7 @@ final readonly class LecturaDeGasto
         $editar = ! $gasto->anulado() && $this->acceso->corrigeGasto($user, $gasto);
 
         return new GastoLeido(
+            $this->vista($user, $gasto),
             $gasto,
             $veo,
             count($todos) - count($veo),
@@ -51,6 +52,15 @@ final readonly class LecturaDeGasto
             EtiquetaDocumento::de($gasto->origen, $gasto->numero, $gasto->periodo_desde, $gasto->periodo_hasta),
             // RN-IMP-27: la carga inicial solo se anula.
             ['editar' => $editar && $gasto->origen !== Origen::SaldoInicial, 'anular' => $editar],
+        );
+    }
+
+    private function vista(User $user, Gasto $gasto): VistaDelGasto
+    {
+        return new VistaDelGasto(
+            $gasto->origen !== Origen::ParteHoras || $this->acceso->veDetallePorPersona($user),
+            $this->acceso->vePagos($user),
+            $gasto->tieneEstadoDePago() && ! $gasto->anulado() && $this->acceso->marcaPagos($user),
         );
     }
 

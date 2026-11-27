@@ -28,6 +28,7 @@ final readonly class CargaRepetida
         private ObrasConsulta $obras,
         private Rubros $rubros,
         private FacturaRepetida $facturas,
+        private SuperposicionDelParte $parte,
     ) {}
 
     /**
@@ -40,6 +41,7 @@ final readonly class CargaRepetida
             Origen::RetiroRemito => $datos->confirmarRemitoRepetido || $this->remito($gasto, $excluir),
             Origen::Amortizacion => $this->amortizacion($gasto, $excluir),
             Origen::MontoPeriodo => $datos->confirmarSuperposicion || $this->superposicion($gasto, $excluir),
+            Origen::ParteHoras => $datos->confirmarSuperposicion || $this->parte->verificar($gasto),
             default => null,
         };
     }

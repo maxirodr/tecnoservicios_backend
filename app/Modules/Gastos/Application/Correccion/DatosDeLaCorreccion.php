@@ -7,6 +7,7 @@ namespace App\Modules\Gastos\Application\Correccion;
 use App\Modules\Gastos\Application\Carga\DatosGasto;
 use App\Modules\Gastos\Application\Carga\DatosRenglon;
 use App\Modules\Gastos\Application\Rubros;
+use App\Modules\Gastos\Domain\Enums\Origen;
 use App\Modules\Gastos\Domain\Models\Gasto;
 use App\Modules\Gastos\Domain\Models\GastoRenglon;
 use App\Modules\Gastos\Domain\NumeroComprobante;
@@ -31,7 +32,7 @@ final readonly class DatosDeLaCorreccion
             && $proveedorId === $gasto->proveedor_id;
         $mismoPeriodo = $desde === $gasto->periodo_desde?->toDateString()
             && $hasta === $gasto->periodo_hasta?->toDateString()
-            && $this->mismaObraYRubro($gasto, $renglones);
+            && ($gasto->origen === Origen::ParteHoras ? $this->sinObrasNuevas($gasto, $renglones) : $this->mismaObraYRubro($gasto, $renglones));
 
         return new DatosGasto(
             $gasto->origen,
@@ -45,6 +46,7 @@ final readonly class DatosDeLaCorreccion
             $renglones,
             $cambios->confirmarRemitoRepetido || $mismoRemito,
             $cambios->confirmarSuperposicion || $mismoPeriodo,
+            $this->texto($cambios, 'concepto', $gasto->origen === Origen::ParteHoras ? $gasto->renglones->first()?->concepto : null),
         );
     }
 
@@ -65,6 +67,7 @@ final readonly class DatosDeLaCorreccion
             $r->material_id,
             null,
             $r->detalle,
+            $r->empleado,
         ))->all());
     }
 
@@ -79,6 +82,24 @@ final readonly class DatosDeLaCorreccion
         return count($renglones) === 1 && $guardado !== null && $nuevo !== null
             && $nuevo->obraId === $guardado->obra_id
             && $nuevo->rubroClave === $this->rubros->porId($guardado->rubro_id)?->clave;
+    }
+
+    /**
+     * Parte de horas (RN-GAS-55): vuelve a avisar la superposición solo si se sumó una obra.
+     *
+     * @param  list<DatosRenglon>  $renglones
+     */
+    private function sinObrasNuevas(Gasto $gasto, array $renglones): bool
+    {
+        $guardadas = $gasto->obraIds();
+
+        foreach ($renglones as $renglon) {
+            if ($renglon->obraId !== null && ! in_array($renglon->obraId, $guardadas, true)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private function texto(CambiosGasto $cambios, string $campo, ?string $guardado): ?string

@@ -22,4 +22,5 @@ enum ClaveFuncion: string
     case Proveedores = 'proveedores';
     case UsuariosPermisos = 'usuarios_permisos';
     case PlazosPrioridad = 'plazos_prioridad';
+    case Pagos = 'pagos';
 }

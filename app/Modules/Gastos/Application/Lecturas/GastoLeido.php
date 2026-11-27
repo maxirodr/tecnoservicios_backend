@@ -9,7 +9,8 @@ use App\Modules\Gastos\Domain\Models\GastoRenglon;
 
 /**
  * Un gasto como lo ve quien mira (RN-GAS-48): con "solo sus obras", solo los renglones de sus obras y
- * los totales de esos; `totalFiltrado`, la parte que cumple los filtros de obra o rubro (RN-GAS-31).
+ * los totales de esos; `totalFiltrado`, la parte que cumple los filtros de obra o rubro (RN-GAS-31); `vista`, el
+ * detalle del parte de horas y el estado de pago que le tocan (RN-GAS-57, 61).
  */
 final readonly class GastoLeido
 {
@@ -20,6 +21,7 @@ final readonly class GastoLeido
      * @param  array{editar: bool, anular: bool}  $puede
      */
     public function __construct(
+        public VistaDelGasto $vista,
         public Gasto $gasto,
         public array $renglones,
         public int $ocultos,

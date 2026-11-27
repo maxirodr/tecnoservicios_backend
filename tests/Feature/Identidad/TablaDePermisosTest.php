@@ -18,9 +18,9 @@ final class TablaDePermisosTest extends IdentidadTestCase
     {
         $this->actingAs($this->usuarioDe('Dirección'))->getJson('/api/permisos')
             ->assertOk()
-            ->assertJsonCount(12, 'data.funciones')
+            ->assertJsonCount(13, 'data.funciones')
             ->assertJsonCount(11, 'data.sectores')
-            ->assertJsonCount(132, 'data.celdas')
+            ->assertJsonCount(143, 'data.celdas')
             ->assertJsonPath('data.funciones.7', ['clave' => 'rendicion', 'nombre' => 'Rendición', 'admite_editar' => true, 'admite_alcance' => true, 'orden' => 8]);
 
         $this->actingAs($this->usuarioDe('Compras'))->getJson('/api/permisos')->assertForbidden();
@@ -61,7 +61,7 @@ final class TablaDePermisosTest extends IdentidadTestCase
 
     public function test_no_acepta_editar_en_funcion_que_no_lo_admite(): void
     {
-        // Hoy las 12 funciones admiten editar (§6.1); la regla queda probada con una que no lo admita.
+        // Hoy las 13 funciones admiten editar (§6.1); la regla queda probada con una que no lo admita.
         Funcion::query()->where('clave', 'monto_obra')->update(['admite_editar' => false]);
         $compras = Sector::query()->where('nombre', 'Compras')->valueOrFail('id');
 

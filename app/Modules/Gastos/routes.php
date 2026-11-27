@@ -8,6 +8,7 @@ use App\Modules\Gastos\Http\Controllers\GastoController;
 use App\Modules\Gastos\Http\Controllers\GastoOpcionesController;
 use App\Modules\Gastos\Http\Controllers\GastosCargadosController;
 use App\Modules\Gastos\Http\Controllers\HistorialGastoController;
+use App\Modules\Gastos\Http\Controllers\PagoDeFacturaController;
 use App\Modules\Gastos\Http\Controllers\RenglonesSinDocumentoController;
 use App\Modules\Gastos\Http\Middleware\PuedeCargarGastos;
 use App\Modules\Gastos\Http\Middleware\PuedeCorregirGastos;
@@ -29,11 +30,16 @@ Route::middleware('auth:sanctum')->group(function () use ($editar): void {
     Route::get('gastos/opciones', [GastoOpcionesController::class, 'opciones'])->middleware(PuedeCargarGastos::class);
     Route::get('gastos/obras-opciones', [GastoOpcionesController::class, 'obras'])->middleware(PuedeCargarGastos::class);
     Route::get('gastos/factura-existente', [GastoOpcionesController::class, 'facturaExistente'])->middleware(PuedeCargarGastos::class);
+    // Parte de horas (DU-C02): los nombres son de quien tiene `gastos = editar` (RN-GAS-56, 57).
+    Route::get('gastos/empleados', [GastoOpcionesController::class, 'empleados'])->middleware($editar);
 
     Route::post('gastos', [GastoController::class, 'store'])->middleware([PuedeCargarGastos::class, 'idempotent']);
     Route::get('gastos/{gasto}', [GastoController::class, 'show'])->whereNumber('gasto')->middleware(VerGastos::class);
     Route::patch('gastos/{gasto}', [GastoController::class, 'update'])->whereNumber('gasto')->middleware(PuedeCorregirGastos::class);
     Route::post('gastos/{gasto}/anular', AnularGastoController::class)->whereNumber('gasto')->middleware([$editar, 'idempotent']);
+    // Facturas pagas o impagas (DU-C03): `pagos = editar` y ver la factura (404 si no la ve).
+    Route::post('gastos/{gasto}/marcar-paga', [PagoDeFacturaController::class, 'paga'])->whereNumber('gasto')->middleware(['permiso:pagos,editar', 'idempotent']);
+    Route::post('gastos/{gasto}/marcar-impaga', [PagoDeFacturaController::class, 'impaga'])->whereNumber('gasto')->middleware(['permiso:pagos,editar', 'idempotent']);
     Route::get('gastos/{gasto}/historial', HistorialGastoController::class)->whereNumber('gasto')->middleware(VerGastos::class);
 
     // W-46: se abre desde la rendición; lo ven `rendicion` o `control_cantidad` (lo mira el caso de uso).

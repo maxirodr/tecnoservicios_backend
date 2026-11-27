@@ -120,7 +120,7 @@ Usado, vencido o con 5 fallos: la fila se borra (`CodigosDeIngreso`).
 |---|---|---|
 | clave | varchar(40) único | `pedidos`, `obras`, `rendicion`, `monto_obra`… |
 | nombre | varchar(80) | como se ve en W-15 |
-| admite_editar | bool | hoy `true` en las 12 funciones (incluida `monto_obra`, DU-A21) |
+| admite_editar | bool | hoy `true` en las 13 funciones (incluidas `monto_obra`, DU-A21, y `pagos`, DU-C03) |
 | admite_alcance | bool | si acepta "solo sus obras" (ADR-006): `pedidos`, `obras`, `presupuesto_rubro`, `monto_obra`, `gastos`, `rendicion`, `control_cantidad` |
 | orden | smallint unsigned | |
 
@@ -133,7 +133,7 @@ Usado, vencido o con 5 fallos: la fila se borra (`CodigosDeIngreso`).
 | alcance | varchar(10) | `todas` · `propias` |
 | timestamps | | |
 
-Único `(sector_id, funcion_id)`. La migración `2026_11_13_100005` carga las 12 funciones, los 11 sectores
+Único `(sector_id, funcion_id)`. La migración `2026_11_13_100005` carga las 12 funciones (la 13, `pagos`, la carga `2026_11_27_100002`), los 11 sectores
 del organigrama (Dirección, Calidad, Gerencia de Operaciones, Jefatura de Proyectos, Ingeniería de proyectos,
 Seguridad e Higiene, Gerencia de Administración, Jefatura de Administración, Compras, RRHH, Pañol y Logística)
 y la configuración inicial del cap. 3, con `insertOrIgnore` (idempotente; no pisa cambios hechos desde W-15).
@@ -277,20 +277,23 @@ Ajustado el 24-nov-2026 con `especificacion/gastos.md` §4.6 y `rendicion.md` §
 | Campo | Tipo | Oblig. | Nota |
 |---|---|---|---|
 | tipo_documento | varchar(15) | sí | `factura` · `sin_documento` (W-10). **No hay** `nota_credito` (resuelta DU-G05). No se edita |
-| origen | varchar(20) | sí | desde qué carga vino: `factura`, `sin_comprobante` (W-35), `combustible`, `consumo_stock`, `amortizacion`, `retiro_remito`, `devolucion` (W-46), `monto_periodo` (horas/fijos, W-46), `saldo_inicial` (F-62, "Carga inicial"). Sirve para filtros y reglas; no se edita |
+| origen | varchar(20) | sí | desde qué carga vino: `factura`, `sin_comprobante` (W-35), `combustible`, `consumo_stock`, `amortizacion`, `retiro_remito`, `devolucion` (W-46), `monto_periodo` (horas/fijos, W-46), `parte_horas` (parte de horas, W-10, DU-C02), `saldo_inicial` (F-62, "Carga inicial"). Sirve para filtros y reglas; no se edita |
 | numero | varchar(40) | factura y retiro sí | N.º de factura o de remito, guardado **normalizado**: sin espacios al borde, en mayúsculas y, si tiene la forma punto de venta–número, con 4+ dígitos de punto de venta y 8 de número (`3-12345` → `0003-00012345`; RN-GAS-07, resuelta DU-G10). Lo normaliza el caso de uso (`NumeroComprobante`) |
 | numero_vigente | varchar(40) GENERATED (`IF(tipo_documento = 'factura' AND anulado_at IS NULL, numero, NULL)`) | — | **único** con `proveedor_id`: una factura no se carga dos veces (criterio de aceptación n.º 2); una anulada libera el número |
 | fecha | date | sí | la del comprobante (≤ hoy); en `monto_periodo`, `periodo_hasta` (puede ser futura: fijos del mes en curso) |
 | proveedor_id | FK proveedores | sí | siempre: en sin documento, amortización, devolución sin proveedor y períodos, el proveedor genérico (F-44); en factura y retiro, uno de la base (no el genérico) |
 | rendido_por | varchar(120) | no | gastos sin comprobante (C12; obligatorio en "gastos de obra rendidos", RN-GAS-18). Texto: quien rinde puede no ser usuario (supervisión no usa el sistema) |
-| periodo_desde, periodo_hasta | date | `monto_periodo` sí | horas y fijos (C18); hasta ≥ desde |
+| periodo_desde, periodo_hasta | date | `monto_periodo` y `parte_horas` sí | horas y fijos (C18) y parte de horas (DU-C02); hasta ≥ desde |
 | observaciones | text | no | **sin uso en la Etapa 1** (ninguna pantalla lo muestra, `gastos.md` §4.6); factura escaneada o tickets: archivo o link en `adjuntos` (`comprobante_gasto`; remito: `remito`) |
 | cargado_por | FK users | sí | quién cargó (W-34 "Cargó: Diego · 17-oct 10:42") |
 | updated_by | FK users, null | — | última corrección (W-34 "Última edición") |
 | timestamps | | — | `created_at` = cuándo se cargó; `updated_at` es la versión (409, RN-GAS-39) |
 | anulado_at, anulado_por, motivo_anulacion | | no | anular en lugar de borrar (W-34); motivo obligatorio; sin vuelta atrás (resuelta DU-G11) |
+| pagado_at | date, null | no | solo facturas: fecha del pago (≤ hoy); null = **impaga** (DU-C03, `gastos.md` §5.14). No toca la rendición |
+| pagado_por | FK users, null | no | quién la marcó paga (DU-C03) |
 
-Índices: `(proveedor_id, fecha)`, `numero` (buscador y aviso de remito repetido), `fecha` (W-33), `anulado_at`, `origen`.
+Índices: `(proveedor_id, fecha)`, `numero` (buscador y aviso de remito repetido), `fecha` (W-33), `anulado_at`, `origen`,
+`(tipo_documento, pagado_at)` (filtro Pago de W-33, DU-C03).
 Único anti-duplicado: `(proveedor_id, numero_vigente)` sobre el número **normalizado**, solo facturas no anuladas — el
 mismo número de otro proveedor se acepta; un remito repetido solo avisa (no hay único). Antes decía
 `(proveedor_id, tipo_documento, numero)` para facturas no anuladas: es lo mismo, con la columna generada explícita.
@@ -309,6 +312,7 @@ mismo número de otro proveedor se acepta; un remito repetido solo avisa (no hay
 | rubro_id | FK rubros, null | si hay obra | CHECK: `obra_id IS NULL OR rubro_id IS NOT NULL` |
 | material_id | FK materiales, null | en un retiro, sí | liga el renglón al control por cantidad; material de la **misma obra** del renglón (lo valida el caso de uso con `MaterialesDeObra::perteneceAObra`) |
 | detalle | varchar(250) | no | cotización de la moneda extranjera, aclaraciones |
+| empleado | varchar(120), null | `parte_horas` sí | la persona del renglón del parte de horas (texto, no es usuario; DU-C02). La cantidad son las horas y el precio, el valor hora. Solo lo ven quienes tienen `gastos = editar` (`gastos.md` RN-GAS-57) |
 | timestamps | | — | |
 
 Índices: `(obra_id, rubro_id)` (rendición), `(obra_id, fecha)` (W-36, W-37, últimos gastos de W-11), `rubro_id`,
@@ -572,3 +576,13 @@ Juani. Ya están en el diccionario de arriba; esta tabla es el resumen para el D
 
 Orden de las migraciones de la semana 3: `materiales` (después de `presupuestos` y `rubros`) → `gastos` → `gasto_renglones`
 (FK a `materiales`).
+
+### Agregados del cliente (27-nov-2026, DU-C02 y DU-C03)
+
+| Tabla | Antes | Ahora | Motivo |
+|---|---|---|---|
+| `gasto_renglones` | — | + `empleado` varchar(120) null | parte de horas: un renglón por persona y obra (DU-C02) |
+| `gastos` | — | + `pagado_at` date null, `pagado_por` FK users null; índice `(tipo_documento, pagado_at)` | facturas pagas o impagas (DU-C03) |
+| `funciones` | 12 filas | + `pagos` "Pagos de facturas" (fila 13, admite editar, sin alcance) y su configuración inicial | DU-C03; migración idempotente `2026_11_27_100002` |
+
+Migraciones: `2026_11_27_100000` (empleado), `2026_11_27_100001` (pago), `2026_11_27_100002` (función `pagos`).

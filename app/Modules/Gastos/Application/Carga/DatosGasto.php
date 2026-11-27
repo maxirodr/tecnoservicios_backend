@@ -28,5 +28,6 @@ final readonly class DatosGasto
         public array $renglones,
         public bool $confirmarRemitoRepetido = false,
         public bool $confirmarSuperposicion = false,
+        public ?string $concepto = null,
     ) {}
 }

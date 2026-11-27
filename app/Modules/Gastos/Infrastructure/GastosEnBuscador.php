@@ -63,6 +63,8 @@ final readonly class GastosEnBuscador implements FuenteBusqueda
                 'fecha' => $gasto->fecha->toDateString(),
                 'total' => $leido->total,
                 'anulado' => $gasto->anulado(),
+                // "(impaga)", solo con `pagos` ≥ ver (RN-GAS-62).
+                ...($leido->vista->vePago ? ['impaga' => $gasto->impaga()] : []),
             ];
         })->all()));
     }

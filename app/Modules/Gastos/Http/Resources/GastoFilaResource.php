@@ -12,7 +12,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * `GastoFila` (W-33, gastos.md §12.2): documento con la etiqueta común con la rendición, proveedor (el
  * front muestra "—" si es el genérico), obras y rubros de los renglones que ve (null = sin obra), total y,
- * con filtro de obra o rubro o alcance propio, `total_filtrado`. Importes como string decimal.
+ * con filtro de obra o rubro o alcance propio, `total_filtrado`. Importes como string decimal. `pago`, solo con
+ * `pagos` ≥ ver (RN-GAS-61).
  *
  * @property GastoLeido $resource
  */
@@ -60,6 +61,7 @@ final class GastoFilaResource extends JsonResource
             ...($totalFiltrado === null ? [] : ['total_filtrado' => $totalFiltrado]),
             'cargado_por' => ['id' => $gasto->cargadoPor->id, 'nombre' => $gasto->cargadoPor->nombre],
             'anulado' => $gasto->anulado(),
+            ...($leido->vista->vePago ? ['pago' => PagoResource::de($gasto)] : []),
         ];
     }
 }

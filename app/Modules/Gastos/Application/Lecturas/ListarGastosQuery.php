@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Gastos\Application\Lecturas;
 
 use App\Modules\Gastos\Application\Acceso\AccesoGasto;
+use App\Modules\Gastos\Application\Acceso\BuscarGasto;
 use App\Modules\Gastos\Application\Rubros;
 use App\Modules\Gastos\Domain\Models\Gasto;
 use App\Modules\Gastos\Infrastructure\Consultas\CriterioDeRenglones;
@@ -13,6 +14,7 @@ use App\Modules\Gastos\Infrastructure\Consultas\FiltroDeRenglones;
 use App\Modules\Gastos\Infrastructure\Consultas\FiltroGastos;
 use App\Modules\Gastos\Infrastructure\Consultas\GastosQuery;
 use App\Modules\Gastos\Infrastructure\Consultas\PorObra;
+use App\Modules\Gastos\Infrastructure\Consultas\PorPago;
 use App\Modules\Gastos\Infrastructure\Consultas\PorProveedor;
 use App\Modules\Gastos\Infrastructure\Consultas\PorRubro;
 use App\Modules\Gastos\Infrastructure\Consultas\PorTipoDocumento;
@@ -28,6 +30,9 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
  */
 final readonly class ListarGastosQuery
 {
+    /** RN-GAS-61: el filtro Pago pide `pagos` ≥ ver. */
+    public const SIN_PAGOS = 'No tenés acceso al estado de pago de las facturas.';
+
     public function __construct(
         private AccesoGasto $acceso,
         private Rubros $rubros,
@@ -40,6 +45,7 @@ final readonly class ListarGastosQuery
      */
     public function handle(User $user, FiltrosDeGastos $filtros): array
     {
+        BuscarGasto::exigir($filtros->pago === null || $this->acceso->vePagos($user), self::SIN_PAGOS);
         $cabecera = $this->cabecera($filtros);
         $criterio = $this->criterio($user, $filtros);
 
@@ -83,6 +89,10 @@ final readonly class ListarGastosQuery
 
         if ($filtros->tipo !== null) {
             $cabecera[] = new PorTipoDocumento($filtros->tipo);
+        }
+
+        if ($filtros->pago !== null) {
+            $cabecera[] = new PorPago($filtros->pago);
         }
 
         return $cabecera;

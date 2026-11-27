@@ -223,6 +223,7 @@ propias las cosas que el documento asigna a **otra gente** que la del módulo qu
 | 10 | `proveedores` | Proveedores | Ver: base y ficha (W-14). Editar: alta y edición (W-38), alta rápida desde la factura (F-42). | Sí | No | Columna de W-15; F-55/F-56 "administración y compras" | **1** |
 | 11 | `usuarios_permisos` | Usuarios y permisos | Ver: usuarios, sectores y tabla. Editar: alta/edición/baja de usuarios, sectores y la tabla (F-58, F-59, F-60). | Sí | No | Columna "Usuarios" de W-15 | **1** |
 | 12 | `plazos_prioridad` | Plazos de la prioridad | Ver: W-50. Editar: cambiar los plazos (F-68). | Sí | No | F-68: "gerencia", distinto de quien administra usuarios | **1** |
+| 13 | `pagos` | Pagos de facturas | Ver: el estado paga / impaga de las facturas y el filtro Pago (W-33, W-34, buscador). Editar: marcar como paga (con la fecha) o impaga (`gastos.md` §5.14). | Sí | No | DU-C03 (pedido de Bruno, 26-nov): "el responsable de pagos… tenga eso para tildar", gente distinta de la que carga | 3 (agregado) |
 
 No son filas: **Inicio / Mis tareas / Tareas que pedí / Tareas que sigo / Mi perfil / Avisos**
 (todos, F-04, F-05, F-07, F-10, F-64), **Tareas de mi gente / Carga por persona** (jerarquía,
@@ -255,19 +256,19 @@ Leyenda: **E** = Editar · **V** = Ver · **—** = Sin acceso · **·T** = toda
 según la DU indicada (todas resueltas el 12-nov: va la propuesta). Esta tabla es **definitiva**
 para la migración.
 
-| Sector | Tareas | Equipos en reparación | Obras | Estado de obra | Presupuesto por rubro | Monto de obra y ganancia | Gastos y facturas | Rendición | Control por cantidad | Proveedores | Usuarios y permisos | Plazos de la prioridad |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Dirección | **E·T** | *E·T* (DU-01) | **V·T** | **V** | **V·T** | **V·T** | **V·T** | **V·T** | **V·T** | **V** | **E** | **V** |
-| Calidad | **E·T** | *E·T* (DU-01) | **V·T** | — | *—* (A02) | — | *—* (A02) | *—* (A02) | — | *—* (A02) | **—** | — |
-| Gerencia de Operaciones | **E·T** | *E·T* (DU-01) | **E·T** | **V** + responsable | **V·T** | **V·T** | **V·T** | **V·T** | **V·T** | *V* (DU-02) | **E** | **E** |
-| Jefatura de Proyectos | **E·T** | *E·T* (DU-01) | **E·T** | **V** + responsable | **V·T** | — | **V·T** | **V·T** | **V·T** | *V* (DU-02) | **—** | — |
-| Ingeniería de proyectos | **E·T** | *E·T* (DU-01) | **E·T** | **V** + responsable | *V·P* (A04) | — | *V·P* (A04) | **V·P** | *V·P* (A04) | **—** (W-17) | **—** | — |
-| Seguridad e Higiene | **E·T** | *E·T* (DU-01) | **V·T** | — | *—* (A02) | — | *—* (A02) | *—* (A02) | — | *—* (A02) | **—** | — |
-| Gerencia de Administración | **E·T** | *E·T* (DU-01) | **E·T** | **E** | **E·T** | **E·T** | **E·T** | **E·T** | **E·T** | **E** | **E** | **E** |
-| Jefatura de Administración | **E·T** | *E·T* (DU-01) | **E·T** | **E** | **E·T** | **E·T** | **E·T** | **E·T** | **E·T** | **E** | **—** ("solo la gerencia") | — |
-| Compras | **E·T** | *E·T* (DU-01) | **V·T** | — | **E·T** | — | **E·T** | **E·T** | *E·T* (A05) | **E** | **—** | — |
-| RRHH | **E·T** | *E·T* (DU-01) | **V·T** | — | *—* (A03) | — | *—* (A03) | *—* (A03) | — | *—* (A03) | **—** | — |
-| Pañol y Logística | **E·T** | *E·T* (DU-01) | **V·T** | — | *—* (A02) | — | *—* (A02) | *—* (A02) | — | *—* (A02) | **—** | — |
+| Sector | Tareas | Equipos en reparación | Obras | Estado de obra | Presupuesto por rubro | Monto de obra y ganancia | Gastos y facturas | Rendición | Control por cantidad | Proveedores | Usuarios y permisos | Plazos de la prioridad | Pagos de facturas |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Dirección | **E·T** | *E·T* (DU-01) | **V·T** | **V** | **V·T** | **V·T** | **V·T** | **V·T** | **V·T** | **V** | **E** | **V** | *V* (DU-C03) |
+| Calidad | **E·T** | *E·T* (DU-01) | **V·T** | — | *—* (A02) | — | *—* (A02) | *—* (A02) | — | *—* (A02) | **—** | — | *—* (DU-C03) |
+| Gerencia de Operaciones | **E·T** | *E·T* (DU-01) | **E·T** | **V** + responsable | **V·T** | **V·T** | **V·T** | **V·T** | **V·T** | *V* (DU-02) | **E** | **E** | *—* (DU-C03) |
+| Jefatura de Proyectos | **E·T** | *E·T* (DU-01) | **E·T** | **V** + responsable | **V·T** | — | **V·T** | **V·T** | **V·T** | *V* (DU-02) | **—** | — | *—* (DU-C03) |
+| Ingeniería de proyectos | **E·T** | *E·T* (DU-01) | **E·T** | **V** + responsable | *V·P* (A04) | — | *V·P* (A04) | **V·P** | *V·P* (A04) | **—** (W-17) | **—** | — | *—* (DU-C03) |
+| Seguridad e Higiene | **E·T** | *E·T* (DU-01) | **V·T** | — | *—* (A02) | — | *—* (A02) | *—* (A02) | — | *—* (A02) | **—** | — | *—* (DU-C03) |
+| Gerencia de Administración | **E·T** | *E·T* (DU-01) | **E·T** | **E** | **E·T** | **E·T** | **E·T** | **E·T** | **E·T** | **E** | **E** | **E** | *E* (DU-C03) |
+| Jefatura de Administración | **E·T** | *E·T* (DU-01) | **E·T** | **E** | **E·T** | **E·T** | **E·T** | **E·T** | **E·T** | **E** | **—** ("solo la gerencia") | — | *E* (DU-C03) |
+| Compras | **E·T** | *E·T* (DU-01) | **V·T** | — | **E·T** | — | **E·T** | **E·T** | *E·T* (A05) | **E** | **—** | — | *V* (DU-C03) |
+| RRHH | **E·T** | *E·T* (DU-01) | **V·T** | — | *—* (A03) | — | *—* (A03) | *—* (A03) | — | *—* (A03) | **—** | — | *—* (DU-C03) |
+| Pañol y Logística | **E·T** | *E·T* (DU-01) | **V·T** | — | *—* (A02) | — | *—* (A02) | *—* (A02) | — | *—* (A02) | **—** | — | *—* (DU-C03) |
 
 De dónde sale cada columna:
 
@@ -282,6 +283,7 @@ De dónde sale cada columna:
 - **Proveedores**: F-55/F-56 "Administración y compras"; W-17 "Administración tiene todo lo de gastos, proveedores y rendición" y para Ingeniería "No ve Proveedores… mientras la tabla de permisos no se los dé" (por eso Ingeniería arranca en Sin acceso: DU-A02 ajusta DU-02, ambas resueltas). Gerencia de Operaciones y Jefatura de Proyectos: Ver, como DU-02 (ya ven los gastos).
 - **Usuarios y permisos**: F-58/F-59/F-60 "Dirección y las dos gerencias"; W-15 "Administración: Editar — solo la gerencia".
 - **Plazos de la prioridad**: F-68 "Gerencia" → las dos gerencias; Dirección V por "ve todo".
+- **Pagos de facturas** (agregada el 27-nov, DU-C03, pedido de Bruno): Editar Gerencia y Jefatura de Administración (pagan las facturas); Ver Dirección y Compras; el resto Sin acceso. Se carga con una migración idempotente propia (`2026_11_27_100002`), que no pisa lo que la empresa ya cambió; Gerencia la ajusta en la tabla de permisos.
 - **Dirección**: cap. 3 "Ve todo" y F-61 "Dirección ve todo" → V·T en todo lo que W-15 dejó "a completar"; E en Pedidos y Usuarios (W-15).
 - **"a completar"** (W-15: "el resto de la tabla la completan ustedes"): arrancan en **Sin acceso** (resuelta DU-A02); RRHH sin acceso a Gastos, Presupuesto, Rendición y Proveedores (resuelta DU-A03).
 
@@ -432,7 +434,7 @@ Formas:
 { "clave": "rendicion", "nombre": "Rendición", "admite_editar": true, "admite_alcance": true, "orden": 8 }
 ```
 
-`permisos` trae **las 12 claves** siempre. El front arma el menú con la tabla §6.4 (una sola
+`permisos` trae **las 13 claves** siempre (12 + `pagos`, DU-C03). El front arma el menú con la tabla §6.4 (una sola
 función `menuPara(permisos, tieneGente)` testeada) y la API decide (RN-IDE-14).
 
 Adjuntos (transversal, `app/Shared`, ADR-014): `POST /api/adjuntos` (multipart para archivo, JSON

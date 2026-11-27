@@ -21,6 +21,8 @@ final readonly class FiltroRenglones
      * @param  'fecha'|'proveedor'|'total'  $orden
      * @param  'asc'|'desc'  $dir
      * @param  int|null  $limite  10 para "Últimos gastos" (resuelta DU-R07)
+     * @param  bool  $detallePorPersona  parte de horas (DU-C02, RN-GAS-57): true = un renglón por persona con su
+     *                                   `empleado` (quien mira tiene `gastos = editar`); false = resumido por parte
      */
     public function __construct(
         public ?array $rubroClaves = null,
@@ -30,5 +32,6 @@ final readonly class FiltroRenglones
         public string $orden = self::ORDEN_FECHA,
         public string $dir = 'desc',
         public ?int $limite = null,
+        public bool $detallePorPersona = false,
     ) {}
 }

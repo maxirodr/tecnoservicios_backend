@@ -5,17 +5,20 @@ declare(strict_types=1);
 namespace App\Modules\Gastos\Http\Requests;
 
 use App\Modules\Gastos\Application\Correccion\CambiosGasto;
+use App\Modules\Gastos\Domain\Enums\Origen;
+use App\Modules\Gastos\Domain\Models\Gasto;
 use App\Shared\Concurrencia\VersionDeFila;
 use Carbon\CarbonImmutable;
 
 /**
  * `PATCH /api/gastos/{id}` (W-34, RN-GAS-37): campos de cabecera opcionales; `renglones` = la lista completa
  * (con `id`, se conserva o cambia; sin `id`, nuevo; el que no viene, se quita); `adjuntos` = la lista
- * completa; `updated_at` = la versión que se abrió (409). Tipo de documento y origen no se leen.
+ * completa; `updated_at` = la versión que se abrió (409). Tipo de documento y origen no se leen. En el parte de
+ * horas, `concepto` es el de la cabecera y cada renglón trae su `empleado` (RN-GAS-52, 53).
  */
 final class CorregirGastoRequest extends GastosRequest
 {
-    private const CAMPOS_CABECERA = ['numero', 'fecha', 'proveedor_id', 'rendido_por', 'periodo_desde', 'periodo_hasta'];
+    private const CAMPOS_CABECERA = ['numero', 'fecha', 'proveedor_id', 'rendido_por', 'periodo_desde', 'periodo_hasta', 'concepto'];
 
     /**
      * @return array<string, mixed>
@@ -29,6 +32,7 @@ final class CorregirGastoRequest extends GastosRequest
             'rendido_por' => ['sometimes', 'nullable', 'string', 'max:'.self::LARGO_RENDIDO_POR],
             'periodo_desde' => ['sometimes', 'nullable', 'date_format:Y-m-d'],
             'periodo_hasta' => ['sometimes', 'nullable', 'date_format:Y-m-d'],
+            'concepto' => ['sometimes', 'nullable', 'string', 'max:'.self::LARGO_TEXTO],
             'adjuntos' => ['sometimes', 'array', 'max:'.self::MAX_ADJUNTOS],
             'adjuntos.*' => ['integer', 'distinct'],
             'renglones' => ['sometimes', 'array'],
@@ -38,6 +42,17 @@ final class CorregirGastoRequest extends GastosRequest
             'confirmar_superposicion' => ['sometimes', 'boolean'],
             ...VersionDeFila::reglas(),
         ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        // Los textos del parte de horas (horas y valor hora) dependen de qué se cargó, que no viene en el PATCH.
+        $esParte = Gasto::query()->whereKey((int) $this->route('gasto'))->where('origen', Origen::ParteHoras->value)->exists();
+
+        return [...parent::messages(), ...($esParte ? self::mensajesDelParte() : [])];
     }
 
     public function versionEsperada(): ?CarbonImmutable

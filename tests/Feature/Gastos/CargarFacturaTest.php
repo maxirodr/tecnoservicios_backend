@@ -36,7 +36,7 @@ final class CargarFacturaTest extends GastosTestCase
             ->assertJsonPath('data.renglones.0.fecha', '2026-10-17')
             ->assertJsonPath('data.renglones.4.obra', null)
             ->assertJsonPath('data.obras_afectadas.0.nombre_trabajo', 'Piso industrial nave 3')
-            ->assertJsonPath('data.puede', ['editar' => true, 'anular' => true]);
+            ->assertJsonPath('data.puede', ['editar' => true, 'anular' => true, 'marcar_pago' => true]);
 
         $id = $respuesta->json('data.id');
         $this->assertIsInt($id);

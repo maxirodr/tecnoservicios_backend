@@ -37,6 +37,12 @@ final readonly class AccesoRendicion
             && ($this->permisos->alcance($user, $funcion->value) === Alcance::Todas || $obra->responsableId === $user->id);
     }
 
+    /** El parte de horas por persona, con nombre y valor hora: `gastos = editar` sobre la obra (RN-REN-63, DU-C02). */
+    public function detallePorPersona(User $user, ObraResumen $obra): bool
+    {
+        return $this->puede($user, ClaveFuncion::Gastos, Nivel::Editar, $obra);
+    }
+
     public function tiene(User $user, ClaveFuncion $funcion, Nivel $nivel): bool
     {
         return $this->permisos->puede($user, $funcion->value, $nivel);

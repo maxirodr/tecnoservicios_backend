@@ -45,12 +45,13 @@ final readonly class ReglasDeRenglones
         }
 
         $obraDeLaRendicion = $datos->renglones[0]->obraId ?? null;
+        $conceptoDelParte = $datos->origen === Origen::ParteHoras ? RenglonDelParte::concepto($datos) : null;
         $existentes = [];
         $resueltos = [];
 
         foreach ($datos->renglones as $renglon) {
             $this->obra($datos->origen, $renglon, $obraDeLaRendicion, $existentes, $errores);
-            $resueltos[] = $this->resolver($datos->origen, $renglon, $fechaCabecera, $errores);
+            $resueltos[] = $this->resolver($datos->origen, $renglon, $fechaCabecera, $errores, $conceptoDelParte);
         }
 
         return $resueltos;
@@ -80,13 +81,19 @@ final readonly class ReglasDeRenglones
         }
     }
 
-    private function resolver(Origen $origen, DatosRenglon $renglon, ?string $fechaCabecera, Errores $errores): RenglonAGuardar
+    /** `$conceptoDelParte`: en el parte de horas, el concepto de la cabecera va en cada renglón (RN-GAS-52). */
+    private function resolver(Origen $origen, DatosRenglon $renglon, ?string $fechaCabecera, Errores $errores, ?string $conceptoDelParte = null): RenglonAGuardar
     {
         $porImporte = $origen->tieneUnSoloRenglon();
         $cantidad = $porImporte ? '1.000' : bcadd($renglon->cantidad, '0', TotalDeRenglon::ESCALA_CANTIDAD);
         $precio = bcadd($renglon->precioUnitario, '0', TotalDeRenglon::ESCALA_IMPORTE);
 
         $this->signo($origen, $renglon->posicion, $cantidad, $errores);
+        $esParte = $origen === Origen::ParteHoras;
+
+        if ($conceptoDelParte === null && $renglon->concepto === '') {
+            $errores->renglon($renglon->posicion, 'concepto', 'Escribí el concepto.');
+        }
         $this->precio($origen, $renglon->posicion, $precio, $errores);
 
         $total = TotalDeRenglon::calcular($cantidad, $precio);
@@ -100,7 +107,7 @@ final readonly class ReglasDeRenglones
             $renglon->posicion,
             $renglon->id,
             $this->fecha($origen, $renglon, $fechaCabecera, $errores),
-            $renglon->concepto,
+            $conceptoDelParte ?? $renglon->concepto,
             $cantidad,
             $precio,
             $total,
@@ -109,6 +116,7 @@ final readonly class ReglasDeRenglones
             $materialId,
             $materialNuevo,
             $renglon->detalle,
+            $esParte ? RenglonDelParte::empleado($renglon, $errores) : null,
         );
     }
 
@@ -118,6 +126,12 @@ final readonly class ReglasDeRenglones
     private function signo(Origen $origen, int $posicion, string $cantidad, Errores $errores): void
     {
         $signo = bccomp($cantidad, '0', TotalDeRenglon::ESCALA_CANTIDAD);
+
+        if ($origen === Origen::ParteHoras) {
+            RenglonDelParte::horas($posicion, $cantidad, $errores);
+
+            return;
+        }
 
         match (true) {
             $signo === 0 => $errores->renglon($posicion, 'cantidad', 'La cantidad no puede ser 0.'),
@@ -138,6 +152,7 @@ final readonly class ReglasDeRenglones
             $signo < 0 => $errores->renglon($posicion, 'precio_unitario', 'El precio no puede ser negativo.'),
             $origen === Origen::Amortizacion && $signo === 0 => $errores->renglon($posicion, 'precio_unitario', 'Poné el importe.'),
             $origen === Origen::MontoPeriodo && $signo === 0 => $errores->renglon($posicion, 'precio_unitario', 'Poné el importe del período.'),
+            $origen === Origen::ParteHoras && $signo === 0 => $errores->renglon($posicion, 'precio_unitario', RenglonDelParte::SIN_VALOR_HORA),
             default => null,
         };
     }

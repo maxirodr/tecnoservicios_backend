@@ -28,5 +28,6 @@ final readonly class DatosRenglon
         public ?int $materialId,
         public ?MaterialNuevo $materialNuevo,
         public ?string $detalle,
+        public ?string $empleado = null,
     ) {}
 }
