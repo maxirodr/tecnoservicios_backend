@@ -58,11 +58,11 @@ final class SectoresTest extends IdentidadTestCase
         $celdas = Permiso::query()->with('funcion')->where('sector_id', $sector->id)->get()
             ->mapWithKeys(fn (Permiso $celda): array => [$celda->funcion->clave => $celda->nivel->value.'·'.$celda->alcance->value]);
 
-        $this->assertCount(12, $celdas);
+        $this->assertCount(13, $celdas);
         $this->assertSame('editar·todas', $celdas['pedidos']);
         $this->assertSame('editar·todas', $celdas['equipos_reparacion']);
         $this->assertSame('ver·todas', $celdas['obras']);
-        $this->assertSame(9, $celdas->filter(fn (string $celda): bool => $celda === 'sin_acceso·todas')->count());
+        $this->assertSame(10, $celdas->filter(fn (string $celda): bool => $celda === 'sin_acceso·todas')->count());
         $creado = $this->actividades(Sector::class, 'creado');
         $this->assertCount(1, $creado);
         $this->assertSame($sector->id, $creado[0]->sujeto_id);
