@@ -182,6 +182,8 @@ y viaja en el contrato (§12.4.1).
 - **RN-REN-16** **HORAS LIQUIDADAS y FIJOS restan** en la rendición como cualquier rubro: su gastado es la suma de los **montos por período** cargados para la obra, sin detalle por empleado (no se liquidan sueldos, D-009). Se presupuestan como los demás (RN-OBR-35). *(F-54, cap. 4.4 "después le cargo montos de mano de obra y me los va restando", C18)*
 - **RN-REN-17** **Período desde–hasta** (dos fechas: quincena para horas, mes para fijos, o el que usen), **un renglón por período y por obra** en su rubro. La **carga** (sección "Horas liquidadas y fijos por período" de W-46, endpoint y guardado) es de Gastos (origen `monto_periodo`, una sola fuente) y sus reglas y textos son los de `gastos.md` RN-GAS-27 y RN-GAS-28, que acá no se repiten: rubro `horas_liquidadas` o `fijos`; hasta ≥ desde; importe mayor que cero; concepto por defecto "Horas liquidadas 1 al 15-oct" / "Fijos 1 al 31-oct", editable; la fecha efectiva es **el último día del período** (`periodo_hasta`). Si ya hay un período del **mismo rubro y obra que se superpone**, **no se frena**: se avisa "Ya hay HORAS LIQUIDADAS de Ampliación de nave de ensayo del 1 al 15-oct (950.000). ¿Cargar igual?" y se guarda si confirma. *(resuelta DU-18; dónde se carga, fecha efectiva y aviso de superposición: resuelta DU-R04 y DU-G09)*
 - **RN-REN-18** En W-11 las filas FIJOS y HORAS LIQUIDADAS dicen debajo "monto por período" y "monto por período, sin detalle por persona" (W-11), y quien puede cargarlas (`rendicion` = editar, RN-REN-58) ve el acceso "+ cargar período" que abre esa sección de W-46 con la obra y el rubro elegidos. En W-36 cada renglón se ve con el documento "Período 1 al 15-oct". *(W-11, resuelta DU-R04)*
+- **RN-REN-62** **Parte de horas** (DU-C02, `gastos.md` §5.13): las HORAS LIQUIDADAS también llegan del parte de horas que se carga en W-10, una vez, con un renglón por persona y obra; cada obra resta lo suyo, con fecha efectiva el "hasta" del parte, y el gastado de HORAS LIQUIDADAS es la suma de los montos por período **y** de los renglones del parte. El monto por período de W-46 sigue igual. En W-11 ("Últimos gastos") y W-36 el documento es "Parte de horas 1 al 15-oct". *(DU-C02 "Cada obra ve en su rendición lo suyo")*
+- **RN-REN-63** **Privacidad del detalle por persona** (`gastos.md` RN-GAS-57): quien tiene **`gastos = editar`** sobre la obra ve en W-11 y W-36 un renglón por persona con el **empleado** (`empleado: "Juan Pérez"`), las horas y el valor hora. Los demás (por ejemplo Ingeniería en sus obras, que mira la rendición con `rendicion` ≥ ver) ven el parte **resumido**: un renglón por parte con el concepto, las horas sumadas en Cantidad ("120") y el total, sin empleado y con el Precio unitario vacío ("—"; `precio_unitario: null`, `resumido: true`). W-37 agrupa por concepto, así que se ve igual para todos (el concepto del parte, horas y total, sin nombres). Los totales de la fila HORAS LIQUIDADAS, el pie de W-36 y W-12 son los mismos para todos. *(DU-C02 "Privacidad (valor hora por persona)")*
 
 ### Saldo, porcentaje y rubros pasados (F-49, F-50)
 
@@ -527,7 +529,8 @@ importes y cantidades como **string decimal** (ADR-008); porcentajes como string
   },
   "ultimos_gastos": [
     { "renglon_id": 921, "gasto_id": 310, "fecha": "2026-11-30", "documento": "Período 1 al 30-nov", "proveedor": null,
-      "concepto": "Fijos 1 al 30-nov", "rubro": { "clave": "fijos", "nombre": "FIJOS" }, "total": "260000.00" }
+      "concepto": "Fijos 1 al 30-nov", "rubro": { "clave": "fijos", "nombre": "FIJOS" }, "total": "260000.00",
+      "empleado": null }                  // parte de horas con gastos = editar: el nombre (RN-REN-63)
     /* … hasta 10 */
   ],
   "puede": { "ver_monto_obra": true, "abrir_gastos": true, "ver_todos_los_gastos": true, "cargar_sin_documento": true,
@@ -541,7 +544,8 @@ importes y cantidades como **string decimal** (ADR-008); porcentajes como string
   "cantidad_renglones": 3,
   "renglones": [
     { "renglon_id": 912, "gasto_id": 305, "fecha": "2026-10-16", "documento": "Consumo de stock", "proveedor": null,
-      "concepto": "Antiparras", "cantidad": "10.000", "precio_unitario": "2500.00", "total": "25000.00", "rubro_clave": "epp" }
+      "concepto": "Antiparras", "cantidad": "10.000", "precio_unitario": "2500.00", "total": "25000.00", "rubro_clave": "epp",
+      "empleado": null, "resumido": false }   // parte de horas: "empleado" con gastos = editar; si no, resumido: true y precio_unitario: null (RN-REN-63)
   ]
 }
 // PorProveedor
@@ -747,6 +751,7 @@ esta tabla de equivalencias (sale del análisis de sus seis rendiciones):
 | F-48 · F-54 (presupuesto) | RN-REN-09…13 | `test_presupuestado_suma_todos_los_presupuestos_por_rubro` · `test_solo_total_compara_total_contra_gastado` · `test_obra_mixta_muestra_sin_desglose` · `test_presupuesto_sin_cargar_no_suma_y_avisa` · `test_cambio_en_w13_invalida_el_cache` · `test_ver_presupuestado_no_pide_presupuesto_rubro` |
 | F-54 (EPP) | RN-REN-14, 15 | `test_epp_suma_en_insumos_en_el_resumen` · `test_detalle_de_insumos_marca_epp_y_subtotal` · `test_detalle_de_epp_solo_devuelve_404` |
 | F-54 (horas y fijos) | RN-REN-16…18 | `test_horas_y_fijos_por_periodo_restan_en_su_rubro` · `test_fecha_efectiva_de_un_periodo_es_su_ultimo_dia` (con Gastos, también si es futura) · `test_periodo_superpuesto_avisa_y_no_frena` (Gastos) |
+| F-54 (parte de horas, DU-C02) | RN-REN-62, 63 | `PrivacidadDelParteTest` (Rendición): `test_rendicion_muestra_el_parte_por_persona_con_gastos_editar` · `test_rendicion_muestra_el_parte_resumido_sin_gastos_editar` · `test_el_parte_suma_en_horas_liquidadas` |
 | F-50 | RN-REN-21, 22 | `test_rubro_pasado_es_estricto_al_centavo` · `test_rubro_con_gasto_y_sin_presupuesto_es_pasado` · `test_solo_total_no_marca_rubros` · `test_obra_mixta_marca_contra_lo_desglosado` · `test_obra_pasada_se_marca` |
 | F-54 (monto) | RN-REN-23…25 | `test_monto_y_ganancias_con_monto_obra_ver` · `test_monto_no_viaja_sin_permiso` · `test_monto_respeta_alcance_propias` · `test_presupuesto_sin_monto_avisa` · `test_ganancia_negativa` |
 | F-51 | RN-REN-30…32 | `test_detalle_lista_todos_los_renglones_del_rubro` · `test_pie_del_detalle_igual_al_gastado` · `test_detalle_ordena_por_fecha_proveedor_y_total` · `test_renglon_es_vinculo_solo_con_gastos_ver` |
@@ -771,6 +776,8 @@ cargan, qué fecha usan, superposición) · DU-R05 (qué permiso habilita las ca
 columnas de fecha, diferencia con MATERIALES, unidad) · DU-R07 (lo que W-11/W-36/W-37 no dicen: etiquetas, últimos 10, grupo "Sin
 documento", período, marca EPP) · DU-R08 (técnica: contratos nuevos con Obras y Gastos) · DU-R09 (retirado antes del arranque en la
 carga inicial, semana 4).
+
+**Pedidos del cliente (Bruno, 26-nov):** DU-C02 (parte de horas: RN-REN-62, 63; `gastos.md` §5.13).
 
 **De `gastos.md` que se aplican acá:** DU-G01 (fecha del renglón = fecha efectiva), DU-G03 (fuera de presupuesto en la misma
 carga, con su unidad), DU-G05 (sin nota de crédito), DU-G09 (superposición de períodos).
